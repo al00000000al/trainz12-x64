@@ -127,6 +127,29 @@ Tools: `D:\tools` (Ghidra), scripts: `trainz12-x64/tools/`
   `DynamicBuffer::Write(const void*, ulong, ulong)` gained a third argument. The SDK guides names and intent;
   the TS12 binaries remain the authority.
 
+### Jet::BFEncrypt = a modified Blowfish (reconstructed and verified 2026-10-19)
+- `src/Kernel_7c/AuranBlowfish.{h,cpp}`; tables generated from pi by `tools/gen_pi_tables.py` (Machin formula),
+  checked equal to the DLL's tables (P at RVA 0x18478, S at 0x184c0). No data copied from the binary.
+- Differences from standard Blowfish (all confirmed in the disassembly, `ghidra_scripts/DumpAsm.java`):
+  key repeated/cut to 56 bytes read as little-endian words; blocks are two LE words (L first);
+  F(x) = ((((S1[b]&1) + S0[a]) ^ 0x20) + (S3[d]&1) + S2[c]) with a = low byte; R ^= F(L) ^ 0x20;
+  **the S-box fill rewinds every outer pass** so only S0[0], S1[0], S2[1], S3[1] change;
+  a non-multiple-of-8 tail is one more block ending at the buffer end (decrypt does it first).
+- Methods (thiscall, `RET 0xC`, hidden Result* first): GetCaps 0x21f0 {keyMin 1, keyMax 256, bufMin 8,
+  bufMax 0xffffffff, align 0x40}, SetKey 0x2230, GetOptimalSize 0x1db0 (round up to 8), EncryptData 0x24d0,
+  DecryptData 0x2550. Codes: 2 null, 3 key size 0, 4 key > 256, 5 buffer < 8.
+- `src/tests/diff_blowfish.cpp` calls the original methods by RVA on a zeroed 0x1060-byte object:
+  75 008 checks (key-schedule state, encrypt, decrypt of random data, round trips, error codes), 0 mismatches.
+- Technique: internal (non-exported) functions of `<module>_orig.dll` can be diff-tested by calling them at
+  base + RVA with the right calling convention.
+
+### Jet::LZSSCompress is a multi-mode codec (to do)
+- CompressBlock 0x6ec0 / DecompressBlock 0x7150 work on IOSlave streams (KernelStandard).
+- Header byte: low nibble = level 0..9 (0 = stored), bits 4-5 = window mode. Mode 0: LZ with 32-bit flag words,
+  3-bit lengths (7 = extended by a byte), 1-byte offsets. Levels 1-6: 16-bit tokens, offset bits per mode from
+  the table at 0x1001814c, literal runs. Levels 7-9: Huffman-coded LZ77 with Deflate-like length tables
+  (0x10018458). Likely the codec behind .ja archives and asset data: decompression must be bit-exact.
+
 ### Third-party deps and their x64 availability
 | 32-bit dep | x64 replacement |
 |---|---|
