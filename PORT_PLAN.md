@@ -27,10 +27,16 @@ at every step and catches mistakes while they are small.
 - Verification per module: game starts, a fixed test route loads, the same JetLog output, the same frame
   (screenshot diff), the same GS script behaviour on a test session. Recorded traces act as an oracle.
 
+- Granularity: stateless classes can move one at a time; stateful subsystems move as a whole module
+  (see MODLOG "Replacement granularity"). Modules the game never loads (Lexer, RenderDirectX9, movie players)
+  come last or not at all.
+
 ## Phase 3: x64
 - Fix 64-bit hazards in the source: pointer-sized fields in on-disk structs, `int`↔pointer casts,
   32-bit handles in the GS VM, inline asm/x87 maths.
 - Swap deps for x64 builds (table in MODLOG.md).
+- Replace the embedded XULRunner 1.9 (menu HTML panels) with a 64-bit HTML engine such as WebView2.
+- The live renderer is OpenGL: port RenderOpenGL first; it is also the natural base for a modern backend.
 - Then real use of the hardware: multi-threaded asset loading, bigger caches, modern renderer backend.
 
 ## Phase 4: add-on compatibility

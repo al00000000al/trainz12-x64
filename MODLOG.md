@@ -83,6 +83,29 @@ Tools: `D:\tools` (Ghidra), scripts: `trainz12-x64/tools/`
   if both non-null. `PString::cache` is a private static, imported as DATA.
 - A `__cdecl` member returning a class by value takes (this, hidden result*) on the stack in that order.
 
+### What actually loads (main menu, 2026-10-18, 32-bit module list of the running game)
+- Jet: Kernel, KernelStandard, KernelResource, KernelResources, Input{System,DirectX,Win32}, Interface{System,Resources},
+  Render2DCore, Render3DCore, Render3DFoundation, **RenderOpenGL**, RenderSystem, WaterSystem, DebugInterface.
+  `out\loaded_modules_menu.txt`.
+- **The renderer in use is OpenGL** (RenderOpenGL_7c), not DirectX 9.
+- **Not loaded at the menu**: Lexer_7c (nothing references it; not in plugins.ini, so probably dead),
+  DebugSupport, DSMoviePlayer, VFWMoviePlayer, Render3DExtension, RenderDirectX9. Re-check inside a driving session.
+- **Embedded Mozilla XULRunner 1.9pre** (`bin\mozilla\`: xul, xpcom, js3250, nspr4, nss3/ssl3/smime3/softokn3, sqlite3):
+  the HTML panels of the menus. No x64 build of that version exists: the x64 port must replace it (e.g. WebView2).
+  Also loaded: cg/cgGL, cudart, nvtt, ijl10, OpenAL32 + wrap_oal, LIBEAY32, MSVCR71, UnicoWS.
+
+### Replacement granularity (lesson from Task/TaskManager)
+- Inside a module, functions call each other directly, not through the export table. So replacing one class
+  of a module is only safe when that class holds no state shared with the rest of the module (UId: fine).
+  Stateful subsystems (App, Task/TaskManager + the internal LogTask, plugin system, EditItemManager) must move
+  together: Kernel_7c's core gets replaced as one unit.
+
+### Naming pass via RTTI vftables (`ghidra_scripts/NameVtableFunctions.java`, all programs via `tools/ghidra_all.ps1`)
+- Unnamed functions referenced from a labelled vftable become `Class::vfN`. +~9 900 names; trainz.exe alone
+  +6 804 (5 268 vftables). trainz.exe now 65.6% named (was 51.0%); Jet modules 70–91%.
+- Kernel_7c internal classes revealed: BFEncrypt (Blowfish), LZSSCompress, PluginSystem, PluginLibrary,
+  PluginGroup, PluginFactoryOf<...>, LogTask, Mutex, ReferenceCount.
+
 ### Third-party deps and their x64 availability
 | 32-bit dep | x64 replacement |
 |---|---|
