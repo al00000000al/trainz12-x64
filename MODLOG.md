@@ -235,6 +235,23 @@ ini files), one CriticalSection at 0x10019ccc guarding everything below.
   {next, prev, count, T items[13]}; Add appends to the last chunk, a full last chunk gets a new one.
   PluginCollection *is* that array, so the chunk format must stay exact.
 
+### FastDynamicArray<PluginConfig*> reconstructed (2026-10-19): 63/256 Kernel_7c exports ours
+- `src/include/jet/FastDynamicArray.h` (own code; layout and behaviour of TS12, not a copy of the SDK header):
+  array {head}, Chunk {next, prev, count, data[SIZ]} ring from Jet::Alloc, Iterator {node, head, chunk}.
+  All 33 exported members link against the original mangled names via one explicit instantiation
+  (`Kernel_7c/PluginConfigList.cpp`).
+- TS12 differs from the SDK in: Insert/InsertUnique (first chunk whose last item is not less, then
+  BinarySearch 0x10008ca0 inside it, which lands before the first equal item), Index(n) without a bounds
+  check (past the end: {null, head, head}), Index(Iterator) computed as items-before-chunk +
+  (node - chunk - 0xc) >> 2 (so -3 for End() of an empty array), RemovePack building its result after moving
+  the head (the SDK returned the freed head), Pop() on empty reads address 0 (ours returns T()).
+- `src/tests/diff_fda.cpp`: 400 random runs of 23 operation kinds with many duplicates, whole chunk ring and
+  returned iterator positions compared after every step: **100 306 checks, 0 mismatches**.
+- In game: menu, clean exit, JetLog identical to the baseline.
+- Method note: the exit "Packed Heap Summary" lines (e.g. `#StringData ... 507k/508k used`) change between
+  identical runs (a control run with the old DLL showed it), so `tools/menu_check.ps1` ignores them.
+  `tools/bisect_exports.ps1` builds a DLL with a slice of an export group, for hunting in-game differences.
+
 ### Still to do in LZSSCompress
 - Wrap the codec in the LZSSCompress plugin class (IOSlave in/out, vtables) once the plugin system is ours.
 - CompressBlock 0x6ec0 / DecompressBlock 0x7150 work on IOSlave streams (KernelStandard).
