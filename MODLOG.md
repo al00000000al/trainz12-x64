@@ -306,6 +306,22 @@ ini files), one CriticalSection at 0x10019ccc guarding everything below.
   older diff tests unchanged.
 - In game: menu reached on our main loop, clean exit, JetLog identical to the baseline.
 
+### EditItem block: analysis notes (in progress, 2026-10-19)
+- 0x10002c80-0x10004a20 (~7 KB, 61 exports). No module of the game imports any EditItem* symbol: dead code
+  in TS12, but needed for a Kernel_7c without the original. Asm: `D:\trainz12-decomp` scratch dumps.
+- EditItem (0x34): own vfptr +0, PluginInstance at +4 (vbptr +4, factory +8), manager +0xc, PString type
+  +0x10, caps list (FDA<PString,13> chunks) +0x14, Array<FullCap,13> {count +0x18, capacity +0x1c, data +0x20}
+  (FullCap = 2 PStrings, grown in steps of 13), bool paged +0x24, vtordisp +0x28, ReferenceCount +0x2c.
+  Ctor takes the PString *by value* plus the vbase flag. Init stores the manager; Save/Load flip +0x24.
+- EditItemManager (0x30): vfptr +0, vbptr +4, factory +8, item list (DynamicArray<PString>) +0xc,
+  current item +0x10, undo stack +0x14 and redo stack +0x18 (EditItemStack, 0x18 bytes each, ctor(bool)),
+  Mutex* +0x1c, PString name +0x20, vtordisp +0x24, ReferenceCount +0x28. Ctor registers
+  CleanupThisTempDataOnDisk with atexit. Vtable slots used: +0x28 group id for CreateItem, +0x2c CreateItem,
+  +0x30 GetSystemLevelIdentifier, +0x34 item default name, +0x38 GetApplicationUniqueTempPath.
+- Temp files: tempFileDir (static PString) = app temp path + "\" + GetUUID() (UId::SetRnd → GetString,
+  stripped), made with File::Md; names "Temp_%d.bin" from tempFileCounter under tempFileMutex; File::Prune
+  cleans up. Initialize(name) takes a named Mutex and cleans old data when it gets the lock first.
+
 ### Third-party deps and their x64 availability
 | 32-bit dep | x64 replacement |
 |---|---|
