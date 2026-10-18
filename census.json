@@ -1,0 +1,921 @@
+[
+ {
+  "name": "CCP.exe",
+  "machine": "0x14c",
+  "dotnet": true,
+  "code": 1092411,
+  "exports": 1,
+  "cxx_exports": 0,
+  "rtti": 244,
+  "imports": [
+   "KERNEL32.dll",
+   "WSOCK32.dll",
+   "KernelStandard_7c.dll",
+   "MSVCP80.dll",
+   "MSVCR80.dll",
+   "KernelResource_7c.dll",
+   "Kernel_7c.dll",
+   "RenderSystem_7c.dll",
+   "Render3DCore_7c.dll",
+   "Render3DFoundation_7c.dll",
+   "USER32.dll",
+   "SHELL32.dll",
+   "LIBEAY32.dll",
+   "GDI32.dll",
+   "msvcm80.dll",
+   "mscoree.dll"
+  ]
+ },
+ {
+  "name": "cg.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 1774805,
+  "exports": 527,
+  "cxx_exports": 38,
+  "rtti": 0,
+  "imports": [
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "cgGL.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 203605,
+  "exports": 86,
+  "cxx_exports": 0,
+  "rtti": 0,
+  "imports": [
+   "cg.dll",
+   "OPENGL32.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "COMDLG32.OCX",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 70732,
+  "exports": 5,
+  "cxx_exports": 0,
+  "rtti": 0,
+  "imports": [
+   "KERNEL32.dll",
+   "USER32.dll",
+   "ole32.dll",
+   "ADVAPI32.dll",
+   "OLEAUT32.dll",
+   "comdlg32.dll",
+   "GDI32.dll"
+  ]
+ },
+ {
+  "name": "ContentManager.exe",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 2138797,
+  "exports": 0,
+  "cxx_exports": 0,
+  "rtti": 494,
+  "imports": [
+   "WINMM.dll",
+   "OpenAL32.dll",
+   "trainznativeinterface.dll",
+   "WSOCK32.dll",
+   "MFC80.DLL",
+   "MSVCR80.dll",
+   "KERNEL32.dll",
+   "USER32.dll",
+   "GDI32.dll",
+   "MSIMG32.dll",
+   "ADVAPI32.dll",
+   "SHELL32.dll",
+   "SHLWAPI.dll",
+   "ole32.dll",
+   "OLEAUT32.dll",
+   "MSVCP80.dll",
+   "KernelStandard_7c.dll",
+   "KernelResource_7c.dll",
+   "Kernel_7c.dll",
+   "RenderSystem_7c.dll",
+   "Render3DCore_7c.dll",
+   "Render3DFoundation_7c.dll",
+   "d3d9.dll",
+   "d3dx9_42.dll",
+   "LIBEAY32.dll"
+  ]
+ },
+ {
+  "name": "cudart.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 185742,
+  "exports": 125,
+  "cxx_exports": 0,
+  "rtti": 36,
+  "imports": [
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "DebugInterface_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 3729,
+  "exports": 38,
+  "cxx_exports": 37,
+  "rtti": 3,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "MSVCR80.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "DebugSupport_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 18497,
+  "exports": 119,
+  "cxx_exports": 118,
+  "rtti": 20,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "DebugInterface_7c.dll",
+   "InterfaceSystem_7c.dll",
+   "Render3DCore_7c.dll",
+   "RenderSystem_7c.dll",
+   "InputSystem_7c.dll",
+   "MSVCR80.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "DSMoviePlayer_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 76801,
+  "exports": 1,
+  "cxx_exports": 0,
+  "rtti": 58,
+  "imports": [
+   "Render3DFoundation_7c.dll",
+   "KernelStandard_7c.dll",
+   "Kernel_7c.dll",
+   "KernelResource_7c.dll",
+   "KERNEL32.dll",
+   "USER32.dll",
+   "ole32.dll",
+   "OLEAUT32.dll",
+   "WINMM.dll",
+   "MSVCR80.dll"
+  ]
+ },
+ {
+  "name": "dx7vb.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 216962,
+  "exports": 4,
+  "cxx_exports": 0,
+  "rtti": 0,
+  "imports": [
+   "msvcrt.dll",
+   "KERNEL32.dll",
+   "ADVAPI32.dll",
+   "ole32.dll",
+   "GDI32.dll",
+   "MSACM32.dll",
+   "USER32.dll",
+   "OLEAUT32.dll"
+  ]
+ },
+ {
+  "name": "ijl10.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 127110,
+  "exports": 6,
+  "cxx_exports": 0,
+  "rtti": 0,
+  "imports": [
+   "KERNEL32.dll",
+   "USER32.dll",
+   "VERSION.dll",
+   "MSVCRT.dll"
+  ]
+ },
+ {
+  "name": "InputDirectX_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 28725,
+  "exports": 1,
+  "cxx_exports": 0,
+  "rtti": 18,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "InputSystem_7c.dll",
+   "Kernel_7c.dll",
+   "DINPUT8.dll",
+   "KERNEL32.dll",
+   "USER32.dll",
+   "MSVCR80.dll"
+  ]
+ },
+ {
+  "name": "InputSystem_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 80506,
+  "exports": 327,
+  "cxx_exports": 326,
+  "rtti": 36,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "Kernel_7c.dll",
+   "KernelResource_7c.dll",
+   "MSVCR80.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "InputWin32_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 16229,
+  "exports": 1,
+  "cxx_exports": 0,
+  "rtti": 16,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "Kernel_7c.dll",
+   "InputSystem_7c.dll",
+   "KERNEL32.dll",
+   "USER32.dll",
+   "WINMM.dll",
+   "MSVCR80.dll"
+  ]
+ },
+ {
+  "name": "InterfaceResources_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 40401,
+  "exports": 169,
+  "cxx_exports": 168,
+  "rtti": 24,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "Kernel_7c.dll",
+   "KernelResources_7c.dll",
+   "KernelResource_7c.dll",
+   "GDI32.dll",
+   "MSVCR80.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "InterfaceSystem_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 368417,
+  "exports": 2022,
+  "cxx_exports": 2021,
+  "rtti": 149,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "Kernel_7c.dll",
+   "KernelResource_7c.dll",
+   "KernelResources_7c.dll",
+   "RenderSystem_7c.dll",
+   "Render2DCore_7c.dll",
+   "InterfaceResources_7c.dll",
+   "InputSystem_7c.dll",
+   "MSVCR80.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "JAConverter.exe",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 405849,
+  "exports": 0,
+  "cxx_exports": 0,
+  "rtti": 87,
+  "imports": [
+   "WINMM.dll",
+   "KERNEL32.dll",
+   "USER32.dll",
+   "ADVAPI32.dll",
+   "SHELL32.dll",
+   "dbghelp.dll",
+   "VERSION.dll"
+  ]
+ },
+ {
+  "name": "jpatchl-w32.exe",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 5408,
+  "exports": 0,
+  "cxx_exports": 0,
+  "rtti": 0,
+  "imports": [
+   "msvcrt.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "Kernel_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 60331,
+  "exports": 256,
+  "cxx_exports": 255,
+  "rtti": 27,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "KERNEL32.dll",
+   "ole32.dll",
+   "MSVCR80.dll"
+  ]
+ },
+ {
+  "name": "KernelResource_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 35857,
+  "exports": 187,
+  "cxx_exports": 187,
+  "rtti": 20,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "Kernel_7c.dll",
+   "MSVCR80.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "KernelResources_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 11793,
+  "exports": 51,
+  "cxx_exports": 50,
+  "rtti": 14,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "Kernel_7c.dll",
+   "KernelResource_7c.dll",
+   "MSVCR80.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "KernelStandard_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 327509,
+  "exports": 1762,
+  "cxx_exports": 1762,
+  "rtti": 48,
+  "imports": [
+   "ijl10.dll",
+   "DBGHELP.dll",
+   "KERNEL32.dll",
+   "USER32.dll",
+   "GDI32.dll",
+   "ADVAPI32.dll",
+   "WINMM.dll",
+   "MSVCR80.dll",
+   "MSVCP80.dll",
+   "VERSION.dll"
+  ]
+ },
+ {
+  "name": "Launcher.exe",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 1648794,
+  "exports": 0,
+  "cxx_exports": 0,
+  "rtti": 292,
+  "imports": [
+   "trainznativeinterface.dll",
+   "WSOCK32.dll",
+   "MFC80.DLL",
+   "MSVCR80.dll",
+   "KERNEL32.dll",
+   "USER32.dll",
+   "GDI32.dll",
+   "MSIMG32.dll",
+   "ADVAPI32.dll",
+   "SHELL32.dll",
+   "OLEAUT32.dll",
+   "MSVCP80.dll",
+   "KernelStandard_7c.dll",
+   "KernelResource_7c.dll",
+   "Kernel_7c.dll",
+   "RenderSystem_7c.dll",
+   "Render3DFoundation_7c.dll",
+   "Render3DCore_7c.dll",
+   "PSAPI.DLL",
+   "LIBEAY32.dll"
+  ]
+ },
+ {
+  "name": "Lexer_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 21684,
+  "exports": 185,
+  "cxx_exports": 185,
+  "rtti": 8,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "MSVCR80.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "libeay32.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 667852,
+  "exports": 2999,
+  "cxx_exports": 0,
+  "rtti": 0,
+  "imports": [
+   "WSOCK32.dll",
+   "GDI32.dll",
+   "ADVAPI32.dll",
+   "USER32.dll",
+   "MSVCR71.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "MSCOMCTL.OCX",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 706696,
+  "exports": 5,
+  "cxx_exports": 0,
+  "rtti": 0,
+  "imports": [
+   "KERNEL32.dll",
+   "USER32.dll",
+   "ole32.dll",
+   "ADVAPI32.dll",
+   "OLEAUT32.dll",
+   "comdlg32.dll",
+   "GDI32.dll"
+  ]
+ },
+ {
+  "name": "msvcr71.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 232360,
+  "exports": 837,
+  "cxx_exports": 50,
+  "rtti": 5,
+  "imports": [
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "msvcr80.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 402026,
+  "exports": 1459,
+  "cxx_exports": 68,
+  "rtti": 13,
+  "imports": [
+   "msvcrt.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "nvtt.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 73339,
+  "exports": 81,
+  "cxx_exports": 46,
+  "rtti": 17,
+  "imports": [
+   "cudart.dll",
+   "MSVCP80.dll",
+   "MSVCR80.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "OpenAL32.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 60648,
+  "exports": 93,
+  "cxx_exports": 0,
+  "rtti": 0,
+  "imports": [
+   "WINMM.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "Render2DCore_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 19569,
+  "exports": 85,
+  "cxx_exports": 84,
+  "rtti": 14,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "Kernel_7c.dll",
+   "KernelResource_7c.dll",
+   "RenderSystem_7c.dll",
+   "MSVCR80.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "Render3DCore_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 503665,
+  "exports": 2500,
+  "cxx_exports": 2499,
+  "rtti": 212,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "Kernel_7c.dll",
+   "KernelResource_7c.dll",
+   "RenderSystem_7c.dll",
+   "DebugInterface_7c.dll",
+   "MSVCR80.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "Render3DExtension_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 47345,
+  "exports": 186,
+  "cxx_exports": 185,
+  "rtti": 43,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "Kernel_7c.dll",
+   "Render3DCore_7c.dll",
+   "RenderSystem_7c.dll",
+   "MSVCR80.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "Render3DFoundation_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 220600,
+  "exports": 1084,
+  "cxx_exports": 1083,
+  "rtti": 72,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "Kernel_7c.dll",
+   "KernelResource_7c.dll",
+   "RenderSystem_7c.dll",
+   "Render3DCore_7c.dll",
+   "MSVCR80.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "RenderDirectX9_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 77617,
+  "exports": 41,
+  "cxx_exports": 40,
+  "rtti": 33,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "Kernel_7c.dll",
+   "RenderSystem_7c.dll",
+   "KERNEL32.dll",
+   "USER32.dll",
+   "GDI32.dll",
+   "MSVCR80.dll",
+   "d3dx9_42.dll"
+  ]
+ },
+ {
+  "name": "RenderOpenGL_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 151777,
+  "exports": 51,
+  "cxx_exports": 50,
+  "rtti": 72,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "Kernel_7c.dll",
+   "RenderSystem_7c.dll",
+   "cgGL.dll",
+   "cg.dll",
+   "KERNEL32.dll",
+   "USER32.dll",
+   "GDI32.dll",
+   "MSVCR80.dll"
+  ]
+ },
+ {
+  "name": "RenderSystem_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 395684,
+  "exports": 2687,
+  "cxx_exports": 2686,
+  "rtti": 115,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "Kernel_7c.dll",
+   "KernelResource_7c.dll",
+   "KernelResources_7c.dll",
+   "USER32.dll",
+   "GDI32.dll",
+   "MSVCR80.dll",
+   "MSVCP80.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "scrrun.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 100460,
+  "exports": 6,
+  "cxx_exports": 0,
+  "rtti": 46,
+  "imports": [
+   "MFC42.DLL",
+   "msvcrt.dll",
+   "OLEAUT32.dll",
+   "ole32.dll",
+   "ADVAPI32.dll",
+   "KERNEL32.dll",
+   "USER32.dll",
+   "VERSION.dll"
+  ]
+ },
+ {
+  "name": "ssleay32.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 133624,
+  "exports": 218,
+  "cxx_exports": 0,
+  "rtti": 0,
+  "imports": [
+   "LIBEAY32.dll",
+   "MSVCR71.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "TADDaemon.exe",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 1869290,
+  "exports": 2,
+  "cxx_exports": 2,
+  "rtti": 240,
+  "imports": [
+   "WSOCK32.dll",
+   "KERNEL32.dll",
+   "USER32.dll",
+   "ADVAPI32.dll",
+   "SHELL32.dll",
+   "trainznativeinterface.dll",
+   "KernelStandard_7c.dll",
+   "MSVCP80.dll",
+   "MSVCR80.dll",
+   "KernelResource_7c.dll",
+   "Kernel_7c.dll",
+   "RenderSystem_7c.dll",
+   "PSAPI.DLL",
+   "Render3DFoundation_7c.dll",
+   "Render3DCore_7c.dll",
+   "SSLEAY32.dll",
+   "LIBEAY32.dll"
+  ]
+ },
+ {
+  "name": "trainz.exe",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 6693453,
+  "exports": 1,
+  "cxx_exports": 0,
+  "rtti": 1309,
+  "imports": [
+   "OpenAL32.dll",
+   "KERNEL32.dll",
+   "USER32.dll",
+   "GDI32.dll",
+   "ADVAPI32.dll",
+   "SHELL32.dll",
+   "trainznativeinterface.dll",
+   "WSOCK32.dll",
+   "nvtt.dll",
+   "KernelStandard_7c.dll",
+   "MSVCP80.dll",
+   "Render3DFoundation_7c.dll",
+   "Render3DCore_7c.dll",
+   "RenderSystem_7c.dll",
+   "Kernel_7c.dll",
+   "KernelResource_7c.dll",
+   "InterfaceSystem_7c.dll",
+   "InputSystem_7c.dll",
+   "WaterSystem_7c.dll",
+   "MSVCR80.dll",
+   "PSAPI.DLL",
+   "LIBEAY32.dll"
+  ]
+ },
+ {
+  "name": "TrainzDiag.exe",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 485943,
+  "exports": 0,
+  "cxx_exports": 0,
+  "rtti": 101,
+  "imports": [
+   "VERSION.dll",
+   "MFC80.DLL",
+   "MSVCR80.dll",
+   "KERNEL32.dll",
+   "USER32.dll",
+   "GDI32.dll",
+   "ADVAPI32.dll",
+   "SHELL32.dll",
+   "ole32.dll",
+   "OLEAUT32.dll",
+   "MSVCP80.dll",
+   "KernelStandard_7c.dll",
+   "KernelResource_7c.dll",
+   "OPENGL32.dll",
+   "PSAPI.DLL",
+   "RenderSystem_7c.dll"
+  ]
+ },
+ {
+  "name": "trainznativeinterface.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 55747,
+  "exports": 94,
+  "cxx_exports": 2,
+  "rtti": 5,
+  "imports": [
+   "MSVCP80.dll",
+   "MSVCR80.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "TrainzUtil.exe",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 1602234,
+  "exports": 1,
+  "cxx_exports": 0,
+  "rtti": 329,
+  "imports": [
+   "KERNEL32.dll",
+   "USER32.dll",
+   "GDI32.dll",
+   "ADVAPI32.dll",
+   "SHELL32.dll",
+   "trainznativeinterface.dll",
+   "WSOCK32.dll",
+   "nvtt.dll",
+   "KernelStandard_7c.dll",
+   "MSVCP80.dll",
+   "KernelResource_7c.dll",
+   "Kernel_7c.dll",
+   "MSVCR80.dll",
+   "RenderSystem_7c.dll",
+   "Render3DCore_7c.dll",
+   "Render3DFoundation_7c.dll",
+   "PSAPI.DLL",
+   "LIBEAY32.dll"
+  ]
+ },
+ {
+  "name": "unicows.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 221089,
+  "exports": 507,
+  "cxx_exports": 0,
+  "rtti": 0,
+  "imports": [
+   "KERNEL32.dll",
+   "USER32.dll",
+   "GDI32.dll",
+   "MPR.dll",
+   "ADVAPI32.dll",
+   "comdlg32.dll",
+   "VERSION.dll",
+   "SHELL32.dll",
+   "WINSPOOL.DRV",
+   "oledlg.dll",
+   "WINMM.dll",
+   "AVICAP32.dll",
+   "MSVFW32.dll",
+   "IMM32.dll"
+  ]
+ },
+ {
+  "name": "VFWMoviePlayer_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 6534,
+  "exports": 1,
+  "cxx_exports": 0,
+  "rtti": 10,
+  "imports": [
+   "Render3DFoundation_7c.dll",
+   "KernelStandard_7c.dll",
+   "Kernel_7c.dll",
+   "KernelResource_7c.dll",
+   "MSVCR80.dll",
+   "AVIFIL32.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "WaterSystem_7c.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 111889,
+  "exports": 490,
+  "cxx_exports": 489,
+  "rtti": 61,
+  "imports": [
+   "KernelStandard_7c.dll",
+   "Kernel_7c.dll",
+   "RenderSystem_7c.dll",
+   "Render3DCore_7c.dll",
+   "MSVCR80.dll",
+   "KERNEL32.dll"
+  ]
+ },
+ {
+  "name": "wrap_oal.dll",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 310757,
+  "exports": 95,
+  "cxx_exports": 0,
+  "rtti": 3,
+  "imports": [
+   "KERNEL32.dll",
+   "WINMM.dll",
+   "USER32.dll",
+   "ole32.dll"
+  ]
+ },
+ {
+  "name": "XCrashReport.exe",
+  "machine": "0x14c",
+  "dotnet": false,
+  "code": 449488,
+  "exports": 0,
+  "cxx_exports": 0,
+  "rtti": 136,
+  "imports": [
+   "KERNEL32.dll",
+   "USER32.dll",
+   "GDI32.dll",
+   "comdlg32.dll",
+   "WINSPOOL.DRV",
+   "ADVAPI32.dll",
+   "SHELL32.dll",
+   "SHLWAPI.dll",
+   "ole32.dll",
+   "OLEAUT32.dll",
+   "VERSION.dll"
+  ]
+ }
+]

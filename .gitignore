@@ -1,0 +1,16 @@
+# Never commit game files, decompiled output or Ghidra projects: they are N3V/Auran's copyrighted code.
+# Those live in D:\trainz12-decomp and are backed up privately with tools/backup.ps1.
+*.exe
+*.dll
+*.ja
+*.gpr
+*.rep/
+*.c
+!src/**/*.c
+*.7z
+
+# raw string dumps from the binary
+qualified_names_trainz.txt
+log_names_trainz.txt
+
+__pycache__/

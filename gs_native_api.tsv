@@ -1,0 +1,860 @@
+file	class	base	method	returns	params	modifiers
+asset.gs	Asset	GSObject	GetKUID	KUID	void	public
+asset.gs	Asset	GSObject	GetLocalisedName	string	void	public
+asset.gs	Asset	GSObject	GetCreatorName	string	void	public
+asset.gs	Asset	GSObject	IsCreatedByLocalUser	bool	void	public
+asset.gs	Asset	GSObject	IsLocal	bool	void	public
+asset.gs	Asset	GSObject	IsBuiltIn	bool	void	public
+asset.gs	Asset	GSObject	IsPayware	bool	void	public
+asset.gs	Asset	GSObject	IsOnTheDownloadStation	bool	void	public
+asset.gs	Asset	GSObject	GetLocalisedDescription	string	void	public
+asset.gs	Asset	GSObject	LookupKUIDTable	KUID	string kuidTableAssetName	public
+asset.gs	Asset	GSObject	GetStringTable	StringTable	void	public
+asset.gs	Asset	GSObject	GetConfigSoup	Soup	void	public
+asset.gs	Asset	GSObject	FindAsset	Asset	string kuidTableAssetName	public
+asset.gs	Asset	GSObject	GetDependencyList	KUIDList	void	public
+asset.gs	Asset	GSObject	SupportsTrainzBuildVersion	bool	float trainzBuildVersion	public
+asset.gs	Asset	GSObject	LoadImage	Image	string imagePath	public
+asset.gs	Asset	GSObject	IsLocallyModified	bool		public
+asset.gs	Asset	GSObject	GetInfoURL	string		public
+asset.gs	Asset	GSObject	GetIsFavorite	bool		public
+asset.gs	Asset	GSObject	SetIsFavorite	void	bool isFavorite	public
+asset.gs	Asset	GSObject	GetParent	Asset		public
+asset.gs	Asset	GSObject	GetCategoryRegion	string		public
+asset.gs	Asset	GSObject	GetCategoryEra	string		public
+asset.gs	Asset	GSObject	GetCategoryClass	string		public
+asset.gs	Asset	GSObject	GetDateInstalled	string		public
+asset.gs	Asset	GSObject	GetIsFaulty	bool		public
+asset.gs	Asset	GSObject	GetIsMissingDependencies	bool		public
+asset.gs	Asset	GSObject	GetHasIncompletePrerequisites	bool		public
+asset.gs	Asset	GSObject	GetSessionRuleData	Soup	string ruleKUID	public
+browser.gs	Browser	GameObject	SetParam	void	int paramID, string str	public
+browser.gs	Browser	GameObject	LoadHTMLString	void	string htmlData	public
+browser.gs	Browser	GameObject	LoadHTMLString	void	Asset asset, string htmlData	public
+browser.gs	Browser	GameObject	LoadHTMLFile	void	Asset asset, string relativePath	public
+browser.gs	Browser	GameObject	GetAsset	Asset	void	public
+browser.gs	Browser	GameObject	SetCloseEnabled	void	bool enabled	public
+browser.gs	Browser	GameObject	SetScrollEnabled	void	bool enabled	public
+browser.gs	Browser	GameObject	SetWindowStyle	void	int style	public
+browser.gs	Browser	GameObject	SetWindowPriority	void	int layerPriority	public
+browser.gs	Browser	GameObject	SetButtonOverlayStyle	void	int button1, int button2	public
+browser.gs	Browser	GameObject	SetWindowRect	void	int left, int top, int right, int bottom	public
+browser.gs	Browser	GameObject	GetWindowTop	int	void	public
+browser.gs	Browser	GameObject	GetWindowLeft	int	void	public
+browser.gs	Browser	GameObject	GetWindowRight	int	void	public
+browser.gs	Browser	GameObject	GetWindowBottom	int	void	public
+browser.gs	Browser	GameObject	SetWindowTop	void	int top	public
+browser.gs	Browser	GameObject	SetWindowLeft	void	int left	public
+browser.gs	Browser	GameObject	SetWindowRight	void	int right	public
+browser.gs	Browser	GameObject	SetWindowBottom	void	int bottom	public
+browser.gs	Browser	GameObject	SetWindowVisible	void	bool visible	public
+browser.gs	Browser	GameObject	GetWindowVisible	bool	void	public
+browser.gs	Browser	GameObject	IsWindowMinimised	bool	void	public
+browser.gs	Browser	GameObject	MinimiseWindow	void	string caption, string tooltip	public
+browser.gs	Browser	GameObject	RestoreWindow	void		public
+browser.gs	Browser	GameObject	SetRememberPosition	void	Asset asset, string identifier	public
+browser.gs	Browser	GameObject	SetWindowGrow	void	int minWidth, int minHeight, int maxWidth, int maxHeight	public
+browser.gs	Browser	GameObject	SetElementFocus	void	string elementID	public
+browser.gs	Browser	GameObject	SetElementProperty	void	string elementID, string propertyID, string value	public
+browser.gs	Browser	GameObject	GetElementProperty	string	string elementID, string propertyID	public
+browser.gs	Browser	GameObject	SetTrainzText	void	string id, string text	public
+browser.gs	Browser	GameObject	SetElementObjectProperty	void	string elementID, string propertyID, object value	public
+browser.gs	Browser	GameObject	SetWindowTitle	void	string windowTitle	public
+browser.gs	Browser	GameObject	GetAttention	void		public
+browser.gs	Browser	GameObject	BringToFront	void	void	public
+browser.gs	Browser	GameObject	Defocus	void	void	public
+browser.gs	Browser	GameObject	PopupMenu	void	Menu menu	public
+browser.gs	Browser	GameObject	ResetScrollBar	void	void	public
+browser.gs	Browser	GameObject	ResizeHeightToFit	void	void	public
+browser.gs	BrowserInterface		CreateBrowser	Browser	void	public
+browser.gs	BrowserInterface		SetOverlayColor	void	float red, float green, float blue, float alpha, float morphTime	public
+browser.gs	BrowserInterface		Quote	string	string a_str	public
+browser.gs	BrowserInterface		MaskProfanity	string	string s	public
+buildable.gs	Buildable	SceneryWithTrack	GetBuildingState	int	void	public
+buildable.gs	Buildable	SceneryWithTrack	GetBuildingProgress	float	void	public
+buildable.gs	Buildable	SceneryWithTrack	SetBuildingState	void	int state	public
+buildable.gs	Buildable	SceneryWithTrack	SetBuildingProgress	void	float progress	public
+buildable.gs	Buildable	SceneryWithTrack	SetBuildingPaused	void	bool paused	public
+buildable.gs	Buildable	SceneryWithTrack	StartBuild	bool	void	public
+buildable.gs	Buildable	SceneryWithTrack	CancelBuild	bool	void	public
+buildable.gs	Buildable	SceneryWithTrack	EnableUserStartBuild	void	bool enable	public
+buildable.gs	Buildable	SceneryWithTrack	EnableUserCancelBuild	void	bool enable	public
+cabin.gs	CabinControl	GameObject	GetName	string	void	public
+cabin.gs	CabinControl	GameObject	GetValue	float	void	public
+cabin.gs	CabinControl	GameObject	IsVisible	bool	void	public
+cabin.gs	CabinControl	GameObject	IsLocked	bool	void	public
+cabin.gs	CabinControl	GameObject	GetMinimum	float	void	public
+cabin.gs	CabinControl	GameObject	GetMaximum	float	void	public
+cabin.gs	CabinControl	GameObject	SetValue	void	float value	public
+cabin.gs	CabinControl	GameObject	SetVisible	void	bool visible	public
+cabin.gs	CabinControl	GameObject	SetLocked	void	bool locked	public
+cabin.gs	CabinControl	GameObject	SetText	void	string text	public
+cabin.gs	CabinControl	GameObject	SetUserLimits	void	float min, float max	public
+cabin.gs	CabinControl	GameObject	SetNamedValue	void	string name, float value	public
+cabin.gs	Cabin	MeshObject	GetControls	CabinControl[]	void	public
+cabin.gs	Cabin	MeshObject	GetNamedControl	CabinControl	string name	public
+cabin.gs	Cabin	MeshObject	GetParentObject	GameObject	void	public
+cabin.gs	Cabin	MeshObject	FireAddCoal	bool	void	public
+cabin.gs	Cabin	MeshObject	SetCabLightIntensity	void	float intensity	public
+cabin.gs	Cabin	MeshObject	GetTimeSinceLastUserActivity	float	void	public
+cabin.gs	Cabin	MeshObject	PlaySoundScriptEvent	void	string soundName	public
+cabin.gs	Cabin	MeshObject	StopSoundScriptEvent	void	string soundName	public
+carsignal.gs	CarSignal	Trackside	SetCarSignalState	void	int state	public
+carsignal.gs	CarSignal	Trackside	GetCarSignalState	int	void	public
+common.gs	LinkedList		SortInternal	void	LinkedData[] self	public
+common.gs	LinkedList		AddInternal	void	LinkedData[] self, LinkedData ld, bool unique	public
+constructors.gs	ConstructorsBase		NewSoup	Soup	void	public
+constructors.gs	ConstructorsBase		NewKUIDList	KUIDList	void	public
+constructors.gs	ConstructorsBase		NewImage	Image		public
+constructors.gs	Constructors	ConstructorsBase	NewProductFilter	ProductFilter	void	public
+constructors.gs	Constructors	ConstructorsBase	NewBrowser	Browser	void	public
+constructors.gs	Constructors	ConstructorsBase	NewMenu	Menu	void	public
+constructors.gs	Constructors	ConstructorsBase	NewDriverCommands	DriverCommands	void	public
+constructors.gs	Constructors	ConstructorsBase	GetTrainzStrings	StringTable	void	public
+constructors.gs	Constructors	ConstructorsBase	GetTrainzAsset	Asset	void	public
+constructors.gs	Constructors	ConstructorsBase	NewDriverCommand	DriverCommand	Asset commandAsset	public
+crossing.gs	Crossing	SceneryWithTrack	SetCrossingState	void	int crossingState	public
+crossing.gs	Crossing	SceneryWithTrack	GetCrossingState	int	void	public
+crossing.gs	Crossing	SceneryWithTrack	SetCrossingAutomatic	void	bool automatic	public
+crossing.gs	Crossing	SceneryWithTrack	GetCrossingAutomatic	bool	void	public
+crossing.gs	Crossing	SceneryWithTrack	GetCrossingHasNearbyTrain	bool	void	public
+dlcstore.gs	DLCInfo	GSObject	GetProductID	string		public
+dlcstore.gs	DLCInfo	GSObject	GetLocalisedName	string		public
+dlcstore.gs	DLCInfo	GSObject	GetLocalisedDescription	string		public
+dlcstore.gs	DLCInfo	GSObject	GetLocalisedPrice	string		public
+dlcstore.gs	DLCInfo	GSObject	GetIconPath	string		public
+dlcstore.gs	DLCInfo	GSObject	GetThumbnailPath	string		public
+dlcstore.gs	DLCStore	GameObject	GetProductList	DLCInfo[]	SecurityToken token, GSObject caller	public
+dlcstore.gs	DLCStore	GameObject	GetProductInfo	DLCInfo	SecurityToken token, GSObject caller, string productId	public
+dlcstore.gs	DLCStore	GameObject	GetBestProductForKUID	string	SecurityToken token, GSObject caller, KUID assetKuid	public
+dlcstore.gs	DLCStore	GameObject	IsPurchasingEnabled	bool	SecurityToken token, GSObject caller	public
+dlcstore.gs	DLCStore	GameObject	SubmitPurchase	void	SecurityToken token, GSObject caller, string productId	public
+dlcstore.gs	DLCStore	GameObject	RedownloadAllPurchases	void	SecurityToken token, GSObject caller	public
+drivercharacter.gs	DriverCharacter	ModuleScript	ReissueLastCommand	void	void	public
+drivercharacter.gs	DriverCharacter	ModuleScript	IssueNextCommand	void	void	public
+drivercharacter.gs	DriverCharacter	ModuleScript	SetLocation	void	GameObject location	public
+drivercharacter.gs	DriverCharacter	ModuleScript	GetLocation	GameObject	void	public
+drivercharacter.gs	DriverCharacter	ModuleScript	GetLocalisedName	string	void	public
+drivercharacter.gs	DriverCharacter	ModuleScript	SetLocalisedName	void	string name	public
+drivercharacter.gs	DriverCharacter	ModuleScript	SetAlertIcon	void	bool hasAlertIcon	
+drivercharacter.gs	DriverCharacter	ModuleScript	GetDriverCommands	DriverCommands	void	public
+drivercharacter.gs	DriverCharacter	ModuleScript	SetDriverCommands	void	DriverCommands driverCommands	public
+drivercharacter.gs	DriverCharacter	ModuleScript	SetDriverCommandFilter	void	KUID[] allowedCommands	public
+drivercharacter.gs	DriverCharacter	ModuleScript	GetDriverCommandFilter	KUID[]	void	public
+drivercharacter.gs	DriverCharacter	ModuleScript	SetOwnerPlayer	bool	string playerUsername	public
+drivercharacter.gs	DriverCharacter	ModuleScript	GetOwnerPlayer	string	void	public
+drivercharacter.gs	DriverCharacter	ModuleScript	SetRunningCommands	void	bool enable	public
+drivercharacter.gs	DriverCharacter	ModuleScript	AddDriverScheduleCommand	void	DriverScheduleCommand cmd	public
+drivercharacter.gs	DriverCharacter	ModuleScript	NavigateToIndustry	bool	Industry industry, string attachedTrackName	public
+drivercharacter.gs	DriverCharacter	ModuleScript	NavigateToVehicle	bool	Vehicle vehicle	public
+drivercharacter.gs	DriverCharacter	ModuleScript	NavigateToVehicle	bool	Vehicle vehicle, bool directionRelativeToVehicle	public
+drivercharacter.gs	DriverCharacter	ModuleScript	NavigateToTrackside	bool	Trackside trackside	public
+drivercharacter.gs	DriverCharacter	ModuleScript	NavigateThroughTrackside	bool	Trackside trackside	public
+drivercharacter.gs	DriverCharacter	ModuleScript	DriveToIndustry	bool	Industry industry, string attachedTrackName	public
+drivercharacter.gs	DriverCharacter	ModuleScript	DriveToVehicle	bool	Vehicle vehicle	public
+drivercharacter.gs	DriverCharacter	ModuleScript	DriveToVehicle	bool	Vehicle vehicle, bool directionRelativeToVehicle	public
+drivercharacter.gs	DriverCharacter	ModuleScript	DriveToTrackside	bool	Trackside trackside	public
+drivercharacter.gs	DriverCharacter	ModuleScript	DriveThroughTrackside	bool	Trackside trackside	public
+drivercommands.gs	DriverCommands	GameObject	AddDriverScheduleCommand	void	DriverScheduleCommand cmd	public
+drivercommands.gs	DriverCommands	GameObject	GetDriverScheduleCommands	DriverScheduleCommand[]	void	public
+drivercommands.gs	DriverCommands	GameObject	ClearDriverScheduleCommands	void	void	public
+drivercommands.gs	DriverCommands	GameObject	GetDriverScheduleRepeat	bool	void	public
+drivercommands.gs	DriverCommands	GameObject	SetDriverScheduleRepeat	void	bool repeat	public
+drivercommands.gs	DriverCommands	GameObject	ProceedToNextCommand	void	void	public
+gameplaymenu.gs	GameplayMenu	GameplayMenuBase	CloseGameplayMenu	void	void	public
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	LoadDriverQuickDrive	bool	KUID kuid	
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	LoadDriverSession	bool	KUID kuid	
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	LoadDriverSavedSession	bool	string theSavedSession	
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	LoadSurveyorNew	bool		
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	LoadSurveyorMap	bool	KUID kuid	
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	LoadSurveyorMapNewSession	bool	KUID kuid	
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	LoadSurveyorSession	bool	KUID kuid	
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	LoadSurveyorSessionClone	bool	KUID sessionKuid	
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	LoadRailyard	bool	KUID kuid	
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	GetSavedSessionInfo	Soup		
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	DeleteMap	bool	KUID theMap	
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	DeleteSession	bool	KUID theSession	
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	DeleteSavedSession	bool	string theSavedSession	
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	BeginAssetRestriction	void	KUID sessionKUID	public
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	EndAssetRestriction	void	void	public
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	IsAssetRestrictionBusy	bool	void	public
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	DoesSessionContainUnofficialAssets	bool	void	public
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	DoesSessionContainModifiedAssets	bool	void	public
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	DoesSessionContainMissingAssets	bool	void	public
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	RevertSessionModifiedAssets	void	void	public
+gameplaymenubase.gs	GameplayMenuBase	TrainzGameObject	DownloadSessionMissingAssets	void	void	public
+gameplaymenumobile.gs	GameplayMenuMobile	GameplayMenuBase	NotifyOfChildListChange	void		
+gameplaymenumobile.gs	GameplayMenuMobile	GameplayMenuBase	OpenChildGameplayMenu	void	KUID menuKuid, GSObject initParam	
+gameplaymenumobile.gs	GameplayMenuMobile	GameplayMenuBase	SetPortraitModeDisabled	void	bool disable	
+gs.gs	GSObject		GetGSClassName	string	void	public
+gs.gs	GameObject	GSObject	SendMessage	void	GameObject dst, string major, string minor	public
+gs.gs	GameObject	GSObject	SendMessage	void	GameObject dst, string major, string minor, GSObject paramSoup	public
+gs.gs	GameObject	GSObject	PostMessage	void	GameObject dst, string major, string minor, float seconds	public
+gs.gs	GameObject	GSObject	PostMessage	void	GameObject dst, string major, string minor, GSObject paramSoup, float seconds	public
+gs.gs	GameObject	GSObject	ClearMessages	void	string major, string minor	public
+gs.gs	GameObject	GSObject	AddHandler	void	GameObject target, string major, string minor, string handler	public
+gs.gs	GameObject	GSObject	Sniff	void	GameObject target, string major, string minor, bool state	public
+gs.gs	GameObject	GSObject	Sleep	void	float seconds	public
+gs.gs	GameObject	GSObject	GetId	int		public
+gs.gs	GameObject	GSObject	GetName	string		public
+gs.gs	GameObject	GSObject	Exception	void	string reason	public
+gs.gs	Router		GetGameObject	GameObject	int uniqueId	public
+gs.gs	Router		GetForeignGameObject	GameObject	int uniqueId	public
+gs.gs	Router		GetGameObject	GameObject	string uniqueName	public
+gs.gs	Router		PostMessage	void	int srcNodeId, int dstNodeId, string major, string minor, float delay	public
+gs.gs	Router		Info	void		public
+gs.gs	Router		GetCurrentThreadGameObject	GameObject	void	public
+gs.gs	Math		Rand	float	float p_lower, float p_upper	public
+gs.gs	Math		Rand	int	int p_lower, int p_upper	public
+gs.gs	Math		Sqrt	float	float p_v	public
+gs.gs	Str		TrimLeft	void	string s, string trim	public
+gs.gs	Str		TrimRight	void	string s, string trim	public
+gs.gs	Str		ToInt	int	string s	public
+gs.gs	Str		ToFloat	float	string s	public
+gs.gs	Str		ToUpper	void	string s	public
+gs.gs	Str		ToLower	void	string s	public
+gs.gs	Str		Tokens	string[]	string s, string delimiters	public
+gs.gs	Str		UnpackInt	int	string s	public
+gs.gs	Str		UnpackFloat	float	string s	public
+gs.gs	Str		UnpackString	string	string s	public
+gs.gs	Str		Find	int	string s, string substr, int startingIndex	public
+gstracksearch.gs	GSTrackSearch		SearchNextObject	bool	void	public
+gstracksearch.gs	GSTrackSearch		GetObject	object	void	public
+gstracksearch.gs	GSTrackSearch		GetDistance	float	void	public
+gstracksearch.gs	GSTrackSearch		GetFacingRelativeToSearchDirection	bool	void	public
+gstracksearch.gs	GSTrackSearch		GetTrack	Track	void	public
+gstracksearch.gs	GSTrackSearch		GetAttachedTrackParentObject	SceneryWithTrack	void	public
+gstracksearch.gs	GSTrackSearch		GetAttachedTrackName	string	void	public
+gstracksearch.gs	GSTrackSearch		CloneSearch	GSTrackSearch	void	public
+gstracksearch.gs	GSTrackSearch		ReverseDirection	void	void	public
+htmlbuffer.gs	HTMLBuffer	GSObject	Clear	void	void	public
+htmlbuffer.gs	HTMLBuffer	GSObject	IsEmpty	bool	void	public
+htmlbuffer.gs	HTMLBuffer	GSObject	AsString	string	void	public
+htmlbuffer.gs	HTMLBuffer	GSObject	Print	void	string s	public
+htmlbuffer.gs	HTMLBuffer	GSObject	Escape	void	string s	public
+htmlbuffer.gs	HTMLBufferStatic		Construct	HTMLBuffer	void	public
+image.gs	Image		Clear	void	int width, int height	public
+image.gs	Image		Resize	void	int width, int height, bool bStretch	public
+image.gs	Image		GetWidth	int	void	public
+image.gs	Image		GetHeight	int	void	public
+image.gs	Image		SetLineColor	void	float red, float green, float blue, float alpha	public
+image.gs	Image		SetFillColor	void	float red, float green, float blue, float alpha	public
+image.gs	Image		DrawPoint	void	int x, int y	public
+image.gs	Image		DrawRect	void	int left, int top, int right, int bottom	public
+image.gs	Image		DrawLine	void	int x0, int y0, int x1, int y1	public
+image.gs	Image		DrawCircle	void	int x, int y, int radius	public
+image.gs	Image		DrawTriangle	void	int x0, int y0, int x1, int y1, int x2, int y2	public
+image.gs	Image		DrawImage	void	int x, int y, Image source	public
+image.gs	Image		DrawImage	void	int dstLeft, int dstTop, int dstRight, int dstBottom, Image source	public
+image.gs	Image		DrawImage	void	int dstLeft, int dstTop, int dstRight, int dstBottom, Image source, int srcLeft, int srcTop, int srcRight, int srcBottom	public
+image.gs	Image		SetTextFont	void	string fontName, int fontSize	public
+image.gs	Image		MeasureTextWidth	int	string text	public
+image.gs	Image		DrawText	void	int x, int y, string text	public
+image.gs	Image		ExportImage	Soup	void	public
+image.gs	Image		ImportImage	void	Soup soup	public
+industry.gs	Industry	Buildable	GetProcessNameList	string[]	void	public
+industry.gs	Industry	Buildable	GetProcessStarted	bool	string processName	public
+industry.gs	Industry	Buildable	GetProcessEnabled	bool	string processName	public
+industry.gs	Industry	Buildable	SetProcessEnabled	void	string processName, bool enabled	public
+industry.gs	Industry	Buildable	GetProcessDuration	float	string processName	public
+industry.gs	Industry	Buildable	SetProcessDuration	void	string processName, float processDuration	public
+industry.gs	Industry	Buildable	ClearProcess	void	string processName	public
+industry.gs	Industry	Buildable	SetProcessInput	void	string processName, ProductQueue queue, Asset product, int amount	public
+industry.gs	Industry	Buildable	GetProcessInput	int	string processName, ProductQueue queue, Asset product	public
+industry.gs	Industry	Buildable	SetProcessOutput	void	string processName, ProductQueue queue, Asset product, int amount	public
+industry.gs	Industry	Buildable	GetProcessOutput	int	string processName, ProductQueue queue, Asset product	public
+industry.gs	Industry	Buildable	GetProcessIOQueue	ProductQueue	string processName, bool wantInput, int ioIndex	public
+industry.gs	Industry	Buildable	GetProcessIOProduct	Asset	string processName, bool wantInput, int ioIndex	public
+industry.gs	Industry	Buildable	GetProcessIOAmount	int	string processName, bool wantInput, int ioIndex	public
+industry.gs	Industry	Buildable	PerformProcessStarted	void	string processName	public
+industry.gs	Industry	Buildable	PerformProcessCancelled	void	string processName	public
+industry.gs	Industry	Buildable	PerformProcessFinished	void	string processName	public
+industry.gs	Industry	Buildable	PerformProcessInput	bool	string processName	public
+industry.gs	Industry	Buildable	PerformProcessOutput	void	string processName	public
+interface.gs	Interface		Log	void	string msg	public
+interface.gs	Interface		Print	void	string msg	public
+interface.gs	Interface		ShowDriverButtonMenu	void	bool state	public
+interface.gs	Interface		HighlightButtonBarElement	void	int buttonIndex, bool state	public
+interface.gs	Interface		SetScore	void	string msg	public
+interface.gs	Interface		GetOnScreenHelp	bool	void	public
+interface.gs	Interface		ShowOnScreenHelp	void	bool show	public
+interface.gs	Interface		ShowVehicleProductFilters	void	bool show	public
+interface.gs	Interface		SetHelperIconScale	void	float scale	public
+interface.gs	Interface		SetResults	void	string msg	public
+interface.gs	Interface		GetDisplayWidth	int	void	public
+interface.gs	Interface		GetDisplayHeight	int	void	public
+interface.gs	Interface		GetApproximateDisplayPPI	int	void	public
+interface.gs	Interface		GetDeviceFormFactor	int		public
+interface.gs	Interface		ShowGameOptionsPanel	void	KUID kuid	public
+interface.gs	Interface		SetTooltip	void	Browser tooltip	public
+interface.gs	Interface		ShowHelpPopup	void	string message, Asset asset, string msgId, float minWidth, float minHeight	public
+interface.gs	Interface		AddFloatingDriverMessage	void	string message	public
+interface.gs	Interface		GetMetricMode	bool	void	public
+interface.gs	Interface		SetMetricMode	void	bool useMetric	public
+interface.gs	Interface		WarnObsolete	void	string warning	public
+interface.gs	Interface		Exception	void	string message	public
+interface.gs	Interface		LogCallStack	void	string msg	public
+interface.gs	Interface		SetMapView	void	bool visible	public
+interface.gs	Interface		GetMapView	bool	void	public
+interface.gs	Interface		SetDecoupleMode	void	bool enabled	public
+interface.gs	Interface		GetDecoupleMode	bool	void	public
+interface.gs	Interface		SetMessageWindowVisible	void	bool visible	public
+interface.gs	Interface		GetMessageWindowVisible	bool	void	public
+interface.gs	Interface		HasUnseenMessages	bool	void	public
+interface.gs	Interface		GetInterfaceVisible	bool	void	public
+interface.gs	Interface		GetDriverOrderBarVisible	bool	void	public
+interface.gs	Interface		SetDriverOrderBarVisible	void	bool visible	public
+interface.gs	Interface		SetElementProperty	void	string elementID, string propertyID, string value	public
+interface.gs	Interface		GetElementProperty	string	string elementID, string propertyID	public
+interface.gs	Interface		GetTimeStamp	string	void	public
+interface.gs	Interface		GetClickTrackSearch	GSTrackSearch	void	public
+interface.gs	Interface		SetAchievementAwarded	bool	string achievementName, SecurityToken achivementSystemSecurityToken	public
+interface.gs	Interface		SetAchievementVariable	void	string achievementVariableName, float newValue, SecurityToken achivementSystemSecurityToken	public
+interface.gs	Interface		SetAchievementProgress	void	string achievementVariableName, float currentSumValue, float maxSumValue, SecurityToken achivementSystemSecurityToken	public
+junctionbase.gs	JunctionBase		SetDirection	bool	int direction	public
+junctionbase.gs	JunctionBase		SetDefaultDirection	bool	int direction	public
+junctionbase.gs	JunctionBase		GetDirection	int	void	public
+junctionbase.gs	JunctionBase		AllowManualControl	void	bool allow	public
+junctionbase.gs	JunctionBase		GetManualControl	bool		public
+junctionbase.gs	JunctionBase		SetAllowsPermitControl	void	bool bShouldAllowPermitControl	public
+junctionbase.gs	JunctionBase		DoesAllowPermitControl	bool	void	public
+junctionbase.gs	JunctionBase		RequestPermit	Permit	GameObject obj	public
+junctionbase.gs	JunctionBase		RequestPermit	Permit	GameObject obj, int junctionDirection	public
+junctionbase.gs	JunctionBase		RequestTrackPermit	Permit	GameObject obj, int direction	public
+junctionbase.gs	JunctionBase		SwitchForTrain	bool	Train train, int dstDirection	public
+junctionbase.gs	JunctionBase		GetDirectionToTrain	int	Train train	public
+junctionbase.gs	JunctionBase		GetMapObject	MapObject	void	public
+junctionbase.gs	JunctionBase		GetGameObject	GameObject	void	public
+junctionbase.gs	JunctionBase		JunctionReEnter	bool	int nodeId	public
+junctionbase.gs	JunctionBase		JunctionInnerReEnter	bool	int nodeId	public
+junctionbase.gs	JunctionBase		GetDirectionToTrack	int	Track track	public
+junctionbase.gs	JunctionBase		GetTrackInDirection	Track	int direction	public
+junctionbase.gs	JunctionBase		BeginTrackSearch	GSTrackSearch	int direction	public
+junctionbase.gs	JunctionBase		ToggleJunction	void	void	public
+kuid.gs	KUID	GSObject	GetName	string	void	public
+kuid.gs	KUID	GSObject	GetHTMLString	string	void	public
+kuid.gs	KUID	GSObject	GetLogString	string	void	public
+kuid.gs	KUID	GSObject	GetBaseString	string	void	public
+kuid.gs	KUID	GSObject	GetBaseKUID	KUID	void	public
+kuidlist.gs	KUIDList	GSObject	CountKUIDs	int	void	public
+kuidlist.gs	KUIDList	GSObject	AddKUID	void	KUID kuid	public
+kuidlist.gs	KUIDList	GSObject	RemoveKUID	void	KUID kuid	public
+kuidlist.gs	KUIDList	GSObject	HasKUID	bool	KUID kuid	public
+kuidlist.gs	KUIDList	GSObject	GetIndexedKUID	KUID	int index	public
+kuidlist.gs	KUIDList	GSObject	Copy	void	KUIDList from	public
+kuidlist.gs	KUIDList	GSObject	Clear	void	void	public
+kuidlist.gs	KUIDList	GSObject	IsLocked	bool	void	public
+library.gs	Library	TrainzGameObject, PropertyObject	GetOnlineAccess	OnlineAccess	void	
+library.gs	Library	TrainzGameObject, PropertyObject	AddSystemMenuIcon	void	Asset iconAsset, string localisedTooltip, string helpLink	
+library.gs	Library	TrainzGameObject, PropertyObject	AddSystemMenuIcon	void	Asset iconAsset, string localisedTooltip, string helpLink, bool showMenuBar	
+library.gs	Library	TrainzGameObject, PropertyObject	RemoveSystemMenuIcon	void	void	
+library.gs	Library	TrainzGameObject, PropertyObject	BlinkSystemMenuIcon	void	int seconds	
+library.gs	Library	TrainzGameObject, PropertyObject	ShowSystemMenuIconMenu	void	Menu menu	
+library.gs	Library	TrainzGameObject, PropertyObject	HideSystemMenuIconMenu	void		
+library.gs	Library	TrainzGameObject, PropertyObject	PlaySoundScriptEvent	void	string soundName	public
+library.gs	Library	TrainzGameObject, PropertyObject	StopSoundScriptEvent	void	string soundName	public
+library.gs	Library	TrainzGameObject, PropertyObject	LibraryCallNative	string	string function, string[] stringParam, GSObject[] objectParam	
+locomotive.gs	Locomotive	Vehicle	SetBrokenThrottle	void	bool broken	public
+locomotive.gs	Locomotive	Vehicle	SetBrokenReverser	void	bool broken	public
+locomotive.gs	Locomotive	Vehicle	SetCompressorEfficiency	void	float efficiency	public
+locomotive.gs	Locomotive	Vehicle	SetHasDriver	void	bool hasDriver	public
+locomotive.gs	Locomotive	Vehicle	GetEngineSetting	float	string p_settingName	public
+locomotive.gs	Locomotive	Vehicle	SetEngineSetting	void	string p_settingName, float p_value	public
+mapobject.gs	MapObject	MeshObject	GetQueue	ProductQueue	string queueName	public
+mapobject.gs	MapObject	MeshObject	GetQueues	ProductQueue[]	void	public
+mapobject.gs	MapObject	MeshObject	GetLocalisedName	string	void	public
+mapobject.gs	MapObject	MeshObject	PlaySoundScriptEvent	void	string soundName	public
+mapobject.gs	MapObject	MeshObject	StopSoundScriptEvent	void	string soundName	public
+mapobject.gs	MapObject	MeshObject	GetPFXEmitterRate	float	int id, int phase	public
+mapobject.gs	MapObject	MeshObject	SetPFXEmitterRate	void	int id, int phase, float rate	public
+mapobject.gs	MapObject	MeshObject	GetPFXEmitterVelocity	float	int id, int phase	public
+mapobject.gs	MapObject	MeshObject	SetPFXEmitterVelocity	void	int id, int phase, float vel	public
+mapobject.gs	MapObject	MeshObject	SetPFXEmitterStartColor	void	int id, int phase, float r, float g, float b, float a	public
+mapobject.gs	MapObject	MeshObject	SetPFXEmitterEndColor	void	int id, int phase, float r, float g, float b, float a	public
+mapobject.gs	MapObject	MeshObject	GetPFXEmitterLifetime	float	int id, int phase	public
+mapobject.gs	MapObject	MeshObject	SetPFXEmitterLifetime	void	int id, int phase, float life	public
+mapobject.gs	MapObject	MeshObject	GetPFXEmitterMinSize	float	int id, int phase	public
+mapobject.gs	MapObject	MeshObject	SetPFXEmitterMinSize	void	int id, int phase, float newsize	public
+mapobject.gs	MapObject	MeshObject	GetPFXEmitterMaxSize	float	int id, int phase	public
+mapobject.gs	MapObject	MeshObject	SetPFXEmitterMaxSize	void	int id, int phase, float newsize	public
+mapobject.gs	MapObject	MeshObject	GetPFXEmitterMinRate	float	int id	public
+mapobject.gs	MapObject	MeshObject	SetPFXEmitterMinRate	void	int id, float newsize	public
+mapobject.gs	MapObject	MeshObject	GetPFXEmitterMaxRate	float	int id	public
+mapobject.gs	MapObject	MeshObject	SetPFXEmitterMaxRate	void	int id, float newsize	public
+mapobject.gs	MapObject	MeshObject	SetPFXEmitterConeSize	void	int id, float x, float y, float z	public
+mapobject.gs	MapObject	MeshObject	SetPFXEmitterTexture	void	int id, KUID texturekuid	public
+mapobject.gs	MapObject	MeshObject	SetPFXEmitterEmitParticles	void	int id, int number,float time	public
+mapobject.gs	MapObject	MeshObject	GetPFXEmitterPhysicsDelay	float	int id, int phase	public
+mapobject.gs	MapObject	MeshObject	SetPFXEmitterPhysicsDelay	void	int id, int phase, float value	public
+mapobject.gs	MapObject	MeshObject	SetMapObjectPosition	void	WorldCoordinate position	public
+mapobject.gs	MapObject	MeshObject	GetMapObjectPosition	WorldCoordinate	void	public
+mapobject.gs	MapObject	MeshObject	AdjustMapObjectPosition	void	float dx, float dy, float dz	public
+mapobject.gs	MapObject	MeshObject	SetMapObjectOrientation	void	Orientation orientation	public
+mapobject.gs	MapObject	MeshObject	GetMapObjectOrientation	Orientation	void	public
+menu.gs	Menu	GSObject	AddItem	void	string name, GameObject dstObject, string major, string minor	public
+menu.gs	Menu	GSObject	AddItem	void	string name, GameObject dstObject, string major, string minor, KUID icon	public
+menu.gs	Menu	GSObject	AddSubmenu	void	string name, Menu submenu	public
+menu.gs	Menu	GSObject	AddSeperator	void		public
+menu.gs	Menu	GSObject	CountItems	int	void	public
+menu.gs	Menu	GSObject	SubdivideItems	void	bool forceSorting	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	HasMesh	bool	string p_meshName	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	SetMeshAnimationState	void	string p_meshName, bool p_state	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	SetMeshAnimationFrame	void	string p_meshName, float p_frame	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	SetMeshAnimationFrame	void	string p_meshName, float p_frame, float interpTime	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	GetMeshAnimationFrame	float	string p_meshName	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	GetMeshAnimationFrameCount	float	string p_meshName	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	StartMeshAnimationLoop	void	string p_meshName	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	StopMeshAnimation	void	string p_meshName	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	SetMeshAnimationSpeed	void	string p_meshName, float p_speed	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	SetFXAttachment	MeshObject	string effectName, Asset asset	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	GetFXAttachment	MeshObject	string effectName	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	SetFXAnimationState	void	string effectName, bool state	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	SetFXTextureReplacement	void	string effectName, Asset textureGroupAsset, int textureIndex	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	SetFXCoronaTexture	void	string effectName, Asset textureAsset	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	SetFXNameText	void	string effectName, string text	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	SetMeshVisible	void	string meshName, bool visible, float fadeDuration	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	SetMeshTranslation	void	string meshName, float x, float y, float z	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	SetMeshOrientation	void	string meshName, float a, float b, float c	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	SetMesh	void	string meshName, float fadeDuration	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	SwapTextureOnMesh	void	string meshName, string oldTextureName, string newTextureName	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	SetFXTextureReplacementTexture	void	string effectName, string textureName	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	SetTextureSelfIllumination	void	string textureName, float r, float g, float b	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	GetTextureSelfIlluminationState	bool	string textureName	public
+meshobject.gs	MeshObject	PropertyObject, TrainzGameObject	NativeGetAsset	Asset	void	
+multiplayergame.gs	MultiplayerGame		Init	bool	SecurityToken token, string serverUsername, bool bIsClient, OnlineAccess onlineAccess, OnlineGroup gameGroup	public
+multiplayergame.gs	MultiplayerGame		End	void	SecurityToken token	public
+multiplayergame.gs	MultiplayerGame		IsActive	bool		public
+multiplayergame.gs	MultiplayerGame		IsLoadingClient	bool		public
+multiplayergame.gs	MultiplayerGame		IsLoadingClient	bool	string clientName	public
+multiplayergame.gs	MultiplayerGame		GetClientLoadProgress	float		public
+multiplayergame.gs	MultiplayerGame		GetClientLoadProgress	float	string clientName	public
+multiplayergame.gs	MultiplayerGame		IsClient	bool		public
+multiplayergame.gs	MultiplayerGame		IsServer	bool		public
+multiplayergame.gs	MultiplayerGame		SendGameplayMessageToClient	void	string clientName, string msgMajor, string msgMinor, Soup data	public
+multiplayergame.gs	MultiplayerGame		SendGameplayMessageToServer	void	string msgMajor, string msgMinor, Soup data	public
+multiplayergame.gs	MultiplayerGame		BroadcastGameplayMessage	void	string msgMajor, string msgMinor, Soup data	public
+multiplayergame.gs	MultiplayerGame		GetGameChatChannel	string		public
+multiplayergame.gs	MultiplayerGame		GetClientToServerLatency	int		public
+multiplayergame.gs	MultiplayerGame		GetAllowDriverOrderListReplication	bool		public
+multiplayergame.gs	MultiplayerGame		SetAllowDriverOrderListReplication	void	bool allow	public
+navpoints.gs	NavPoints		SetNavigationPointComplete	void	string id, int index, bool complete	public
+navpoints.gs	NavPoints		SetNavigationPointSetVisible	void	string id, bool visible	public
+navpoints.gs	NavPoints		ClearNavigationPointSet	void	string id	public
+navpoints.gs	NavPoints		IsNavigationPointSetComplete	bool	string id	public
+navpoints.gs	NavPoints		CreateNavigationPointSetInternal	bool	string id, int style, Soup points, string[] trainFilter	
+onlineaccess.gs	<global>		Connect	void	void	public
+onlineaccess.gs	<global>		GetStatus	int	void	public
+onlineaccess.gs	<global>		Disconnect	void	void	public
+onlineaccess.gs	<global>		GetUsername	string	void	public
+onlineaccess.gs	<global>		SetLocalData	int	string key, Soup data	public
+onlineaccess.gs	<global>		GetLocalData	int	string key, Soup data	public
+onlineaccess.gs	<global>		PostMessage	int	string destUsername, Soup data	public
+onlineaccess.gs	<global>		CollectMessage	int	string o_sourceUsername, Soup o_data	public
+onlineaccess.gs	<global>		CreateGroup	OnlineGroup	int initialGroupFlags	public
+onlineaccess.gs	<global>		OpenGroup	OnlineGroup	string onlineGroupCookie, int initialGroupFlags	public
+onlineaccess.gs	<global>		PostOfflineMessage	int	Soup data	public
+onlineaccess.gs	<global>		CollectOfflineMessage	int	Soup o_data	public
+onlineaccess.gs	<global>		CanAccessMultiplayer	bool		public
+onlinegroup.gs	<global>		Connect	void	void	public
+onlinegroup.gs	<global>		Disconnect	void	void	public
+onlinegroup.gs	<global>		GetStatus	int	void	public
+onlinegroup.gs	<global>		GetOnlineGroupCookie	string	void	public
+onlinegroup.gs	<global>		AddUser	void	string profilename	public
+onlinegroup.gs	<global>		RemoveUser	void	string profilename	public
+onlinegroup.gs	<global>		CountUsers	int	void	public
+onlinegroup.gs	<global>		GetIndexedUser	string	int index	public
+onlinegroup.gs	<global>		FindUser	int	string profilename	public
+onlinegroup.gs	<global>		GetUserStatus	int	int index	public
+onlinegroup.gs	<global>		PostMessage	int	Soup data	public
+onlinegroup.gs	<global>		CollectMessage	int	string o_sourceUsername, Soup o_data	public
+onlinegroup.gs	<global>		SetModeFlags	void	int modeFlags, int modeFlagsMask	public
+onlinegroup.gs	<global>		SetUserModeFlags	void	string username, int modeFlags, int modeFlagsMask	public
+onlinegroup.gs	<global>		GetUserModeFlags	int	string username	public
+permit.gs	Permit	GSObject	GetState	int	void	public
+permit.gs	Permit	GSObject	Release	void	void	public
+permit.gs	Permit	GSObject	IsForSameObjectAs	bool	Permit other	public
+permit.gs	Permit	GSObject	HasSamePermissionsAs	bool	Permit other	public
+permit.gs	Permit	GSObject	GetObjectBase	object	void	public
+permit.gs	Permit	GSObject	SetOwnerObject	void	GameObject obj	public
+productfilter.gs	ProductFilter	GSObject	Clear	void	void	public
+productfilter.gs	ProductFilter	GSObject	CopyFilter	void	ProductFilter filter	public
+productfilter.gs	ProductFilter	GSObject	AppendFilter	void	ProductFilter filter	public
+productfilter.gs	ProductFilter	GSObject	IntersectFilter	ProductFilter	ProductFilter filter	public
+productfilter.gs	ProductFilter	GSObject	AddProduct	void	Asset product	public
+productfilter.gs	ProductFilter	GSObject	RemoveProduct	void	Asset product	public
+productfilter.gs	ProductFilter	GSObject	AddProductCategory	void	Asset productCategory	public
+productfilter.gs	ProductFilter	GSObject	RemoveProductCategory	void	Asset productCategory	public
+productfilter.gs	ProductFilter	GSObject	DoesAcceptProduct	bool	Asset product	public
+productfilter.gs	ProductFilter	GSObject	DoesAcceptProductCategory	bool	Asset productCategory	public
+productfilter.gs	ProductFilter	GSObject	GetProducts	Asset[]	void	public
+productfilter.gs	ProductFilter	GSObject	GetProductCategories	Asset[]	void	public
+productfilter.gs	ProductFilter	GSObject	IsLocked	bool	void	public
+productqueue.gs	ProductQueue	GSObject	GetQueueSize	int	void	public
+productqueue.gs	ProductQueue	GSObject	SetQueueSize	void	int queueSize	public
+productqueue.gs	ProductQueue	GSObject	GetQueuePerHour	int	void	public
+productqueue.gs	ProductQueue	GSObject	SetQueuePerHour	void	int queueSize	public
+productqueue.gs	ProductQueue	GSObject	GetQueueSpace	int	void	public
+productqueue.gs	ProductQueue	GSObject	GetQueueName	string	void	public
+productqueue.gs	ProductQueue	GSObject	CountProductMatching	int	ProductFilter filter	public
+productqueue.gs	ProductQueue	GSObject	TransferProductFrom	int	ProductQueue fromQueue, ProductFilter matchingFilter, int maximumToTransfer, bool performTransfer	public
+productqueue.gs	ProductQueue	GSObject	DestroyProductMatching	int	ProductFilter filter, int maximumToDestroy	public
+productqueue.gs	ProductQueue	GSObject	CreateProduct	int	Asset product, int maximumToAdd	public
+productqueue.gs	ProductQueue	GSObject	GetProductFilter	ProductFilter	void	public
+productqueue.gs	ProductQueue	GSObject	SetProductFilter	void	ProductFilter filter	public
+productqueue.gs	ProductQueue	GSObject	GetProductList	Asset[]	void	public
+productqueue.gs	ProductQueue	GSObject	GetProductCategory	Asset	void	public
+scenariobehavior.gs	ScenarioBehavior	TrainzGameObject, PropertyObject	GetChildBehaviors	ScenarioBehavior[]	void	public
+scenariobehavior.gs	ScenarioBehavior	TrainzGameObject, PropertyObject	GetParentBehavior	ScenarioBehavior	void	public
+scenariobehavior.gs	ScenarioBehavior	TrainzGameObject, PropertyObject	SetSessionString	void	string tag, string value	
+scenariobehavior.gs	ScenarioBehavior	TrainzGameObject, PropertyObject	GetSessionString	string	string tag	
+scenerywithtrack.gs	SceneryWithTrack	MapObject	ReEnter	bool	int nodeId	public
+scenerywithtrack.gs	SceneryWithTrack	MapObject	InnerReEnter	bool	int nodeId	public
+scenerywithtrack.gs	SceneryWithTrack	MapObject	FindTriggerContainingNode	string	int nodeId, bool onlyInnerTrigger	public
+scenerywithtrack.gs	SceneryWithTrack	MapObject	GetDistanceBetweenTriggerAndVehicle	float	string triggerName, Vehicle trainVehicle	public
+scenerywithtrack.gs	SceneryWithTrack	MapObject	GetTriggerTrack	Track	string triggerName	public
+scenerywithtrack.gs	SceneryWithTrack	MapObject	GetAttachedTrack	Track	string trackName	public
+scenerywithtrack.gs	SceneryWithTrack	MapObject	GetAttachedJunctions	JunctionBase[]	void	public
+scenerywithtrack.gs	SceneryWithTrack	MapObject	GetAttachedTracks	Track[]	void	public
+scenerywithtrack.gs	SceneryWithTrack	MapObject	IsTrainInTriggers	bool	Train train, bool onlyCheckInnerRadius	public
+scenerywithtrack.gs	SceneryWithTrack	MapObject	NotifyTrackGraphObservers	void	void	public
+securitytoken.gs	<global>		IsOwnerLocallyModified	bool		public
+servlet.gs	Servlet	Library	SetPersistentData	void	string key, Soup data	public
+servlet.gs	Servlet	Library	GetPersistentData	void	string key, Soup o_data	public
+servlet.gs	Servlet	Library	GetPeristentDataKeysWithPrefix	string[]	string prefixString	public
+servlet.gs	Servlet	Library	AdminValidateLogin	int	string username, string password	public
+servlet.gs	Servlet	Library	AdminListAvailableServlets	Soup	int contentID	public
+servlet.gs	Servlet	Library	AdminListInstalledServlets	Soup	int contentID	public
+servlet.gs	Servlet	Library	AdminInstallContent	bool	int contentID, KUID assetID	public
+servlet.gs	Servlet	Library	AdminStartServlet	bool	int contentID, KUID assetID	public
+servlet.gs	Servlet	Library	AdminStopServlet	void	int contentID, KUID assetID	public
+servlet.gs	Servlet	Library	AdminProcessAdministrativeLogin	bool	KUID servletID, int userID, ServletHTTPRequest request, ServletHTTPReply reply	public
+signal.gs	Signal	Trackside	SetSignalState	void	int state, string reason	public
+signal.gs	Signal	Trackside	LightSignal	void	bool show	public
+signal.gs	Signal	Trackside	SetSignalStateEx	void	int state, string reason	public
+signal.gs	Signal	Trackside	GetSignalLit	bool	void	public
+signal.gs	Signal	Trackside	GetIsDistant	bool	void	public
+signal.gs	Signal	Trackside	GetIsHome	bool	void	public
+signal.gs	Signal	Trackside	GetIsRepeater	bool	void	public
+signal.gs	Signal	Trackside	ForceUpdate	void	void	public
+signal.gs	Signal	Trackside	SetAutopilotHintObj	void	MapObject autopilotHintObj	public
+signal.gs	Signal	Trackside	SetAutopilotJunction	void	JunctionBase autopilotFirstJunction	public
+soup.gs	Soup	GSObject	CountTags	int	void	public
+soup.gs	Soup	GSObject	GetNamedTag	string	string name	public
+soup.gs	Soup	GSObject	GetNamedSoup	Soup	string name	public
+soup.gs	Soup	GSObject	GetNamedSoupAdd	Soup	string name	public
+soup.gs	Soup	GSObject	GetIndexedTagName	string	int index	public
+soup.gs	Soup	GSObject	GetIndexForNamedTag	int	string name	public
+soup.gs	Soup	GSObject	GetNamedTagAsKUID	KUID	string name	public
+soup.gs	Soup	GSObject	GetNamedTagAsInt	int	string name	public
+soup.gs	Soup	GSObject	GetNamedTagAsInt	int	string name, int defaultValue	public
+soup.gs	Soup	GSObject	GetNamedTagAsFloat	float	string name	public
+soup.gs	Soup	GSObject	GetNamedTagAsFloat	float	string name, float defaultValue	public
+soup.gs	Soup	GSObject	RemoveNamedTag	void	string name	public
+soup.gs	Soup	GSObject	SetNamedTag	void	string name, string value	public
+soup.gs	Soup	GSObject	SetNamedTag	void	string name, float value	public
+soup.gs	Soup	GSObject	SetNamedTag	void	string name, int value	public
+soup.gs	Soup	GSObject	SetNamedTag	void	string name, KUID value	public
+soup.gs	Soup	GSObject	SetNamedSoup	void	string name, Soup value	public
+soup.gs	Soup	GSObject	Copy	void	Soup value	public
+soup.gs	Soup	GSObject	Clear	void	void	public
+soup.gs	Soup	GSObject	IsLocked	bool	void	public
+soup.gs	Soup	GSObject	GetLockedReference	Soup	void	public
+soup.gs	Soup	GSObject	AddUniqueNamedSoup	void	Soup value	public
+soup.gs	Soup	GSObject	Log	void	void	public
+soup.gs	Soup	GSObject	AsString	string	void	public
+stringtable.gs	StringTable	GSObject	GetLanguage	string		public
+stringtable.gs	StringTable	GSObject	ClearParams	void		public
+stringtable.gs	StringTable	GSObject	SetParam	void	int param, string text	public
+stringtable.gs	StringTable	GSObject	GetString	string	string str	public
+track.gs	Track	GameObject	RequestPermitForTrain	Permit	Train train	public
+track.gs	Track	GameObject	RequestPermit	Permit	GameObject obj, bool direction	public
+track.gs	Track	GameObject	RequestPermit	Permit	GameObject obj	public
+track.gs	Track	GameObject	GetTrackPriorityNumber	int	void	public
+track.gs	Track	GameObject	SetTrackPriorityNumber	void	int i	public
+track.gs	Track	GameObject	BeginTrackSearchInDirection	GSTrackSearch	bool direction	public
+track.gs	Track	GameObject	BeginTrackSearch	GSTrackSearch	bool direction	public
+track.gs	Track	GameObject	GetDirectionToTrack	int	Track other	public
+trackcircuit.gs	TrackCircuitBlock	GameObject	IsOccupied	bool	void	public
+trackside.gs	Trackside	MapObject	RequestTrackPermit	Permit	bool dir, GameObject owner	public
+trackside.gs	Trackside	MapObject	ReEnter	bool	int nodeId	public
+trackside.gs	Trackside	MapObject	InnerReEnter	bool	int nodeId	public
+trackside.gs	Trackside	MapObject	GetSignalState	int	void	public
+trackside.gs	Trackside	MapObject	GetSignalStateEx	int	void	public
+trackside.gs	Trackside	MapObject	GetTrack	Track	void	public
+trackside.gs	Trackside	MapObject	GetSpeedLimit	float	void	public
+trackside.gs	Trackside	MapObject	SetSpeedLimit	void	float limit	public
+trackside.gs	Trackside	MapObject	BeginTrackSearch	GSTrackSearch	bool direction	public
+trackside.gs	Trackside	MapObject	GetIsSearchLimit	bool	void	public
+trackside.gs	Trackside	MapObject	NotifyTrackGraphObservers	void	void	public
+train.gs	Train	GameObject	GetVehicles	Vehicle[]	void	public
+train.gs	Train	GameObject	GetFrontmostLocomotive	Locomotive	void	public
+train.gs	Train	GameObject	GetFrontmostLocomotiveVehicle	Vehicle	void	public
+train.gs	Train	GameObject	SetAutopilotMode	void	int controlMode	public
+train.gs	Train	GameObject	GetAutopilotMode	int	void	public
+train.gs	Train	GameObject	GetAllowsUserControl	bool	void	public
+train.gs	Train	GameObject	IsOwningClient	bool	void	public
+train.gs	Train	GameObject	GetPhysicsModel	int	void	public
+train.gs	Train	GameObject	EnablePhysics	void	bool enable	public
+train.gs	Train	GameObject	ShowInConsistMenu	void	bool show	public
+train.gs	Train	GameObject	SetCouplingMask	void	int mask	public
+train.gs	Train	GameObject	SetDecouplingMask	void	int mask	public
+train.gs	Train	GameObject	GetVelocity	float	void	public
+train.gs	Train	GameObject	GetSmoothedVelocity	float	void	public
+train.gs	Train	GameObject	GetTrainVelocity	float	void	public
+train.gs	Train	GameObject	IsStopped	bool		public
+train.gs	Train	GameObject	HasMoved	bool		public
+train.gs	Train	GameObject	SetVelocity	void	float vel	public
+train.gs	Train	GameObject	AddVelocity	void	float vel	public
+train.gs	Train	GameObject	SetDCCThrottle	void	float throttle	public
+train.gs	Train	GameObject	GetDCCThrottle	float	void	public
+train.gs	Train	GameObject	StopTrainGently	void	void	public
+train.gs	Train	GameObject	SetManualThrottle	void	int throttleNotch	public
+train.gs	Train	GameObject	SetReverser	void	int reverserDirection	public
+train.gs	Train	GameObject	GetReverser	int		public
+train.gs	Train	GameObject	SetTrainBrakes	void	float brakeMode	public
+train.gs	Train	GameObject	GetTrainBrakes	float	void	public
+train.gs	Train	GameObject	SetDynamicBrakeMode	void	int dynamicBrakeMode	public
+train.gs	Train	GameObject	GetHeadlightState	bool	void	public
+train.gs	Train	GameObject	SetHeadlightState	void	bool lightsOn	public
+train.gs	Train	GameObject	HasLights	bool		public
+train.gs	Train	GameObject	GetDitchlightState	bool	void	public
+train.gs	Train	GameObject	SetDitchlightState	void	bool lightsFlashing	public
+train.gs	Train	GameObject	HasDitchlight	bool		public
+train.gs	Train	GameObject	GetHighbeamState	bool	void	public
+train.gs	Train	GameObject	SetHighbeamState	void	bool highBeam	public
+train.gs	Train	GameObject	GetPantographState	int	void	public
+train.gs	Train	GameObject	SetPantographState	void	int state	public
+train.gs	Train	GameObject	HasPantographs	bool		public
+train.gs	Train	GameObject	SoundHorn	void	void	public
+train.gs	Train	GameObject	HasHorn	bool		public
+train.gs	Train	GameObject	GetBellState	bool	void	public
+train.gs	Train	GameObject	SetBellState	void	bool bellOn	public
+train.gs	Train	GameObject	HasBell	bool		public
+train.gs	Train	GameObject	SetBail	void	void	public
+train.gs	Train	GameObject	TrackSearch	MapObject[]	bool dir, float distance	public
+train.gs	Train	GameObject	Derail	void	void	public
+train.gs	Train	GameObject	Turnaround	void	void	public
+train.gs	Train	GameObject	SetAdvisoryLimit	void	float speed	public
+train.gs	Train	GameObject	SetAdvisoryLimit2	void	float speed	public
+train.gs	Train	GameObject	SetFloatingLimit	void	float delta, bool enable	public
+train.gs	Train	GameObject	GetSpeedLimit	float	void	public
+train.gs	Train	GameObject	GetAdvisoryLimit	float	void	public
+train.gs	Train	GameObject	MarkAdvisoryLimit	void	void	public
+train.gs	Train	GameObject	RevertAdvisoryLimit	void	void	public
+train.gs	Train	GameObject	GetAdvisoryLimit2	float	void	public
+train.gs	Train	GameObject	SetTrainLimitMonitorLinear	void	GameObject monitor, string majorType, float speedLimit, float forwardAccelerationLimit, float sidewaysAccelerationLimit, float jerkLimit	public
+train.gs	Train	GameObject	ClearTrainLimitMonitor	void	GameObject monitor, string optionalMajorType	public
+train.gs	Train	GameObject	GetTrackmarkDirection	int	TrackMark mark	public
+train.gs	Train	GameObject	SetTrainPriorityNumber	void	int priority	public
+train.gs	Train	GameObject	GetTrainPriorityNumber	int	void	public
+train.gs	Train	GameObject	SetAutopilotTarget	void	Buildable obj, string triggerName	public
+train.gs	Train	GameObject	SetAutopilotTarget	void	Trackside obj	public
+train.gs	Train	GameObject	SetAutopilotTarget	void	Track track	public
+train.gs	Train	GameObject	SetAutopilotTarget	void	JunctionBase junction	public
+train.gs	Train	GameObject	SetAutopilotTargetMinimumSpeed	void	float speed	public
+train.gs	Train	GameObject	SetAutopilotTargetMinimumDistance	void	float distance	public
+train.gs	Train	GameObject	GetAutopilotTargetSlowing	bool	void	public
+train.gs	Train	GameObject	GetMaximumCouplingStressVehicle	Vehicle	void	public
+train.gs	Train	GameObject	GetTrainDisplayName	string	void	public
+train.gs	Train	GameObject	GetActiveDriver	DriverCharacter	void	public
+train.gs	Train	GameObject	GetAITrainMaxSpeed	float	void	public
+train.gs	Train	GameObject	GetBrakeLightOn	bool	void	public
+train.gs	Train	GameObject	GetAutopilotStopJunctionBase	JunctionBase	void	public
+train.gs	Train	GameObject	GetAutopilotStopTrain	Train	void	public
+train.gs	Train	GameObject	TestTrackPermit	bool	Permit trackPermit, bool innerOnly	public
+trainzassetsearch.gs	TrainzAssetSearch		SearchAssets	Asset[]	int filterType, string filterValue	public
+trainzassetsearch.gs	TrainzAssetSearch		SearchAssets	Asset[]	int[] filterTypes, string[] filterValues	public
+trainzassetsearch.gs	TrainzAssetSearch		SearchAssetsSorted	Asset[]	int filterType, string filterValue, int sortedBy, bool sortAsc	public
+trainzassetsearch.gs	TrainzAssetSearch		SearchAssetsSorted	Asset[]	int[] filterTypes, string[] filterValues, int sortedBy, bool sortAsc	public
+trainzgameobject.gs	TrainzGameObject	GameObject	IssueSecurityToken	SecurityToken	KUID asset, string[] rights	
+trainzgameobject.gs	TrainzGameObject	GameObject	IssueSecurityToken	SecurityToken	SecurityToken source, KUID asset, string[] rights	
+trainzgameobject.gs	TrainzGameObject	GameObject	MergeSecurityTokens	SecurityToken	SecurityToken[] tokens	
+trainzgameobject.gs	TrainzGameObject	GameObject	Validate	bool	SecurityToken token, TrainzGameObject owner, string operation	
+trainzgameobject.gs	TrainzGameObject	GameObject	Validate	bool	SecurityToken token, KUID owner, string operation	
+trainzscript.gs	TrainzScriptBase		GetLibrary	Library	KUID kuid	public
+trainzscript.gs	TrainzScriptBase		FindAsset	Asset	KUID kuid	public
+trainzscript.gs	TrainzScriptBase		GetAssetList	Asset[]	string kind	public
+trainzscript.gs	TrainzScriptBase		GetAssetList	Asset[]	string kind, string customCategoryList	public
+trainzscript.gs	TrainzScriptBase		SearchAssets	KUID[]	string categoryFilter, bool bSearchLocalAssetsOnly	public
+trainzscript.gs	TrainzScriptBase		FindUpdatedAssets	Asset[]		public
+trainzscript.gs	TrainzScriptBase		SetGamePaused	void	GameObject actor, bool bShouldPause	public
+trainzscript.gs	TrainzScriptBase		IsGamePaused	bool	void	public
+trainzscript.gs	TrainzScriptBase		GetSeconds	float	void	public
+trainzscript.gs	TrainzScriptBase		GetNormalizedSystemTime	float	void	public
+trainzscript.gs	TrainzScriptBase		GetSystemYear	int	void	public
+trainzscript.gs	TrainzScriptBase		GetSystemMonth	int	void	public
+trainzscript.gs	TrainzScriptBase		GetSystemDate	int	void	public
+trainzscript.gs	TrainzScriptBase		GetSystemHour	int	void	public
+trainzscript.gs	TrainzScriptBase		GetSystemMinute	int	void	public
+trainzscript.gs	TrainzScriptBase		GetSystemSecond	int	void	public
+trainzscript.gs	TrainzScriptBase		OpenURL	bool	string URL	public
+trainzscript.gs	TrainzScriptBase		DoesInstallationProvideRight	bool	int right	public
+trainzscript.gs	TrainzScriptBase		QueryDownloadStationAccess	int		public
+trainzscript.gs	TrainzScriptBase		TrainzSystemCall	Soup	string name, Soup param	public
+trainzscript.gs	TrainzScriptBase		Log	void	string msg	public
+trainzscript.gs	TrainzScriptBase		GetTrainzVersion	float	void	public
+trainzscript.gs	TrainzScriptBase		GetTrainzBuild	int	void	public
+trainzscript.gs	TrainzScriptBase		CloneKUID	KUID	KUID kuid	public
+turntable.gs	Turntable	SceneryWithTrack	IsMoving	bool	void	public
+turntable.gs	Turntable	SceneryWithTrack	GetStopPosition	int	void	public
+turntable.gs	Turntable	SceneryWithTrack	MoveToNextStop	void	void	public
+turntable.gs	Turntable	SceneryWithTrack	MoveToPrevStop	void	void	public
+turntable.gs	Turntable	SceneryWithTrack	MoveToStop	void	int stopIndex	public
+turntable.gs	Turntable	SceneryWithTrack	CanMoveToNextStop	bool	void	public
+turntable.gs	Turntable	SceneryWithTrack	CanMoveToPrevStop	bool	void	public
+vehicle.gs	Vehicle	Trackside	GetMyTrain	Train	void	public
+vehicle.gs	Vehicle	Trackside	GetDirectionRelativeToTrain	bool	void	public
+vehicle.gs	Vehicle	Trackside	GetMass	float	void	public
+vehicle.gs	Vehicle	Trackside	GetDrainCocks	bool	void	public
+vehicle.gs	Vehicle	Trackside	ToggleDrainCocks	void	void	public
+vehicle.gs	Vehicle	Trackside	SetDrainCocks	void	bool Ison	public
+vehicle.gs	Vehicle	Trackside	GetLength	float	void	public
+vehicle.gs	Vehicle	Trackside	GetVelocity	float	void	public
+vehicle.gs	Vehicle	Trackside	GetOdometerDistance	float	void	public
+vehicle.gs	Vehicle	Trackside	SetOdometerDistance	void	float distance	public
+vehicle.gs	Vehicle	Trackside	GetTripMeterDistance	float	void	public
+vehicle.gs	Vehicle	Trackside	SetTripMeterDistance	void	float distance	public
+vehicle.gs	Vehicle	Trackside	SetBrokenBrakes	void	bool broken	public
+vehicle.gs	Vehicle	Trackside	SetBrakePipeEfficiency	void	float efficiency	public
+vehicle.gs	Vehicle	Trackside	SetRunningNumber	void	string rn	public
+vehicle.gs	Vehicle	Trackside	GetRunningNumber	string		public
+vehicle.gs	Vehicle	Trackside	SetHeadlightColor	void	float red, float green, float blue	public
+vehicle.gs	Vehicle	Trackside	SetHighBeams	void	bool HighBeamsOn	public
+vehicle.gs	Vehicle	Trackside	GetHighBeams	bool		public
+vehicle.gs	Vehicle	Trackside	SetIsDitchFlashing	void	bool IsFlashing	public
+vehicle.gs	Vehicle	Trackside	GetIsDitchFlashing	bool		public
+vehicle.gs	Vehicle	Trackside	RepairCoupler	void	bool isFront	public
+vehicle.gs	Vehicle	Trackside	GetAutomaticFiremanState	bool		public
+vehicle.gs	Vehicle	Trackside	SetAutomaticFiremanState	void	bool AutomaticFiremanEnabled	public
+vehicle.gs	Vehicle	Trackside	Uncouple	void	Vehicle other	public
+vehicle.gs	Vehicle	Trackside	Uncouple	void	int direction	public
+vehicle.gs	Vehicle	Trackside	GetCouplingDirection	int	Vehicle other	public
+vehicle.gs	Vehicle	Trackside	SetCouplingMask	void	int couplingMask	public
+vehicle.gs	Vehicle	Trackside	SetDecouplingMask	void	int couplingMask	public
+vehicle.gs	Vehicle	Trackside	Couple	bool	Vehicle other	public
+vehicle.gs	Vehicle	Trackside	Reposition	bool	TrackMark mark, bool direction	public
+vehicle.gs	Vehicle	Trackside	Reposition	bool	Vehicle other, int myCoupleDirection, int otherCoupleDirection	public
+vehicle.gs	Vehicle	Trackside	Reposition	bool	Train train, int myCoupleDirection, int otherCoupleDirection	public
+vehicle.gs	Vehicle	Trackside	Reverse	bool		public
+vehicle.gs	Vehicle	Trackside	GetBrakeCylinderPressure	float	void	public
+vehicle.gs	Vehicle	Trackside	GetAuxReservoirPressure	float	void	public
+vehicle.gs	Vehicle	Trackside	GetBrakePipePressure	float	void	public
+vehicle.gs	Vehicle	Trackside	SetPitchBasedOnTrack	void	bool pitchBasedOnTrack	public
+vehicle.gs	Vehicle	Trackside	SetPitchBasedOnSpeed	void	float multiplier	public
+vehicle.gs	Vehicle	Trackside	SetRollBasedOnTrack	void	float multiplier	public
+vehicle.gs	Vehicle	Trackside	SetHandBrake	void	bool applied	public
+vehicle.gs	Vehicle	Trackside	IsInTunnel	bool	void	public
+vehicle.gs	Vehicle	Trackside	IsOnBridge	bool	void	public
+vehicle.gs	Vehicle	Trackside	IsDerailed	bool	void	public
+vehicle.gs	Vehicle	Trackside	GetEngineType	int	void	public
+vehicle.gs	Vehicle	Trackside	GetVehicleTypeFlags	int	void	public
+vehicle.gs	Vehicle	Trackside	GetTrackGradient	float	void	public
+vehicle.gs	Vehicle	Trackside	GetRelationToTrack	int	Buildable obj, string trackName	public
+vehicle.gs	Vehicle	Trackside	HasLoadedThisStop	bool		public
+vehicle.gs	Vehicle	Trackside	HasUnloadedThisStop	bool		public
+vehicle.gs	Vehicle	Trackside	SetHasLoadedThisStop	void	bool hasLoaded	
+vehicle.gs	Vehicle	Trackside	SetHasUnloadedThisStop	void	bool hasUnloaded	
+vehicle.gs	Vehicle	Trackside	GetMaximumTractiveEffort	float	void	public
+vehicle.gs	Vehicle	Trackside	SetMaximumTractiveEffort	void	float maxTE	public
+vehicle.gs	Vehicle	Trackside	GetDefaultMaximumTractiveEffort	float	void	public
+vehicle.gs	Vehicle	Trackside	GetWheelslipTractionMultiplier	float	void	public
+vehicle.gs	Vehicle	Trackside	SetWheelslipTractionMultiplier	void	float multiplier	public
+vehicle.gs	Vehicle	Trackside	GetWheelslipMomentumMultiplier	float	void	public
+vehicle.gs	Vehicle	Trackside	SetWheelslipMomentumMultiplier	void	float multiplier	public
+vehicle.gs	Vehicle	Trackside	GetSandingTractionMultiplier	float	void	public
+vehicle.gs	Vehicle	Trackside	SetSandingTractionMultiplier	void	float multiplier	public
+vehicle.gs	Vehicle	Trackside	GetTractionMultiplier	float	void	public
+vehicle.gs	Vehicle	Trackside	SetTractionMultiplier	void	float multiplier	public
+vehicle.gs	Vehicle	Trackside	GetMaximumCouplerCompressionStress	float	void	public
+vehicle.gs	Vehicle	Trackside	SetMaximumCouplerCompressionStress	void	float maxCouplerCompressionStress	public
+vehicle.gs	Vehicle	Trackside	GetDefaultMaximumCouplerCompressionStress	float	void	public
+vehicle.gs	Vehicle	Trackside	GetMaximumCouplerExpansionStress	float	void	public
+vehicle.gs	Vehicle	Trackside	SetMaximumCouplerExpansionStress	void	float maxCouplerExpansionStress	public
+vehicle.gs	Vehicle	Trackside	GetDefaultMaximumCouplerExpansionStress	float	void	public
+vehicle.gs	Vehicle	Trackside	GetMaximumCoupleVelocity	float	void	public
+vehicle.gs	Vehicle	Trackside	SetMaximumCoupleVelocity	void	float maxCoupleVelocity	public
+vehicle.gs	Vehicle	Trackside	GetDefaultMaximumCoupleVelocity	float	void	public
+vehicle.gs	Vehicle	Trackside	GetCouplingStress	float	Vehicle toVehicle	public
+vehicle.gs	Vehicle	Trackside	SetCouplerBreakageEnabled	void	bool enabled	public
+vehicle.gs	Vehicle	Trackside	GetCouplerBreakageEnabled	bool	void	public
+vehicle.gs	Vehicle	Trackside	SetCabinSwayAmount	void	float amount	public
+vehicle.gs	Vehicle	Trackside	GetCabinSwayAmount	float	void	public
+vehicle.gs	Vehicle	Trackside	GetDefaultCabinSwayAmount	float	void	public
+vehicle.gs	Vehicle	Trackside	GetEngineParam	float	string p_paramName	public
+vehicle.gs	Vehicle	Trackside	GetBogeyList	Bogey[]	void	public
+vehicle.gs	Vehicle	Trackside	SetProductRestrictionFilter	void	ProductFilter filter	
+vehicle.gs	Vehicle	Trackside	GetProductRestriction	public ProductFilter	void	
+world.gs	World	TrainzScriptBase	LoadMap	bool	KUID kuid	public
+world.gs	World	TrainzScriptBase	RestartSession	bool		public
+world.gs	World	TrainzScriptBase	LoadSession	bool	KUID kuid	public
+world.gs	World	TrainzScriptBase	LoadMapTSO	bool	Asset asset, string filename	public
+world.gs	World	TrainzScriptBase	CreateTrain	Train	KUID[] consist, TrackMark mark, bool direction	public
+world.gs	World	TrainzScriptBase	CreateTrain	Train	KUID[] consist, Buildable obj, string trackName, float position, bool direction	public
+world.gs	World	TrainzScriptBase	CreateTrain	Train	KUID[] consist, string trackMarkName, bool direction	public
+world.gs	World	TrainzScriptBase	CreateTrain	Train	KUID[] consist, GSTrackSearch tracksearch	public
+world.gs	World	TrainzScriptBase	DeleteVehicle	void	Vehicle vehicle	public
+world.gs	World	TrainzScriptBase	DeleteTrain	void	Train train	public
+world.gs	World	TrainzScriptBase	GetCurrentTrain	Train		public
+world.gs	World	TrainzScriptBase	SetCamera	void	Train focus, int cameraMode	public
+world.gs	World	TrainzScriptBase	SetCamera	void	Vehicle focus, int cameraMode	public
+world.gs	World	TrainzScriptBase	SetCamera	void	Junction focus	public
+world.gs	World	TrainzScriptBase	SetCamera	bool	MapObject obj	public
+world.gs	World	TrainzScriptBase	GetCameraTarget	MapObject		public
+world.gs	World	TrainzScriptBase	SetCameraFlags	void	int cameraFlags	public
+world.gs	World	TrainzScriptBase	GetCameraFlags	int		public
+world.gs	World	TrainzScriptBase	SetCameraMode	void	int cameraMode	public
+world.gs	World	TrainzScriptBase	GetCameraMode	int		public
+world.gs	World	TrainzScriptBase	UserSetCameraMode	void	int cameraMode	public
+world.gs	World	TrainzScriptBase	UserSetCamera	bool	GameObject target	public
+world.gs	World	TrainzScriptBase	SetCameraAngle	void	float yaw, float pitch, float radius	public
+world.gs	World	TrainzScriptBase	GetCameraYaw	float		public
+world.gs	World	TrainzScriptBase	GetCameraPitch	float		public
+world.gs	World	TrainzScriptBase	GetCameraZoom	float		public
+world.gs	World	TrainzScriptBase	GetCameraPositionX	float		public
+world.gs	World	TrainzScriptBase	GetCameraPositionY	float		public
+world.gs	World	TrainzScriptBase	GetCameraPositionZ	float		public
+world.gs	World	TrainzScriptBase	GetGameTime	float	void	public
+world.gs	World	TrainzScriptBase	SetGameTime	void	float time	public
+world.gs	World	TrainzScriptBase	GetGameYear	int	void	public
+world.gs	World	TrainzScriptBase	GetGameMonth	int	void	public
+world.gs	World	TrainzScriptBase	GetGameDate	int	void	public
+world.gs	World	TrainzScriptBase	SetGameDate	void	int year, int month, int date	public
+world.gs	World	TrainzScriptBase	SetGameTimeRate	void	int rate	public
+world.gs	World	TrainzScriptBase	GetWeatherType	int		public
+world.gs	World	TrainzScriptBase	GetWeatherChangeability	int		public
+world.gs	World	TrainzScriptBase	SetWeather	void	int type, int changeability	public
+world.gs	World	TrainzScriptBase	PlaySound	float	Asset asset, string filename, float volume, float minDistance, float maxDistance, GameObject target, string attachmentPoint, bool looping	public
+world.gs	World	TrainzScriptBase	CreateBehavior	ScenarioBehavior	KUID kuid, Soup initialProperties	public
+world.gs	World	TrainzScriptBase	GetBehaviors	ScenarioBehavior[]	void	public
+world.gs	World	TrainzScriptBase	GetIndustryList	GameObject[]	void	public
+world.gs	World	TrainzScriptBase	GetVehicleList	Vehicle[]	void	public
+world.gs	World	TrainzScriptBase	GetTrainList	Train[]	void	public
+world.gs	World	TrainzScriptBase	GetSignalList	Signal[]	void	public
+world.gs	World	TrainzScriptBase	GetTrackMarkList	TrackMark[]	void	public
+world.gs	World	TrainzScriptBase	GetTriggerList	Trigger[]	void	public
+world.gs	World	TrainzScriptBase	GetJunctionList	Junction[]	void	public
+world.gs	World	TrainzScriptBase	GetCameraTargetList	MapObject[]	void	public
+world.gs	World	TrainzScriptBase	RemoveDriverCharacter	void	DriverCharacter driverCharacter	public
+world.gs	World	TrainzScriptBase	GetDriverCharacterList	DriverCharacter[]	void	public
+world.gs	World	TrainzScriptBase	AddDriverCharacter	DriverCharacter	Asset driverCharacterAsset	public
+world.gs	World	TrainzScriptBase	RemoveDriverCommand	void	DriverCommand command	public
+world.gs	World	TrainzScriptBase	GetDriverCommandList	DriverCommand[]	void	public
+world.gs	World	TrainzScriptBase	AddDriverCommand	DriverCommand	Asset driverCommandAsset	public
+world.gs	World	TrainzScriptBase	FindDriverCommand	DriverCommand	Asset driverCommandAsset	public
+world.gs	World	TrainzScriptBase	SetTargetObserver	void	GameObject observer	public
+world.gs	World	TrainzScriptBase	GetSurveyorSavedConsistList	string[]	void	public
+world.gs	World	TrainzScriptBase	GetSurveyorSavedConsist	Soup	string name	public
+world.gs	World	TrainzScriptBase	GetStringTable	StringTable	void	public
+world.gs	World	TrainzScriptBase	SetLayerVisible	void	string layerName, bool visible	public
+world.gs	World	TrainzScriptBase	IsLayerVisible	bool	string layerName	public
+world.gs	World	TrainzScriptBase	GetLayerType	int	string layerName	public
+world.gs	World	TrainzScriptBase	GetLayerList	string[]	int layerType	public
+world.gs	World	TrainzScriptBase	GetCurrentModule	int	void	public
+world.gs	World	TrainzScriptBase	GetCurrentProfile	Asset	void	public
+world.gs	World	TrainzScriptBase	GetTimeElapsed	float	void	public
+world.gs	World	TrainzScriptBase	SetLegacyAllowDriverlessTrains	void	bool enable	public
+world.gs	World	TrainzScriptBase	IsAssetRestrictionInEffect	bool	void	public
+world.gs	World	TrainzScriptBase	UpdatePositionToGroundHeight	bool	WorldCoordinate position	public
+world.gs	World	TrainzScriptBase	UpdatePositionToSurfaceHeight	bool	WorldCoordinate position	public
+world1.gs	World1		SetDCCMode	void	bool useDCCMode	public
+world1.gs	World1		SetDerailLevel	void	int derailLevel	public

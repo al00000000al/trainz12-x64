@@ -1,0 +1,964 @@
+kind	signature	class_method	handler	ref_at	in_function
+native	$bool@World::LoadSession(KUID)	World::LoadSession	00689230	0068ce0b	FUN_0068cb90@0068cb90
+native	$DriverCommand@World::FindDriverCommand(Asset)	World::FindDriverCommand	0068c8d0	0069082d	FUN_0068cb90@0068cb90
+native	$ProductQueue@Industry::GetProcessIOQueue(string,bool,int)	Industry::GetProcessIOQueue	006d5e80	006d3f13	FUN_006d32c0@006d32c0
+native	$int@Trackside::GetSignalState()	Trackside::GetSignalState	006e14f0	006e1afc	FUN_006e1790@006e1790
+native	$string@Browser::GetElementProperty(string,string)	Browser::GetElementProperty	0060b180	006078c2	FUN_00605540@00605540
+native	$void@CabinControl::SetVisible(bool)	CabinControl::SetVisible	00744b70	0060f5a9	FUN_0060e4e0@0060e4e0
+native	$bool@TrainzScriptBase::DoesInstallationProvideRight(int)	TrainzScriptBase::DoesInstallationProvideRight	00908ca0	0090c269	FUN_0090ae70@0090ae70
+native	$string@KUID::GetHTMLString()	KUID::GetHTMLString	009cab60	009cb0bc	FUN_009caf60@009caf60
+native	$int@ProductQueue::TransferProductFrom(ProductQueue,ProductFilter,int,bool)	ProductQueue::TransferProductFrom	00625ec0	00626ff8	FUN_00626940@00626940
+native	$void@DriverCharacter::SetDriverCommands(DriverCommands)	DriverCharacter::SetDriverCommands	005b6c00	005b8536	FUN_005b7030@005b7030
+native	$bool@World::RestartSession()	World::RestartSession	00689160	0068cd00	FUN_0068cb90@0068cb90
+native	$bool@MeshObject::GetTextureSelfIlluminationState(string)	MeshObject::GetTextureSelfIlluminationState	006bfc60	006c149a	FUN_006c02c0@006c02c0
+native	$bool@Trackside::InnerReEnter(int)	Trackside::InnerReEnter	006e13d0	006e19ef	FUN_006e1790@006e1790
+native	$bool@NavPoints::IsNavigationPointSetComplete(string)	NavPoints::IsNavigationPointSetComplete	00914760	009159c9	FUN_00915550@00915550
+native	$bool@TrainzScriptBase::OpenURL(string)	TrainzScriptBase::OpenURL	009090b0	0090c15e	FUN_0090ae70@0090ae70
+native	$bool@World::UpdatePositionToSurfaceHeight(WorldCoordinate)	World::UpdatePositionToSurfaceHeight	00695fb0	00693d2f	FUN_0068cb90@0068cb90
+native	$void@CabinControl::SetValue(float)	CabinControl::SetValue	00744b50	0060f48a	FUN_0060e4e0@0060e4e0
+native	$StringTable@Constructors::GetTrainzStrings()	Constructors::GetTrainzStrings	00614f90	0061421a	FUN_00613eb0@00613eb0
+native	$void@LinkedList::AddInternal(LinkedData[],LinkedData,bool)	LinkedList::AddInternal	009dbbf0	009dc006	FUN_009dbeb0@009dbeb0
+native	$string@StringTable::GetLanguage()	StringTable::GetLanguage	00998020	00998158	FUN_00998110@00998110
+native	$ProductQueue@MapObject::GetQueue(string)	MapObject::GetQueue	006b2c70	006b3d2c	FUN_006b3ce0@006b3ce0
+callback	$string[]@PropertyObject::GetPropertyElementList(string)	PropertyObject::GetPropertyElementList		0090fe5d	FUN_0090fca0@0090fca0
+callback	$string[]@PropertyObject::GetPropertyElementList(string)	PropertyObject::GetPropertyElementList		009a23bf	FUN_009a21e0@009a21e0
+native	$bool@Train::Reposition(TrackMark,bool)	Train::Reposition	0059cfb0	0059f255	FUN_0059da10@0059da10
+callback	$bool@DriverScheduleCommand::UpdateExecute(DriverCharacter)	DriverScheduleCommand::UpdateExecute		005b51eb	FUN_005b5180@005b5180
+native	$string@KUID::GetName()	KUID::GetName	009caea0	009cafa8	FUN_009caf60@009caf60
+native	$DriverCommand@World::AddDriverCommand(Asset)	World::AddDriverCommand	0068c720	00690710	FUN_0068cb90@0068cb90
+native	$void@Browser::SetElementProperty(string,string,string)	Browser::SetElementProperty	0060afb0	006077b3	FUN_00605540@00605540
+native	$void@Train::Derail()	Train::Derail	0059cf40	0059f136	FUN_0059da10@0059da10
+native	$float@Math::Sqrt(float)	Math::Sqrt	007bbfc0	007bc266	FUN_007bbff0@007bbff0
+native	$void@Industry::ClearProcess(string)	Industry::ClearProcess	006d5da0	006d3df4	FUN_006d32c0@006d32c0
+native	$void@Router::PostMessage(int,int,string,string,float)	Router::PostMessage	007a58b0	007b2c9c	FUN_007b19d0@007b19d0
+native	$void@Vehicle::SetSandingTractionMultiplier(float)	Vehicle::SetSandingTractionMultiplier	005835a0	00587290	FUN_005840e0@005840e0
+native	$Asset[]@TrainzAssetSearch::SearchAssets(int,string)	TrainzAssetSearch::SearchAssets	009db360	009db7c8	FUN_009db780@009db780
+native	$int@Interface::GetDisplayHeight()	Interface::GetDisplayHeight	00902d10	00693f6b	FUN_0068cb90@0068cb90
+native	$int@TrainzScriptBase::QueryDownloadStationAccess()	TrainzScriptBase::QueryDownloadStationAccess	009096a0	0090c376	FUN_0090ae70@0090ae70
+native	$Train@World::CreateTrain(KUID[],TrackMark,bool)	World::CreateTrain	00689620	0068d029	FUN_0068cb90@0068cb90
+native	$Track@Trackside::GetTrack()	Trackside::GetTrack	006e1530	006e1d2b	FUN_006e1790@006e1790
+native	$string@KUID::GetBaseString()	KUID::GetBaseString	009caae0	009cb2d4	FUN_009caf60@009caf60
+native	$void@World::SetTargetObserver(GameObject)	World::SetTargetObserver	00694aa0	0069094c	FUN_0068cb90@0068cb90
+native	$void@CabinControl::SetLocked(bool)	CabinControl::SetLocked	00744ba0	0060f6b8	FUN_0060e4e0@0060e4e0
+native	$void@DriverCharacter::SetRunningCommands(bool)	DriverCharacter::SetRunningCommands	005b5fe0	005b8646	FUN_005b7030@005b7030
+native	$void@StringTable::SetParam(int,string)	StringTable::SetParam	00997bc0	00998370	FUN_00998110@00998110
+native	$void@Vehicle::SetTractionMultiplier(float)	Vehicle::SetTractionMultiplier	00583650	005874cc	FUN_005840e0@005840e0
+native	$string@MapObject::GetLocalisedName()	MapObject::GetLocalisedName	006b2e70	006b3f43	FUN_006b3ce0@006b3ce0
+native	$Asset@Industry::GetProcessIOProduct(string,bool,int)	Industry::GetProcessIOProduct	006d6010	006d4030	FUN_006d32c0@006d32c0
+native	$void@Browser::SetTrainzText(string,string)	Browser::SetTrainzText	0060b310	006079d6	FUN_00605540@00605540
+native	$DriverCommand@Constructors::NewDriverCommand(Asset)	Constructors::NewDriverCommand	006151b0	00614445	FUN_00613eb0@00613eb0
+native	$int@ProductQueue::DestroyProductMatching(ProductFilter,int)	ProductQueue::DestroyProductMatching	00626450	00627117	FUN_00626940@00626940
+native	$bool@World::LoadMapTSO(Asset,string)	World::LoadMapTSO	00689420	0068cf1a	FUN_0068cb90@0068cb90
+native	$int@Interface::GetDisplayWidth()	Interface::GetDisplayWidth	00902d40	00693e4e	FUN_0068cb90@0068cb90
+native	$GameObject@Router::GetCurrentThreadGameObject()	Router::GetCurrentThreadGameObject	007a5a10	007b2da5	FUN_007b19d0@007b19d0
+native	$ScenarioBehavior[]@ScenarioBehavior::GetChildBehaviors()	ScenarioBehavior::GetChildBehaviors	00631790	00631eb8	FUN_00631e70@00631e70
+callback	$bool@DriverScheduleCommand::FailExecute(DriverCharacter)	DriverScheduleCommand::FailExecute		005b528b	FUN_005b5220@005b5220
+native	$int@Trackside::GetSignalStateEx()	Trackside::GetSignalStateEx	006e1510	006e1c0c	FUN_006e1790@006e1790
+native	$void@Menu::AddItem(string,GameObject,string,string)	Menu::AddItem	0061bb40	0061c3c8	FUN_0061c380@0061c380
+native	$string@KUID::GetLogString()	KUID::GetLogString	009caa60	009cb1c7	FUN_009caf60@009caf60
+native	$void@Train::SetAdvisoryLimit(float)	Train::SetAdvisoryLimit	0059cfd0	0059f491	FUN_0059da10@0059da10
+native	$float@Vehicle::GetTractionMultiplier()	Vehicle::GetTractionMultiplier	00583630	005873af	FUN_005840e0@005840e0
+native	$void@Train::Turnaround()	Train::Turnaround	0059cfc0	0059f372	FUN_0059da10@0059da10
+native	$ProductQueue[]@MapObject::GetQueues()	MapObject::GetQueues	006b2d70	006b3e38	FUN_006b3ce0@006b3ce0
+native	$Asset@Constructors::GetTrainzAsset()	Constructors::GetTrainzAsset	00615070	00614329	FUN_00613eb0@00613eb0
+native	$void@StringTable::ClearParams()	StringTable::ClearParams	00997b50	00998266	FUN_00998110@00998110
+native	$void@GameplayMenuMobile::NotifyOfChildListChange()	GameplayMenuMobile::NotifyOfChildListChange	009261d0	00926318	FUN_009262d0@009262d0
+native	$void@MeshObject::SetFXCoronaTexture(string,Asset)	MeshObject::SetFXCoronaTexture	006bfd50	006c15ae	FUN_006c02c0@006c02c0
+native	$void@Train::ClearTrainLimitMonitor(GameObject,string)	Train::ClearTrainLimitMonitor	00595490	005a2dce	FUN_0059da10@0059da10
+native	$void@Signal::ForceUpdate()	Signal::ForceUpdate	0051c150	0051c9e7	FUN_0051c210@0051c210
+native	$int@OnlineGroup::GetUserModeFlags(string)	OnlineGroup::GetUserModeFlags	009192f0	0091af18	FUN_00919f70@00919f70
+callback	$void@PropertyObject::SetPropertyValue(string,string)	PropertyObject::SetPropertyValue		0090d4fd	FUN_0090d410@0090d410
+callback	$void@PropertyObject::SetPropertyValue(string,string)	PropertyObject::SetPropertyValue		009a1927	FUN_009a1650@009a1650
+native	$float@Train::GetAITrainMaxSpeed()	Train::GetAITrainMaxSpeed	00595220	005a2a73	FUN_0059da10@0059da10
+native	$Permit@Trackside::RequestTrackPermit(bool,GameObject)	Trackside::RequestTrackPermit	006e1290	006e17d8	FUN_006e1790@006e1790
+native	$void@Browser::RestoreWindow()	Browser::RestoreWindow	0060ad30	00607577	FUN_00605540@00605540
+native	$Soup@Image::ExportImage()	Image::ExportImage	009212d0	00922c94	FUN_009219b0@009219b0
+native	$float@Train::GetTrainBrakes()	Train::GetTrainBrakes	0059c030	0059ef07	FUN_0059da10@0059da10
+native	$void@Soup::Log()	Soup::Log	009995a0	0099bc8f	FUN_0099a420@0099a420
+native	$GameObject@Router::GetForeignGameObject(int)	Router::GetForeignGameObject	007a57e0	007b2967	FUN_007b19d0@007b19d0
+native	$DriverCommand[]@World::GetDriverCommandList()	World::GetDriverCommandList	0068c6e0	006904d4	FUN_0068cb90@0068cb90
+native	$void@NavPoints::SetNavigationPointSetVisible(string,bool)	NavPoints::SetNavigationPointSetVisible	00914970	009157b0	FUN_00915550@00915550
+native	$void@Vehicle::SetWheelslipMomentumMultiplier(float)	Vehicle::SetWheelslipMomentumMultiplier	005834f0	00587054	FUN_005840e0@005840e0
+native	$Asset[]@TrainzScriptBase::FindUpdatedAssets()	TrainzScriptBase::FindUpdatedAssets	00909bd0	0090bf3b	FUN_0090ae70@0090ae70
+native	$bool@World::IsAssetRestrictionInEffect()	World::IsAssetRestrictionInEffect	00695e10	00693af3	FUN_0068cb90@0068cb90
+native	$bool@CabinControl::IsLocked()	CabinControl::IsLocked	00744af0	0060f131	FUN_0060e4e0@0060e4e0
+native	$int@Industry::GetProcessInput(string,ProductQueue,Asset)	Industry::GetProcessInput	006d57e0	006d3bb8	FUN_006d32c0@006d32c0
+native	$ProductFilter@Constructors::NewProductFilter()	Constructors::NewProductFilter	00614c30	00613ef8	FUN_00613eb0@00613eb0
+native	$void@Image::DrawText(int,int,string)	Image::DrawText	00921900	00922b7d	FUN_009219b0@009219b0
+native	$bool@TrainzGameObject::Validate(SecurityToken,KUID,string)	TrainzGameObject::Validate	0090ce20	0090e3d4	FUN_0090df50@0090df50
+native	$bool@Signal::GetIsRepeater()	Signal::GetIsRepeater	0051c120	0051c8c8	FUN_0051c210@0051c210
+native	$void@DriverCharacter::SetLocalisedName(string)	DriverCharacter::SetLocalisedName	005ba050	005b820a	FUN_005b7030@005b7030
+native	$void@ProductQueue::SetQueuePerHour(int)	ProductQueue::SetQueuePerHour	00625d30	00626cac	FUN_00626940@00626940
+native	$void@Soup::AddUniqueNamedSoup(Soup)	Soup::AddUniqueNamedSoup	009995b0	0099bb6b	FUN_0099a420@0099a420
+native	$void@Train::SetTrainBrakes(float)	Train::SetTrainBrakes	0059cec0	0059edfc	FUN_0059da10@0059da10
+callback	$void@DriverScheduleCommand::SetDriverCharacter(DriverCharacter)	DriverScheduleCommand::SetDriverCharacter		005b50e8	FUN_005b5070@005b5070
+native	$void@GameplayMenu::CloseGameplayMenu()	GameplayMenu::CloseGameplayMenu	009315e0	0093175a	FUN_00931710@00931710
+native	$void@OnlineGroup::SetUserModeFlags(string,int,int)	OnlineGroup::SetUserModeFlags	009193f0	0091adfb	FUN_00919f70@00919f70
+native	$Vehicle@Train::GetMaximumCouplingStressVehicle()	Train::GetMaximumCouplingStressVehicle	0059c4f0	005a2956	FUN_0059da10@0059da10
+native	$void@MeshObject::SetFXTextureReplacementTexture(string,string)	MeshObject::SetFXTextureReplacementTexture	006bfa70	006c126c	FUN_006c02c0@006c02c0
+native	$void@Browser::MinimiseWindow(string,string)	Browser::MinimiseWindow	0060ac10	00607458	FUN_00605540@00605540
+native	$bool@CabinControl::IsVisible()	CabinControl::IsVisible	00744aa0	0060f012	FUN_0060e4e0@0060e4e0
+native	$bool@Trackside::ReEnter(int)	Trackside::ReEnter	006e1390	006e18e4	FUN_006e1790@006e1790
+native	$float@CabinControl::GetMaximum()	CabinControl::GetMaximum	00744b30	0060f36d	FUN_0060e4e0@0060e4e0
+native	$bool@World::LoadMap(KUID)	World::LoadMap	00689060	0068cbf4	FUN_0068cb90@0068cb90
+native	$Menu@Constructors::NewMenu()	Constructors::NewMenu	00614ef0	00614110	FUN_00613eb0@00613eb0
+native	$void@Train::SetTrainLimitMonitorLinear(GameObject,string,float,float,float,float)	Train::SetTrainLimitMonitorLinear	00595260	005a2caf	FUN_0059da10@0059da10
+native	$void@Signal::SetAutopilotJunction(JunctionBase)	Signal::SetAutopilotJunction	0051c1c0	0051cc23	FUN_0051c210@0051c210
+native	$void@Router::Info()	Router::Info	007a5a40	007b2b91	FUN_007b19d0@007b19d0
+native	$int@Math::Rand(int,int)	Math::Rand	007bbf70	007bc15b	FUN_007bbff0@007bbff0
+native	$int@ProductQueue::CountProductMatching(ProductFilter)	ProductQueue::CountProductMatching	00625da0	00626edb	FUN_00626940@00626940
+native	$DriverCommands@DriverCharacter::GetDriverCommands()	DriverCharacter::GetDriverCommands	005b6be0	005b8429	FUN_005b7030@005b7030
+native	$void@World::RemoveDriverCommand(DriverCommand)	World::RemoveDriverCommand	0068ca60	006905f1	FUN_0068cb90@0068cb90
+native	$Browser@Constructors::NewBrowser()	Constructors::NewBrowser	00614cd0	00614006	FUN_00613eb0@00613eb0
+native	$string@Soup::AsString()	Soup::AsString	00999480	0099bdb3	FUN_0099a420@0099a420
+native	$void@Image::ImportImage(Soup)	Image::ImportImage	00920e50	00922da6	FUN_009219b0@009219b0
+native	$bool@World::UpdatePositionToGroundHeight(WorldCoordinate)	World::UpdatePositionToGroundHeight	00695f00	00693c12	FUN_0068cb90@0068cb90
+native	$void@Browser::SetElementFocus(string)	Browser::SetElementFocus	0060af10	00607694	FUN_00605540@00605540
+native	$void@LinkedList::SortInternal(LinkedData[])	LinkedList::SortInternal	009dbd70	009dbef8	FUN_009dbeb0@009dbeb0
+native	$Soup@TrainzScriptBase::TrainzSystemCall(string,Soup)	TrainzScriptBase::TrainzSystemCall	00909310	0090c04a	FUN_0090ae70@0090ae70
+native	$void@Train::SetDynamicBrakeMode(int)	Train::SetDynamicBrakeMode	0059cef0	0059f019	FUN_0059da10@0059da10
+native	$bool@Train::GetBrakeLightOn()	Train::GetBrakeLightOn	00595240	005a2b92	FUN_0059da10@0059da10
+native	$void@NavPoints::ClearNavigationPointSet(string)	NavPoints::ClearNavigationPointSet	00914830	009158ba	FUN_00915550@00915550
+native	$float@Vehicle::GetSandingTractionMultiplier()	Vehicle::GetSandingTractionMultiplier	00583580	00587173	FUN_005840e0@005840e0
+callback	$bool@DriverScheduleCommand::BeginExecute(DriverCharacter)	DriverScheduleCommand::BeginExecute		005b5141	FUN_005b5070@005b5070
+native	$int@ProductQueue::GetQueueSpace()	ProductQueue::GetQueueSpace	00625d60	00626dbc	FUN_00626940@00626940
+native	$void@DriverCharacter::SetAlertIcon(bool)	DriverCharacter::SetAlertIcon	005b6bc0	005b831e	FUN_005b7030@005b7030
+native	$void@MeshObject::SetTextureSelfIllumination(string,float,float,float)	MeshObject::SetTextureSelfIllumination	006bfbb0	006c138b	FUN_006c02c0@006c02c0
+native	$float@Math::Rand(float,float)	Math::Rand	007bbf00	007bc04e	FUN_007bbff0@007bbff0
+native	$int@Industry::GetProcessOutput(string,ProductQueue,Asset)	Industry::GetProcessOutput	006d5ac0	006d3cd7	FUN_006d32c0@006d32c0
+native	$float@CabinControl::GetMinimum()	CabinControl::GetMinimum	00744b10	0060f24e	FUN_0060e4e0@0060e4e0
+native	$void@Signal::SetAutopilotHintObj(MapObject)	Signal::SetAutopilotHintObj	0051c160	0051cb04	FUN_0051c210@0051c210
+native	$GameObject@Router::GetGameObject(string)	Router::GetGameObject	007a5820	007b2a7c	FUN_007b19d0@007b19d0
+native	$void@MeshObject::SetMesh(string,float)	MeshObject::SetMesh	006c0120	006c19f5	FUN_006c02c0@006c02c0
+callback	$Requirement[]@ScenarioBehavior::GetRequirements()	ScenarioBehavior::GetRequirements		00632376	FUN_00632330@00632330
+callback	$void@DriverCharacter::DriverVisitScenery(string)	DriverCharacter::DriverVisitScenery		005b56b9	FUN_005b55f0@005b55f0
+native	$void@Industry::PerformProcessFinished(string)	Industry::PerformProcessFinished	006d2ef0	006d449a	FUN_006d32c0@006d32c0
+native	$void@Train::RevertAdvisoryLimit()	Train::RevertAdvisoryLimit	0059d050	0059fb45	FUN_0059da10@0059da10
+native	$DriverScheduleCommand[]@DriverCommands::GetDriverScheduleCommands()	DriverCommands::GetDriverScheduleCommands	0049cd50	0049c3ac	FUN_0049c250@0049c250
+native	$Asset[]@ProductQueue::GetProductList()	ProductQueue::GetProductList	00626640	0062758f	FUN_00626940@00626940
+native	$void@Vehicle::SetMaximumCouplerExpansionStress(float)	Vehicle::SetMaximumCouplerExpansionStress	005837d0	00587907	FUN_005840e0@005840e0
+native	$bool@World::IsLayerVisible(string)	World::IsLayerVisible	00695940	00690ee1	FUN_0068cb90@0068cb90
+native	$void@Browser::ResetScrollBar()	Browser::ResetScrollBar	0060b600	00607e1d	FUN_00605540@00605540
+callback	$Soup@GameplayMenuMobile::SaveState()	GameplayMenuMobile::SaveState		00924953	FUN_00924910@00924910
+native	$KUID@TrainzScriptBase::CloneKUID(KUID)	TrainzScriptBase::CloneKUID	00909650	0090c7e1	FUN_0090ae70@0090ae70
+native	$void@MapObject::SetPFXEmitterRate(int,int,float)	MapObject::SetPFXEmitterRate	006b3140	006b439c	FUN_006b3ce0@006b3ce0
+native	$void@Menu::SubdivideItems(bool)	Menu::SubdivideItems	0061ca70	0061c915	FUN_0061c380@0061c380
+native	$float@Vehicle::GetVelocity()	Vehicle::GetVelocity	00581970	00584353	FUN_005840e0@005840e0
+native	$bool@GSTrackSearch::SearchNextObject()	GSTrackSearch::SearchNextObject	0062c300	0062b8f8	FUN_0062b8b0@0062b8b0
+native	$string@DriverCharacter::GetOwnerPlayer()	DriverCharacter::GetOwnerPlayer	005b7010	005b8abe	FUN_005b7030@005b7030
+native	$void@Train::MarkAdvisoryLimit()	Train::MarkAdvisoryLimit	0059d010	0059fa26	FUN_0059da10@0059da10
+native	$bool@Interface::SetAchievementAwarded(string,SecurityToken)	Interface::SetAchievementAwarded	009042e0	006943e3	FUN_0068cb90@0068cb90
+native	$Train@World::CreateTrain(KUID[],GSTrackSearch)	World::CreateTrain	00689860	0068d37d	FUN_0068cb90@0068cb90
+native	$bool@Trackside::GetIsSearchLimit()	Trackside::GetIsSearchLimit	006e1720	006e21a3	FUN_006e1790@006e1790
+native	$void@Browser::GetAttention()	Browser::GetAttention	0060b9c0	00607cfe	FUN_00605540@00605540
+native	$string@ScenarioBehavior::GetSessionString(string)	ScenarioBehavior::GetSessionString	00631b30	006321e4	FUN_00631e70@00631e70
+native	$void@Industry::PerformProcessCancelled(string)	Industry::PerformProcessCancelled	006d2db0	006d438b	FUN_006d32c0@006d32c0
+native	$void@ProductQueue::SetProductFilter(ProductFilter)	ProductQueue::SetProductFilter	00626600	00627470	FUN_00626940@00626940
+native	$float@Vehicle::GetMaximumCouplerExpansionStress()	Vehicle::GetMaximumCouplerExpansionStress	005837b0	005877fc	FUN_005840e0@005840e0
+native	$int@Menu::CountItems()	Menu::CountItems	0061c360	0061c7f9	FUN_0061c380@0061c380
+native	$float@Vehicle::GetLength()	Vehicle::GetLength	005818b0	00584248	FUN_005840e0@005840e0
+native	$void@World::DeleteTrain(Train)	World::DeleteTrain	0068a1b0	0068d5b5	FUN_0068cb90@0068cb90
+native	$void@Vehicle::SetBrakePipeEfficiency(float)	Vehicle::SetBrakePipeEfficiency	00582200	00584571	FUN_005840e0@005840e0
+callback	$void@GameplayMenuMobile::InitWithParentObject(GSObject)	GameplayMenuMobile::InitWithParentObject		009261a5	FUN_00926130@00926130
+native	$void@KUIDList::AddKUID(KUID)	KUIDList::AddKUID	0099c080	0099c426	FUN_0099c2d0@0099c2d0
+native	$float@Vehicle::GetMaximumCoupleVelocity()	Vehicle::GetMaximumCoupleVelocity	00583880	00587a1c	FUN_005840e0@005840e0
+native	$void@Browser::PopupMenu(Menu)	Browser::PopupMenu	0060b7f0	00608176	FUN_00605540@00605540
+native	$void@Browser::Defocus()	Browser::Defocus	0060b7d0	00608059	FUN_00605540@00605540
+native	$Asset@ProductQueue::GetProductCategory()	ProductQueue::GetProductCategory	00626800	006276ac	FUN_00626940@00626940
+native	$object@GSTrackSearch::GetObject()	GSTrackSearch::GetObject	0062c330	0062ba04	FUN_0062b8b0@0062b8b0
+native	$string[]@World::GetLayerList(int)	World::GetLayerList	00695b10	0069111d	FUN_0068cb90@0068cb90
+native	$bool@Industry::PerformProcessInput(string)	Industry::PerformProcessInput	006d3020	006d45ae	FUN_006d32c0@006d32c0
+callback	$void@ScenarioBehavior::AppendDependencies(KUIDList)	ScenarioBehavior::AppendDependencies		006324e7	FUN_00632420@00632420
+callback	$void@DriverCharacter::DriverCoupleVehicle(Vehicle)	DriverCharacter::DriverCoupleVehicle		005b577e	FUN_005b56e0@005b56e0
+callback	$object@DriverScheduleCommand::GetIcon()	DriverScheduleCommand::GetIcon		005b9c90	FUN_005b9bf0@005b9bf0
+native	$void@Interface::SetAchievementProgress(string,float,float,SecurityToken)	Interface::SetAchievementProgress	00903fa0	00694502	FUN_0068cb90@0068cb90
+native	$float@MapObject::GetPFXEmitterVelocity(int,int)	MapObject::GetPFXEmitterVelocity	006b31b0	006b44bb	FUN_006b3ce0@006b3ce0
+native	$Asset@MeshObject::NativeGetAsset()	MeshObject::NativeGetAsset	006bf2c0	006c1b12	FUN_006c02c0@006c02c0
+native	$Locomotive@Train::GetFrontmostLocomotive()	Train::GetFrontmostLocomotive	0059d200	0059fc62	FUN_0059da10@0059da10
+native	$void@Trackside::NotifyTrackGraphObservers()	Trackside::NotifyTrackGraphObservers	006e1750	006e22c0	FUN_006e1790@006e1790
+native	$void@Browser::BringToFront()	Browser::BringToFront	0060b7a0	00607f3a	FUN_00605540@00605540
+native	$Asset[]@TrainzAssetSearch::SearchAssetsSorted(int[],string[],int,bool)	TrainzAssetSearch::SearchAssetsSorted	009db4d0	009dbaea	FUN_009db780@009db780
+native	$int@World::GetLayerType(string)	World::GetLayerType	00695a20	00691000	FUN_0068cb90@0068cb90
+native	$bool@GameplayMenuBase::LoadDriverQuickDrive(KUID)	GameplayMenuBase::LoadDriverQuickDrive	0092f7c0	0092fe1c	FUN_0092fdd0@0092fdd0
+callback	$void@GameplayMenuMobile::LoadState(Soup)	GameplayMenuMobile::LoadState		0092629a	FUN_009261e0@009261e0
+native	$void@Vehicle::SetBrokenBrakes(bool)	Vehicle::SetBrokenBrakes	005821a0	00584462	FUN_005840e0@005840e0
+native	$void@World::DeleteVehicle(Vehicle)	World::DeleteVehicle	0068a160	0068d499	FUN_0068cb90@0068cb90
+native	$int@KUIDList::CountKUIDs()	KUIDList::CountKUIDs	0099bee0	0099c318	FUN_0099c2d0@0099c2d0
+native	$void@MeshObject::SetMeshTranslation(string,float,float,float)	MeshObject::SetMeshTranslation	006bffa0	006c17c6	FUN_006c02c0@006c02c0
+native	$Asset[]@TrainzAssetSearch::SearchAssets(int[],string[])	TrainzAssetSearch::SearchAssets	009db260	009db8d6	FUN_009db780@009db780
+native	$int@Industry::GetProcessIOAmount(string,bool,int)	Industry::GetProcessIOAmount	006d6160	006d414f	FUN_006d32c0@006d32c0
+native	$DriverCommands@Constructors::NewDriverCommands()	Constructors::NewDriverCommands	006152d0	00614561	FUN_00613eb0@00613eb0
+callback	$void@Train::Init()	Train::Init		0059191a	FUN_005918f0@005918f0
+callback	$void@Train::Init()	Train::Init		00591935	FUN_005918f0@005918f0
+native	$void@CabinControl::SetUserLimits(float,float)	CabinControl::SetUserLimits	00744be0	0060f8d7	FUN_0060e4e0@0060e4e0
+native	$void@TrainzScriptBase::Log(string)	TrainzScriptBase::Log	00908ff0	0090c486	FUN_0090ae70@0090ae70
+native	$Train@World::CreateTrain(KUID[],string,bool)	World::CreateTrain	00689e30	0068d145	FUN_0068cb90@0068cb90
+native	$float@World::GetTimeElapsed()	World::GetTimeElapsed	0068cb70	00690b88	FUN_0068cb90@0068cb90
+native	$int@ProductQueue::CreateProduct(Asset,int)	ProductQueue::CreateProduct	006264a0	00627234	FUN_00626940@00626940
+native	$float@Train::GetSpeedLimit()	Train::GetSpeedLimit	0059d1a0	0059f6cd	FUN_0059da10@0059da10
+native	$void@GameplayMenuMobile::OpenChildGameplayMenu(KUID,GSObject)	GameplayMenuMobile::OpenChildGameplayMenu	00924d70	0092642c	FUN_009262d0@009262d0
+native	$void@Menu::AddItem(string,GameObject,string,string,KUID)	Menu::AddItem	0061be00	0061c4d6	FUN_0061c380@0061c380
+native	$string@StringTable::GetString(string)	StringTable::GetString	00997cd0	0099847a	FUN_00998110@00998110
+native	$ScenarioBehavior@ScenarioBehavior::GetParentBehavior()	ScenarioBehavior::GetParentBehavior	006318d0	00631fcc	FUN_00631e70@00631e70
+callback	$bool@DriverScheduleCommand::EndExecute(DriverCharacter)	DriverScheduleCommand::EndExecute		005b532b	FUN_005b52c0@005b52c0
+native	$void@DriverCharacter::SetDriverCommandFilter(KUID[])	DriverCharacter::SetDriverCommandFilter	005b6cd0	005b8765	FUN_005b7030@005b7030
+native	$void@MapObject::PlaySoundScriptEvent(string)	MapObject::PlaySoundScriptEvent	006b2e90	006b4050	FUN_006b3ce0@006b3ce0
+native	$float@Vehicle::GetMaximumCouplerCompressionStress()	Vehicle::GetMaximumCouplerCompressionStress	005836e0	005875dd	FUN_005840e0@005840e0
+native	$int@Interface::GetApproximateDisplayPPI()	Interface::GetApproximateDisplayPPI	00902ce0	0069408a	FUN_0068cb90@0068cb90
+native	$void@Browser::SetElementObjectProperty(string,string,object)	Browser::SetElementObjectProperty	0060b470	00607ae1	FUN_00605540@00605540
+native	$float@Trackside::GetSpeedLimit()	Trackside::GetSpeedLimit	006e1580	006e1e48	FUN_006e1790@006e1790
+native	$KUID@KUID::GetBaseKUID()	KUID::GetBaseKUID	009cae00	009cb3e4	FUN_009caf60@009caf60
+native	$void@MeshObject::SetMeshVisible(string,bool,float)	MeshObject::SetMeshVisible	006bfed0	006c16b9	FUN_006c02c0@006c02c0
+callback	$void@ExtraContentMenu::ShowPaywareDetails(string)	ExtraContentMenu::ShowPaywareDetails		00937c95	FUN_00937b20@00937b20
+native	$void@CabinControl::SetText(string)	CabinControl::SetText	00744bc0	0060f7cc	FUN_0060e4e0@0060e4e0
+native	$void@Train::SetAdvisoryLimit2(float)	Train::SetAdvisoryLimit2	0059d090	0059f5ae	FUN_0059da10@0059da10
+native	$int@World::GetCurrentModule()	World::GetCurrentModule	0068cab0	00690a69	FUN_0068cb90@0068cb90
+native	$void@Menu::AddSeperator()	Menu::AddSeperator	0061c290	0061c6ea	FUN_0061c380@0061c380
+native	$float@Vehicle::GetMass()	Vehicle::GetMass	00581890	0058413c	FUN_005840e0@005840e0
+native	$float@Train::GetAdvisoryLimit2()	Train::GetAdvisoryLimit2	0059d1e0	0059f909	FUN_0059da10@0059da10
+native	$void@World::SetLayerVisible(string,bool)	World::SetLayerVisible	00695850	00690dc4	FUN_0068cb90@0068cb90
+native	$float@MapObject::GetPFXEmitterRate(int,int)	MapObject::GetPFXEmitterRate	006b30c0	006b427f	FUN_006b3ce0@006b3ce0
+native	$void@MeshObject::SetMeshOrientation(string,float,float,float)	MeshObject::SetMeshOrientation	006c0060	006c18d6	FUN_006c02c0@006c02c0
+native	$Asset[]@TrainzAssetSearch::SearchAssetsSorted(int,string,int,bool)	TrainzAssetSearch::SearchAssetsSorted	009db600	009db9e0	FUN_009db780@009db780
+native	$int@TrainzScriptBase::GetTrainzBuild()	TrainzScriptBase::GetTrainzBuild	00908c60	0090c6c2	FUN_0090ae70@0090ae70
+callback	$void@DriverCharacter::DriverTakeJunction(JunctionBase,int)	DriverCharacter::DriverTakeJunction		005b55d2	FUN_005b5500@005b5500
+native	$bool@DriverCharacter::SetOwnerPlayer(string)	DriverCharacter::SetOwnerPlayer	005b6f10	005b89a1	FUN_005b7030@005b7030
+native	$void@DriverCommands::AddDriverScheduleCommand(DriverScheduleCommand)	DriverCommands::AddDriverScheduleCommand	0049cbe0	0049c298	FUN_0049c250@0049c250
+native	$GSTrackSearch@Trackside::BeginTrackSearch(bool)	Trackside::BeginTrackSearch	006e1620	006e2084	FUN_006e1790@006e1790
+native	$void@Interface::ShowGameOptionsPanel(KUID)	Interface::ShowGameOptionsPanel	00905170	006942c6	FUN_0068cb90@0068cb90
+native	$void@GameplayMenuMobile::SetPortraitModeDisabled(bool)	GameplayMenuMobile::SetPortraitModeDisabled	00923300	00926537	FUN_009262d0@009262d0
+native	$void@Industry::PerformProcessStarted(string)	Industry::PerformProcessStarted	006d2c70	006d426c	FUN_006d32c0@006d32c0
+native	$void@Browser::SetWindowTitle(string)	Browser::SetWindowTitle	0060b8d0	00607bee	FUN_00605540@00605540
+native	$void@CabinControl::SetNamedValue(string,float)	CabinControl::SetNamedValue	00744960	0060f9e4	FUN_0060e4e0@0060e4e0
+native	$ProductFilter@ProductQueue::GetProductFilter()	ProductQueue::GetProductFilter	006265e0	00627353	FUN_00626940@00626940
+native	$Train@World::CreateTrain(KUID[],Buildable,string,float,bool)	World::CreateTrain	00689ad0	0068d261	FUN_0068cb90@0068cb90
+native	$void@Trackside::SetSpeedLimit(float)	Trackside::SetSpeedLimit	006e15c0	006e1f67	FUN_006e1790@006e1790
+native	$int@Interface::GetDeviceFormFactor()	Interface::GetDeviceFormFactor	00902cc0	006941a7	FUN_0068cb90@0068cb90
+native	$void@MapObject::StopSoundScriptEvent(string)	MapObject::StopSoundScriptEvent	006b2f80	006b4160	FUN_006b3ce0@006b3ce0
+native	$void@ScenarioBehavior::SetSessionString(string,string)	ScenarioBehavior::SetSessionString	00631910	006320d7	FUN_00631e70@00631e70
+native	$KUID[]@DriverCharacter::GetDriverCommandFilter()	DriverCharacter::GetDriverCommandFilter	005b6db0	005b8882	FUN_005b7030@005b7030
+native	$StringTable@World::GetStringTable()	World::GetStringTable	00695790	00690ca5	FUN_0068cb90@0068cb90
+native	$void@Menu::AddSubmenu(string,Menu)	Menu::AddSubmenu	0061c180	0061c5e0	FUN_0061c380@0061c380
+native	$float@TrainzScriptBase::GetTrainzVersion()	TrainzScriptBase::GetTrainzVersion	00908c80	0090c5a5	FUN_0090ae70@0090ae70
+native	$void@Vehicle::SetMaximumCouplerCompressionStress(float)	Vehicle::SetMaximumCouplerCompressionStress	00583700	005876ef	FUN_005840e0@005840e0
+native	$float@Train::GetAdvisoryLimit()	Train::GetAdvisoryLimit	0059d1c0	0059f7ea	FUN_0059da10@0059da10
+callback	$void@DriverCharacter::NotifyRemoveDriver()	DriverCharacter::NotifyRemoveDriver		005b54c4	FUN_005b54a0@005b54a0
+callback	$void@DriverCharacter::NotifyRemoveDriver()	DriverCharacter::NotifyRemoveDriver		005b54df	FUN_005b54a0@005b54a0
+native	$void@OnlineAccess::Connect()	OnlineAccess::Connect	0091c6c0	0091c978	FUN_0091c930@0091c930
+native	$bool@Vehicle::Reposition(TrackMark,bool)	Vehicle::Reposition	00581b10	00584afd	FUN_005840e0@005840e0
+native	$KUIDList@ConstructorsBase::NewKUIDList()	ConstructorsBase::NewKUIDList	009dd2a0	009dd536	FUN_009dd3e0@009dd3e0
+native	$bool@KUIDList::IsLocked()	KUIDList::IsLocked	0099bec0	0099ca9d	FUN_0099c2d0@0099c2d0
+native	$string@SceneryWithTrack::FindTriggerContainingNode(int,bool)	SceneryWithTrack::FindTriggerContainingNode	006dd060	006ddb6f	FUN_006dd910@006dd910
+native	$bool@TrackCircuitBlock::IsOccupied()	TrackCircuitBlock::IsOccupied	00932d30	00932dba	FUN_00932d70@00932d70
+native	$bool@GameplayMenuBase::LoadSurveyorMap(KUID)	GameplayMenuBase::LoadSurveyorMap	0092e570	00930250	FUN_0092fdd0@0092fdd0
+callback	$DriverCommand@DriverScheduleCommand::GetDriverCommand()	DriverScheduleCommand::GetDriverCommand		005ba53f	FUN_005ba4f0@005ba4f0
+native	$bool@SceneryWithTrack::InnerReEnter(int)	SceneryWithTrack::InnerReEnter	006dcfe0	006dda64	FUN_006dd910@006dd910
+native	$SceneryWithTrack@GSTrackSearch::GetAttachedTrackParentObject()	GSTrackSearch::GetAttachedTrackParentObject	0062c4c0	0062be43	FUN_0062b8b0@0062b8b0
+native	$Train@Vehicle::GetMyTrain()	Vehicle::GetMyTrain	00581ac0	005849e1	FUN_005840e0@005840e0
+callback	$void@DriverCharacter::DriverVisitTrack(Track)	DriverCharacter::DriverVisitTrack		005b59b2	FUN_005b5920@005b5920
+native	$void@MapObject::SetPFXEmitterEndColor(int,int,float,float,float,float)	MapObject::SetPFXEmitterEndColor	006b3370	006b4814	FUN_006b3ce0@006b3ce0
+native	$void@DriverCommands::ProceedToNextCommand()	DriverCommands::ProceedToNextCommand	0049cf30	0049c7f3	FUN_0049c250@0049c250
+native	$bool@World::SetCamera(MapObject)	World::SetCamera	0068a320	0068db41	FUN_0068cb90@0068cb90
+native	$void@Interface::LogCallStack(string)	Interface::LogCallStack	0068afb0	0069166a	FUN_0068cb90@0068cb90
+native	$void@KUIDList::Clear()	KUIDList::Clear	0099bf10	0099c981	FUN_0099c2d0@0099c2d0
+native	$JunctionBase@Train::GetAutopilotStopJunctionBase()	Train::GetAutopilotStopJunctionBase	0059bbb0	005a01af	FUN_0059da10@0059da10
+native	$float@Vehicle::GetDefaultMaximumCouplerCompressionStress()	Vehicle::GetDefaultMaximumCouplerCompressionStress	00583790	00587d75	FUN_005840e0@005840e0
+native	$Soup@World::GetSurveyorSavedConsist(string)	World::GetSurveyorSavedConsist	00903b40	0069494f	FUN_0068cb90@0068cb90
+native	$void@OnlineAccess::Disconnect()	OnlineAccess::Disconnect	0091bbc0	0091cb8f	FUN_0091c930@0091c930
+callback	$void@Achievements::DisableAchievementTracking(SecurityToken)	Achievements::DisableAchievementTracking		00908628	FUN_009083d0@009083d0
+callback	$void@DriverCharacter::DriverCompleteJunctions()	DriverCharacter::DriverCompleteJunctions		005b5aa9	FUN_005b5a50@005b5a50
+callback	$void@DriverCharacter::DriverCompleteJunctions()	DriverCharacter::DriverCompleteJunctions		005b5ac5	FUN_005b5a50@005b5a50
+native	$void@Train::SetFloatingLimit(float,bool)	Train::SetFloatingLimit	0059d0d0	005a03eb	FUN_0059da10@0059da10
+native	$float@Vehicle::GetCouplingStress(Vehicle)	Vehicle::GetCouplingStress	00583950	00587fb1	FUN_005840e0@005840e0
+native	$float@MapObject::GetPFXEmitterLifetime(int,int)	MapObject::GetPFXEmitterLifetime	006b3440	006b4933	FUN_006b3ce0@006b3ce0
+native	$Image@ConstructorsBase::NewImage()	ConstructorsBase::NewImage	009dd200	009dd640	FUN_009dd3e0@009dd3e0
+native	$void@World::SetCameraFlags(int)	World::SetCameraFlags	0068a920	0068dd69	FUN_0068cb90@0068cb90
+native	$void@Interface::ShowDriverButtonMenu(bool)	Interface::ShowDriverButtonMenu	0068b220	006918a9	FUN_0068cb90@0068cb90
+callback	$string@GameplayMenuMobile::GetChildObjectDescriptionHTML(string)	GameplayMenuMobile::GetChildObjectDescriptionHTML		00924808	FUN_009246f0@009246f0
+native	$int@OnlineAccess::GetStatus()	OnlineAccess::GetStatus	0091b260	0091ca84	FUN_0091c930@0091c930
+native	$string@GSTrackSearch::GetAttachedTrackName()	GSTrackSearch::GetAttachedTrackName	0062c590	0062bf5f	FUN_0062b8b0@0062b8b0
+native	$Train@Train::GetAutopilotStopTrain()	Train::GetAutopilotStopTrain	0059bc70	005a02cc	FUN_0059da10@0059da10
+native	$bool@GameplayMenuBase::LoadSurveyorMapNewSession(KUID)	GameplayMenuBase::LoadSurveyorMapNewSession	0092dd90	0093036f	FUN_0092fdd0@0092fdd0
+native	$bool@Vehicle::Reposition(Vehicle,int,int)	Vehicle::Reposition	00581c50	00584c19	FUN_005840e0@005840e0
+native	$MapObject@World::GetCameraTarget()	World::GetCameraTarget	0068a380	0068dc5d	FUN_0068cb90@0068cb90
+native	$string[]@World::GetSurveyorSavedConsistList()	World::GetSurveyorSavedConsistList	00903780	00694842	FUN_0068cb90@0068cb90
+callback	$void@DriverCharacter::DriverTurnAround(bool)	DriverCharacter::DriverTurnAround		005b5a39	FUN_005b59d0@005b59d0
+native	$void@Interface::Print(string)	Interface::Print	0068b080	00691784	FUN_0068cb90@0068cb90
+callback	$bool@SecurityToken::IsOwnerLocallyModified()	SecurityToken::IsOwnerLocallyModified		009ba6a8	FUN_009ba660@009ba660
+native	$float@Vehicle::GetDefaultMaximumCoupleVelocity()	Vehicle::GetDefaultMaximumCoupleVelocity	00583930	00587e94	FUN_005840e0@005840e0
+native	$void@World::SetCamera(Train,int)	World::SetCamera	0068a260	0068d7ed	FUN_0068cb90@0068cb90
+native	$void@World1::SetDCCMode(bool)	World1::SetDCCMode	00689dc0	00691340	FUN_0068cb90@0068cb90
+callback	$Soup[]@GameplayMenuMobile::GetChildList()	GameplayMenuMobile::GetChildList		00925345	FUN_009250f0@009250f0
+native	$bool@DriverCommands::GetDriverScheduleRepeat()	DriverCommands::GetDriverScheduleRepeat	0049cef0	0049c5c4	FUN_0049c250@0049c250
+native	$bool@KUIDList::HasKUID(KUID)	KUIDList::HasKUID	0099bfa0	0099c63a	FUN_0099c2d0@0099c2d0
+native	$bool@Train::IsStopped()	Train::IsStopped	0059d280	0059fe85	FUN_0059da10@0059da10
+callback	$string@ScenarioBehavior::GetDescription()	ScenarioBehavior::GetDescription		00632a0d	FUN_00632970@00632970
+native	$void@Vehicle::Uncouple(Vehicle)	Vehicle::Uncouple	005819c0	0058468d	FUN_005840e0@005840e0
+native	$void@Vehicle::SetMaximumCoupleVelocity(float)	Vehicle::SetMaximumCoupleVelocity	005838a0	00587b39	FUN_005840e0@005840e0
+native	$void@Interface::SetAchievementVariable(string,float,SecurityToken)	Interface::SetAchievementVariable	00904140	0069461f	FUN_0068cb90@0068cb90
+native	$float@GSTrackSearch::GetDistance()	GSTrackSearch::GetDistance	0062c440	0062bc18	FUN_0062b8b0@0062b8b0
+native	$Train@World::GetCurrentTrain()	World::GetCurrentTrain	0068a1f0	0068d6d1	FUN_0068cb90@0068cb90
+native	$bool@GameplayMenuBase::LoadDriverSession(KUID)	GameplayMenuBase::LoadDriverSession	0092fbd0	0092ff28	FUN_0092fdd0@0092fdd0
+native	$string@ProductQueue::GetQueueName()	ProductQueue::GetQueueName	00626920	006277cb	FUN_00626940@00626940
+native	$void@Industry::PerformProcessOutput(string)	Industry::PerformProcessOutput	006d3190	006d46b9	FUN_006d32c0@006d32c0
+native	$void@KUIDList::RemoveKUID(KUID)	KUIDList::RemoveKUID	0099c000	0099c530	FUN_0099c2d0@0099c2d0
+callback	$string@DriverScheduleCommand::GetTooltip()	DriverScheduleCommand::GetTooltip		005b9fa8	FUN_005b9ec0@005b9ec0
+native	$void@Browser::ResizeHeightToFit()	Browser::ResizeHeightToFit	0060b620	00608295	FUN_00605540@00605540
+callback	$void@DriverCharacter::DriverVisitTrackMark(TrackMark)	DriverCharacter::DriverVisitTrackMark		005b583e	FUN_005b57a0@005b57a0
+native	$void@MeshObject::SwapTextureOnMesh(string,string,string)	MeshObject::SwapTextureOnMesh	006c01c0	006c1c31	FUN_006c02c0@006c02c0
+native	$void@DriverCommands::ClearDriverScheduleCommands()	DriverCommands::ClearDriverScheduleCommands	0049ce50	0049c4b7	FUN_0049c250@0049c250
+native	$Track@GSTrackSearch::GetTrack()	GSTrackSearch::GetTrack	0062c380	0062bb0e	FUN_0062b8b0@0062b8b0
+native	$Vehicle@Train::GetFrontmostLocomotiveVehicle()	Train::GetFrontmostLocomotiveVehicle	0059d240	0059fd73	FUN_0059da10@0059da10
+native	$Asset@World::GetCurrentProfile()	World::GetCurrentProfile	0068cb00	0069122e	FUN_0068cb90@0068cb90
+native	$void@MapObject::SetPFXEmitterVelocity(int,int,float)	MapObject::SetPFXEmitterVelocity	006b3230	006b45d8	FUN_006b3ce0@006b3ce0
+native	$float@World::PlaySound(Asset,string,float,float,float,GameObject,string,bool)	World::PlaySound	009045c0	00694730	FUN_0068cb90@0068cb90
+callback	$void@DriverScheduleCommand::SetProperties(Soup)	DriverScheduleCommand::SetProperties		005ba479	FUN_005ba3a0@005ba3a0
+native	$void@World::SetCamera(Junction)	World::SetCamera	0068a2d0	0068da25	FUN_0068cb90@0068cb90
+native	$bool@GameplayMenuBase::LoadSurveyorNew()	GameplayMenuBase::LoadSurveyorNew	0092fac0	00930140	FUN_0092fdd0@0092fdd0
+native	$void@Interface::Log(string)	Interface::Log	0068aed0	0069155a	FUN_0068cb90@0068cb90
+native	$Soup@ConstructorsBase::NewSoup()	ConstructorsBase::NewSoup	009dd340	009dd428	FUN_009dd3e0@009dd3e0
+native	$void@KUIDList::Copy(KUIDList)	KUIDList::Copy	0099bf40	0099c865	FUN_0099c2d0@0099c2d0
+native	$int@Vehicle::GetCouplingDirection(Vehicle)	Vehicle::GetCouplingDirection	00581a50	005848c5	FUN_005840e0@005840e0
+native	$void@DriverCommands::SetDriverScheduleRepeat(bool)	DriverCommands::SetDriverScheduleRepeat	0049cf10	0049c6d4	FUN_0049c250@0049c250
+native	$bool@SceneryWithTrack::ReEnter(int)	SceneryWithTrack::ReEnter	006dcf60	006dd958	FUN_006dd910@006dd910
+native	$int@Train::GetTrackmarkDirection(TrackMark)	Train::GetTrackmarkDirection	0059ba90	005a009d	FUN_0059da10@0059da10
+native	$bool@GSTrackSearch::GetFacingRelativeToSearchDirection()	GSTrackSearch::GetFacingRelativeToSearchDirection	0062c460	0062bd27	FUN_0062b8b0@0062b8b0
+native	$float@Vehicle::GetDefaultMaximumCouplerExpansionStress()	Vehicle::GetDefaultMaximumCouplerExpansionStress	00583860	00587c58	FUN_005840e0@005840e0
+native	$void@World::SetCamera(Vehicle,int)	World::SetCamera	0068a510	0068d909	FUN_0068cb90@0068cb90
+native	$bool@Train::HasMoved()	Train::HasMoved	0059d2a0	0059ff92	FUN_0059da10@0059da10
+callback	$void@DriverCharacter::DriverThroughTrackMark(TrackMark)	DriverCharacter::DriverThroughTrackMark		005b58fe	FUN_005b5860@005b5860
+native	$void@World1::SetDerailLevel(int)	World1::SetDerailLevel	00689e00	0069144d	FUN_0068cb90@0068cb90
+native	$KUID@KUIDList::GetIndexedKUID(int)	KUIDList::GetIndexedKUID	0099c240	0099c749	FUN_0099c2d0@0099c2d0
+native	$bool@GameplayMenuBase::LoadDriverSavedSession(string)	GameplayMenuBase::LoadDriverSavedSession	0092e680	00930033	FUN_0092fdd0@0092fdd0
+callback	$Soup@DriverScheduleCommand::GetProperties()	DriverScheduleCommand::GetProperties		005ba2be	FUN_005ba240@005ba240
+callback	$Soup@PropertyObject::GetProperties()	PropertyObject::GetProperties		0044fc8e	FUN_0044fc20@0044fc20
+callback	$Soup@PropertyObject::GetProperties()	PropertyObject::GetProperties		0091ee22	FUN_0091eda0@0091eda0
+callback	$Soup@PropertyObject::GetProperties()	PropertyObject::GetProperties		006b1166	FUN_006b1090@006b1090
+callback	$Soup@PropertyObject::GetProperties()	PropertyObject::GetProperties		006b162c	FUN_006b1590@006b1590
+callback	$Soup@PropertyObject::GetProperties()	PropertyObject::GetProperties		00630b75	FUN_00630a90@00630a90
+callback	$Soup@PropertyObject::GetProperties()	PropertyObject::GetProperties		00911c41	FUN_00910b10@00910b10
+callback	$Soup@PropertyObject::GetProperties()	PropertyObject::GetProperties		006307bc	FUN_00630720@00630720
+callback	$Requirement[]@Industry::GetRequirements()	Industry::GetRequirements		006d4e7f	FUN_006d4e30@006d4e30
+native	$void@Vehicle::Uncouple(int)	Vehicle::Uncouple	00581a20	005847a9	FUN_005840e0@005840e0
+native	$void@MapObject::SetPFXEmitterStartColor(int,int,float,float,float,float)	MapObject::SetPFXEmitterStartColor	006b32a0	006b46f7	FUN_006b3ce0@006b3ce0
+callback	$int@ScenarioBehavior::GetStateFlags()	ScenarioBehavior::GetStateFlags		00632b72	FUN_00632b30@00632b30
+native	$float@World::GetGameTime()	World::GetGameTime	0068aa50	0068e3e1	FUN_0068cb90@0068cb90
+callback	$void@Industry::NotifyProcessFinished(string)	Industry::NotifyProcessFinished		006d190a	FUN_006d1840@006d1840
+native	$float@Vehicle::GetCabinSwayAmount()	Vehicle::GetCabinSwayAmount	00583aa0	00588429	FUN_005840e0@005840e0
+native	$float@MapObject::GetPFXEmitterMaxSize(int,int)	MapObject::GetPFXEmitterMaxSize	006b3620	006b4dab	FUN_006b3ce0@006b3ce0
+native	$string@Asset::GetLocalisedDescription()	Asset::GetLocalisedDescription	009cf4f0	009cffe4	FUN_009cfd80@009cfd80
+callback	$void@DriverCharacter::DriverDriveForever()	DriverCharacter::DriverDriveForever		005b5d43	FUN_005b5cc0@005b5cc0
+native	$void@Train::SetHeadlightState(bool)	Train::SetHeadlightState	0059d2e0	005a0980	FUN_0059da10@0059da10
+native	$Track@SceneryWithTrack::GetAttachedTrack(string)	SceneryWithTrack::GetAttachedTrack	006dd520	006ddfc8	FUN_006dd910@006dd910
+native	$int@JunctionBase::GetDirection()	JunctionBase::GetDirection	009008a0	00901808	FUN_009016b0@009016b0
+native	$bool@GameplayMenuBase::DeleteMap(KUID)	GameplayMenuBase::DeleteMap	0092f380	009307e7	FUN_0092fdd0@0092fdd0
+native	$float@Vehicle::GetBrakePipePressure()	Vehicle::GetBrakePipePressure	00582060	005851a5	FUN_005840e0@005840e0
+native	$string@Asset::GetLocalisedName()	Asset::GetLocalisedName	009cf5b0	009cfeda	FUN_009cfd80@009cfd80
+native	$void@Interface::ShowVehicleProductFilters(bool)	Interface::ShowVehicleProductFilters	0068b330	00691d31	FUN_0068cb90@0068cb90
+native	$string@DLCStore::GetBestProductForKUID(SecurityToken,GSObject,KUID)	DLCStore::GetBestProductForKUID	009cc150	009cd570	FUN_009cd310@009cd310
+native	$int@OnlineAccess::PostMessage(string,Soup)	OnlineAccess::PostMessage	0091be10	0091cfe8	FUN_0091c930@0091c930
+callback	$string@PropertyObject::GetPropertyType(string)	PropertyObject::GetPropertyType		009a1207	FUN_009a1170@009a1170
+callback	$void@DriverCharacter::DriverBeginIssueSchedule()	DriverCharacter::DriverBeginIssueSchedule		005b5c86	FUN_005b5c00@005b5c00
+callback	$void@DriverCharacter::DriverBeginIssueSchedule()	DriverCharacter::DriverBeginIssueSchedule		005b5ca1	FUN_005b5c00@005b5c00
+native	$void@Vehicle::SetCabinSwayAmount(float)	Vehicle::SetCabinSwayAmount	00583a60	0058830c	FUN_005840e0@005840e0
+native	$bool@World::UserSetCamera(GameObject)	World::UserSetCamera	0068a410	0068e2c2	FUN_0068cb90@0068cb90
+native	$Track@SceneryWithTrack::GetTriggerTrack(string)	SceneryWithTrack::GetTriggerTrack	006dd3c0	006ddeab	FUN_006dd910@006dd910
+native	$bool@MultiplayerGame::Init(SecurityToken,string,bool,OnlineAccess,OnlineGroup)	MultiplayerGame::Init	00917780	009179e8	FUN_009179a0@009179a0
+native	$bool@Train::TestTrackPermit(Permit,bool)	Train::TestTrackPermit	0059c850	005a0863	FUN_0059da10@0059da10
+native	$JunctionBase[]@SceneryWithTrack::GetAttachedJunctions()	SceneryWithTrack::GetAttachedJunctions	006dd620	006de0e7	FUN_006dd910@006dd910
+native	$void@Interface::SetScore(string)	Interface::SetScore	0068b160	00691f75	FUN_0068cb90@0068cb90
+native	$void@JunctionBase::AllowManualControl(bool)	JunctionBase::AllowManualControl	008ffd10	00901a20	FUN_009016b0@009016b0
+native	$OnlineGroup@OnlineAccess::CreateGroup(int)	OnlineAccess::CreateGroup	0091c140	0091d224	FUN_0091c930@0091c930
+native	$bool@GameplayMenuBase::DeleteSavedSession(string)	GameplayMenuBase::DeleteSavedSession	0092ed10	00930a23	FUN_0092fdd0@0092fdd0
+native	$string@Vehicle::GetRunningNumber()	Vehicle::GetRunningNumber	005830f0	005853c3	FUN_005840e0@005840e0
+callback	$void@Industry::NotifyProcessStarted(string)	Industry::NotifyProcessStarted		006d1a0a	FUN_006d1940@006d1940
+native	$string@Asset::GetCreatorName()	Asset::GetCreatorName	009cf4b0	009d00ee	FUN_009cfd80@009cfd80
+native	$bool@DLCStore::IsPurchasingEnabled(SecurityToken,GSObject)	DLCStore::IsPurchasingEnabled	009cc060	009cd67a	FUN_009cd310@009cd310
+native	$bool@Train::GetHeadlightState()	Train::GetHeadlightState	0059d2c0	005a0a9f	FUN_0059da10@0059da10
+callback	$void@DriverCharacter::DriverSetAllowCoupling(bool,Train)	DriverCharacter::DriverSetAllowCoupling		005b5df3	FUN_005b5d60@005b5d60
+native	$void@MapObject::SetPFXEmitterMaxSize(int,int,float)	MapObject::SetPFXEmitterMaxSize	006b36a0	006b4eba	FUN_006b3ce0@006b3ce0
+native	$void@ProductFilter::Clear()	ProductFilter::Clear	0061f3d0	00620aa8	FUN_00620a60@00620a60
+native	$string@MultiplayerGame::GetGameChatChannel()	MultiplayerGame::GetGameChatChannel	009171c0	00917af6	FUN_009179a0@009179a0
+native	$int@World::GetGameYear()	World::GetGameYear	0068aad0	0068e61d	FUN_0068cb90@0068cb90
+native	$void@Vehicle::SetRunningNumber(string)	Vehicle::SetRunningNumber	00582f30	005852b1	FUN_005840e0@005840e0
+native	$float@Vehicle::GetDefaultCabinSwayAmount()	Vehicle::GetDefaultCabinSwayAmount	00583ac0	00588548	FUN_005840e0@005840e0
+callback	$void@Achievements::DisplayMainWindow()	Achievements::DisplayMainWindow		00966369	FUN_00965fd0@00965fd0
+native	$void@BrowserInterface::SetOverlayColor(float,float,float,float,float)	BrowserInterface::SetOverlayColor	00608570	0060569c	FUN_00605540@00605540
+native	$bool@JunctionBase::SetDefaultDirection(int)	JunctionBase::SetDefaultDirection	00901260	00901913	FUN_009016b0@009016b0
+native	$int@OnlineAccess::CollectMessage(string,Soup)	OnlineAccess::CollectMessage	0091b540	0091d107	FUN_0091c930@0091c930
+native	$void@Interface::SetHelperIconScale(float)	Interface::SetHelperIconScale	0068b350	00691e53	FUN_0068cb90@0068cb90
+native	$void@World::SetGameTime(float)	World::SetGameTime	0068aa80	0068e4fe	FUN_0068cb90@0068cb90
+native	$bool@GameplayMenuBase::DeleteSession(KUID)	GameplayMenuBase::DeleteSession	0092ef30	00930904	FUN_0092fdd0@0092fdd0
+native	$bool@Vehicle::Reverse()	Vehicle::Reverse	00581f60	00584e51	FUN_005840e0@005840e0
+native	$int@OnlineAccess::GetLocalData(string,Soup)	OnlineAccess::GetLocalData	0091c310	0091cdac	FUN_0091c930@0091c930
+native	$void@Train::EnablePhysics(bool)	Train::EnablePhysics	0059c910	005a0508	FUN_0059da10@0059da10
+callback	$void@DriverCharacter::DriverIssueSchedule()	DriverCharacter::DriverIssueSchedule		005b5b3f	FUN_005b5ae0@005b5ae0
+callback	$void@DriverCharacter::DriverIssueSchedule()	DriverCharacter::DriverIssueSchedule		005b5b5b	FUN_005b5ae0@005b5ae0
+native	$void@World::SetCameraMode(int)	World::SetCameraMode	0068a980	0068df88	FUN_0068cb90@0068cb90
+native	$void@Vehicle::SetCouplerBreakageEnabled(bool)	Vehicle::SetCouplerBreakageEnabled	005839d0	005880d0	FUN_005840e0@005840e0
+native	$void@GSTrackSearch::ReverseDirection()	GSTrackSearch::ReverseDirection	0062c6b0	0062c197	FUN_0062b8b0@0062b8b0
+native	$void@Interface::HighlightButtonBarElement(int,bool)	Interface::HighlightButtonBarElement	0068b260	006919cb	FUN_0068cb90@0068cb90
+callback	$string@PropertyObject::GetPropertyName(string)	PropertyObject::GetPropertyName		009a13f7	FUN_009a1360@009a1360
+native	$void@MapObject::SetPFXEmitterLifetime(int,int,float)	MapObject::SetPFXEmitterLifetime	006b34c0	006b4a50	FUN_006b3ce0@006b3ce0
+callback	$void@GameplayMenuMobile::OpenChildObject(string)	GameplayMenuMobile::OpenChildObject		009246be	FUN_009245a0@009245a0
+native	$string@OnlineAccess::GetUsername()	OnlineAccess::GetUsername	0091c250	0091cc9c	FUN_0091c930@0091c930
+native	$float@SceneryWithTrack::GetDistanceBetweenTriggerAndVehicle(string,Vehicle)	SceneryWithTrack::GetDistanceBetweenTriggerAndVehicle	006dd130	006ddc7c	FUN_006dd910@006dd910
+native	$GSTrackSearch@GSTrackSearch::CloneSearch()	GSTrackSearch::CloneSearch	0062c610	0062c07b	FUN_0062b8b0@0062b8b0
+native	$DLCInfo[]@DLCStore::GetProductList(SecurityToken,GSObject)	DLCStore::GetProductList	009cc640	009cd358	FUN_009cd310@009cd310
+native	$int@World::GetCameraFlags()	World::GetCameraFlags	0068a960	0068de7b	FUN_0068cb90@0068cb90
+native	$bool@Vehicle::Reposition(Train,int,int)	Vehicle::Reposition	00581dc0	00584d35	FUN_005840e0@005840e0
+native	$bool@GameplayMenuBase::LoadSurveyorSession(KUID)	GameplayMenuBase::LoadSurveyorSession	0092dcd0	0093048c	FUN_0092fdd0@0092fdd0
+native	$KUID@Asset::GetKUID()	Asset::GetKUID	009cde80	009cfdcc	FUN_009cfd80@009cfd80
+native	$bool@JunctionBase::SetDirection(int)	JunctionBase::SetDirection	00901290	009016fc	FUN_009016b0@009016b0
+native	$bool@GameplayMenuBase::LoadRailyard(KUID)	GameplayMenuBase::LoadRailyard	0092cdd0	009306c8	FUN_0092fdd0@0092fdd0
+native	$void@MapObject::SetPFXEmitterMinSize(int,int,float)	MapObject::SetPFXEmitterMinSize	006b35b0	006b4c8c	FUN_006b3ce0@006b3ce0
+native	$Browser@BrowserInterface::CreateBrowser()	BrowserInterface::CreateBrowser	00608400	00605590	FUN_00605540@00605540
+native	$float@Vehicle::GetAuxReservoirPressure()	Vehicle::GetAuxReservoirPressure	00582030	00585089	FUN_005840e0@005840e0
+native	$void@World::UserSetCameraMode(int)	World::UserSetCameraMode	0068aa30	0068e1a5	FUN_0068cb90@0068cb90
+native	$int@OnlineAccess::SetLocalData(string,Soup)	OnlineAccess::SetLocalData	0091baa0	0091cecb	FUN_0091c930@0091c930
+native	$void@Interface::ShowOnScreenHelp(bool)	Interface::ShowOnScreenHelp	0068b2e0	00691c0f	FUN_0068cb90@0068cb90
+native	$bool@Train::IsOwningClient()	Train::IsOwningClient	0059c800	005a0744	FUN_0059da10@0059da10
+native	$bool@SceneryWithTrack::IsTrainInTriggers(Train,bool)	SceneryWithTrack::IsTrainInTriggers	006dd2b0	006ddd8c	FUN_006dd910@006dd910
+native	$DLCInfo@DLCStore::GetProductInfo(SecurityToken,GSObject,string)	DLCStore::GetProductInfo	009cc2c0	009cd466	FUN_009cd310@009cd310
+native	$float@Vehicle::GetBrakeCylinderPressure()	Vehicle::GetBrakeCylinderPressure	00582010	00584f6d	FUN_005840e0@005840e0
+callback	$void@DriverCharacter::DriverNullCommand()	DriverCharacter::DriverNullCommand		005b5bc9	FUN_005b5b70@005b5b70
+callback	$void@DriverCharacter::DriverNullCommand()	DriverCharacter::DriverNullCommand		005b5be5	FUN_005b5b70@005b5b70
+native	$bool@Vehicle::GetCouplerBreakageEnabled()	Vehicle::GetCouplerBreakageEnabled	00583a40	005881ed	FUN_005840e0@005840e0
+native	$bool@GameplayMenuBase::LoadSurveyorSessionClone(KUID)	GameplayMenuBase::LoadSurveyorSessionClone	0092e280	009305ab	FUN_0092fdd0@0092fdd0
+callback	$void@Achievements::TADRequestRefresh()	Achievements::TADRequestRefresh		0090535e	FUN_00905320@00905320
+callback	$void@Achievements::TADRequestRefresh()	Achievements::TADRequestRefresh		00905372	FUN_00905320@00905320
+native	$int@World::GetCameraMode()	World::GetCameraMode	0068a9a0	0068e093	FUN_0068cb90@0068cb90
+native	$bool@Interface::GetOnScreenHelp()	Interface::GetOnScreenHelp	0068b2c0	00691aed	FUN_0068cb90@0068cb90
+callback	$void@JunctionBase::UserRequestToggle()	JunctionBase::UserRequestToggle		00900c13	FUN_00900b50@00900b50
+callback	$void@JunctionBase::UserRequestToggle()	JunctionBase::UserRequestToggle		00900c28	FUN_00900b50@00900b50
+callback	$void@GameplayMenuMobile::DeleteChildObject(string)	GameplayMenuMobile::DeleteChildObject		009266f6	FUN_00926630@00926630
+native	$bool@Train::GetAllowsUserControl()	Train::GetAllowsUserControl	0059c790	005a0627	FUN_0059da10@0059da10
+native	$float@MapObject::GetPFXEmitterMinSize(int,int)	MapObject::GetPFXEmitterMinSize	006b3530	006b4b6f	FUN_006b3ce0@006b3ce0
+native	$Permit@JunctionBase::RequestPermit(GameObject)	JunctionBase::RequestPermit	00900f10	00901e8b	FUN_009016b0@009016b0
+native	$bool@OnlineAccess::CanAccessMultiplayer()	OnlineAccess::CanAccessMultiplayer	0091b300	0091d69c	FUN_0091c930@0091c930
+native	$bool@Train::GetHighbeamState()	Train::GetHighbeamState	0059d470	005a1128	FUN_0059da10@0059da10
+native	$bool@Interface::GetMetricMode()	Interface::GetMetricMode	00694e60	006923ef	FUN_0068cb90@0068cb90
+native	$KUIDList@Asset::GetDependencyList()	Asset::GetDependencyList	009cefd0	009d0797	FUN_009cfd80@009cfd80
+native	$void@Browser::LoadHTMLString(string)	Browser::LoadHTMLString	00609650	00605bfe	FUN_00605540@00605540
+native	$int@Permit::GetState()	Permit::GetState	0060cf20	0060d208	FUN_0060d1c0@0060d1c0
+native	$void@Vehicle::SetHandBrake(bool)	Vehicle::SetHandBrake	00582360	0058580a	FUN_005840e0@005840e0
+native	$void@Vehicle::SetIsDitchFlashing(bool)	Vehicle::SetIsDitchFlashing	00583d40	00588aa0	FUN_005840e0@005840e0
+native	$void@MapObject::SetPFXEmitterMaxRate(int,float)	MapObject::SetPFXEmitterMaxRate	006b3800	006b52f6	FUN_006b3ce0@006b3ce0
+native	$void@HTMLBuffer::Print(string)	HTMLBuffer::Print	0099cbc0	0099d334	FUN_0099cfc0@0099cfc0
+native	$void@ProductFilter::AddProduct(Asset)	ProductFilter::AddProduct	0061fb80	00620ed9	FUN_00620a60@00620a60
+native	$int@World::GetWeatherChangeability()	World::GetWeatherChangeability	0068ae60	0068ecd1	FUN_0068cb90@0068cb90
+native	$void@GameplayMenuBase::EndAssetRestriction()	GameplayMenuBase::EndAssetRestriction	0092cec0	00930d7c	FUN_0092fdd0@0092fdd0
+native	$Soup@Asset::GetConfigSoup()	Asset::GetConfigSoup	009cf080	009d067b	FUN_009cfd80@009cfd80
+native	$bool@MultiplayerGame::IsLoadingClient(string)	MultiplayerGame::IsLoadingClient	00917080	00917f35	FUN_009179a0@009179a0
+callback	$Soup@ScenarioBehavior::GetSessionProperties()	ScenarioBehavior::GetSessionProperties		00980523	FUN_009803e0@009803e0
+native	$string@Library::LibraryCallNative(string,string[],GSObject[])	Library::LibraryCallNative	0091e200	0091fc54	FUN_0091fb00@0091fb00
+native	$void@Interface::AddFloatingDriverMessage(string)	Interface::AddFloatingDriverMessage	00694dc0	006922db	FUN_0068cb90@0068cb90
+native	$bool@JunctionBase::DoesAllowPermitControl()	JunctionBase::DoesAllowPermitControl	008ffcc0	00901d6c	FUN_009016b0@009016b0
+native	$int@OnlineAccess::CollectOfflineMessage(Soup)	OnlineAccess::CollectOfflineMessage	0091b320	0091d57f	FUN_0091c930@0091c930
+native	$bool@Vehicle::GetHighBeams()	Vehicle::GetHighBeams	00583d20	00588995	FUN_005840e0@005840e0
+native	$string@HTMLBuffer::AsString()	HTMLBuffer::AsString	0099cd20	0099d227	FUN_0099cfc0@0099cfc0
+native	$int@World::GetWeatherType()	World::GetWeatherType	0068ad40	0068ebb2	FUN_0068cb90@0068cb90
+native	$void@Browser::LoadHTMLFile(Asset,string)	Browser::LoadHTMLFile	00609400	00605ae1	FUN_00605540@00605540
+native	$void@Train::SetHighbeamState(bool)	Train::SetHighbeamState	0059d490	005a101b	FUN_0059da10@0059da10
+native	$bool@GameplayMenuBase::DoesSessionContainUnofficialAssets()	GameplayMenuBase::DoesSessionContainUnofficialAssets	0092e150	00930faa	FUN_0092fdd0@0092fdd0
+native	$float@MultiplayerGame::GetClientLoadProgress(string)	MultiplayerGame::GetClientLoadProgress	00916f60	0091816d	FUN_009179a0@009179a0
+native	$void@World::SetCameraAngle(float,float,float)	World::SetCameraAngle	0068a730	0068eeff	FUN_0068cb90@0068cb90
+native	$bool@Train::HasPantographs()	Train::HasPantographs	0059d530	005a1348	FUN_0059da10@0059da10
+native	$void@ProductFilter::AddProductCategory(Asset)	ProductFilter::AddProductCategory	0061fdd0	00621111	FUN_00620a60@00620a60
+native	$Permit@JunctionBase::RequestPermit(GameObject,int)	JunctionBase::RequestPermit	00900e20	00901fa8	FUN_009016b0@009016b0
+native	$void@Browser::LoadHTMLString(Asset,string)	Browser::LoadHTMLString	006097d0	00605d1d	FUN_00605540@00605540
+native	$void@Vehicle::SetDecouplingMask(int)	Vehicle::SetDecouplingMask	005817a0	00585a46	FUN_005840e0@005840e0
+callback	$void@DriverCommand::AddCommandMenuItem(DriverCharacter,Menu)	DriverCommand::AddCommandMenuItem		005b0d28	FUN_005b0c10@005b0c10
+callback	$float@Achievements::GetAchievementProgress(KUID,string)	Achievements::GetAchievementProgress		005c5d99	FUN_005c5b2d@005c5b2d
+callback	$float@Achievements::GetAchievementProgress(KUID,string)	Achievements::GetAchievementProgress		005c617a	FUN_005c5eb0@005c5eb0
+callback	$void@Cabin::UserSetControl(CabinControl,float)	Cabin::UserSetControl		0074688f	FUN_00746810@00746810
+native	$HTMLBuffer@HTMLBufferStatic::Construct()	HTMLBufferStatic::Construct	0099cf00	0099d565	FUN_0099cfc0@0099cfc0
+native	$void@Vehicle::RepairCoupler(bool)	Vehicle::RepairCoupler	00583dd0	00588ccf	FUN_005840e0@005840e0
+native	$void@DriverCharacter::IssueNextCommand()	DriverCharacter::IssueNextCommand	005b60d0	005b7188	FUN_005b7030@005b7030
+native	$void@ProductFilter::RemoveProduct(Asset)	ProductFilter::RemoveProduct	0061fca0	00620ff5	FUN_00620a60@00620a60
+native	$void@Train::SetPantographState(int)	Train::SetPantographState	0059d4f0	005a1233	FUN_0059da10@0059da10
+native	$void@World::SetWeather(int,int)	World::SetWeather	0068ad10	0068edee	FUN_0068cb90@0068cb90
+native	$void@Interface::SetMetricMode(bool)	Interface::SetMetricMode	00694e80	00692506	FUN_0068cb90@0068cb90
+native	$bool@Permit::IsForSameObjectAs(Permit)	Permit::IsForSameObjectAs	0060d070	0060d427	FUN_0060d1c0@0060d1c0
+native	$void@MapObject::SetPFXEmitterConeSize(int,float,float,float)	MapObject::SetPFXEmitterConeSize	006b3850	006b5415	FUN_006b3ce0@006b3ce0
+native	$bool@Asset::SupportsTrainzBuildVersion(float)	Asset::SupportsTrainzBuildVersion	009cef50	009d08b3	FUN_009cfd80@009cfd80
+native	$void@Library::AddSystemMenuIcon(Asset,string,string)	Library::AddSystemMenuIcon	0091e0b0	0091fd5f	FUN_0091fb00@0091fb00
+native	$void@Permit::Release()	Permit::Release	0060cf40	0060d31c	FUN_0060d1c0@0060d1c0
+native	$bool@GameplayMenuBase::IsAssetRestrictionBusy()	GameplayMenuBase::IsAssetRestrictionBusy	0092cd60	00930e9b	FUN_0092fdd0@0092fdd0
+native	$void@DriverCharacter::ReissueLastCommand()	DriverCharacter::ReissueLastCommand	005b6060	005b707c	FUN_005b7030@005b7030
+native	$float@MultiplayerGame::GetClientLoadProgress()	MultiplayerGame::GetClientLoadProgress	00917040	00918051	FUN_009179a0@009179a0
+callback	$void@Vehicle::NotifyTrainChanged(Train,Train)	Vehicle::NotifyTrainChanged		00578896	FUN_005786e0@005786e0
+native	$void@Vehicle::SetCouplingMask(int)	Vehicle::SetCouplingMask	00581730	00585929	FUN_005840e0@005840e0
+callback	$void@DriverCommand::Init(Asset)	DriverCommand::Init		005b0a0d	FUN_005b0820@005b0820
+native	$void@HTMLBuffer::Escape(string)	HTMLBuffer::Escape	0099cc60	0099d444	FUN_0099cfc0@0099cfc0
+native	$bool@Vehicle::GetIsDitchFlashing()	Vehicle::GetIsDitchFlashing	00583db0	00588bb2	FUN_005840e0@005840e0
+callback	$string@PropertyObject::GetPropertyValue(string)	PropertyObject::GetPropertyValue		009a0e27	FUN_009a0d90@009a0d90
+native	$string@BrowserInterface::MaskProfanity(string)	BrowserInterface::MaskProfanity	006088b0	006058b0	FUN_00605540@00605540
+callback	$string@PropertyObject::LibraryCall(string,string[],GSObject[])	PropertyObject::LibraryCall		0091ec16	FUN_0091e9b0@0091e9b0
+native	$void@ProductFilter::AppendFilter(ProductFilter)	ProductFilter::AppendFilter	0061f4a0	00620cc0	FUN_00620a60@00620a60
+native	$OnlineGroup@OnlineAccess::OpenGroup(string,int)	OnlineAccess::OpenGroup	0091c020	0091d343	FUN_0091c930@0091c930
+native	$void@Train::SetDitchlightState(bool)	Train::SetDitchlightState	0059d3d0	005a0cdb	FUN_0059da10@0059da10
+native	$int@World::GetGameDate()	World::GetGameDate	0068ab90	0068e859	FUN_0068cb90@0068cb90
+native	$bool@JunctionBase::GetManualControl()	JunctionBase::GetManualControl	008ffcf0	00901b30	FUN_009016b0@009016b0
+native	$KUID@Asset::LookupKUIDTable(string)	Asset::LookupKUIDTable	009cf2f0	009d0319	FUN_009cfd80@009cfd80
+native	$void@Vehicle::SetHeadlightColor(float,float,float)	Vehicle::SetHeadlightColor	00583bf0	00588776	FUN_005840e0@005840e0
+native	$Track[]@SceneryWithTrack::GetAttachedTracks()	SceneryWithTrack::GetAttachedTracks	006dd740	006de204	FUN_006dd910@006dd910
+native	$Soup@GameplayMenuBase::GetSavedSessionInfo()	GameplayMenuBase::GetSavedSessionInfo	0092d050	00930b40	FUN_0092fdd0@0092fdd0
+callback	$string@PropertyObject::GetPropertyDescription(string)	PropertyObject::GetPropertyDescription		009a1017	FUN_009a0f80@009a0f80
+native	$void@Interface::SetTooltip(Browser)	Interface::SetTooltip	00694b10	00692097	FUN_0068cb90@0068cb90
+native	$void@MultiplayerGame::End(SecurityToken)	MultiplayerGame::End	00917660	00917c00	FUN_009179a0@009179a0
+native	$float@MapObject::GetPFXEmitterMinRate(int)	MapObject::GetPFXEmitterMinRate	006b3710	006b4fce	FUN_006b3ce0@006b3ce0
+native	$void@DLCStore::SubmitPurchase(SecurityToken,GSObject,string)	DLCStore::SubmitPurchase	009cd060	009cd789	FUN_009cd310@009cd310
+native	$void@Vehicle::SetPitchBasedOnTrack(bool)	Vehicle::SetPitchBasedOnTrack	00582250	005854d0	FUN_005840e0@005840e0
+callback	$void@DriverCharacter::SetTrain(Train,bool)	DriverCharacter::SetTrain		005b5ed5	FUN_005b5e10@005b5e10
+native	$bool@Asset::IsCreatedByLocalUser()	Asset::IsCreatedByLocalUser	009cf480	009d01fd	FUN_009cfd80@009cfd80
+native	$void@ProductFilter::CopyFilter(ProductFilter)	ProductFilter::CopyFilter	0061f450	00620bb6	FUN_00620a60@00620a60
+native	$Bogey[]@Vehicle::GetBogeyList()	Vehicle::GetBogeyList	00583ae0	00588665	FUN_005840e0@005840e0
+native	$bool@Train::HasLights()	Train::HasLights	0059d320	005a0bbc	FUN_0059da10@0059da10
+native	$int@World::GetGameMonth()	World::GetGameMonth	0068ab30	0068e73a	FUN_0068cb90@0068cb90
+native	$string@BrowserInterface::Quote(string)	BrowserInterface::Quote	006085f0	006057a6	FUN_00605540@00605540
+native	$OnlineAccess@Library::GetOnlineAccess()	Library::GetOnlineAccess	0091f810	0091fb48	FUN_0091fb00@0091fb00
+native	$void@Vehicle::SetRollBasedOnTrack(float)	Vehicle::SetRollBasedOnTrack	00582290	005856ed	FUN_005840e0@005840e0
+native	$float@MapObject::GetPFXEmitterMaxRate(int)	MapObject::GetPFXEmitterMaxRate	006b37b0	006b51e6	FUN_006b3ce0@006b3ce0
+native	$void@Browser::SetParam(int,string)	Browser::SetParam	00609340	006059bf	FUN_00605540@00605540
+native	$void@World::SetGameTimeRate(int)	World::SetGameTimeRate	0068acb0	0068ea95	FUN_0068cb90@0068cb90
+native	$ProductFilter@ProductFilter::IntersectFilter(ProductFilter)	ProductFilter::IntersectFilter	0061f640	00620dca	FUN_00620a60@00620a60
+native	$bool@MultiplayerGame::IsLoadingClient()	MultiplayerGame::IsLoadingClient	00917160	00917e19	FUN_009179a0@009179a0
+native	$StringTable@Asset::GetStringTable()	Asset::GetStringTable	009cfc70	009d055f	FUN_009cfd80@009cfd80
+native	$bool@HTMLBuffer::IsEmpty()	HTMLBuffer::IsEmpty	0099cba0	0099d11c	FUN_0099cfc0@0099cfc0
+native	$bool@Train::HasDitchlight()	Train::HasDitchlight	0059d410	005a0f09	FUN_0059da10@0059da10
+native	$int@OnlineAccess::PostOfflineMessage(Soup)	OnlineAccess::PostOfflineMessage	0091b970	0091d460	FUN_0091c930@0091c930
+native	$void@SceneryWithTrack::NotifyTrackGraphObservers()	SceneryWithTrack::NotifyTrackGraphObservers	006dd8d0	006de323	FUN_006dd910@006dd910
+native	$void@DLCStore::RedownloadAllPurchases(SecurityToken,GSObject)	DLCStore::RedownloadAllPurchases	009cd230	009cd8a5	FUN_009cd310@009cd310
+native	$void@GameplayMenuBase::BeginAssetRestriction(KUID)	GameplayMenuBase::BeginAssetRestriction	0092cf70	00930c5f	FUN_0092fdd0@0092fdd0
+native	$void@Vehicle::SetHighBeams(bool)	Vehicle::SetHighBeams	00583cb0	00588888	FUN_005840e0@005840e0
+native	$void@World::SetGameDate(int,int,int)	World::SetGameDate	0068abf0	0068e976	FUN_0068cb90@0068cb90
+native	$void@Interface::ShowHelpPopup(string,Asset,string,float,float)	Interface::ShowHelpPopup	00694b80	006921b9	FUN_0068cb90@0068cb90
+native	$void@HTMLBuffer::Clear()	HTMLBuffer::Clear	0099cdd0	0099d008	FUN_0099cfc0@0099cfc0
+native	$bool@MultiplayerGame::IsActive()	MultiplayerGame::IsActive	00916e40	00917d0a	FUN_009179a0@009179a0
+native	$void@MapObject::SetPFXEmitterMinRate(int,float)	MapObject::SetPFXEmitterMinRate	006b3760	006b50d9	FUN_006b3ce0@006b3ce0
+native	$void@Vehicle::SetPitchBasedOnSpeed(float)	Vehicle::SetPitchBasedOnSpeed	00582270	005855db	FUN_005840e0@005840e0
+native	$bool@Train::GetDitchlightState()	Train::GetDitchlightState	0059d3b0	005a0df8	FUN_0059da10@0059da10
+callback	$bool@DriverCharacter::IsRunningCommand()	DriverCharacter::IsRunningCommand		005b5f32	FUN_005b5ef0@005b5ef0
+native	$void@JunctionBase::SetAllowsPermitControl(bool)	JunctionBase::SetAllowsPermitControl	00901080	00901c4f	FUN_009016b0@009016b0
+native	$Asset@Asset::FindAsset(string)	Asset::FindAsset	009cf150	009d043b	FUN_009cfd80@009cfd80
+native	$MapObject@JunctionBase::GetMapObject()	JunctionBase::GetMapObject	008fffa0	00902420	FUN_009016b0@009016b0
+native	$float@Buildable::GetBuildingProgress()	Buildable::GetBuildingProgress	006cd8d0	006ccfb4	FUN_006cce60@006cce60
+native	$Asset@Asset::GetParent()	Asset::GetParent	009ceda0	009d0f53	FUN_009cfd80@009cfd80
+native	$int@Crossing::GetCrossingState()	Crossing::GetCrossingState	00515ff0	0051623c	FUN_005160e0@005160e0
+native	$void@Interface::SetDecoupleMode(bool)	Interface::SetDecoupleMode	00695140	00692b99	FUN_0068cb90@0068cb90
+native	$bool@TrainzScriptBase::IsGamePaused()	TrainzScriptBase::IsGamePaused	00908f30	0090afc8	FUN_0090ae70@0090ae70
+native	$Vehicle[]@Train::GetVehicles()	Train::GetVehicles	0059c5c0	0059da68	FUN_0059da10@0059da10
+native	$void@Image::Resize(int,int,bool)	Image::Resize	00921290	00921b0a	FUN_009219b0@009219b0
+native	$void@Library::ShowSystemMenuIconMenu(Menu)	Library::ShowSystemMenuIconMenu	0091dcc0	009201b8	FUN_0091fb00@0091fb00
+native	$void@GameObject::SendMessage(GameObject,string,string)	GameObject::SendMessage	007a7db0	007b1c7e	FUN_007b19d0@007b19d0
+native	$int@Vehicle::GetRelationToTrack(Buildable,string)	Vehicle::GetRelationToTrack	00583110	005860fa	FUN_005840e0@005840e0
+native	$string@Soup::GetIndexedTagName(int)	Soup::GetIndexedTagName	009992e0	0099a89d	FUN_0099a420@0099a420
+native	$bool@Train::GetBellState()	Train::GetBellState	0059d6c0	005a19fc	FUN_0059da10@0059da10
+native	$float@World::GetCameraPositionY()	World::GetCameraPositionY	0068a860	0068f458	FUN_0068cb90@0068cb90
+native	$void@GameplayMenuBase::RevertSessionModifiedAssets()	GameplayMenuBase::RevertSessionModifiedAssets	0092ea90	009312d6	FUN_0092fdd0@0092fdd0
+native	$bool@Vehicle::GetAutomaticFiremanState()	Vehicle::GetAutomaticFiremanState	00583f70	00589147	FUN_005840e0@005840e0
+native	$bool@ProductFilter::DoesAcceptProductCategory(Asset)	ProductFilter::DoesAcceptProductCategory	00620140	00621465	FUN_00620a60@00620a60
+native	$bool@Train::HasBell()	Train::HasBell	0059d720	005a18dd	FUN_0059da10@0059da10
+native	$bool@Interface::GetMapView()	Interface::GetMapView	00695100	00692a7c	FUN_0068cb90@0068cb90
+native	$void@Browser::SetWindowPriority(int)	Browser::SetWindowPriority	0060a170	006062b2	FUN_00605540@00605540
+native	$int@JunctionBase::GetDirectionToTrain(Train)	JunctionBase::GetDirectionToTrain	00900720	00902303	FUN_009016b0@009016b0
+native	$Soup@Soup::GetNamedSoupAdd(string)	Soup::GetNamedSoupAdd	00999f30	0099a78e	FUN_0099a420@0099a420
+native	$int@Vehicle::GetEngineType()	Vehicle::GetEngineType	00582e40	00585fdd	FUN_005840e0@005840e0
+native	$string@GSObject::GetGSClassName()	GSObject::GetGSClassName	007a7330	007b1b79	FUN_007b19d0@007b19d0
+native	$float@World::GetCameraPositionX()	World::GetCameraPositionX	0068a800	0068f33b	FUN_0068cb90@0068cb90
+native	$float@MapObject::GetPFXEmitterPhysicsDelay(int,int)	MapObject::GetPFXEmitterPhysicsDelay	006b39b0	006b576e	FUN_006b3ce0@006b3ce0
+native	$void@MeshObject::SetMeshAnimationFrame(string,float)	MeshObject::SetMeshAnimationFrame	006bed40	006c0523	FUN_006c02c0@006c02c0
+native	$int@Buildable::GetBuildingState()	Buildable::GetBuildingState	006cd8b0	006ccea8	FUN_006cce60@006cce60
+native	$void@Asset::SetIsFavorite(bool)	Asset::SetIsFavorite	009cdc50	009d0e3f	FUN_009cfd80@009cfd80
+native	$void@Crossing::SetCrossingState(int)	Crossing::SetCrossingState	00515fb0	00516128	FUN_005160e0@005160e0
+native	$Asset[]@ProductFilter::GetProductCategories()	ProductFilter::GetProductCategories	00620400	0062169d	FUN_00620a60@00620a60
+native	$ScenarioBehavior@World::CreateBehavior(KUID,Soup)	World::CreateBehavior	0068b420	0068f694	FUN_0068cb90@0068cb90
+native	$void@Browser::SetWindowRect(int,int,int,int)	Browser::SetWindowRect	0060a650	006064ee	FUN_00605540@00605540
+native	$void@Image::SetLineColor(float,float,float,float)	Image::SetLineColor	00921000	00921e2d	FUN_009219b0@009219b0
+native	$void@Library::PlaySoundScriptEvent(string)	Library::PlaySoundScriptEvent	0091fa10	009203f4	FUN_0091fb00@0091fb00
+native	$KUID@Soup::GetNamedTagAsKUID(string)	Soup::GetNamedTagAsKUID	0099a2f0	0099aadb	FUN_0099a420@0099a420
+native	$void@Str::TrimLeft(string,string)	Str::TrimLeft	007b9cc0	007ba548	FUN_007ba500@007ba500
+native	$void@MapObject::SetMapObjectPosition(WorldCoordinate)	MapObject::SetMapObjectPosition	006b3aa0	006b59aa	FUN_006b3ce0@006b3ce0
+native	$float@MeshObject::GetMeshAnimationFrame(string)	MeshObject::GetMeshAnimationFrame	006beea0	006c0740	FUN_006c02c0@006c02c0
+native	$string@DLCInfo::GetProductID()	DLCInfo::GetProductID	009cb710	009cb868	FUN_009cb820@009cb820
+native	$int@Train::GetAutopilotMode()	Train::GetAutopilotMode	0059c770	0059dc7f	FUN_0059da10@0059da10
+native	$bool@DriverCharacter::NavigateToVehicle(Vehicle)	DriverCharacter::NavigateToVehicle	005b63a0	005b76ec	FUN_005b7030@005b7030
+native	$bool@Interface::GetDecoupleMode()	Interface::GetDecoupleMode	00695180	00692cb8	FUN_0068cb90@0068cb90
+native	$float@TrainzScriptBase::GetSeconds()	TrainzScriptBase::GetSeconds	00908f10	0090b0d3	FUN_0090ae70@0090ae70
+native	$void@GameplayMenuBase::DownloadSessionMissingAssets()	GameplayMenuBase::DownloadSessionMissingAssets	0092e8f0	009313e6	FUN_0092fdd0@0092fdd0
+callback	$void@TrainzGameObject::Init(Asset)	TrainzGameObject::Init		0090e58b	FUN_0090e4e0@0090e4e0
+native	$int@Turntable::GetStopPosition()	Turntable::GetStopPosition	00521290	0052154c	FUN_005213f0@005213f0
+native	$void@GameObject::SendMessage(GameObject,string,string,GSObject)	GameObject::SendMessage	007a7f50	007b1d83	FUN_007b19d0@007b19d0
+native	$string@Asset::GetCategoryRegion()	Asset::GetCategoryRegion	009cec20	009d117e	FUN_009cfd80@009cfd80
+native	$float@World::GetCameraPositionZ()	World::GetCameraPositionZ	0068a8c0	0068f577	FUN_0068cb90@0068cb90
+native	$int@Soup::GetIndexForNamedTag(string)	Soup::GetIndexForNamedTag	00998e00	0099a9b9	FUN_0099a420@0099a420
+native	$Permit@Track::RequestPermitForTrain(Train)	Track::RequestPermitForTrain	005e6c30	005e7158	FUN_005e7110@005e7110
+callback	$void@PropertyObject::LinkPropertyValue(string)	PropertyObject::LinkPropertyValue		009a26dc	FUN_009a2520@009a2520
+callback	$void@PropertyObject::LinkPropertyValue(string)	PropertyObject::LinkPropertyValue		009a2667	FUN_009a2520@009a2520
+native	$GameObject@JunctionBase::GetGameObject()	JunctionBase::GetGameObject	008fff80	0090253f	FUN_009016b0@009016b0
+native	$void@Buildable::SetBuildingState(int)	Buildable::SetBuildingState	006cd8f0	006cd0bf	FUN_006cce60@006cce60
+native	$void@Crossing::SetCrossingAutomatic(bool)	Crossing::SetCrossingAutomatic	00516010	00516347	FUN_005160e0@005160e0
+native	$bool@Vehicle::GetDirectionRelativeToTrain()	Vehicle::GetDirectionRelativeToTrain	005832f0	00586219	FUN_005840e0@005840e0
+native	$float@Vehicle::GetEngineParam(string)	Vehicle::GetEngineParam	00582380	00589266	FUN_005840e0@005840e0
+native	$void@Train::SetAutopilotMode(int)	Train::SetAutopilotMode	0059c730	0059db74	FUN_0059da10@0059da10
+native	$int@Image::GetHeight()	Image::GetHeight	00920ca0	00921d1e	FUN_009219b0@009219b0
+native	$MapObject[]@Train::TrackSearch(bool,float)	Train::TrackSearch	0059bd40	005a1c38	FUN_0059da10@0059da10
+native	$void@MapObject::SetPFXEmitterPhysicsDelay(int,int,float)	MapObject::SetPFXEmitterPhysicsDelay	006b3a30	006b588d	FUN_006b3ce0@006b3ce0
+native	$void@MeshObject::SetMeshAnimationFrame(string,float,float)	MeshObject::SetMeshAnimationFrame	006bedf0	006c0630	FUN_006c02c0@006c02c0
+native	$bool@DriverCharacter::NavigateToIndustry(Industry,string)	DriverCharacter::NavigateToIndustry	005b6220	005b75cf	FUN_005b7030@005b7030
+native	$void@Browser::SetButtonOverlayStyle(int,int)	Browser::SetButtonOverlayStyle	0060a1c0	006063d1	FUN_00605540@00605540
+native	$int@Image::GetWidth()	Image::GetWidth	00920cd0	00921c14	FUN_009219b0@009219b0
+native	$void@Train::SetBail()	Train::SetBail	0059d780	005a1b19	FUN_0059da10@0059da10
+native	$Asset[]@ProductFilter::GetProducts()	ProductFilter::GetProducts	00620270	00621581	FUN_00620a60@00620a60
+native	$void@MultiplayerGame::SendGameplayMessageToServer(string,string,Soup)	MultiplayerGame::SendGameplayMessageToServer	00917350	009185dd	FUN_009179a0@009179a0
+native	$bool@Turntable::IsMoving()	Turntable::IsMoving	00521250	00521438	FUN_005213f0@005213f0
+native	$string@Asset::GetCategoryEra()	Asset::GetCategoryEra	009cece0	009d106c	FUN_009cfd80@009cfd80
+native	$void@Library::HideSystemMenuIconMenu()	Library::HideSystemMenuIconMenu	0091dca0	009202d7	FUN_0091fb00@0091fb00
+native	$bool@Vehicle::IsInTunnel()	Vehicle::IsInTunnel	00582d10	00585c82	FUN_005840e0@005840e0
+native	$bool@GameplayMenuBase::DoesSessionContainModifiedAssets()	GameplayMenuBase::DoesSessionContainModifiedAssets	0092e020	009310be	FUN_0092fdd0@0092fdd0
+native	$void@CarSignal::SetCarSignalState(int)	CarSignal::SetCarSignalState	008fdca0	008fdda8	FUN_008fdd60@008fdd60
+native	$string@Soup::GetNamedTag(string)	Soup::GetNamedTag	00999370	0099a57a	FUN_0099a420@0099a420
+native	$void@Train::SoundHorn()	Train::SoundHorn	0059d5a0	005a1584	FUN_0059da10@0059da10
+callback	$string@Achievements::GetAchievementDisplayName(KUID,string)	Achievements::GetAchievementDisplayName		005c6342	FUN_005c5eb0@005c5eb0
+native	$float@World::GetCameraYaw()	World::GetCameraYaw	0068a770	0068f011	FUN_0068cb90@0068cb90
+native	$void@Interface::WarnObsolete(string)	Interface::WarnObsolete	00694ed0	00692726	FUN_0068cb90@0068cb90
+native	$void@Browser::SetCloseEnabled(bool)	Browser::SetCloseEnabled	00609d20	00605f59	FUN_00605540@00605540
+callback	$DriverScheduleCommand@DriverCommand::CreateScheduleCommand(DriverCharacter,Soup)	DriverCommand::CreateScheduleCommand		005b0ea4	FUN_005b0d90@005b0d90
+native	$bool@MeshObject::HasMesh(string)	MeshObject::HasMesh	006bebc0	006c030c	FUN_006c02c0@006c02c0
+native	$object@Permit::GetObjectBase()	Permit::GetObjectBase	0060d110	0060d644	FUN_0060d1c0@0060d1c0
+native	$bool@Asset::IsLocallyModified()	Asset::IsLocallyModified	009cf820	009d0aeb	FUN_009cfd80@009cfd80
+native	$void@ProductFilter::RemoveProductCategory(Asset)	ProductFilter::RemoveProductCategory	0061fef0	0062122d	FUN_00620a60@00620a60
+native	$bool@MultiplayerGame::IsClient()	MultiplayerGame::IsClient	00916e10	00918289	FUN_009179a0@009179a0
+callback	$void@CarSignal::UpdateSignalGraphics()	CarSignal::UpdateSignalGraphics		008fdc50	FUN_008fdc10@008fdc10
+native	$bool@Vehicle::Couple(Vehicle)	Vehicle::Couple	00581810	00585b65	FUN_005840e0@005840e0
+native	$void@Vehicle::SetProductRestrictionFilter(ProductFilter)	Vehicle::SetProductRestrictionFilter	00583e40	00588dee	FUN_005840e0@005840e0
+native	$Permit@JunctionBase::RequestTrackPermit(GameObject,int)	JunctionBase::RequestTrackPermit	00901600	009020c7	FUN_009016b0@009016b0
+native	$void@Library::AddSystemMenuIcon(Asset,string,string,bool)	Library::AddSystemMenuIcon	0091df50	0091fe6c	FUN_0091fb00@0091fb00
+native	$int@Train::GetPantographState()	Train::GetPantographState	0059d4d0	005a1465	FUN_0059da10@0059da10
+native	$void@DriverCharacter::SetLocation(GameObject)	DriverCharacter::SetLocation	005b6150	005b7293	FUN_005b7030@005b7030
+callback	$void@PropertyObject::SetProperties(Soup)	PropertyObject::SetProperties		0044fdc0	FUN_0044fd40@0044fd40
+callback	$void@PropertyObject::SetProperties(Soup)	PropertyObject::SetProperties		0091f142	FUN_0091f080@0091f080
+callback	$void@PropertyObject::SetProperties(Soup)	PropertyObject::SetProperties		0090d2b3	FUN_0090d200@0090d200
+callback	$void@PropertyObject::SetProperties(Soup)	PropertyObject::SetProperties		0098075a	FUN_00980640@00980640
+callback	$Asset@ResourceRequirement::GetResource()	ResourceRequirement::GetResource		00687dfd	FUN_00687cd0@00687cd0
+native	$void@MapObject::SetPFXEmitterTexture(int,KUID)	MapObject::SetPFXEmitterTexture	006b38c0	006b5532	FUN_006b3ce0@006b3ce0
+callback	$void@Cabin::UserPressKey(string)	Cabin::UserPressKey		00746962	FUN_007468c0@007468c0
+native	$int@Soup::CountTags()	Soup::CountTags	00998cb0	0099a46c	FUN_0099a420@0099a420
+native	$void@Interface::EnableMessageBar(bool)	Interface::EnableMessageBar	0068b2a0	00692616	FUN_0068cb90@0068cb90
+native	$bool@Permit::HasSamePermissionsAs(Permit)	Permit::HasSamePermissionsAs	0060d0b0	0060d534	FUN_0060d1c0@0060d1c0
+native	$Asset@Browser::GetAsset()	Browser::GetAsset	00608f30	00605e3a	FUN_00605540@00605540
+native	$Image@Asset::LoadImage(string)	Asset::LoadImage	009cf850	009d09cf	FUN_009cfd80@009cfd80
+native	$bool@GameplayMenuBase::DoesSessionContainMissingAssets()	GameplayMenuBase::DoesSessionContainMissingAssets	0092df00	009311c9	FUN_0092fdd0@0092fdd0
+native	$void@Train::SetBellState(bool)	Train::SetBellState	0059d6e0	005a17c0	FUN_0059da10@0059da10
+callback	$int@ResourceRequirement::GetAmount()	ResourceRequirement::GetAmount		00687fe2	FUN_00687cd0@00687cd0
+native	$void@Interface::SetMapView(bool)	Interface::SetMapView	006950c0	0069295d	FUN_0068cb90@0068cb90
+native	$void@Browser::SetWindowStyle(int)	Browser::SetWindowStyle	00609d90	00606195	FUN_00605540@00605540
+native	$void@Library::RemoveSystemMenuIcon()	Library::RemoveSystemMenuIcon	0091dce0	0092009b	FUN_0091fb00@0091fb00
+native	$void@MultiplayerGame::SendGameplayMessageToClient(string,string,string,Soup)	MultiplayerGame::SendGameplayMessageToClient	00917460	009184c1	FUN_009179a0@009179a0
+native	$void@DriverCharacter::AddDriverScheduleCommand(DriverScheduleCommand)	DriverCharacter::AddDriverScheduleCommand	005b61e0	005b74b0	FUN_005b7030@005b7030
+native	$void@Image::Clear(int,int)	Image::Clear	00921060	009219fc	FUN_009219b0@009219b0
+native	$void@Vehicle::SetAutomaticFiremanState(bool)	Vehicle::SetAutomaticFiremanState	00583f90	0058902a	FUN_005840e0@005840e0
+callback	$void@Cabin::Update()	Cabin::Update		00746cdd	FUN_00746cb0@00746cb0
+callback	$void@Cabin::Update()	Cabin::Update		00746cf8	FUN_00746cb0@00746cb0
+native	$bool@ProductFilter::DoesAcceptProduct(Asset)	ProductFilter::DoesAcceptProduct	00620020	00621349	FUN_00620a60@00620a60
+native	$Soup@Soup::GetNamedSoup(string)	Soup::GetNamedSoup	0099a100	0099a684	FUN_0099a420@0099a420
+native	$float@World::GetCameraZoom()	World::GetCameraZoom	0068a7d0	0068f229	FUN_0068cb90@0068cb90
+native	$bool@Vehicle::IsDerailed()	Vehicle::IsDerailed	00582e10	00585ebe	FUN_005840e0@005840e0
+native	$int@CarSignal::GetCarSignalState()	CarSignal::GetCarSignalState	008fdaf0	008fdeb6	FUN_008fdd60@008fdd60
+native	$bool@Asset::GetIsFavorite()	Asset::GetIsFavorite	009cee20	009d0d23	FUN_009cfd80@009cfd80
+native	$void@TrainzScriptBase::SetGamePaused(GameObject,bool)	TrainzScriptBase::SetGamePaused	00909170	0090aebc	FUN_0090ae70@0090ae70
+native	$void@Interface::Exception(string)	Interface::Exception	00694f80	0069283b	FUN_0068cb90@0068cb90
+native	$bool@JunctionBase::SwitchForTrain(Train,int)	JunctionBase::SwitchForTrain	009007a0	009021e4	FUN_009016b0@009016b0
+native	$void@MeshObject::SetMeshAnimationState(string,bool)	MeshObject::SetMeshAnimationState	006bec90	006c0418	FUN_006c02c0@006c02c0
+native	$void@Browser::SetScrollEnabled(bool)	Browser::SetScrollEnabled	00609d60	00606076	FUN_00605540@00605540
+native	$string@Asset::GetInfoURL()	Asset::GetInfoURL	009cee90	009d0c07	FUN_009cfd80@009cfd80
+native	$void@Library::BlinkSystemMenuIcon(int)	Library::BlinkSystemMenuIcon	0091dd90	0091ff7c	FUN_0091fb00@0091fb00
+native	$bool@MultiplayerGame::IsServer()	MultiplayerGame::IsServer	00916de0	009183a5	FUN_009179a0@009179a0
+native	$bool@Train::HasHorn()	Train::HasHorn	0059d5b0	005a16a1	FUN_0059da10@0059da10
+callback	$void@Cabin::Attach(GameObject)	Cabin::Attach		00746c98	FUN_00746c20@00746c20
+callback	$GameObject@ResourceRequirement::GetDst()	ResourceRequirement::GetDst		00687f5f	FUN_00687cd0@00687cd0
+native	$float@World::GetCameraPitch()	World::GetCameraPitch	0068a7a0	0068f11e	FUN_0068cb90@0068cb90
+native	$GameObject@DriverCharacter::GetLocation()	DriverCharacter::GetLocation	005b61a0	005b73a0	FUN_005b7030@005b7030
+native	$void@MapObject::SetPFXEmitterEmitParticles(int,int,float)	MapObject::SetPFXEmitterEmitParticles	006b3950	006b5651	FUN_006b3ce0@006b3ce0
+native	$void@Permit::SetOwnerObject(GameObject)	Permit::SetOwnerObject	0060d150	0060d763	FUN_0060d1c0@0060d1c0
+native	$bool@Vehicle::IsOnBridge()	Vehicle::IsOnBridge	00582d90	00585da1	FUN_005840e0@005840e0
+native	$ProductFilter@Vehicle::GetProductRestriction()	Vehicle::GetProductRestriction	00583f30	00588f0b	FUN_005840e0@005840e0
+native	$int@Browser::GetWindowLeft()	Browser::GetWindowLeft	0060a830	00606a53	FUN_00605540@00605540
+native	$int@TrainzScriptBase::GetSystemHour()	TrainzScriptBase::GetSystemHour	00908d50	0090b64b	FUN_0090ae70@0090ae70
+native	$bool@Interface::GetDriverOrderBarVisible()	Interface::GetDriverOrderBarVisible	00695290	0069324d	FUN_0068cb90@0068cb90
+native	$GSTrackSearch@Track::BeginTrackSearch(bool)	Track::BeginTrackSearch	005e6e50	005e76b3	FUN_005e7110@005e7110
+native	$string@DLCInfo::GetThumbnailPath()	DLCInfo::GetThumbnailPath	009cb5b0	009cbdb5	FUN_009cb820@009cb820
+native	$void@Vehicle::SetTripMeterDistance(float)	Vehicle::SetTripMeterDistance	0058a340	0058990c	FUN_005840e0@005840e0
+native	$void@Train::SetAutopilotTarget(Track)	Train::SetAutopilotTarget	0059c2c0	005a21b4	FUN_0059da10@0059da10
+native	$Train[]@World::GetTrainList()	World::GetTrainList	0068ba80	0068fb0c	FUN_0068cb90@0068cb90
+native	$bool@DriverCharacter::NavigateThroughTrackside(Trackside)	DriverCharacter::NavigateThroughTrackside	005b6640	005b7a47	FUN_005b7030@005b7030
+native	$void@MapObject::SetMapObjectOrientation(Orientation)	MapObject::SetMapObjectOrientation	006b3c20	006b5d05	FUN_006b3ce0@006b3ce0
+native	$bool@Industry::GetProcessStarted(string)	Industry::GetProcessStarted	006d29a0	006d3418	FUN_006d32c0@006d32c0
+native	$void@Image::DrawLine(int,int,int,int)	Image::DrawLine	00920c40	009222ab	FUN_009219b0@009219b0
+callback	$void@PropertyObject::PropertyBrowserRefresh(Browser)	PropertyObject::PropertyBrowserRefresh		009a0c9a	FUN_009a0b40@009a0b40
+native	$float@Train::GetTrainVelocity()	Train::GetTrainVelocity	0059cb20	0059e1f1	FUN_0059da10@0059da10
+native	$Track@JunctionBase::GetTrackInDirection(int)	JunctionBase::GetTrackInDirection	00901580	0090299e	FUN_009016b0@009016b0
+native	$void@Browser::SetWindowBottom(int)	Browser::SetWindowBottom	0060a7d0	00606943	FUN_00605540@00605540
+callback	$Soup@Signal::PerformLogic()	Signal::PerformLogic		0051bac0	FUN_0051b9e0@0051b9e0
+native	$CabinControl@Cabin::GetNamedControl(string)	Cabin::GetNamedControl	00746e10	0060e638	FUN_0060e4e0@0060e4e0
+native	$float@Soup::GetNamedTagAsFloat(string,float)	Soup::GetNamedTagAsFloat	00998f60	0099af53	FUN_0099a420@0099a420
+native	$float@Vehicle::GetOdometerDistance()	Vehicle::GetOdometerDistance	0058a290	005897fb	FUN_005840e0@005840e0
+native	$void@Buildable::EnableUserStartBuild(bool)	Buildable::EnableUserStartBuild	006cda20	006cd637	FUN_006cce60@006cce60
+native	$void@MeshObject::StopMeshAnimation(string)	MeshObject::StopMeshAnimation	006bf0f0	006c0a9b	FUN_006c02c0@006c02c0
+native	$bool@Asset::GetHasIncompletePrerequisites()	Asset::GetHasIncompletePrerequisites	009cfb80	009d1713	FUN_009cfd80@009cfd80
+native	$string@DLCInfo::GetIconPath()	DLCInfo::GetIconPath	009cb630	009cbc99	FUN_009cb820@009cb820
+native	$void@OnlineGroup::AddUser(string)	OnlineGroup::AddUser	009198e0	0091a3ec	FUN_00919f70@00919f70
+native	$bool@Turntable::CanMoveToPrevStop()	Turntable::CanMoveToPrevStop	00521370	00521ab0	FUN_005213f0@005213f0
+native	$void@Vehicle::SetHasLoadedThisStop(bool)	Vehicle::SetHasLoadedThisStop	005840a0	00586771	FUN_005840e0@005840e0
+native	$void@GameObject::PostMessage(GameObject,string,string,GSObject,float)	GameObject::PostMessage	007a8300	007b1f98	FUN_007b19d0@007b19d0
+native	$void@Str::ToLower(string)	Str::ToLower	007b9f30	007baa95	FUN_007ba500@007ba500
+native	$string[]@Str::Tokens(string,string)	Str::Tokens	007b9f60	007babb1	FUN_007ba500@007ba500
+native	$void@Interface::SetDriverOrderBarVisible(bool)	Interface::SetDriverOrderBarVisible	00695230	00693130	FUN_0068cb90@0068cb90
+native	$bool@MultiplayerGame::GetAllowDriverOrderListReplication()	MultiplayerGame::GetAllowDriverOrderListReplication	00916d30	00918931	FUN_009179a0@009179a0
+native	$void@Train::SetDecouplingMask(int)	Train::SetDecouplingMask	0059c9e0	0059e0d5	FUN_0059da10@0059da10
+native	$void@Train::SetAutopilotTarget(Buildable,string)	Train::SetAutopilotTarget	0059c120	005a20a2	FUN_0059da10@0059da10
+native	$void@Track::SetTrackPriorityNumber(int)	Track::SetTrackPriorityNumber	005e6e10	005e7594	FUN_005e7110@005e7110
+native	$int@TrainzScriptBase::GetSystemDate()	TrainzScriptBase::GetSystemDate	00908d90	0090b52c	FUN_0090ae70@0090ae70
+native	$void@JunctionBase::ToggleJunction()	JunctionBase::ToggleJunction	009002a0	00902bb6	FUN_009016b0@009016b0
+native	$int@Browser::GetWindowTop()	Browser::GetWindowTop	0060a880	00606c87	FUN_00605540@00605540
+native	$bool@Asset::IsLocal()	Asset::IsLocal	009cf7f0	009d195b	FUN_009cfd80@009cfd80
+native	$void@Image::DrawTriangle(int,int,int,int,int,int)	Image::DrawTriangle	00920b70	009224e3	FUN_009219b0@009219b0
+native	$float@Vehicle::GetMaximumTractiveEffort()	Vehicle::GetMaximumTractiveEffort	00583320	005869a0	FUN_005840e0@005840e0
+native	$void@Industry::SetProcessEnabled(string,bool)	Industry::SetProcessEnabled	006d2ba0	006d3630	FUN_006d32c0@006d32c0
+native	$float@Str::UnpackFloat(string)	Str::UnpackFloat	007ba270	007bade9	FUN_007ba500@007ba500
+native	$TrackMark[]@World::GetTrackMarkList()	World::GetTrackMarkList	0068bbe0	0068fd48	FUN_0068cb90@0068cb90
+native	$void@Interface::SetResults(string)	Interface::SetResults	0068b390	0069336c	FUN_0068cb90@0068cb90
+native	$void@Train::SetAutopilotTarget(JunctionBase)	Train::SetAutopilotTarget	0059c3b0	005a22c1	FUN_0059da10@0059da10
+native	$void@GameObject::AddHandler(GameObject,string,string,string)	GameObject::AddHandler	007a8620	007b21c6	FUN_007b19d0@007b19d0
+native	$GSTrackSearch@Track::BeginTrackSearchInDirection(bool)	Track::BeginTrackSearchInDirection	005e6f30	005e77d0	FUN_005e7110@005e7110
+native	$int@OnlineGroup::CountUsers()	OnlineGroup::CountUsers	00918cd0	0091a628	FUN_00919f70@00919f70
+native	$float@Vehicle::GetTripMeterDistance()	Vehicle::GetTripMeterDistance	0058a320	00589a1e	FUN_005840e0@005840e0
+native	$bool@Cabin::FireAddCoal()	Cabin::FireAddCoal	007478a0	0060e850	FUN_0060e4e0@0060e4e0
+native	$void@Soup::SetNamedTag(string,float)	Soup::SetNamedTag	00999ad0	0099b18b	FUN_0099a420@0099a420
+native	$float@Train::GetSmoothedVelocity()	Train::GetSmoothedVelocity	0059cba0	0059e429	FUN_0059da10@0059da10
+native	$bool@Industry::GetProcessEnabled(string)	Industry::GetProcessEnabled	006d2aa0	006d3523	FUN_006d32c0@006d32c0
+native	$SecurityToken@TrainzGameObject::IssueSecurityToken(KUID,string[])	TrainzGameObject::IssueSecurityToken	0090dcf0	0090df98	FUN_0090df50@0090df50
+native	$float@Train::GetVelocity()	Train::GetVelocity	0059ca50	0059e30d	FUN_0059da10@0059da10
+native	$int@Browser::GetWindowRight()	Browser::GetWindowRight	0060a8d0	00606b68	FUN_00605540@00605540
+native	$void@GameObject::ClearMessages(string,string)	GameObject::ClearMessages	007a8500	007b20af	FUN_007b19d0@007b19d0
+native	$int@Str::UnpackInt(string)	Str::UnpackInt	007ba190	007baccd	FUN_007ba500@007ba500
+native	$Orientation@MapObject::GetMapObjectOrientation()	MapObject::GetMapObjectOrientation	006b3c90	006b5e22	FUN_006b3ce0@006b3ce0
+native	$int@TrainzScriptBase::GetSystemMinute()	TrainzScriptBase::GetSystemMinute	00908d10	0090b768	FUN_0090ae70@0090ae70
+native	$bool@DriverCharacter::DriveToIndustry(Industry,string)	DriverCharacter::DriveToIndustry	005b6700	005b7b64	FUN_005b7030@005b7030
+native	$Signal[]@World::GetSignalList()	World::GetSignalList	0068bd80	0068fc2b	FUN_0068cb90@0068cb90
+native	$GSTrackSearch@JunctionBase::BeginTrackSearch(int)	JunctionBase::BeginTrackSearch	00900ce0	00902aa9	FUN_009016b0@009016b0
+native	$void@OnlineGroup::RemoveUser(string)	OnlineGroup::RemoveUser	00919780	0091a50b	FUN_00919f70@00919f70
+native	$void@Buildable::EnableUserCancelBuild(bool)	Buildable::EnableUserCancelBuild	006cda60	006cd754	FUN_006cce60@006cce60
+native	$GameObject@Cabin::GetParentObject()	Cabin::GetParentObject	00746ee0	0060e743	FUN_0060e4e0@0060e4e0
+native	$void@Soup::SetNamedTag(string,string)	Soup::SetNamedTag	00999bc0	0099b06f	FUN_0099a420@0099a420
+native	$void@MeshObject::SetMeshAnimationSpeed(string,float)	MeshObject::SetMeshAnimationSpeed	006bf180	006c0bb8	FUN_006c02c0@006c02c0
+native	$void@MultiplayerGame::SetAllowDriverOrderListReplication(bool)	MultiplayerGame::SetAllowDriverOrderListReplication	00917190	00918a4d	FUN_009179a0@009179a0
+native	$void@Vehicle::SetHasUnloadedThisStop(bool)	Vehicle::SetHasUnloadedThisStop	005840c0	00586883	FUN_005840e0@005840e0
+native	$Soup@Asset::GetSessionRuleData(string)	Asset::GetSessionRuleData	009ce7b0	009d1837	FUN_009cfd80@009cfd80
+native	$void@Image::DrawCircle(int,int,int)	Image::DrawCircle	00920bd0	009223c7	FUN_009219b0@009219b0
+native	$bool@JunctionBase::JunctionInnerReEnter(int)	JunctionBase::JunctionInnerReEnter	00900360	0090277b	FUN_009016b0@009016b0
+native	$float@MeshObject::GetMeshAnimationFrameCount(string)	MeshObject::GetMeshAnimationFrameCount	006bef90	006c085f	FUN_006c02c0@006c02c0
+native	$int@OnlineGroup::GetStatus()	OnlineGroup::GetStatus	00918d00	0091a0c4	FUN_00919f70@00919f70
+native	$bool@DriverCharacter::NavigateToVehicle(Vehicle,bool)	DriverCharacter::NavigateToVehicle	005b6480	005b780b	FUN_005b7030@005b7030
+native	$bool@Interface::GetMessageWindowVisible()	Interface::GetMessageWindowVisible	006951f0	00692ef4	FUN_0068cb90@0068cb90
+native	$WorldCoordinate@MapObject::GetMapObjectPosition()	MapObject::GetMapObjectPosition	006b3b20	006b5ac9	FUN_006b3ce0@006b3ce0
+native	$string@Asset::GetDateInstalled()	Asset::GetDateInstalled	009cea70	009d13a7	FUN_009cfd80@009cfd80
+native	$int@Train::GetTrainPriorityNumber()	Train::GetTrainPriorityNumber	0059c5a0	005a1e74	FUN_0059da10@0059da10
+native	$Permit@Track::RequestPermit(GameObject)	Track::RequestPermit	005e6b80	005e7377	FUN_005e7110@005e7110
+native	$int@TrainzScriptBase::GetSystemYear()	TrainzScriptBase::GetSystemYear	00908e10	0090b2f0	FUN_0090ae70@0090ae70
+native	$void@Train::ShowInConsistMenu(bool)	Train::ShowInConsistMenu	0059c950	0059de9d	FUN_0059da10@0059da10
+native	$void@Library::StopSoundScriptEvent(string)	Library::StopSoundScriptEvent	0091f8f0	00920513	FUN_0091fb00@0091fb00
+native	$bool@ProductFilter::IsLocked()	ProductFilter::IsLocked	00620590	006217b9	FUN_00620a60@00620a60
+native	$int@Soup::GetNamedTagAsInt(string)	Soup::GetNamedTagAsInt	00999200	0099abff	FUN_0099a420@0099a420
+native	$void@GameObject::PostMessage(GameObject,string,string,float)	GameObject::PostMessage	007a8160	007b1e8a	FUN_007b19d0@007b19d0
+native	$void@Browser::SetWindowLeft(int)	Browser::SetWindowLeft	0060a690	0060660d	FUN_00605540@00605540
+native	$string@DLCInfo::GetLocalisedName()	DLCInfo::GetLocalisedName	009cb6f0	009cb976	FUN_009cb820@009cb820
+native	$bool@Vehicle::GetDrainCocks()	Vehicle::GetDrainCocks	00582cd0	005894a2	FUN_005840e0@005840e0
+native	$ScenarioBehavior[]@World::GetBehaviors()	World::GetBehaviors	0068b5d0	0068f7b3	FUN_0068cb90@0068cb90
+native	$void@Image::SetFillColor(float,float,float,float)	Image::SetFillColor	00920fa0	00921f49	FUN_009219b0@009219b0
+native	$void@Buildable::SetBuildingPaused(bool)	Buildable::SetBuildingPaused	006cd950	006cd2dc	FUN_006cce60@006cce60
+native	$bool@Crossing::GetCrossingHasNearbyTrain()	Crossing::GetCrossingHasNearbyTrain	00516050	00516564	FUN_005160e0@005160e0
+native	$void@Turntable::MoveToPrevStop()	Turntable::MoveToPrevStop	005212c0	00521764	FUN_005213f0@005213f0
+native	$int@Vehicle::GetVehicleTypeFlags()	Vehicle::GetVehicleTypeFlags	00583fe0	00586447	FUN_005840e0@005840e0
+native	$int@Str::ToInt(string)	Str::ToInt	007b9e60	007ba760	FUN_007ba500@007ba500
+native	$string@Asset::GetCategoryClass()	Asset::GetCategoryClass	009ceb60	009d1290	FUN_009cfd80@009cfd80
+native	$void@OnlineGroup::Connect()	OnlineGroup::Connect	00919a70	00919fb8	FUN_00919f70@00919f70
+native	$void@MultiplayerGame::BroadcastGameplayMessage(string,string,Soup)	MultiplayerGame::BroadcastGameplayMessage	00917240	009186f9	FUN_009179a0@009179a0
+native	$void@Str::TrimRight(string,string)	Str::TrimRight	007b9d90	007ba656	FUN_007ba500@007ba500
+native	$int@Train::GetPhysicsModel()	Train::GetPhysicsModel	0059c8f0	0059dd8e	FUN_0059da10@0059da10
+native	$void@Buildable::SetBuildingProgress(float)	Buildable::SetBuildingProgress	006cd920	006cd1cc	FUN_006cce60@006cce60
+native	$void@Vehicle::SetDrainCocks(bool)	Vehicle::SetDrainCocks	00582cb0	00589383	FUN_005840e0@005840e0
+native	$void@Interface::SetMessageWindowVisible(bool)	Interface::SetMessageWindowVisible	006951b0	00692dd5	FUN_0068cb90@0068cb90
+native	$bool@JunctionBase::JunctionReEnter(int)	JunctionBase::JunctionReEnter	009003a0	0090265c	FUN_009016b0@009016b0
+native	$bool@Crossing::GetCrossingAutomatic()	Crossing::GetCrossingAutomatic	00516030	00516454	FUN_005160e0@005160e0
+native	$Permit@Track::RequestPermit(GameObject,bool)	Track::RequestPermit	005e6ab0	005e726c	FUN_005e7110@005e7110
+callback	$Asset@TrainzGameObject::GetAsset()	TrainzGameObject::GetAsset		0090e5e6	FUN_0090e4e0@0090e4e0
+native	$float@TrainzScriptBase::GetNormalizedSystemTime()	TrainzScriptBase::GetNormalizedSystemTime	00908e50	0090b1e0	FUN_0090ae70@0090ae70
+native	$void@Turntable::MoveToNextStop()	Turntable::MoveToNextStop	005212b0	00521657	FUN_005213f0@005213f0
+native	$float@Vehicle::GetTrackGradient()	Vehicle::GetTrackGradient	00583fb0	00586336	FUN_005840e0@005840e0
+native	$void@Train::SetTrainPriorityNumber(int)	Train::SetTrainPriorityNumber	0059c540	005a1d55	FUN_0059da10@0059da10
+native	$string@OnlineGroup::GetOnlineGroupCookie()	OnlineGroup::GetOnlineGroupCookie	00919cc0	0091a2dc	FUN_00919f70@00919f70
+native	$bool@Asset::GetIsMissingDependencies()	Asset::GetIsMissingDependencies	009ce9d0	009d15ef	FUN_009cfd80@009cfd80
+native	$string@DLCInfo::GetLocalisedPrice()	DLCInfo::GetLocalisedPrice	009cb6b0	009cbb8a	FUN_009cb820@009cb820
+callback	$void@ScenarioBehavior::Pause(bool)	ScenarioBehavior::Pause		006856e1	FUN_00685650@00685650
+native	$bool@Turntable::CanMoveToNextStop()	Turntable::CanMoveToNextStop	00521320	00521993	FUN_005213f0@005213f0
+native	$bool@Vehicle::HasUnloadedThisStop()	Vehicle::HasUnloadedThisStop	00584080	00586666	FUN_005840e0@005840e0
+native	$bool@Buildable::CancelBuild()	Buildable::CancelBuild	006cda00	006cd518	FUN_006cce60@006cce60
+native	$string[]@Industry::GetProcessNameList()	Industry::GetProcessNameList	006d2890	006d330c	FUN_006d32c0@006d32c0
+native	$void@Str::ToUpper(string)	Str::ToUpper	007b9f00	007ba979	FUN_007ba500@007ba500
+native	$Vehicle[]@World::GetVehicleList()	World::GetVehicleList	0068b8e0	0068f9ef	FUN_0068cb90@0068cb90
+native	$void@Image::DrawRect(int,int,int,int)	Image::DrawRect	00920f50	0092218f	FUN_009219b0@009219b0
+native	$bool@Interface::HasUnseenMessages()	Interface::HasUnseenMessages	006952d0	00693011	FUN_0068cb90@0068cb90
+native	$int@JunctionBase::GetDirectionToTrack(Track)	JunctionBase::GetDirectionToTrack	009014d0	0090288a	FUN_009016b0@009016b0
+native	$int@Track::GetTrackPriorityNumber()	Track::GetTrackPriorityNumber	005e6df0	005e7484	FUN_005e7110@005e7110
+native	$CabinControl[]@Cabin::GetControls()	Cabin::GetControls	00746d10	0060e52c	FUN_0060e4e0@0060e4e0
+native	$int@TrainzScriptBase::GetSystemMonth()	TrainzScriptBase::GetSystemMonth	00908dd0	0090b40f	FUN_0090ae70@0090ae70
+native	$void@Train::SetCouplingMask(int)	Train::SetCouplingMask	0059c970	0059dfb9	FUN_0059da10@0059da10
+native	$void@MapObject::AdjustMapObjectPosition(float,float,float)	MapObject::AdjustMapObjectPosition	006b3b70	006b5be6	FUN_006b3ce0@006b3ce0
+native	$void@MeshObject::StartMeshAnimationLoop(string)	MeshObject::StartMeshAnimationLoop	006bf060	006c097c	FUN_006c02c0@006c02c0
+native	$void@Vehicle::SetOdometerDistance(float)	Vehicle::SetOdometerDistance	0058a2b0	005896de	FUN_005840e0@005840e0
+native	$bool@DriverCharacter::NavigateToTrackside(Trackside)	DriverCharacter::NavigateToTrackside	005b6580	005b7928	FUN_005b7030@005b7030
+native	$void@Browser::SetWindowTop(int)	Browser::SetWindowTop	0060a700	00606833	FUN_00605540@00605540
+native	$float@Soup::GetNamedTagAsFloat(string)	Soup::GetNamedTagAsFloat	00999040	0099ae37	FUN_0099a420@0099a420
+native	$void@OnlineGroup::Disconnect()	OnlineGroup::Disconnect	00919d40	0091a1cf	FUN_00919f70@00919f70
+native	$void@Turntable::MoveToStop(int)	Turntable::MoveToStop	005212d0	00521874	FUN_005213f0@005213f0
+native	$bool@Vehicle::HasLoadedThisStop()	Vehicle::HasLoadedThisStop	00584060	00586559	FUN_005840e0@005840e0
+native	$GameObject[]@World::GetIndustryList()	World::GetIndustryList	0068b740	0068f8d0	FUN_0068cb90@0068cb90
+native	$int@MultiplayerGame::GetClientToServerLatency()	MultiplayerGame::GetClientToServerLatency	00916d60	00918815	FUN_009179a0@009179a0
+native	$float@Str::ToFloat(string)	Str::ToFloat	007b9eb0	007ba86a	FUN_007ba500@007ba500
+native	$bool@Buildable::StartBuild()	Buildable::StartBuild	006cd9d0	006cd3fb	FUN_006cce60@006cce60
+native	$bool@Asset::GetIsFaulty()	Asset::GetIsFaulty	009cea20	009d14cb	FUN_009cfd80@009cfd80
+native	$void@Image::DrawPoint(int,int)	Image::DrawPoint	00920650	0092206b	FUN_009219b0@009219b0
+native	$void@Train::SetAutopilotTarget(Trackside)	Train::SetAutopilotTarget	0059c050	005a1f91	FUN_0059da10@0059da10
+native	$int@Soup::GetNamedTagAsInt(string,int)	Soup::GetNamedTagAsInt	00999120	0099ad1b	FUN_0099a420@0099a420
+native	$void@Vehicle::ToggleDrainCocks()	Vehicle::ToggleDrainCocks	00582cf0	005895bf	FUN_005840e0@005840e0
+native	$void@Browser::SetWindowRight(int)	Browser::SetWindowRight	0060a770	0060671c	FUN_00605540@00605540
+native	$string@DLCInfo::GetLocalisedDescription()	DLCInfo::GetLocalisedDescription	009cb6d0	009cba80	FUN_009cb820@009cb820
+native	$void@Browser::SetRememberPosition(Asset,string)	Browser::SetRememberPosition	0060ad50	0060721c	FUN_00605540@00605540
+callback	$bool@ScenarioBehavior::IsCorrectlyConfigured()	ScenarioBehavior::IsCorrectlyConfigured		006315e5	FUN_00631590@00631590
+native	$string@GameObject::GetName()	GameObject::GetName	007a8d80	007b2622	FUN_007b19d0@007b19d0
+native	$bool@Signal::GetSignalLit()	Signal::GetSignalLit	0051c0a0	0051c57c	FUN_0051c210@0051c210
+native	$void@Train::SetManualThrottle(int)	Train::SetManualThrottle	0059cdf0	0059ead1	FUN_0059da10@0059da10
+native	$void@World::RemoveDriverCharacter(DriverCharacter)	World::RemoveDriverCharacter	0068c580	006902b4	FUN_0068cb90@0068cb90
+native	$void@Vehicle::SetWheelslipTractionMultiplier(float)	Vehicle::SetWheelslipTractionMultiplier	00583430	00586e18	FUN_005840e0@005840e0
+native	$string@CabinControl::GetName()	CabinControl::GetName	00744a60	0060edda	FUN_0060e4e0@0060e4e0
+native	$Asset[]@TrainzScriptBase::GetAssetList(string,string)	TrainzScriptBase::GetAssetList	00909fb0	0090bcff	FUN_0090ae70@0090ae70
+native	$int@ProductQueue::GetQueueSize()	ProductQueue::GetQueueSize	00625cc0	00626988	FUN_00626940@00626940
+native	$string@Interface::GetTimeStamp()	Interface::GetTimeStamp	006956b0	006937b9	FUN_0068cb90@0068cb90
+native	$int@OnlineGroup::CollectMessage(string,Soup)	OnlineGroup::CollectMessage	00919560	0091abbf	FUN_00919f70@00919f70
+native	$void@Locomotive::SetHasDriver(bool)	Locomotive::SetHasDriver	005822b0	00589e65	FUN_005840e0@005840e0
+native	$void@Soup::Copy(Soup)	Soup::Copy	009996b0	0099b70c	FUN_0099a420@0099a420
+native	$string@Train::GetTrainDisplayName()	Train::GetTrainDisplayName	0059d7a0	005a271a	FUN_0059da10@0059da10
+native	$bool@DriverCharacter::DriveThroughTrackside(Trackside)	DriverCharacter::DriveThroughTrackside	005b6b00	005b7fdc	FUN_005b7030@005b7030
+native	$void@Cabin::StopSoundScriptEvent(string)	Cabin::StopSoundScriptEvent	00747010	0060ecbb	FUN_0060e4e0@0060e4e0
+native	$void@Signal::LightSignal(bool)	Signal::LightSignal	0051c080	0051c46f	FUN_0051c210@0051c210
+native	$void@Train::StopTrainGently()	Train::StopTrainGently	0059ce40	0059e9b5	FUN_0059da10@0059da10
+native	$void@MeshObject::SetFXNameText(string,string)	MeshObject::SetFXNameText	006bf6d0	006c1030	FUN_006c02c0@006c02c0
+native	$void@Image::DrawImage(int,int,int,int,Image,int,int,int,int)	Image::DrawImage	00920980	00922837	FUN_009219b0@009219b0
+native	$int@OnlineGroup::PostMessage(Soup)	OnlineGroup::PostMessage	00919e50	0091aaa0	FUN_00919f70@00919f70
+native	$SecurityToken@TrainzGameObject::MergeSecurityTokens(SecurityToken[])	TrainzGameObject::MergeSecurityTokens	0090ddf0	0090e1b7	FUN_0090df50@0090df50
+native	$bool@Train::GetAutopilotTargetSlowing()	Train::GetAutopilotTargetSlowing	0059c4d0	005a25fb	FUN_0059da10@0059da10
+native	$DriverCharacter[]@World::GetDriverCharacterList()	World::GetDriverCharacterList	0068c3f0	006901a7	FUN_0068cb90@0068cb90
+native	$float@Vehicle::GetWheelslipTractionMultiplier()	Vehicle::GetWheelslipTractionMultiplier	00583410	00586cfb	FUN_005840e0@005840e0
+native	$void@Soup::RemoveNamedTag(string)	Soup::RemoveNamedTag	00998d10	0099b5f3	FUN_0099a420@0099a420
+native	$bool@NavPoints::CreateNavigationPointSetInternal(string,int,Soup,string[])	NavPoints::CreateNavigationPointSetInternal	00914cf0	00915598	FUN_00915550@00915550
+native	$void@Industry::SetProcessInput(string,ProductQueue,Asset,int)	Industry::SetProcessInput	006d5120	006d397c	FUN_006d32c0@006d32c0
+native	$bool@Browser::GetWindowVisible()	Browser::GetWindowVisible	0060abb0	006070ff	FUN_00605540@00605540
+native	$Asset[]@TrainzScriptBase::GetAssetList(string)	TrainzScriptBase::GetAssetList	0090a4f0	0090bbe0	FUN_0090ae70@0090ae70
+callback	$void@PropertyObject::SetPropertyValue(string,float)	PropertyObject::SetPropertyValue		0090d5f1	FUN_0090d540@0090d540
+callback	$void@PropertyObject::SetPropertyValue(string,float)	PropertyObject::SetPropertyValue		009a172d	FUN_009a1650@009a1650
+native	$int@GameObject::GetId()	GameObject::GetId	007a8d60	007b250b	FUN_007b19d0@007b19d0
+native	$Soup@Soup::GetLockedReference()	Soup::GetLockedReference	00999e20	0099ba47	FUN_0099a420@0099a420
+native	$float@Vehicle::GetWheelslipMomentumMultiplier()	Vehicle::GetWheelslipMomentumMultiplier	005834d0	00586f37	FUN_005840e0@005840e0
+callback	$void@GameplayMenu::TADRequestRefresh()	GameplayMenu::TADRequestRefresh		0093187b	FUN_00931850@00931850
+callback	$void@GameplayMenu::TADRequestRefresh()	GameplayMenu::TADRequestRefresh		00931890	FUN_00931850@00931850
+native	$KUID[]@TrainzScriptBase::SearchAssets(string,bool)	TrainzScriptBase::SearchAssets	00909810	0090be1c	FUN_0090ae70@0090ae70
+native	$bool@Signal::GetIsHome()	Signal::GetIsHome	0051c0f0	0051c7ab	FUN_0051c210@0051c210
+native	$void@World::SetLegacyAllowDriverlessTrains(bool)	World::SetLegacyAllowDriverlessTrains	00695de0	006939d6	FUN_0068cb90@0068cb90
+callback	$void@PropertyObject::SetPropertyValue(string,string,int)	PropertyObject::SetPropertyValue		0090d3e4	FUN_0090d2f0@0090d2f0
+callback	$void@PropertyObject::SetPropertyValue(string,string,int)	PropertyObject::SetPropertyValue		009a1854	FUN_009a1650@009a1650
+native	$int@Train::GetReverser()	Train::GetReverser	0059cea0	0059ecef	FUN_0059da10@0059da10
+native	$void@Locomotive::SetEngineSetting(string,float)	Locomotive::SetEngineSetting	00582970	0058a0a1	FUN_005840e0@005840e0
+native	$void@NavPoints::SetNavigationPointComplete(string,int,bool)	NavPoints::SetNavigationPointComplete	00914a80	009156a6	FUN_00915550@00915550
+callback	$string@ScenarioBehavior::GetChildRelationshipIcon(ScenarioBehavior)	ScenarioBehavior::GetChildRelationshipIcon		006316dd	FUN_00631610@00631610
+native	$bool@Browser::IsWindowMinimised()	Browser::IsWindowMinimised	0060abe0	0060733b	FUN_00605540@00605540
+native	$string@DriverCharacter::GetLocalisedName()	DriverCharacter::GetLocalisedName	005ba0f0	005b80fb	FUN_005b7030@005b7030
+native	$int@Image::MeasureTextWidth(string)	Image::MeasureTextWidth	00921520	00922a6f	FUN_009219b0@009219b0
+native	$DriverCharacter@World::AddDriverCharacter(Asset)	World::AddDriverCharacter	0068c5c0	006903bf	FUN_0068cb90@0068cb90
+native	$float@CabinControl::GetValue()	CabinControl::GetValue	00744a80	0060eef5	FUN_0060e4e0@0060e4e0
+native	$int@ProductQueue::GetQueuePerHour()	ProductQueue::GetQueuePerHour	00625d10	00626b9f	FUN_00626940@00626940
+native	$GameObject@Router::GetGameObject(int)	Router::GetGameObject	007a5640	007b2852	FUN_007b19d0@007b19d0
+native	$void@Industry::SetProcessOutput(string,ProductQueue,Asset,int)	Industry::SetProcessOutput	006d5480	006d3a9b	FUN_006d32c0@006d32c0
+native	$float@Locomotive::GetEngineSetting(string)	Locomotive::GetEngineSetting	005826b0	00589f84	FUN_005840e0@005840e0
+native	$void@GameObject::Exception(string)	GameObject::Exception	007a8e90	007b2739	FUN_007b19d0@007b19d0
+native	$void@OnlineGroup::SetModeFlags(int,int)	OnlineGroup::SetModeFlags	009194c0	0091acdc	FUN_00919f70@00919f70
+native	$bool@Signal::GetIsDistant()	Signal::GetIsDistant	0051c0c0	0051c68c	FUN_0051c210@0051c210
+native	$DriverCharacter@Train::GetActiveDriver()	Train::GetActiveDriver	0059d9c0	005a2837	FUN_0059da10@0059da10
+native	$bool@Soup::IsLocked()	Soup::IsLocked	00998c90	0099b930	FUN_0099a420@0099a420
+native	$void@Train::SetReverser(int)	Train::SetReverser	0059ce50	0059ebdd	FUN_0059da10@0059da10
+native	$void@Image::SetTextFont(string,int)	Image::SetTextFont	00920e80	00922953	FUN_009219b0@009219b0
+native	$void@ProductQueue::SetQueueSize(int)	ProductQueue::SetQueueSize	00625ce0	00626a94	FUN_00626940@00626940
+native	$void@Soup::Clear()	Soup::Clear	00998ce0	0099b81e	FUN_0099a420@0099a420
+callback	$void@PropertyObject::SetPropertyValue(string,int)	PropertyObject::SetPropertyValue		0090d6ec	FUN_0090d640@0090d640
+callback	$void@PropertyObject::SetPropertyValue(string,int)	PropertyObject::SetPropertyValue		009a178b	FUN_009a1650@009a1650
+native	$GSTrackSearch@Interface::GetClickTrackSearch()	Interface::GetClickTrackSearch	00695e40	006938c4	FUN_0068cb90@0068cb90
+native	$bool@TrainzGameObject::Validate(SecurityToken,TrainzGameObject,string)	TrainzGameObject::Validate	0090cf50	0090e2c4	FUN_0090df50@0090df50
+native	$void@MeshObject::SetFXTextureReplacement(string,Asset,int)	MeshObject::SetFXTextureReplacement	006bf810	006c114f	FUN_006c02c0@006c02c0
+callback	$void@GameplayMenu::UserRequestGoBack()	GameplayMenu::UserRequestGoBack		009318db	FUN_009318b0@009318b0
+callback	$void@GameplayMenu::UserRequestGoBack()	GameplayMenu::UserRequestGoBack		009318f0	FUN_009318b0@009318b0
+native	$Junction[]@World::GetJunctionList()	World::GetJunctionList	0068c0c0	0068ff84	FUN_0068cb90@0068cb90
+native	$void@Interface::SetElementProperty(string,string,string)	Interface::SetElementProperty	00695360	0069359a	FUN_0068cb90@0068cb90
+native	$void@Train::SetVelocity(float)	Train::SetVelocity	0059cc70	0059e661	FUN_0059da10@0059da10
+native	$void@Browser::SetWindowGrow(int,int,int,int)	Browser::SetWindowGrow	0060a970	00606ec3	FUN_00605540@00605540
+native	$float@Cabin::GetTimeSinceLastUserActivity()	Cabin::GetTimeSinceLastUserActivity	00747af0	0060ea7f	FUN_0060e4e0@0060e4e0
+native	$int@OnlineGroup::FindUser(string)	OnlineGroup::FindUser	00919650	0091a864	FUN_00919f70@00919f70
+native	$Library@TrainzScriptBase::GetLibrary(KUID)	TrainzScriptBase::GetLibrary	0090ae10	0090b9a4	FUN_0090ae70@0090ae70
+native	$MeshObject@MeshObject::GetFXAttachment(string)	MeshObject::GetFXAttachment	006bf570	006c0df4	FUN_006c02c0@006c02c0
+native	$void@Soup::SetNamedTag(string,KUID)	Soup::SetNamedTag	00999850	0099b3c3	FUN_0099a420@0099a420
+native	$int@Str::Find(string,string,int)	Str::Find	007ba480	007bb021	FUN_007ba500@007ba500
+native	$void@Signal::SetSignalStateEx(int,string)	Signal::SetSignalStateEx	0051bd60	0051c258	FUN_0051c210@0051c210
+native	$int@Track::GetDirectionToTrack(Track)	Track::GetDirectionToTrack	005e7000	005e78ef	FUN_005e7110@005e7110
+native	$void@Vehicle::SetMaximumTractiveEffort(float)	Vehicle::SetMaximumTractiveEffort	00583340	00586abf	FUN_005840e0@005840e0
+native	$void@GameObject::Sniff(GameObject,string,string,bool)	GameObject::Sniff	007a8ab0	007b22dd	FUN_007b19d0@007b19d0
+native	$bool@Asset::IsPayware()	Asset::IsPayware	009ce760	009d1ba3	FUN_009cfd80@009cfd80
+native	$void@Image::DrawImage(int,int,Image)	Image::DrawImage	00920ae0	009225ff	FUN_009219b0@009219b0
+native	$SecurityToken@TrainzGameObject::IssueSecurityToken(SecurityToken,KUID,string[])	TrainzGameObject::IssueSecurityToken	0090de80	0090e0ac	FUN_0090df50@0090df50
+native	$float@Industry::GetProcessDuration(string)	Industry::GetProcessDuration	006d4f20	006d3740	FUN_006d32c0@006d32c0
+native	$void@Locomotive::SetBrokenThrottle(bool)	Locomotive::SetBrokenThrottle	00582090	00589b2b	FUN_005840e0@005840e0
+native	$void@Train::AddVelocity(float)	Train::AddVelocity	0059cbc0	0059e545	FUN_0059da10@0059da10
+native	$int@Browser::GetWindowBottom()	Browser::GetWindowBottom	0060a920	00606da4	FUN_00605540@00605540
+native	$void@Soup::SetNamedTag(string,int)	Soup::SetNamedTag	009999b0	0099b2a7	FUN_0099a420@0099a420
+native	$void@Train::SetAutopilotTargetMinimumSpeed(float)	Train::SetAutopilotTargetMinimumSpeed	0059c470	005a23cc	FUN_0059da10@0059da10
+native	$bool@DriverCharacter::DriveToVehicle(Vehicle)	DriverCharacter::DriveToVehicle	005b6860	005b7c83	FUN_005b7030@005b7030
+native	$string@Str::UnpackString(string)	Str::UnpackString	007ba350	007baf05	FUN_007ba500@007ba500
+native	$MeshObject@MeshObject::SetFXAttachment(string,Asset)	MeshObject::SetFXAttachment	006bf350	006c0cd7	FUN_006c02c0@006c02c0
+native	$bool@Interface::GetInterfaceVisible()	Interface::GetInterfaceVisible	00695310	00693489	FUN_0068cb90@0068cb90
+native	$void@Cabin::SetCabLightIntensity(float)	Cabin::SetCabLightIntensity	00747a30	0060e960	FUN_0060e4e0@0060e4e0
+native	$string@OnlineGroup::GetIndexedUser(int)	OnlineGroup::GetIndexedUser	00919c50	0091a747	FUN_00919f70@00919f70
+native	$int@TrainzScriptBase::GetSystemSecond()	TrainzScriptBase::GetSystemSecond	00908cd0	0090b887	FUN_0090ae70@0090ae70
+native	$Trigger[]@World::GetTriggerList()	World::GetTriggerList	0068bf20	0068fe67	FUN_0068cb90@0068cb90
+native	$bool@Asset::IsBuiltIn()	Asset::IsBuiltIn	009cf7c0	009d1a7f	FUN_009cfd80@009cfd80
+native	$void@Locomotive::SetCompressorEfficiency(float)	Locomotive::SetCompressorEfficiency	00582150	00589d48	FUN_005840e0@005840e0
+native	$float@Train::GetDCCThrottle()	Train::GetDCCThrottle	0059cdd0	0059e899	FUN_0059da10@0059da10
+native	$bool@DriverCharacter::DriveToTrackside(Trackside)	DriverCharacter::DriveToTrackside	005b6a40	005b7ebf	FUN_005b7030@005b7030
+callback	$void@GameplayMenu::SetGameplayMenuMode(Browser,int)	GameplayMenu::SetGameplayMenuMode		009319b1	FUN_00931910@00931910
+native	$void@Soup::SetNamedSoup(string,Soup)	Soup::SetNamedSoup	00999710	0099b4df	FUN_0099a420@0099a420
+native	$Asset@TrainzScriptBase::FindAsset(KUID)	TrainzScriptBase::FindAsset	0090a9c0	0090bac3	FUN_0090ae70@0090ae70
+native	$void@Browser::SetWindowVisible(bool)	Browser::SetWindowVisible	0060ab70	00606fe0	FUN_00605540@00605540
+native	$void@Cabin::PlaySoundScriptEvent(string)	Cabin::PlaySoundScriptEvent	00746f00	0060eb9c	FUN_0060e4e0@0060e4e0
+native	$void@MeshObject::SetFXAnimationState(string,bool)	MeshObject::SetFXAnimationState	006bf630	006c0f13	FUN_006c02c0@006c02c0
+native	$void@Signal::SetSignalState(int,string)	Signal::SetSignalState	0051bee0	0051c364	FUN_0051c210@0051c210
+native	$string@Interface::GetElementProperty(string,string)	Interface::GetElementProperty	00695520	006936ac	FUN_0068cb90@0068cb90
+native	$void@GameObject::Sleep(float)	GameObject::Sleep	007a8e50	007b23f4	FUN_007b19d0@007b19d0
+native	$void@Image::DrawImage(int,int,int,int,Image)	Image::DrawImage	00920a30	0092271b	FUN_009219b0@009219b0
+native	$float@Vehicle::GetDefaultMaximumTractiveEffort()	Vehicle::GetDefaultMaximumTractiveEffort	005833f0	00586bdc	FUN_005840e0@005840e0
+native	$void@Train::SetDCCThrottle(float)	Train::SetDCCThrottle	0059cd20	0059e77d	FUN_0059da10@0059da10
+callback	$void@MapObject::AppendDependencies(KUIDList)	MapObject::AppendDependencies		006b6fe2	FUN_006b6ef0@006b6ef0
+native	$MapObject[]@World::GetCameraTargetList()	World::GetCameraTargetList	0068c260	00690095	FUN_0068cb90@0068cb90
+native	$void@Industry::SetProcessDuration(string,float)	Industry::SetProcessDuration	006d5030	006d385f	FUN_006d32c0@006d32c0
+native	$int@OnlineGroup::GetUserStatus(int)	OnlineGroup::GetUserStatus	00918c60	0091a983	FUN_00919f70@00919f70
+native	$bool@Asset::IsOnTheDownloadStation()	Asset::IsOnTheDownloadStation	009ce710	009d1cc7	FUN_009cfd80@009cfd80
+native	$bool@DriverCharacter::DriveToVehicle(Vehicle,bool)	DriverCharacter::DriveToVehicle	005b6940	005b7da0	FUN_005b7030@005b7030
+native	$void@Locomotive::SetBrokenReverser(bool)	Locomotive::SetBrokenReverser	005820f0	00589c36	FUN_005840e0@005840e0
+native	$void@Train::SetAutopilotTargetMinimumDistance(float)	Train::SetAutopilotTargetMinimumDistance	0059c4a0	005a24de	FUN_0059da10@0059da10
