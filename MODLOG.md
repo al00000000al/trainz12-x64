@@ -252,13 +252,31 @@ ini files), one CriticalSection at 0x10019ccc guarding everything below.
   identical runs (a control run with the old DLL showed it), so `tools/menu_check.ps1` ignores them.
   `tools/bisect_exports.ps1` builds a DLL with a slice of an export group, for hunting in-game differences.
 
-### Still to do in LZSSCompress
-- Wrap the codec in the LZSSCompress plugin class (IOSlave in/out, vtables) once the plugin system is ours.
-- CompressBlock 0x6ec0 / DecompressBlock 0x7150 work on IOSlave streams (KernelStandard).
-- Header byte: low nibble = level 0..9 (0 = stored), bits 4-5 = window mode. Mode 0: LZ with 32-bit flag words,
-  3-bit lengths (7 = extended by a byte), 1-byte offsets. Levels 1-6: 16-bit tokens, offset bits per mode from
-  the table at 0x1001814c, literal runs. Levels 7-9: Huffman-coded LZ77 with Deflate-like length tables
-  (0x10018458). Likely the codec behind .ja archives and asset data: decompression must be bit-exact.
+### Plugin system unit reconstructed (2026-10-19): 140/256 Kernel_7c exports ours
+- `Kernel_7c/PluginSystem.cpp` (PluginType/Config/Instance/Base/Collection + the internal system),
+  `CompressEncrypt.cpp` (Compress/Encrypt bases, LZSSCompress and BFEncrypt over our codecs, the kernel's
+  `JetGetPluginsKernel`, CreateInstance helpers incl. EditItemManager's), `KernelStandardRuntime.cpp`.
+  Object sizes asserted against the original: PluginType 0x20, PluginInstance 0x14, PluginGroup 0x28,
+  LZSSCompress 0x115c (trainz.exe and the tools construct it themselves), BFEncrypt 0x1060.
+- Stays forwarded: the vbtables and vbase destructors of Compress/Encrypt (MSVC emits them only for complete
+  objects of these abstract classes; the original's copies are fine for derived classes elsewhere).
+- Corrections to the spec above: the library list is always searched by name (0x1000a260), and Unload
+  calls FreeLibrary only when the name *is* "*" — plugin DLLs are never unloaded, a later lookup reloads them
+  (LoadLibrary refcount) and calls JetGetPlugins again.
+- Nothing left in the original module reaches the old state: the only forwarded caller of the internals is
+  EditItemManager::CreateItem (0x100036f0, lookup by name through vtable slot 10's group id), and no module
+  of the game imports any EditItem* symbol.
+- `src/tests/plugin_probe.cpp` (+ `D:\trainz12-decomp\probe\run.ps1`): one exe linked to "Kernel_7c.dll" by
+  name, run in a directory where that is the original and in one where it is ours, on the real plugins.ini:
+  collections by group and by group+name before and after, remaps, lookups by id and by name (these load the
+  real plugin DLLs), LZSS and BlowFish through the plugin interface. **2 732 lines, identical** except one
+  known original bug (below).
+  - Method: the probe must hold a system reference for the whole run, as the game does. Without one the
+    system is destroyed and rebuilt (ini re-read) on every call, and "missing"/"failed" flags vanish.
+  - Original crashes (null library) on lookups of *group* ids by id or by name; ours returns 1 / 3. When it
+    crashes it leaks a system reference, which made the first comparison look different.
+  - LZSS DecompressBlock at levels 1 and 5 on 20 000 bytes: the original returns 0 on its own output (the
+    IOSlaveMemory short-write bug noted above), ours restores the data. Compressed bytes are identical.
 
 ### Third-party deps and their x64 availability
 | 32-bit dep | x64 replacement |
