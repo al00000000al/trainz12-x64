@@ -306,7 +306,26 @@ ini files), one CriticalSection at 0x10019ccc guarding everything below.
   older diff tests unchanged.
 - In game: menu reached on our main loop, clean exit, JetLog identical to the baseline.
 
-### EditItem block: analysis notes (in progress, 2026-10-19)
+### Kernel_7c complete (2026-10-19): 256/256 exports ours, the game runs without the original module
+- `Kernel_7c/EditItem.cpp`, `include/jet/EditItem.h`: EditItem, EditItemStack, EditItemManager (61 exports, layout
+  below); Compress/Encrypt vbtables and vbase destructors in `CompressEncrypt.cpp`, exported under the original
+  names through `name=symbol` lines. vbtable bytes match the original ({0, 0xc} at RVA 0x1051c, shared by both).
+  Our `??_D` skips the original's re-store of the Compress/Encrypt vftable pointers on the dying object (not
+  observable), then does the PluginInstance reset and `~ReferenceCount` like the original.
+- `src/tests/edititem_probe.cpp` (+ `probe/run_edititem.ps1`): items (caps, full caps growing in steps of 13,
+  Save/Load flags), stacks (push/pop across chunk boundaries, paged items, failing Load/Undo/Redo, collapse,
+  page out), managers made by the plugin system (Initialize with a named mutex held by another thread, temp
+  dir clean-up, unique file names, GetItem/SubmitItem/BinItem incl. wrong handles, undo/redo to the ends,
+  PageToDisk, CleanupThisTempDataOnDisk): **307 lines, identical**. The random per-process UUID is masked.
+- No regressions: plugin probe (2 732 lines, only the known original LZSS bug differs), task probe identical,
+  diff tests 0 mismatches (Blowfish 75 008, LZSS 11 087, FDA 100 306, UId/Version 621 000).
+- Our DLL imports only KernelStandard_7c, ole32 and kernel32; the generated .def has no forwarders left.
+- In game: menu reached, clean exit, JetLog identical to the baseline; **also with `Kernel_7c_orig.dll` moved
+  out of bin\** (the 32-bit module list shows only our Kernel_7c).
+- Gotcha for agents: the Bash tool turns `\\` into `\` inside heredocs, so a Python fix-up script passed that
+  way corrupted every `"\n"` in a C++ file. Write such scripts with the file tool (or use `chr(92)`).
+
+### EditItem block: analysis notes (2026-10-19)
 - 0x10002c80-0x10004a20 (~7 KB, 61 exports). No module of the game imports any EditItem* symbol: dead code
   in TS12, but needed for a Kernel_7c without the original. Asm: `D:\trainz12-decomp` scratch dumps.
 - EditItem (0x34): own vfptr +0, PluginInstance at +4 (vbptr +4, factory +8), manager +0xc, PString type

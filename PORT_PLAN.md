@@ -47,14 +47,14 @@ at every step and catches mistakes while they are small.
 ## Status (2026-10-19)
 - Phase 0: done. Phase 1: trainz.exe 65.6% of functions named, 850 TrainzScript natives mapped, Jet SDK 1.0
   headers available as a naming reference.
-- Phase 2, Kernel_7c: 195/256 exports ours, verified by differential probes and in game (Version, UId,
-  FastDynamicArray, plugin system, LZSS/BlowFish, main loop). Left: EditItem block + Compress/Encrypt
-  vbtables (analysis notes in MODLOG).
+- Phase 2, Kernel_7c: **done, 256/256 exports ours**, verified by differential probes and in game (Version,
+  UId, FastDynamicArray, plugin system, LZSS/BlowFish, main loop, EditItem block). The game reaches the menu
+  with the original Kernel_7c removed, JetLog identical to the baseline.
 - Phase 3 deps: x64 builds via vcpkg in `D:\trainz12-decomp\thirdparty` (OpenAL Soft, OpenSSL 3,
   libjpeg-turbo, nvtt); Cg, d3dx9, XULRunner, SpeedTree still open.
 
 ## Next steps (one fresh session each; read MODLOG.md first, work sequentially to save the usage limit)
-1. Kernel_7c: EditItem block + Compress/Encrypt vbtables → 256/256, probe + menu check.
+1. ~~Kernel_7c: EditItem block + Compress/Encrypt vbtables → 256/256, probe + menu check.~~ Done 2026-10-19.
 2. Kernel_7c x64: build the module as x64 in a standalone test harness (no game yet) to find 64-bit hazards early.
 3. KernelStandard_7c: inventory and unit order (notes in `D:\trainz12-decomp\notes\KernelStandard.md`).
 4. KernelStandard_7c: first units (PString/PStringCache, strings, Options, File::Path), each diff-tested.
