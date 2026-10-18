@@ -68,6 +68,20 @@ Tools: `D:\tools` (Ghidra), scripts: `trainz12-x64/tools/`
   32-bit process and calls both through the raw exports (thiscall emulated with __fastcall): 600 000 rounds of
   random, near-equal, zero and malformed-string inputs, **0 mismatches**.
 - In game: main menu reached, JetLog identical to baseline, clean exit.
+- **UId complete** (30/256 Kernel_7c exports ours): Read/Write/GetString/SetRnd and UIdNull added. Only the
+  Version default-ctor closure is still forwarded in these two classes.
+  Differential test extended with real KernelStandard objects (DynamicBuffer incl. truncated buffers, PString
+  through the live PStringCache, SetRnd shape): 621 000 rounds, 0 mismatches. In game: identical JetLog.
+
+### Calling into the original modules
+- `tools/gen_implib.py` builds x86 import libs for every Jet module from its export dump
+  (`D:\trainz12-decomp\implib\*.lib`; data exports marked DATA → declare `__declspec(dllimport)`).
+  If our header declarations link against these, their mangled names are right.
+- `tools/dump_imports.py <dll> <from dll> <undname>` lists what a module uses from another, demangled.
+- `Jet::PString` = one `PStringCache::Node*`. Its ctor/copy/dtor are inlined everywhere (not exported);
+  reconstructed: copy = Lock, ++node->refs (+0x10), ++cache->liveRefs (+4), Unlock; dtor = cache->Destroy(node)
+  if both non-null. `PString::cache` is a private static, imported as DATA.
+- A `__cdecl` member returning a class by value takes (this, hidden result*) on the stack in that order.
 
 ### Third-party deps and their x64 availability
 | 32-bit dep | x64 replacement |
