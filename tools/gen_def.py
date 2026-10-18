@@ -5,7 +5,8 @@ from our own code; all others are forwarded to the renamed original (<module>_or
 forwarded to implemented is how a module gets replaced one class at a time.
 
 usage: python gen_def.py <exports.tsv from dump_exports.py> <module name, e.g. Kernel_7c> <implemented.txt> <out.def>
-implemented.txt: one mangled name per line, '#' comments allowed.
+implemented.txt: one mangled name per line, '#' comments allowed. "name=symbol" exports our symbol under the
+original name (for compiler-generated members C++ cannot define, e.g. a default constructor closure).
 """
 import csv
 import sys
@@ -16,12 +17,17 @@ with open(exports_tsv, encoding="utf-8") as f:
     exports = list(csv.DictReader(f, delimiter="\t"))
 
 implemented = set()
+aliases = {}
 p = Path(implemented_txt)
 if p.exists():
     for line in p.read_text(encoding="utf-8").splitlines():
         line = line.split("#", 1)[0].strip()
-        if line:
-            implemented.add(line)
+        if not line:
+            continue
+        name, _, target = line.partition("=")
+        implemented.add(name)
+        if target:
+            aliases[name] = target
 
 unknown = implemented - {e["mangled"] for e in exports}
 if unknown:
@@ -33,7 +39,8 @@ for e in exports:
     name, ordinal = e["mangled"], e["ordinal"]
     is_data = "(" not in e["demangled"] and name.startswith("?")  # vftables, vbtables, statics
     if name in implemented:
-        lines.append(f"    {name} @{ordinal}" + (" DATA" if is_data else ""))
+        target = f"={aliases[name]}" if name in aliases else ""
+        lines.append(f"    {name}{target} @{ordinal}" + (" DATA" if is_data else ""))
     elif name.startswith("?"):
         lines.append(f"    {name}={module}_orig.{name} @{ordinal}")
     else:

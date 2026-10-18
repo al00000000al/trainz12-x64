@@ -278,6 +278,34 @@ ini files), one CriticalSection at 0x10019ccc guarding everything below.
   - LZSS DecompressBlock at levels 1 and 5 on 20 000 bytes: the original returns 0 on its own output (the
     IOSlaveMemory short-write bug noted above), ours restores the data. Compressed bytes are identical.
 
+### Main loop reconstructed (2026-10-19): 195/256 Kernel_7c exports ours
+- `Kernel_7c/Task.cpp`, `App.cpp`, `dllmain.cpp`, `include/jet/Task.h`: Task, TaskManager, App, EntryPoint,
+  TimeEventSystem, GetTaskManager, the "Log" task and the module attach/detach (run under
+  ExceptionHandler::Main like the original). SDK 1.0 names; TS12 layout checked by static_assert
+  (Task 0x28: MSVC pads the vfptr to the class's 8-byte alignment, so the IListNode links sit at +8;
+  TaskManager 0x38; App 0xc) and the vftables of ours and the original compared slot by slot.
+- TaskManager (0x38): os +0, lastTime +8, frameEndTask +0x10, taskArray +0x14, taskChangeArray +0x18,
+  taskUpdateList +0x1c (IList head, count +0x24), flags +0x28 (initialised, taskChanges), frameRate +0x2c,
+  **lockFPS +0x30 (TS12)**, waveServer +0x34. Statics shutdown 0x10019c2c, running 0x10019c2d.
+- Frame (0x1000d3c0): pending changes first (Init new tasks, insert updating tasks before the first task of
+  equal or higher priority, unlink suspended ones); then the update list works as a queue: pop, Update,
+  back of the queue (STOP leaves the list, EXIT ends the loop) until the "Frame End" task (priority FLT_MAX)
+  comes round; it goes to the back too.
+- Main loop (0x1000cf00): `FrameRate` option (ignored with `vSync`) paces frames with Time::Delay in whole ms
+  and carries the error into the next frame, clamped to ±half a frame; `lockFPS` gives a fixed dt =
+  1/lockFPS with Time::IncFrame and Time::SetFrameLockTime. This is where frame pacing can be improved later.
+- Options read: vSync, FrameRate, lockFPS, WaveServer=On (loads WaveServer_7c.dll unless a task named
+  WaveServerTask exists).
+- Module attach also interns 21 names ("OnMinZoom" ... "UserInterface") kept by the original, so the string
+  pool sees the same strings.
+- `gen_def.py`: `name=symbol` lines export our symbol under an original name (used for
+  `??_FVersion@Jet@@QAEXXZ`, the compiler's default constructor closure).
+- `src/tests/task_probe.cpp` (+ `probe/run_task.ps1`): scripted tasks through Start/Update/Stop on both
+  modules (priorities incl. equal and negative, STOP, EXIT, failing Init, Suspend/Resume, delete while
+  running, task added while running, UpdateTask, GetTask, restart): **logs identical**. Plugin probe and the
+  older diff tests unchanged.
+- In game: menu reached on our main loop, clean exit, JetLog identical to the baseline.
+
 ### Third-party deps and their x64 availability
 | 32-bit dep | x64 replacement |
 |---|---|
