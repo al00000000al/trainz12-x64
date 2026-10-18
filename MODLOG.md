@@ -38,6 +38,37 @@ Tools: `D:\tools` (Ghidra), scripts: `trainz12-x64/tools/`
   killed the first run of trainz.exe (2026-10-18 22:47); finished modules were already saved.
 - No PDB exists for any module.
 
+### Module replacement harness (confirmed in game 2026-10-18 23:25)
+- Source of replacements: `D:\trainz12-decomp\src` (private), CMake + VS 2026 (MSVC 14.51), `-A Win32`,
+  static CRT. Build: `cmake -S D:\trainz12-decomp\src -B D:\trainz12-decomp\build32 -G "Visual Studio 18 2026" -A Win32`.
+- `tools/gen_def.py` makes the .def: every original export keeps name + ordinal; names in
+  `<module>/implemented.txt` come from our code, the rest forward to `<module>_orig.dll`.
+  link.exe (x86) rejects a .def forwarder for an undecorated C name (`JetGetPluginsKernel`): those go through
+  `#pragma comment(linker, "/export:...")` in a generated `<module>_forwards.cpp`.
+- Kernel_7c ABI: no STL types in any export; 14 vftables + 5 vbtables (virtual base PluginInstance) and
+  9 static data exports. No malloc/new from msvcr80 (objects use Jet::Alloc from KernelStandard), so a
+  different CRT is safe for this module.
+- **Pure-forwarding Kernel_7c.dll proxy works in game**: copy reaches the main menu, both `Kernel_7c.dll`
+  (ours) and `Kernel_7c_orig.DLL` are loaded (checked with 32-bit PowerShell; 64-bit can't list a WOW64
+  process's modules), JetLog identical to the baseline line for line, clean exit.
+- Test launch: `Start-Process 'D:\games\trainz 2012 x64\bin\trainz.exe' -WorkingDirectory 'D:\games\trainz 2012 x64'
+  -ArgumentList '-windowed','-Width=1280','-Height=800'` (args taken from Launcher.exe). Main menu in ~20 s.
+  Close with CloseMainWindow(): JetLog is only written on exit. The white "Forbidden" panel is the dead
+  N3V news feed, same in the original.
+
+### First reconstructed code: Jet::Version and Jet::UId (2026-10-18)
+- `src/include/jet/{Version,UId}.h`, `src/Kernel_7c/{Version,UId}.cpp` (private tree). 25 of 256 Kernel_7c
+  exports now ours; Version default-ctor closure and UId Read/Write/GetString/SetRnd/UIdNull still forwarded
+  (they need DynamicBuffer/PString/Rand from KernelStandard_7c).
+- ABI gotcha: most UId members are **`__cdecl` member functions** (mangled `QBA`/`QAA`, `this` on the stack);
+  Ghidra shows them as thiscall with `in_stack_` vars. Constructors, operator= and Zero are `__thiscall`.
+- Version = u16 build | u8 minor | u8 major, compared as one u32. UId = GUID layout; `<`/`>` compare
+  data1, data2, data3 unsigned, then data4 bytewise. `UId(const char*)` copies 37 chars but zeroes index 36.
+- **Differential test** `src/tests/diff_kernel_uid_version.cpp` loads ours and Kernel_7c_orig.dll in one
+  32-bit process and calls both through the raw exports (thiscall emulated with __fastcall): 600 000 rounds of
+  random, near-equal, zero and malformed-string inputs, **0 mismatches**.
+- In game: main menu reached, JetLog identical to baseline, clean exit.
+
 ### Third-party deps and their x64 availability
 | 32-bit dep | x64 replacement |
 |---|---|
