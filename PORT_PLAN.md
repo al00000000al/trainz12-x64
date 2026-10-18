@@ -60,9 +60,11 @@ at every step and catches mistakes while they are small.
 1. ~~Kernel_7c: EditItem block + Compress/Encrypt vbtables → 256/256, probe + menu check.~~ Done 2026-10-19.
 2. ~~Kernel_7c x64: build the module as x64 in a standalone test harness (no game yet) to find 64-bit hazards early.~~
    Done 2026-10-19.
-3. KernelStandard_7c: inventory and unit order (notes in `D:\trainz12-decomp\notes\KernelStandard.md`). Mostly
-   done by an earlier session: finish per `notes\HANDOVER_KernelStandard.md` (run `_patch.py`, render the .tmpl).
-4. KernelStandard_7c: first units (PString/PStringCache, strings, Options, File::Path), each diff-tested.
+3. ~~KernelStandard_7c: inventory and unit order (notes in `D:\trainz12-decomp\notes\KernelStandard.md`).~~ Done
+   2026-10-19: 15 units U0-U14, replaced **top-down** (the foundation of Alloc/PString/strings goes last; MODLOG).
+4. KernelStandard_7c: U0 (pure-forwarding proxy, menu check) + U1 Math-1 (Crc, StdMath with `s_sqrtLUT`,
+   Vector2/3, int-log helpers, OptimalRects, Eigen3: 35 exports, ~4.3 KB), bit-exact diff tests against the original.
+   Then the other leaf units U2-U5 (Matrix/Quaternion, small PODs, sync, Rand).
 5. Small Jet modules: KernelResources, KernelResource, Render2DCore, InputWin32, InputSystem.
 6. Decide the menu engine replacement (XULRunner 1.9 → WebView2 or CEF) and the Cg path (Cg 3.1 x64 or GLSL).
 7. Check whether SpeedTree is linked into trainz.exe (proprietary, no x64 download) and plan around it.

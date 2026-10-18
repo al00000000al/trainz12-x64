@@ -384,6 +384,30 @@ ini files), one CriticalSection at 0x10019ccc guarding everything below.
   The older verified DLL (02:24 build) gives the same number, so the cause is the game copy's environment, not
   our module (JetLog otherwise identical).
 
+### KernelStandard_7c: inventory and unit order (2026-10-19)
+Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible inputs in `notes\data`, `notes\ghidra`).
+- 1 762 exports (1 649 code, 113 data/vftables), `.text` 327 509 bytes, 2 276 functions. **Only 666 exports are
+  imported by anything** (trainz.exe 447, six tool exes 191-311, 21 Jet modules 6-168, Kernel_7c 121). The other
+  1 096 are used only inside the module; StringTables has no caller at all.
+- About 13% of `.text` is a statically linked IJG JPEG *encoder* (only `Bitmap::SaveJPG`). JPEG *decoding* goes
+  through ijl10.dll (32-bit only). Both are to be replaced by libjpeg-turbo; decoding will need a tolerance test.
+- The foundation state is **not exported** and orig's own code reaches it by address: the Alloc size-class free
+  lists with 16 striped critical sections, the `#StringData` PackedHeapMP, the PStringCache lock, the shared null
+  AnsiString buffer, the FileSub (.ja archive) list. So the Kernel_7c method is reversed here: **consumers first,
+  foundation last**. Units: U0 proxy, U1-U6 leaves (math, PODs, sync, Rand, small platform), U7 Config (flex
+  scanner), U8 Bitmap, U9 JIRF and streams, U10 File family incl. the .ja reader, U11 OS/Window, U12 diagnostics,
+  U13 thread/time, and U14 foundation as one cut-over.
+- CRT: Alloc blocks are msvcr80 `malloc` with a 4-byte size-class tag (pointers 4 mod 8, a 16-byte alignment
+  problem for x64). `File` keeps a CRT file descriptor at +0, so the File family and Log must link the game's
+  msvcr80, unlike Kernel_7c.
+- Exported objects with MSVC8 STL members (PackedHeap/MP, File::Find, IOSlaveMemoryDynamic) keep their size only
+  with hand-rolled containers.
+- x64 hazards: Window keeps `this` in window extra bytes via `Set/GetWindowLongA(h, 0)`. ExceptionHandler walks
+  EBP frames and uses `CONTEXT.Eip` and `FS:[0]`. Rand, LCRand and Time scale with x87 `fistp` (bit-exactness).
+- Options semantics (one entry per key, `+key=v` appends `,v`, values run to the next switch) are recorded in the
+  plan and implemented in the x64 stand-in.
+- Recommended first: U0 + U1 (35 exports, ~4.3 KB, bit-testable; `StdMath::s_sqrtLUT` is read inline by 10 modules).
+
 ### Third-party deps and their x64 availability
 | 32-bit dep | x64 replacement |
 |---|---|
