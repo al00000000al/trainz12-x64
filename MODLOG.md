@@ -176,6 +176,32 @@ Tools: `D:\tools` (Ghidra), scripts: `trainz12-x64/tools/`
   semantics; length table 0x10018158 {code, extra value, extra bits} is derived from the decode table;
   end symbol 0x110 written without a model update, then zero padding to 16 bits.
 
+### Kernel_7c core: inventory and exported layouts (2026-10-19)
+- Function areas (non-thunk): unnamed 129 fn / 22.1 KB (mostly plugin system, TaskManager internals, Jet
+  container templates), LZSS 37 / 8.9 KB (done), plugin system 85 / 6.9 KB, EditItem* 50 / 5.3 KB,
+  CRT 132 / 3.1 KB, App/Task/EntryPoint/LogTask 52 / 2.8 KB, Blowfish 19 / 2.6 KB (done), UId/Version (done).
+  `ghidra_scripts/NeighboursOfUnnamed.java` → `out\unnamed_Kernel_7c.tsv` (callers, callees, strings).
+- Plugin system internals: PluginSystem (0x48 bytes: ReferenceCount + 5 hash tables at +8/+0x14/+0x20/+0x2c/
+  +0x38 + a circular list at +0x44), plugins.ini loader 0x1000acd0 (keys Plugin, PluginGroup, PluginList,
+  PluginRemap, AutoPlugin, PluginDir; looks next to Kernel_7c.dll and next to the process), library loader
+  0x10009920 (name + "_7c.dll"/"_7c.exe", GetProcAddress "JetGetPlugins" + suffix). Internal only: may be
+  rebuilt with our own containers as long as behaviour matches.
+- Layouts other modules depend on (must match byte for byte; they match the SDK field order):
+  PluginType 0x20 {vptr; UId id +4; PString name +0x14; PluginLibrary* lib +0x18; PluginGroup* parent +0x1c},
+  vtable {AddReference, ReleaseReference, scalar deleting dtor}.
+  PluginConfig 0x28 {PString name; UId id +4; parent +0x14; lib +0x18; type +0x1c; children array +0x20;
+  bool isGroup +0x24; bool isMissing +0x25}.
+  PluginInstance: `virtual` ReferenceCount base (vbptr +0, pluginFactory* +4, ReferenceCount {vptr, refs}
+  placed last). Differs from the SDK, where the base is not virtual.
+- JetGetPluginsKernel registers PluginFactoryOf<LZSSCompress,Compress> (uid 8DBDFEB1-52F4-4c1b-BA91-
+  6A7B1CCC6D3E, group 8DBDFEB0-...) and PluginFactoryOf<BFEncrypt,Encrypt> "BlowFish" (AAF296E1-17A7-11d5-
+  A9C2-00E01898A4A9, group AAF296E0-...).
+- TaskManager options read in 0x1000cb80: "Frame End" task, vSync, FrameRate, lockFPS; WaveServer task
+  (0x1000d160). The frame-rate cap lives here: relevant for the performance goals.
+- Ghidra note: `FixCdeclMembers.java` sets every function's convention from its mangled name (and adds an
+  explicit `this` to __cdecl members); in Kernel_7c they were already right, the remaining noise in calls
+  like `Options::Get(this_04, ...)` is lost ECX tracking, so read the asm where arguments matter.
+
 ### Still to do in LZSSCompress
 - Wrap the codec in the LZSSCompress plugin class (IOSlave in/out, vtables) once the plugin system is ours.
 - CompressBlock 0x6ec0 / DecompressBlock 0x7150 work on IOSlave streams (KernelStandard).
