@@ -50,6 +50,7 @@ at every step and catches mistakes while they are small.
 - Phase 2, Kernel_7c: **done, 256/256 exports ours**, verified by differential probes and in game (Version,
   UId, FastDynamicArray, plugin system, LZSS/BlowFish, main loop, EditItem block). The game reaches the menu
   with the original Kernel_7c removed, JetLog identical to the baseline.
+- Phase 2, KernelStandard_7c: forwarding proxy in game, unit U1 (math) ours and bit-exact: 34/1762 exports.
 - Phase 3, Kernel_7c x64: builds as x64 against a KernelStandard stand-in; the task and EditItem probes give
   the original's output and a golden codec/container test matches the 32-bit build. 8 hazards found and fixed
   or recorded (MODLOG "Kernel_7c on x64").
@@ -62,9 +63,10 @@ at every step and catches mistakes while they are small.
    Done 2026-10-19.
 3. ~~KernelStandard_7c: inventory and unit order (notes in `D:\trainz12-decomp\notes\KernelStandard.md`).~~ Done
    2026-10-19: 15 units U0-U14, replaced **top-down** (the foundation of Alloc/PString/strings goes last; MODLOG).
-4. KernelStandard_7c: U0 (pure-forwarding proxy, menu check) + U1 Math-1 (Crc, StdMath with `s_sqrtLUT`,
-   Vector2/3, int-log helpers, OptimalRects, Eigen3: 35 exports, ~4.3 KB), bit-exact diff tests against the original.
-   Then the other leaf units U2-U5 (Matrix/Quaternion, small PODs, sync, Rand).
+4. ~~KernelStandard_7c: U0 (pure-forwarding proxy, menu check) + U1 Math-1.~~ Done 2026-10-19: 34 exports,
+   ~43 billion bit-exact checks, 0 mismatches, menu check clean.
+4b. KernelStandard_7c: the other leaf units, U2 Matrix3/4 + Quaternion, U3 small PODs, U4 sync, U5 Rand/LCRand,
+   each bit-exact against the original (same harness `tests/diff_ks_math.cpp`; mind x87 vs SSE per operation).
 5. Small Jet modules: KernelResources, KernelResource, Render2DCore, InputWin32, InputSystem.
 6. Decide the menu engine replacement (XULRunner 1.9 → WebView2 or CEF) and the Cg path (Cg 3.1 x64 or GLSL).
 7. Check whether SpeedTree is linked into trainz.exe (proprietary, no x64 download) and plan around it.

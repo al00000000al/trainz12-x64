@@ -408,6 +408,49 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
   plan and implemented in the x64 stand-in.
 - Recommended first: U0 + U1 (35 exports, ~4.3 KB, bit-testable; `StdMath::s_sqrtLUT` is read inline by 10 modules).
 
+### KernelStandard_7c U0 + U1 (2026-10-19): 34/1762 exports ours, bit-exact
+- **U0**: `jet_module(KernelStandard_7c)` with 1762 forwarders to `KernelStandard_7c_orig.dll` (all names are
+  decorated, so a plain .def covers them, data and vftables included). In game both modules are loaded, menu
+  reached, JetLog identical. Kernel probes (plugin, task, EditItem) unchanged through it.
+- **Our code calls the not-yet-replaced foundation in the original**: `implib\KernelStandard_7c_orig.lib`
+  (gen_implib.py with that module name). Our DLL imports only KERNEL32 and KernelStandard_7c_orig.dll.
+- **U1** (34 exports: Crc, StdMath, Vector2/3 conversions, IntLog2/ILog2/CeilPow2/FloorPow2,
+  GetBaryCentricWeights, Eigen3, OptimalRects): `src/KernelStandard_7c/{Math,Eigen3,Barycentric,OptimalRects}.cpp`.
+  The 35 in the plan was one too many.
+- `tests/diff_ks_math.cpp` (ours vs `_orig` in one process, raw bits): **all 2^32 inputs** of the five float
+  StdMath functions, IntLog2, ILog2(float), ILog2(int), CeilPow2 and FloorPow2; 4 M doubles for Sqrt/InvSqrt(double);
+  Crc 200 k; the LUT; Vector ctors incl. signalling NaNs; 2 M Eigen3 matrices (every step separately, incl.
+  QL giving up after 32 iterations on 12 231 of them); 3 M barycentric inputs (394 k degenerate); 3 000 random
+  OptimalRects runs, 193 k steps with both lists compared after each, plus Process on hand-built pending lists.
+  **About 43 billion checks, 0 mismatches.** For inputs that already hold NaNs, Eigen3 (111) and the barycentric
+  weights (1 708) differ only in which NaN payload propagates (x87 keeps the larger significand, SSE the first
+  operand). Matching that would need the original's SSE operand order, so it is accepted. In game: menu,
+  clean exit, JetLog identical.
+- Things that only showed up in the asm:
+  - StdMath works in x87 at the CRT's 53-bit precision and **returns floats unrounded in st(0)**. We compute
+    in double and return through a naked `jmp` thunk on Win32, so an MSVC8 x87 caller sees the same value.
+  - `InvSqrt(double)` takes its seed from the **low** 32 bits of the double (a bug, kept). `Sqrt(double)`
+    takes it from the value rounded to float.
+  - Constants: 0.5f, 1.5f, 1.5, 0.5, 1.0f, 2.0f, ±1e-6 (doubles).
+  - `s_sqrtLUT` (512 mantissas with 8 significant bits): the best simple formula (1/sqrt of the bucket
+    midpoint, rounded) matches only 474 of 512 entries, so the table looks tuned. It is read at build time from
+    the installed game's original DLL by `tools/extract_data.py` into a generated header; the source has no
+    copy of it.
+  - Copies through x87 `fld`/`fstp` quiet signalling NaNs (Vector ctors, Eigen3 diag[0] and the sort swaps):
+    `X87Copy` does the same on Win32.
+  - Eigen3 mixes SSE single precision with x87 double precision step by step: the QL convergence test sums
+    in double, the rotation's new off-diagonal uses the unrounded double square root, c and s are floats. Its
+    4x unrolled scan loops only run for counts above 3, so they are dead for 3x3. `operator[](i)` indexes the
+    object as a flat float array from offset 0. Layout: m[3][3], diag[3], subd[3] (0x3c).
+  - OptimalRects ({set head, tail, count, pending head, tail, count}, 0x18-byte nodes {Rect{x,y,w,h},
+    next link, prev link}, links pointing at link fields) uses custom register conventions in its 15 split
+    helpers. Kept off-by-ones: the strips cut in cases 3, 6, 10 start at the member's last column, and in
+    case 12 at its last row, ending one row short. Validate is an empty function (ICF-folded with an empty
+    destructor).
+- Win32 build note: `/arch` default (SSE2) plus /fp:precise gives the original's single-precision SSE steps
+  exactly. The `double` expressions stand in for its x87 code. The game uses OpenGL, which leaves the x87
+  precision at 53 bits; D3D9 without FPU_PRESERVE would set 24 bits and change the original's results.
+
 ### Third-party deps and their x64 availability
 | 32-bit dep | x64 replacement |
 |---|---|
