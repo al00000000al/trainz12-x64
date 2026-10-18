@@ -14,7 +14,8 @@ if (Get-Process java -ErrorAction SilentlyContinue | Where-Object { $_.Path -lik
     throw 'Ghidra (java) is running; wait for it to finish before backing up.'
 }
 
-& $sevenZip a -t7z -mx=7 -bso0 -bsp0 $archive 'D:\trainz12-decomp' (Split-Path $PSScriptRoot -Parent)
+# the unpacked Jet SDK is left out: it is rebuilt from D:\download\auran-jet-demo with unshield (see MODLOG)
+& $sevenZip a -t7z -mx=7 -bso0 -bsp0 '-xr!jet-sdk' $archive 'D:\trainz12-decomp' (Split-Path $PSScriptRoot -Parent)
 if ($LASTEXITCODE -ne 0) { throw "7z failed with $LASTEXITCODE" }
 & $sevenZip t -bso0 -bsp0 $archive
 if ($LASTEXITCODE -ne 0) { throw "archive test failed with $LASTEXITCODE" }

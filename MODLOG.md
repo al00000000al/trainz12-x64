@@ -106,6 +106,27 @@ Tools: `D:\tools` (Ghidra), scripts: `trainz12-x64/tools/`
 - Kernel_7c internal classes revealed: BFEncrypt (Blowfish), LZSSCompress, PluginSystem, PluginLibrary,
   PluginGroup, PluginFactoryOf<...>, LogTask, Mutex, ReferenceCount.
 
+### Auran Jet SDK 1.0 (2001–2003) as a reference (found by the user, 2026-10-19)
+- Source: archive.org item `auran-jet-demo` (public downloads from auran.com/jet), saved in
+  `D:\download\auran-jet-demo`. Licence: "AURAN Jet Free Access" (copyright Auran): private reference only,
+  never commit or publish SDK files.
+- Unpacked (without running installers) to `D:\trainz12-decomp\jet-sdk\{RC1,Beta2,Demo}\out`. The installers
+  are InstallShield 6 cabs: 7-Zip can't open them; `unshield` 1.6.2 built from source with zlib 1.3.2
+  (`D:\tools\src\unshield-build\src\Release\unshield.exe -d <out> x data1.cab`). The separate
+  `Auran Jet Documentation.exe` uses an older format unshield rejects, but RC1 already contains the same
+  `Doc\doc\JetAPI.chm`, extracted to `jet-sdk\RC1\chm` (10 003 HTML pages).
+- RC1: 517 engine headers (`Inc\inc\*.h`), 111 .cpp (examples, extensions, JIVE), 51 import libs, 98 DLLs
+  (`Kernel.dll`, `KernelStandard.dll`, ... the same modules without `_7c`, plus `.Dev` builds), docs
+  (JetKernelOverview.doc, RenderOverview.doc, whitepapers incl. "Jet DLLs & The Plugin Management System",
+  "Jet Program Flow"). No PDBs.
+- **Checked against TS12**: `UId.h` matches our reconstruction (union data[4] / data1..data4, same compare,
+  same Read/Write). `Version.h`: same packing, fields named `minor`(u16) `major`(u8) `main`(u8).
+  `Task.h` matches the TS12 binary to the byte: taskName +0x10, updatedTime (double) +0x18, priority +0x20,
+  bitfields isUpdating/isOnUpdateList/isInitialized at +0x24; virtuals ~Task, GetName, Init, Done, Update.
+- Differences seen so far (SDK is ~10 years older than TS12): many members became `__cdecl` in TS12;
+  `DynamicBuffer::Write(const void*, ulong, ulong)` gained a third argument. The SDK guides names and intent;
+  the TS12 binaries remain the authority.
+
 ### Third-party deps and their x64 availability
 | 32-bit dep | x64 replacement |
 |---|---|
