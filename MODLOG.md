@@ -341,6 +341,49 @@ ini files), one CriticalSection at 0x10019ccc guarding everything below.
   stripped), made with File::Md; names "Temp_%d.bin" from tempFileCounter under tempFileMutex; File::Prune
   cleans up. Initialize(name) takes a named Mutex and cleans old data when it gets the lock first.
 
+### Kernel_7c on x64: standalone harness (2026-10-19)
+- `build64` (`cmake -S src -B build64 -G "Visual Studio 18 2026" -A x64`): Kernel_7c as an object library
+  (`Kernel_7c_x64`, `JET_KS_STATIC`) linked with `tests/x64/KernelStandardStub.cpp`, a stand-in for the ~95
+  KernelStandard functions Kernel_7c imports. **It is not a reconstruction**: just enough behaviour, following
+  the 32-bit module where a probe's output depends on it (PString interning: Destroy only drops the reference;
+  Options: one entry per key {key, value, separators, cursor}, `+Key=v` appends `,v` (separator byte read from
+  the DLL), values run up to the whitespace before the next `/ - +` switch; ReferenceCount; Mutex).
+  No DllMain when linked statically: `StaticModuleAttach/Detach` (dllmain.cpp) via `JET_STATIC_KERNEL` in main.
+  Static mode finds plugins.ini next to the exe (`GetModuleHandle("Kernel_7c.dll")` is null).
+- Results (`probe/run_x64.ps1`): **task probe 92 lines and EditItem probe 307 lines identical to the original
+  32-bit module's output**; new `tests/golden_kernel.cpp`, built for both arches (LZSS all levels on 80 inputs +
+  300 corrupted streams, Blowfish key schedule/encrypt/decrypt/error codes, 200 FastDynamicArray runs =
+  50 126 steps with the chunk ring hashed after each, 2 000 UIds incl. GetString round trip, 2 000 Versions):
+  **305 lines identical** on Win32 and x64. Its 50 failed LZSS round trips are the size-0 input on both (a
+  header with no payload is a failure, as in DecompressBlock).
+- Compiles clean on x64 at /W3 and with C4267/C4244/C4311/C4312/C4302 enabled: no inline asm, no truncating
+  casts (earlier sessions cast explicitly everywhere).
+- **64-bit hazards found and fixed** (the Win32 build is unchanged: probes, diff tests, menu check all as before):
+  1. FastDynamicArray::Index(Iterator) hard-coded `(node - chunk - 0xc) >> 2`; on x64 the chunk header is 0x18
+     and items 8 bytes → now `offsetof(Chunk, data)` / `sizeof(T)`.
+  2. PString read the node at raw +8 (length) / +0x18 (text); node is now a struct {next, prev, length,
+     capacity, refs, unknown, text[]} (KernelStandard 0x10039cc0); on x64 text is at +0x20.
+  3. 17 size asserts are the 32-bit ABI → `JET_LAYOUT32` (include/jet/Platform.h); UId/Version stay exact.
+  4. KernelStandard objects Kernel_7c embeds without seeing their members (OS 0x18, Events 0x2c, File::Find
+     0x440, IOSlaveMemory 0xc) → `JET_OPAQUE_SIZE(32-bit, provisional x64)`. The real x64 KernelStandard must
+     publish real layouts; File::Find holds MSVC8 STL members (see the KernelStandard hand-over notes).
+  5. DestroyTimeEvents empties Events' lists at raw 32-bit offsets (+8/+0x14/+0x20, links at +4) → skipped on
+     x64; an x64 KernelStandard must empty them in ~Events.
+  6. KernelStandardRuntime binds File::Exists by its 32-bit mangled name with GetProcAddress → not built on x64.
+  7. Export plumbing is x86-only: gen_def.py and implemented.txt use x86 mangled names, `name=symbol` aliases
+     point at `__fastcall` helpers (vbase destructors, Version default-ctor closure). An x64 Kernel_7c.dll
+     needs its own export list (x64 manglings differ: `QEAA` for `QAE`/`QAA`). Since trainz.exe will be
+     rebuilt too, compatibility with the 32-bit manglings is not needed there.
+  8. Only off Windows: UId::data1 and Version::Packed use `unsigned long` as 32 bits (LLP64).
+- x64 sizes vs 32-bit: pointer 8/4, PString 8/4, FastDynamicArray<T*,13>::Chunk 0x80/0x40 (data at 0x18/0xc),
+  Task 0x30/0x28, TaskManager 0x58/0x38, Mutex 0x10/8; UId 0x10 and Version 4 on both.
+- Not portable by design: the differential tests against the original (diff_*, plugin_probe) need the 32-bit
+  original DLLs and call them through emulated thiscall; on x64 the golden output and recorded probe logs act
+  as the oracle instead.
+- Menu-check note: from about 06:40 the exit line `#StringData` reads ~1 100-1 200k used instead of ~508k.
+  The older verified DLL (02:24 build) gives the same number, so the cause is the game copy's environment, not
+  our module (JetLog otherwise identical).
+
 ### Third-party deps and their x64 availability
 | 32-bit dep | x64 replacement |
 |---|---|
