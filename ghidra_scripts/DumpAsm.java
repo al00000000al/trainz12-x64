@@ -28,7 +28,18 @@ public class DumpAsm extends GhidraScript {
 					Instruction ins = it.next();
 					StringBuilder hex = new StringBuilder();
 					for (byte b : ins.getBytes()) hex.append(String.format("%02x", b));
-					w.printf("%s  %-20s %s%n", ins.getAddress(), hex, ins);
+					// show strings and named targets the instruction points at
+					StringBuilder note = new StringBuilder();
+					for (ghidra.program.model.symbol.Reference r : ins.getReferencesFrom()) {
+						ghidra.program.model.listing.Data d = getDataAt(r.getToAddress());
+						if (d != null && d.hasStringValue()) {
+							note.append(" \"").append(d.getDefaultValueRepresentation()).append('"');
+						} else {
+							ghidra.program.model.symbol.Symbol s = getSymbolAt(r.getToAddress());
+							if (s != null) note.append(" <").append(s.getName(true)).append('>');
+						}
+					}
+					w.printf("%s  %-20s %s%s%n", ins.getAddress(), hex, ins, note.length() > 0 ? "   ;" + note : "");
 				}
 			}
 		}

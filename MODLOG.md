@@ -202,6 +202,39 @@ Tools: `D:\tools` (Ghidra), scripts: `trainz12-x64/tools/`
   explicit `this` to __cdecl members); in Kernel_7c they were already right, the remaining noise in calls
   like `Options::Get(this_04, ...)` is lost ECX tracking, so read the asm where arguments matter.
 
+### Plugin system: behaviour spec (read from Kernel_7c, 2026-10-19)
+Globals: PluginSystem* at 0x10019c24 (ref-counted; created on first use by 0x1000c460, which also loads the
+ini files), one CriticalSection at 0x10019ccc guarding everything below.
+- **Loading** (0x1000acd0): Options opts; process `<dir of Kernel_7c.dll>/plugins.ini` if File::Exists, then
+  `<dir of process>/plugins.ini` if it is a different path and exists. If OS options have `AutoPlugin`:
+  scan "" and every `PluginDir` value (0x1000afd0): Find "<dir>/*.dll" (or "*.dll"), DynamicLibrary::Open,
+  Import "PluginList" -> call -> NULL-terminated `const char*` list, each line -> opts.ProcessRaw. Then:
+  `PluginGroup` lines "Name:GUID[:ParentGUID]" (0x1000a3e0), `Plugin` lines "Dll:Name:GUID[:ParentGUID]"
+  (0x1000a710), `PluginRemap` lines "FromGUID:ToGUID" (0x1000aad0). A line whose parent GUID is unknown is
+  skipped. PluginConfig {name, id, parent, lib (Plugin only), isGroup}; added to the parent's children and to
+  the id table; also to a name index where a new entry goes *before* existing ones with the same name.
+  Libraries are found or created by name (list at +0x44), reused while consecutive lines name the same dll.
+- **Library load** (0x10009920, lazy): name "*" -> GetModuleHandle(NULL); ext "exe" -> drop ext, add
+  "_7c.exe"; otherwise drop "dll" ext if any, add "_7c.dll"; LoadLibrary. Entry = "JetGetPlugins" + file name
+  (no suffix for "*"); missing -> FreeLibrary, mark failed, result 2; else call it, result 0. Load failure ->
+  mark failed, result 1. PluginLibrary {vptr, PString name, refs +8, types +0xc, HMODULE +0x10,
+  bool +0x14, bool failed +0x15}; refs 0 -> vf1: delete its types, FreeLibrary (unless the name is "*").
+- **PluginType ctor**: copy id/name, AddRef system, lib = 0; parent GUID non-zero -> find type in types table
+  or make a PluginGroup type (0x28: PluginType + refs +0x20 + member list +0x24) from the group config;
+  add to the group's members; register (0x10009fb0): lib = config's lib (and add to lib's type list), add to
+  the types-by-parent and types tables. **dtor**: lock; unlink from group (group refs--, deleted at 0);
+  unregister; release system. **AddReference/ReleaseReference**: lock; lib->refs++/--, 0 -> unload lib.
+- **Lookup by id** (0x1000a020): remap; types table hit -> lib==0 ? result 4 : AddReference, result 0. Else
+  config (not missing, lib not failed and not loaded) -> load lib -> retry; still nothing -> config.missing=1,
+  unload lib; result 1. By parent+name (0x1000a140/0x1000b290) and by list (Enumerate: non-group children,
+  recursing into groups). PluginCollection(uid[, name]) = FastDynamicArray<PluginConfig*> filled the same way.
+- **CreateInstance** (Compress/Encrypt/EditItemManager): lookup factory, factory vtable +0xc =
+  CreateInstance, then Init (+8 for Compress, +0x24 for EditItemManager) and release on failure; the no-arg
+  versions build LZSSCompress / BFEncrypt directly.
+- **FastDynamicArray<T,13>** as other modules see it inline: a pointer to a ring of 0x40-byte chunks
+  {next, prev, count, T items[13]}; Add appends to the last chunk, a full last chunk gets a new one.
+  PluginCollection *is* that array, so the chunk format must stay exact.
+
 ### Still to do in LZSSCompress
 - Wrap the codec in the LZSSCompress plugin class (IOSlave in/out, vtables) once the plugin system is ours.
 - CompressBlock 0x6ec0 / DecompressBlock 0x7150 work on IOSlave streams (KernelStandard).
