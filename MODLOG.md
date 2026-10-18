@@ -159,7 +159,25 @@ Tools: `D:\tools` (Ghidra), scripts: `trainz12-x64/tools/`
   destination already holds at the cursor" (undefined), and it corrupts its heap on bad Huffman streams.
   Ours fails cleanly. Distance 0 cannot occur in valid streams (mode 0 is only used below 256 bytes).
 
-### Jet::LZSSCompress compression (to do)
+### Jet::LZSSCompress compression (reconstructed and verified 2026-10-19)
+- `JetLzss::Compress` produces **byte-identical** output to CompressBlock: 4 800 comparisons (5 data kinds,
+  16 sizes up to 200 KB, levels 0-9), 0 differences; whole LZSS test now 11 087 checks, 0 mismatches.
+- Level table 0x100194c0 (stride 0x28): {mode, nice length, emitMatch PMF, emitLiterals PMF}; the PMFs are
+  zero in the file and filled by the static initialiser 0x1000f540: levels 1-6 use the token emitters
+  0x10006410 / 0x10006600, levels 7-9 the Huffman emitters 0x100062c0 / 0x10006390 (Ghidra had no functions
+  there: only the table points at them; `ghidra_scripts/CreateFunctionsAt.java`, `XrefsTo.java`).
+- Match finder 0x100067d0: hash h = ((h << s) ^ b) & mask over 3 bytes, s = 3/4/5 for buffer < 2000 / < 24000 /
+  larger, head + prev chains of u16 positions compared as **signed shorts** (mode 2 positions pass 32767),
+  whole chain walked down to pos - window, stop early at the level's nice length; bytes 0, best, 1 checked
+  first, byte 2 implied by the hash. Window slides when pos reaches 2*window (0x10006700).
+- Main loop 0x10006940: pending literals flushed above 0x101; matches over 0x102 split into 0x102 chunks, a
+  1-2 byte remainder goes back to the input. Literal runs of 6+ in modes 1-2 become raw runs.
+- Huffman encoder: symbol bits gathered leaf->root as (node & 1), LSB first, 16-bit flushes with x86 shift
+  semantics; length table 0x10018158 {code, extra value, extra bits} is derived from the decode table;
+  end symbol 0x110 written without a model update, then zero padding to 16 bits.
+
+### Still to do in LZSSCompress
+- Wrap the codec in the LZSSCompress plugin class (IOSlave in/out, vtables) once the plugin system is ours.
 - CompressBlock 0x6ec0 / DecompressBlock 0x7150 work on IOSlave streams (KernelStandard).
 - Header byte: low nibble = level 0..9 (0 = stored), bits 4-5 = window mode. Mode 0: LZ with 32-bit flag words,
   3-bit lengths (7 = extended by a byte), 1-byte offsets. Levels 1-6: 16-bit tokens, offset bits per mode from
