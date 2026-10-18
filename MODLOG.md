@@ -143,7 +143,23 @@ Tools: `D:\tools` (Ghidra), scripts: `trainz12-x64/tools/`
 - Technique: internal (non-exported) functions of `<module>_orig.dll` can be diff-tested by calling them at
   base + RVA with the right calling convention.
 
-### Jet::LZSSCompress is a multi-mode codec (to do)
+### Jet::LZSSCompress decompression (reconstructed and verified 2026-10-19)
+- `src/Kernel_7c/JetLzss.{h,cpp}`: header, mode 0, token mode (levels 1-6), adaptive Huffman (levels 7-9) with
+  the original's model init (0x10005cf0), update (0x100060b0) and in-place rebuild (0x10005e60) carried over.
+  Tree 1 has 0x111 symbols rounded to 0x112 leaves (256 literals, 16 length codes, 0x110 = end); tree 2 has
+  16/64/64 symbols with 4/6/8 raw low distance bits for modes 0/1/2. Bits are read LSB first.
+- `src/tests/diff_lzss.cpp`: a real original LZSSCompress (ctor RVA 0x5a00, flag 1) compresses 5 kinds of data
+  (random, config-like text, runs, zeros, low-entropy binary) at 16 sizes up to 200 KB, levels 0-9:
+  **6 287 checks, 0 mismatches** — our decoder restores every input exactly.
+- The original *decoder* is not a usable oracle from a test harness: driven through IOSlaveMemoryDynamic it
+  fails reading back across that class's 256-byte blocks; through IOSlaveMemory a stream ending in a long
+  back-reference comes out short (buffered IOSlaveWriteCursor + WriteCopy). Valid data in the game goes
+  through other paths; our decoder is checked against the original *encoder's input* instead.
+- Corrupted streams (informational, not replicated): the original treats distance 0 as "copy what the
+  destination already holds at the cursor" (undefined), and it corrupts its heap on bad Huffman streams.
+  Ours fails cleanly. Distance 0 cannot occur in valid streams (mode 0 is only used below 256 bytes).
+
+### Jet::LZSSCompress compression (to do)
 - CompressBlock 0x6ec0 / DecompressBlock 0x7150 work on IOSlave streams (KernelStandard).
 - Header byte: low nibble = level 0..9 (0 = stored), bits 4-5 = window mode. Mode 0: LZ with 32-bit flag words,
   3-bit lengths (7 = extended by a byte), 1-byte offsets. Levels 1-6: 16-bit tokens, offset bits per mode from
