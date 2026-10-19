@@ -603,6 +603,15 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
   - `tools/annotate_asm.py`: labels a dumpbin listing with import names (demangled), string literals and export
     names.
   - `tools/compare_vtables.py`.
+- Modules in the game process at the menu (32-bit PowerShell, `probe/modules_run.ps1`):
+  - Kernel_7c, KernelResources_7c and Render2DCore_7c run without their `_orig`.
+  - Both input drivers are loaded: InputWin32 (with its `_orig`) and InputDirectX, plus DINPUT8. Which one takes
+    the input is still open.
+- Offline file reading:
+  - Outside the game, Jet's MemoryFile cannot read a file opened through File. The read goes through
+    IOSlaveResource / IOSlaveFile, and IOSlaveFile reports a size of 0.
+  - So ConfigParser-based loaders (sprite.txt, bmframe.txt, colour.txt, and KernelResource itself) cannot be
+    diff-tested in-process yet. Fixing this means finding what Jet initialises for File I/O.
 
 ### Third-party deps and their x64 availability
 | 32-bit dep | x64 replacement |
