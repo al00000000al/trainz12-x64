@@ -68,7 +68,8 @@ at every step and catches mistakes while they are small.
 4b. ~~KernelStandard_7c: the other leaf units, U2 Matrix3/4 + Quaternion, U3 small PODs, U4 sync, U5 Rand/LCRand.~~
    Done 2026-10-19: 242/1762 exports ours, each unit bit-exact against the original (NaN payloads aside; MODLOG).
 5. Small Jet modules: KernelResources, KernelResource, Render2DCore, InputWin32, InputSystem.
-   In progress: proxies for all five in game; KernelResources 51/51 ours, bit-exact (MODLOG "Step 5").
+   In progress: proxies for all five in game; KernelResources 51/51 and Render2DCore 85/85 ours, verified
+   against the originals (MODLOG "Step 5"). Left: InputWin32, KernelResource, InputSystem.
 6. Decide the menu engine replacement (XULRunner 1.9 → WebView2 or CEF) and the Cg path (Cg 3.1 x64 or GLSL).
 7. Check whether SpeedTree is linked into trainz.exe (proprietary, no x64 download) and plan around it.
 8. Render stack (RenderSystem, Render3D*, RenderOpenGL), then InterfaceSystem, WaterSystem.

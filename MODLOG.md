@@ -557,6 +557,45 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
   - Limit: in this harness Bitmap::Scale returns null for the 32-bit format, so the scaled loads end with no
     bitmap in both modules.
   - The factories and the two internal resources are only covered in game: menu, clean exit, JetLog identical.
+- **Render2DCore_7c: 85/85 exports ours** (`src/Render2DCore_7c/{Canvas,Sprites}.cpp`, headers
+  `jet/{RenderSystem,Render2DCore,VCall}.h`):
+  - Canvas: an off-screen surface drawn as up to 7 x 5 textures, holding at most 16 dirty rectangles per tile;
+    more than 16 turn into the whole tile.
+  - SelectionBox: a translucent quad with a dark and a light outline, at a 0.375 pixel offset.
+  - SpriteInstance and SpriteManager: priority-sorted sprites, drawn higher priority first via qsort.
+  - SpriteResource ("sprite.txt": `Sprite { Texture UV UVI Color Size Position Rotation Scale AlphaBlendMode
+    AlphaTestMode AlphaTestFunction AlphaRef SrcFactor DstFactor }`; UId ...8A).
+- RenderSystem is only partly declared. Layer and Overlay are declared with their TS12 layout (0x20, 0x3c) and
+  11-slot vtable: dtor, RenderLayer, UpdateLayer, Collides x2, Reset, Render, Update, Begin, End, CanRender.
+  Display, Texture and the kernel are opaque. They are called through `VCall` wrappers by vtable offset:
+  - Display: +0x80 texel offset (a float in st(0)), +0x98 create texture, +0xa0 set texture, +0xe0/+0xe4 draw,
+    +0x10c vertex declaration.
+  - Texture: +0x04 create, +0x0c upload, +0x10 update a rectangle, +0x20/+0x44 bind, +0x38 size, +0x3c touch.
+  - Kernel: +0x7c Display, +0x94 texture manager.
+  - Display +0x54 is the state block that Display's non-virtual setters cache.
+- Things from the asm:
+  - SpriteInstance's 0x50-byte attribute block is a copy of the resource's: position (z is the priority), size,
+    uv, colour, rotation, scale, alpha flags and factors.
+  - The vertices are 4 x {x, y, z, colour, u, v}.
+  - EnableFixedPixelSize divides both sizes by the screen *height* (kept).
+  - Canvas::Render shifts the texture coordinates by Display's texel offset over the tile size.
+  - The rotation's cos/sin are separate x87 fcos/fsin rounded to float.
+  - The same rectangle intersection as KernelResources, with the same wrong-field clearing, is kept.
+- Bug found by the test: SpriteInstance and the layers need `JET_HEAP_OBJECT`. Their deleting destructors free
+  with `Alloc::Delete`, and SpriteManager::Purge deletes sprites that callers allocated in Jet's heap.
+- `tests/diff_r2d.cpp` drives both modules from identical memory against a stand-in renderer. The Display's
+  virtual slots log every call, draws included with all vertex data. Textures, the texture manager and the kernel
+  log their calls too. RenderSystem's real non-virtual Display setters run on the stand-in's state block.
+  - Covered: SelectionBox render; the whole Canvas cycle (Create / setters / Update with random dirty lists /
+    Render with texel offsets and wire frame / Destroy); sprites (Open with UVI handling, all setters, the
+    attribute update with rotation and aspect correction, Render with the alpha save/restore, SpriteManager
+    Add / Render / Update / Remove / Purge).
+  - Compared: the call logs, the Display state and the objects' memory.
+  - Result: **249 020 checks, 0 mismatches.**
+  - SpriteResource is not exported. The test finds its vtable through RTTI.
+  - Limit: its loader cannot be compared outside the game. ConfigParser opens the file, then MemoryFile::Open
+    fails (result 3), even for the game's own config files. Only the failure path is compared.
+- In game: menu, clean exit, JetLog identical. The menu does not seem to draw sprites.
 - Harness notes:
   - Resource's constructor reads `Resource::resourceSystem` (+0xdc). The test points it at a zeroed buffer.
   - KernelStandard's 32-bit bitmap format is enum value 2.
