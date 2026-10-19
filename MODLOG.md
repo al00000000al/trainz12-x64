@@ -511,6 +511,60 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
   shows 0 differences. In game, with all of U1-U5 installed: menu reached, clean exit, JetLog identical to
   the baseline.
 
+### Step 5, small Jet modules (2026-10-19, in progress)
+- Sizes of code in the five modules (Ghidra function sizes): KernelResources ~10 KB, InputWin32 ~13 KB,
+  Render2DCore ~17 KB, KernelResource ~31 KB, InputSystem ~73 KB.
+- Dependencies:
+  - KernelResource is the base. KernelResources, Render2DCore and InputSystem import it.
+  - Render2DCore also imports RenderSystem.
+  - InputWin32 is a plugin built on InputSystem.
+  - All five also import Kernel_7c and KernelStandard_7c.
+- **U0 proxies for all five** (`jet_module` + empty `implemented.txt`): all exports forward to `<module>_orig.dll`.
+  In game: menu, clean exit, JetLog identical.
+- **KernelResources_7c: 51/51 exports ours** (`src/KernelResources_7c/BitmapResources.cpp`, headers
+  `jet/{Resource,KernelResources,Bitmap,Config,Result}.h`). It holds:
+  - BitmapBaseResource, BitmapFrameBaseResource and BitmapResource, plus their instances.
+  - Two internal resources: BitmapFrameResource ("bmframe.txt": `Frame { Image, Area }`, an area of another
+    bitmap resource) and ColourResource ("colour.txt"/"color.txt": `Color { Red Green Blue Alpha Blend }`,
+    rendered as a box, mode 5 when blended, else 1).
+  - The plugin table: ResourceType<T> factories for tga (UId ...81), bmp/jpg/pcx (all ...82), bmframe.txt (...83),
+    colour.txt (...84) and color.txt (...85), in the group 4C414E80-BBDA-11d4-9AD7-0001025364B8.
+- Things from the asm:
+  - Resource has 18 virtuals, all `__cdecl` except the destructor. The order is Lock, Unlock, LoadAll,
+    IsAllLoaded, SetPriority, Add/RemoveObserver, GetMustResetWhenFinished, ~Resource, CreateInstance, Load,
+    LoadTxt, LoadComplete, OnLoadNotify, Unload, CalculateSize, CalculateDataSize, GetRedirection.
+  - The bitmap classes add Render x3 (slots 18-20, overloads in reverse declaration order), GetBitmap, GetArea,
+    GetOffset, and SetBitmap for BitmapResource.
+  - Result codes are `ResultClass<&X::results, X::Results>` (one int, returned in memory). `jet/Result.h`
+    reproduces the mangling, so exports such as `BitmapResource::Load` link under the original names.
+  - The rectangle intersection (0x10001840) clears the wrong fields when the result is empty: x for an empty
+    height and y for an empty width. Kept.
+  - The tiled Render clips each tile to the area's right/bottom edge (not the left/top) before the clip rect.
+  - BitmapResource::Load halves both dimensions until w*h <= MAX_STREAMING_TEXTURE_SIZE^2 (default 2048) and fails
+    if either reaches 0. It scales with Bitmap::Scale.
+  - BitmapBaseResource::GetBitmap throws `Jet::Exception` ("GetBitmap() not implimented", line 0x118).
+- Checks:
+  - `tools/compare_vtables.py` shows the three exported vftables match slot for slot (same import in every
+    imported slot).
+  - `tests/diff_krs.cpp` drives both modules in one process with a stand-in resource whose vtable logs calls, and
+    with real KernelStandard bitmaps:
+    - the three Render variants (random areas, clips, justifications, repeat limits) are compared on destination
+      pixels and call logs;
+    - all BitmapBaseInstance members;
+    - BitmapResource is built through its constructor and loads generated TGA files through a stand-in database,
+      with small streaming limits.
+  - Result: **1 096 760 checks, 0 mismatches**.
+  - Limit: in this harness Bitmap::Scale returns null for the 32-bit format, so the scaled loads end with no
+    bitmap in both modules.
+  - The factories and the two internal resources are only covered in game: menu, clean exit, JetLog identical.
+- Harness notes:
+  - Resource's constructor reads `Resource::resourceSystem` (+0xdc). The test points it at a zeroed buffer.
+  - KernelStandard's 32-bit bitmap format is enum value 2.
+- New public tools:
+  - `tools/annotate_asm.py`: labels a dumpbin listing with import names (demangled), string literals and export
+    names.
+  - `tools/compare_vtables.py`.
+
 ### Third-party deps and their x64 availability
 | 32-bit dep | x64 replacement |
 |---|---|
