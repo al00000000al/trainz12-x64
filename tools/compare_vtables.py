@@ -4,7 +4,9 @@ Each slot is classified as an import (a `jmp [IAT]` thunk, shown as the imported
 module itself. A rebuilt module must have the same number of slots and the same import in every slot where the
 original has one; slots with local code must be local in both (their bodies are checked by the module's tests).
 
-usage: python compare_vtables.py <original.dll> <rebuilt.dll> [slots to read, default 64]
+usage: python compare_vtables.py <original.dll> <rebuilt.dll> [slots to read, default 64] [--rtti]
+--rtti also compares the vftables of classes that are not exported, found through their RTTI complete object
+locators (named by class and subobject offset).
 """
 import struct
 import sys
@@ -56,6 +58,31 @@ class PE:
     def is_code(self, rva):
         return any(a <= rva < b for a, b in self.code)
 
+    def rtti_vtables(self):
+        """{"Class@offset": vftable rva} for every complete object locator in the image"""
+        d, base = self.d, self.base
+        cols = {}
+        for name, vs, va, rs, ro in self.secs:
+            if b".text" in name:
+                continue
+            for o in range(ro, ro + min(vs, rs) - 20, 4):
+                sig, off, _, td, _ = struct.unpack_from("<IIIII", d, o)
+                if sig != 0 or not base <= td < base + 0x10000000:
+                    continue
+                to = self.off(td - base)
+                if to is None or d[to + 8:to + 11] != b".?A":
+                    continue
+                cols[base + va + o - ro] = f"{self.cstr(to + 8)}@{off:x}"
+        out = {}
+        for name, vs, va, rs, ro in self.secs:
+            if b".text" in name:
+                continue
+            for o in range(ro, ro + min(vs, rs) - 4, 4):
+                col = struct.unpack_from("<I", d, o)[0]
+                if col in cols:
+                    out[cols[col]] = va + o - ro + 4
+        return out
+
     def slots(self, vt_rva, limit):
         out = []
         for i in range(limit):
@@ -73,12 +100,18 @@ class PE:
         return out
 
 
-orig, ours = PE(sys.argv[1]), PE(sys.argv[2])
-limit = int(sys.argv[3]) if len(sys.argv) > 3 else 64
+args = [a for a in sys.argv[1:] if a != "--rtti"]
+orig, ours = PE(args[0]), PE(args[1])
+limit = int(args[2]) if len(args) > 2 else 64
+tables_orig = {n: v for n, v in orig.exports.items() if n.startswith("??_7")}
+tables_ours = {n: v for n, v in ours.exports.items() if n.startswith("??_7")}
+if "--rtti" in sys.argv:
+    tables_orig.update(orig.rtti_vtables())
+    tables_ours.update(ours.rtti_vtables())
 bad = 0
-for name in sorted(n for n in orig.exports if n.startswith("??_7")):
-    a = orig.slots(orig.exports[name], limit)
-    b = ours.slots(ours.exports[name], limit) if name in ours.exports else []
+for name in sorted(tables_orig):
+    a = orig.slots(tables_orig[name], limit)
+    b = ours.slots(tables_ours[name], limit) if name in tables_ours else []
     diffs = [i for i in range(max(len(a), len(b))) if (a[i] if i < len(a) else None) != (b[i] if i < len(b) else None)]
     print(f"{name}: {len(a)} slots, {'same' if not diffs else f'{len(diffs)} differ'}")
     for i in diffs:

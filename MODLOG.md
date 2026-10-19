@@ -605,8 +605,54 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
   - `tools/compare_vtables.py`.
 - Modules in the game process at the menu (32-bit PowerShell, `probe/modules_run.ps1`):
   - Kernel_7c, KernelResources_7c and Render2DCore_7c run without their `_orig`.
-  - Both input drivers are loaded: InputWin32 (with its `_orig`) and InputDirectX, plus DINPUT8. Which one takes
-    the input is still open.
+  - Both input drivers are loaded: InputWin32 and InputDirectX, plus DINPUT8. **The game takes keyboard and
+    mouse from InputWin32**: it calls Init and creates exactly the keyboard and the mouse (in-game trace below).
+- **InputWin32_7c: all ours** (`src/InputWin32_7c/InputWin32.cpp`; its only export is
+  `JetGetPluginsInputWin32`). Header `jet/InputSystem.h` holds InputDevice, InputDriver, InputDeviceCaps,
+  InputData, DeviceProperty, ObserverSubject and AutoReference. Header `jet/Window.h` holds the Window members the
+  driver calls. Factory "Win32" 445ED0AC-..., group F3117B18-...
+  - Keyboard: a window hook turns WM_KEYDOWN/UP, WM_SYSKEY* and WM_CHAR/WM_IME_CHAR into Key/Char events.
+    Lock-key modifiers sit in bits 20..27, and Print Screen only sends a release.
+  - Keyboard Update polls GetKeyboardState through a VK → Jet key table (the original builds it at load time).
+  - Keyboard properties: the Caps/Num/Scroll lock state. Setting one toggles it with SendInput.
+  - Mouse: hook-driven moves, buttons and wheel, including the old MSWHEEL_ROLLMSG message.
+  - Mouse properties: range, threshold, position and exclusive mode (a clipped, hidden cursor kept at the window
+    centre).
+  - Joystick: WinMM joyGetPosEx. 8 axes are scaled into ±32767. 32 buttons, with optional auto-repeat. One POV.
+  - All 11 vftables match slot for slot (`compare_vtables.py --rtti`: the classes are found by RTTI).
+  - Quirks kept:
+    - The original's `_ftol2` takes the SSE2 path (cvttsd2si), so out-of-range axes become 0x80000000.
+    - WM_XBUTTONDOWN reports a release.
+    - The joystick's auto-repeat flag stores the raw byte it is given.
+    - The axis ranges sit at a 12-byte stride with overlapping tails.
+  - Bugs found by the test (both fixed):
+    - joyGetPosEx flags must be 0x2bf (all axes, buttons, POVCTS, no JOY_RETURNPOV).
+    - The auto-repeat byte must be kept as given, not normalised to a bool.
+- `tests/diff_iw32.cpp`: nothing is exported, so each module's **import table is patched** instead.
+  - Every Win32 call (user32, winmm, GetVersionExA), Window / OS / Time / Alloc, the InputDevice constructor,
+    destructor and events, and the plugin type base go to logging stubs. The stubs answer from a seeded generator.
+  - Both modules run the same scenarios:
+    - the factory from JetGetPlugins creates the driver;
+    - Init, then Enumerate for each device type;
+    - CreateDevice for keyboard, mouse, both joysticks and an unknown id;
+    - random properties, updates, critical shutdown / startup;
+    - window messages through the registered hooks;
+    - release.
+  - Compared: the call logs and the objects' memory, with pointers named by allocation number and RTTI / vbtable.
+  - Result: **1 462 488 checks, 0 mismatches** over 10 000 scenarios, stable across runs.
+- In game (`probe/input_run.ps1` + `tools/input_check.ps1`, real SendInput clicks and keys), originals vs ours:
+  - Steps: hover; click SELECT ROUTE; click the search box and type (the Russian layout gives "ьщо": WM_CHAR);
+    3 × Backspace; open the Main menu dropdown; Esc; Back.
+  - The same screens and the same text. The only differences are time-driven: the route preview slideshow, the
+    caret blink, and a 7-pixel strip at the bottom edge.
+  - The optional trace (`-DIW32_TRACE`, off by default) logged Init, the keyboard and mouse creation, the button,
+    key and char events with the expected codes (cp1251 0xfc 0xf9 0xee, Backspace, Esc), and the mouse moves.
+  - Menu check with the final build (trace off): clean exit, JetLog identical to the baseline.
+- Screenshots of the game:
+  - GDI copies (BitBlt, PrintWindow) of the GL window come out black.
+  - `tools/dupshot.cpp` (DXGI desktop duplication) sees it, together with whatever window is on top, so the
+    check makes the game window topmost.
+  - Print Screen is no use on Windows 11: it opens the Snipping Tool overlay, which takes the focus.
 - Offline file reading:
   - Outside the game, Jet's MemoryFile cannot read a file opened through File. The read goes through
     IOSlaveResource / IOSlaveFile, and IOSlaveFile reports a size of 0.
