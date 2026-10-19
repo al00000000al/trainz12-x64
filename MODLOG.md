@@ -653,6 +653,60 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
   - `tools/dupshot.cpp` (DXGI desktop duplication) sees it, together with whatever window is on top, so the
     check makes the game window topmost.
   - Print Screen is no use on Windows 11: it opens the Snipping Tool overlay, which takes the focus.
+- **InputSystem_7c** (327 exports, 147 KB) is replaced unit by unit; the rest forwards to `_orig`.
+  - Planned units:
+    - U1 ObserverSubject + observer bases (done);
+    - U2 InputDevice / Keyboard / Mouse / Joystick / InputDriver + device ids (done);
+    - U3 ASCIICode / InputStrings;
+    - U4 EmuDevice;
+    - U5 Input;
+    - U6 InputExtension / InputUIExtension;
+    - U7 InputAction / InputActionMapper;
+    - U8 ForceEffect / ForceResource + the plugin table.
+  - Jet SDK Beta2/RC1 `ObserverSubject.h` is the template's source. Its input headers describe an older design and
+    do not apply.
+- **U1, ObserverSubject<T>** (`src/InputSystem_7c/Observers.cpp`, explicit instantiations for InputObserver,
+  InputActionObserver and InputUIExtensionObserver):
+  - Layout: `{vptr, FastDynamicArray<UncertainObserver, 4> observers, int observerLock}`. An entry is
+    `{bool isValid, T* observer, int priority}`, and a chunk is 0x3c bytes.
+  - TS12 adds a priority: the list is kept sorted highest first (Less = `a.priority > b.priority`). Re-adding an
+    observer with another priority moves it.
+  - While locked, removals only clear the flag; the last unlock drops the cleared entries.
+  - The copy keeps the chunks as they are (memcpy, new `FastDynamicArray::AppendChunks`). operator= has no
+    self-check, so a self-assignment empties the subject.
+  - The slots of a fresh chunk are default-constructed (flag and priority 0). `NewChunk` now does that; it is a
+    no-op for Kernel's pointer arrays, and diff_fda is still 0 mismatches.
+  - The observer bases' virtuals do nothing (folded bodies).
+  - InputUIExtensionObserver's slots:
+    - 0 OnInputGetEvent and 1 OnInputLostEvent (from InputUIExtension::Activate);
+    - 4 OnMouseEvent;
+    - 2 and 3 (Keyboard / Char) are not yet checked.
+  - `tests/diff_is_obs.cpp`: all three instantiations with random add / remove / lock / unlock / iterators /
+    copy / assignment. Compared after each step: the return values and the whole chunk ring.
+    **1 753 750 checks, 0 mismatches.**
+- **U2, devices** (`src/InputSystem_7c/{Devices,Ids}.cpp`):
+  - InputEvent is 0x14 bytes `{type, code/down | ch | id, value, delta, time}`.
+    - The kind sits in bits 4..7: 0x10 lost, 0x20 get, 0x30 key/button, 0x40 char, 0x50 axis, 0x60 pov,
+      0x70 property.
+    - NotifyObservers ORs the device type into bits 0..3 and drops events from untyped devices.
+    - A STOP from an observer ends the round, except for lost / get / property events.
+  - The InputDevice constructor zeroes both states, sets valid and takes a driver reference. The instance id is
+    left as is.
+  - Joystick state: buttons[32], pressure[32] (GetButtonPressure), delta[8] and position[8] (x y z rx ry rz u v),
+    pov[4].
+  - MouseDevice::SetPosition / SetBoundings call SetProperty twice on one local. SetPosition never sets `b`.
+  - The base virtuals (GetCaps, Update, InputDriver's Init / Enumerate / CreateDevice) have bodies, because
+    NullInputDevice keeps them. Our base CreateDevice writes a null result, while the original only clears eax;
+    nothing calls it.
+  - All 13 exported vftables of U1+U2 match. The InputDriver vbtable `{0, 12}` matches.
+  - `tests/diff_is_dev.cpp`: devices of all four kinds around a stand-in driver.
+    - Stand-in observers log each event and, during the notification, return STOP, remove themselves or add
+      others.
+    - Covered: every event function, the accessors, Done / Critical*, the base virtuals, and SetPosition /
+      SetBoundings (caught through a patched vtable slot).
+    - **583 202 checks, 0 mismatches, 181 159 observer calls.**
+  - In game with U1+U2 (plus our InputWin32): the same input scenario gives the same screens; menu check clean,
+    JetLog identical to the baseline.
 - Offline file reading:
   - Outside the game, Jet's MemoryFile cannot read a file opened through File. The read goes through
     IOSlaveResource / IOSlaveFile, and IOSlaveFile reports a size of 0.
