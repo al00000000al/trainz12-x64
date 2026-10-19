@@ -70,8 +70,8 @@ at every step and catches mistakes while they are small.
 5. Small Jet modules: KernelResources, KernelResource, Render2DCore, InputWin32, InputSystem.
    In progress: proxies for all five in game. KernelResources 51/51, Render2DCore 85/85 and InputWin32 (the
    game's keyboard and mouse driver) are ours and verified against the originals (MODLOG "Step 5"; InputWin32
-   also with real clicks and keys in game). InputSystem in progress: units U1 (ObserverSubject) and U2 (devices,
-   driver base) of 8 ours and verified. Left: InputSystem U3-U8, KernelResource.
+   also with real clicks and keys in game). InputSystem in progress: units U1-U4 (ObserverSubject, devices,
+   strings, EmuDevice) of 8 ours and verified. Left: InputSystem U5-U8 (+ EmuDevice::Load), KernelResource.
 6. Decide the menu engine replacement (XULRunner 1.9 → WebView2 or CEF) and the Cg path (Cg 3.1 x64 or GLSL).
 7. Check whether SpeedTree is linked into trainz.exe (proprietary, no x64 download) and plan around it.
 8. Render stack (RenderSystem, Render3D*, RenderOpenGL), then InterfaceSystem, WaterSystem.

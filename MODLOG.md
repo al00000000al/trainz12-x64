@@ -707,6 +707,39 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
     - **583 202 checks, 0 mismatches, 181 159 observer calls.**
   - In game with U1+U2 (plus our InputWin32): the same input scenario gives the same screens; menu check clean,
     JetLog identical to the baseline.
+- **U3, ASCIICode / InputStrings** (`src/InputSystem_7c/Strings.cpp`):
+  - Both are singletons built on first use.
+  - ASCIICode is 256 entries of `{normal, shifted, kind}`. The kinds are control, letter (shift xor caps),
+    symbol (shift), keypad operator, and keypad digit (NumLock only).
+  - InputStrings holds 314 PStrings: 256 keys, 37 buttons (32 joystick + 5 mouse), 8 axes, 4 povs and 9 pov
+    directions ("KC_Esc", "BC_Left", "AC_X", "PC_1", "NE").
+  - Both tables are taken store by store from the original constructors by a small mov emulator. The 166 name
+    assignments are in the original order; BC_32 is assigned twice.
+  - The reverse lookups compare interned nodes. A name not found gives 0 for keys and pov directions and -1 for
+    the others.
+  - `tests/diff_is_str.cpp`: whole tables, every lookup over the code range, copy / assign / destroy.
+    **2 711 checks, 0 mismatches.**
+- **U4, EmuDevice** (`src/InputSystem_7c/Emu.cpp`, 0x360 bytes): a mouse or joystick played from the keyboard.
+  - Keyboard events go into a 256-event ring and are played in Update:
+    - bindings `{key, target, shift/ctrl/alt, kind, direction}` are kept sorted by key;
+    - buttons press and release;
+    - axes accelerate while their key is held (`start ± speed·t²/2`), and joystick axes may auto-centre;
+    - povs take hundredths of a degree.
+  - Original bugs kept:
+    - Bind packs the low word of the key's argument slot (the target store is dead code), so the joystick
+      defaults land on button / axis 0.
+    - GetCaps' bit count uses `(x & m) > s` for `>> s`.
+    - The joystick's AxisEvent reports the mouse fields.
+    - A lost event is never delivered: the state, type included, is zeroed first.
+  - Load reads a config through a flex scanner (yyFlexLexer) built into the module. It stays the original's for
+    now: our code calls `InputSystem_7c_orig.dll`'s Load on our object (new `implib/InputSystem_7c_orig.lib`).
+    The game uses it only with the `InputEmulation` option.
+  - `tests/diff_is_emu.cpp`: Time::Ms is patched in both import tables. Covered: random bindings and defaults,
+    key floods past the queue, updates, properties, Done.
+    **329 376 checks, 0 mismatches** (axis / button / pov / property / get events all seen). Init needs a real
+    Input (U5).
+  - In game EmuDevice is still built by the original Input until U5 is ours.
+  - Menu check with U1-U4: clean, JetLog identical.
 - Offline file reading:
   - Outside the game, Jet's MemoryFile cannot read a file opened through File. The read goes through
     IOSlaveResource / IOSlaveFile, and IOSlaveFile reports a size of 0.
