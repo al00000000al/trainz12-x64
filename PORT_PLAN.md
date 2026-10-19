@@ -65,8 +65,8 @@ at every step and catches mistakes while they are small.
    2026-10-19: 15 units U0-U14, replaced **top-down** (the foundation of Alloc/PString/strings goes last; MODLOG).
 4. ~~KernelStandard_7c: U0 (pure-forwarding proxy, menu check) + U1 Math-1.~~ Done 2026-10-19: 34 exports,
    ~43 billion bit-exact checks, 0 mismatches, menu check clean.
-4b. KernelStandard_7c: the other leaf units, U2 Matrix3/4 + Quaternion, U3 small PODs, U4 sync, U5 Rand/LCRand,
-   each bit-exact against the original (same harness `tests/diff_ks_math.cpp`; mind x87 vs SSE per operation).
+4b. ~~KernelStandard_7c: the other leaf units, U2 Matrix3/4 + Quaternion, U3 small PODs, U4 sync, U5 Rand/LCRand.~~
+   Done 2026-10-19: 242/1762 exports ours, each unit bit-exact against the original (NaN payloads aside; MODLOG).
 5. Small Jet modules: KernelResources, KernelResource, Render2DCore, InputWin32, InputSystem.
 6. Decide the menu engine replacement (XULRunner 1.9 → WebView2 or CEF) and the Cg path (Cg 3.1 x64 or GLSL).
 7. Check whether SpeedTree is linked into trainz.exe (proprietary, no x64 download) and plan around it.

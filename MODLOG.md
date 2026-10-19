@@ -451,6 +451,66 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
   exactly. The `double` expressions stand in for its x87 code. The game uses OpenGL, which leaves the x87
   precision at 53 bits; D3D9 without FPU_PRESERVE would set 24 bits and change the original's results.
 
+### KernelStandard_7c U2-U5 (2026-10-19): 242/1762 exports ours, bit-exact
+- **U3** small PODs (`SmallTypes.cpp`): 11.15 M checks, 0 mismatches.
+- **U4** sync objects (`SyncObjects.cpp`: SyncObject, Mutex, Semaphore, WEvent, CriticalSection, SingleLock,
+  MultiLock, SWMRGuard): `tests/diff_ks_sync.cpp` runs a 319-step two-thread scenario on both modules,
+  identical results over 3 runs. `SingleLock::operator=` copies the whole object, padding bytes included. The
+  default-constructor closures (`??_F`) are exported as aliases of `__fastcall` workers that use `::new`
+  (the class `operator new` hides placement new). Data still owned by the original is declared
+  `JET_KS_FORWARDED` (dllimport) in our headers.
+- **U5** Rand / LCRand (`Rand.cpp`): Rand 16 M checks, 0 mismatches. LCRand 8 M checks, 1 difference, which is
+  NaN-only (NextDouble with two NaN arguments). Details from the asm:
+  - Scale 1/(2^32-1) (bits 0x3DF0000000100000).
+  - Schrage step for 16807 x mod (2^32-1); t <= 0 becomes t - 1.
+  - Integer results go through `_ftol2_sse`, which is a 32-bit `cvttsd2si`, so out-of-range values give 0x80000000.
+  - The Gaussian's spare value lives in one global for all generators.
+  - Randomise reads `Time::frameLock`/`frameLockTime`. The test sets these to make it deterministic.
+  - Float results come back unrounded in st(0). Their exports are aliases of `__fastcall(this, edx, ...)`
+    workers returning double, which has the thiscall ABI.
+- **U2** Matrix3 / Matrix4 / Quaternion (`Math2.cpp`, 29 exports):
+  - `tests/diff_ks_math2.cpp` makes 200 k random cases per member. Entries come from four distributions, 2 %
+    of them are special values, and some inputs are aimed at each branch (rotation matrices, equal/close/
+    negated quaternions for Slerp, near-gimbal quaternions, up parallel to the axis).
+  - The whole object is compared as raw bits, and GetDeterminant as the st(0) double.
+  - Result: **5.8 M checks, 0 mismatches**, plus 1 962 differences that are NaN payloads only, accepted as in U1.
+  - The SSE expressions were lifted from the listing with the new `tools/sse_lift.py`. It turns a block of SSE
+    scalar code into SSA, or into nested expressions with the original association.
+  - Matrix3 members are thiscall, Matrix4 members `__cdecl` with `this` on the stack (QAA), Quaternion thiscall.
+    Matrices are row-major. Rotate(x,y,z) rewrites rows 0-2 (all 4 columns for Matrix4). It skips `fsincos` for
+    an angle that is exactly 0, so -0 gives sin +0. RotateX/Y/Z and SetRotate* have no such check.
+  - The Matrix4 RotateX/Y/Z and SetRotAxisAngle functions touch only the upper 3x3. SetRotate*(a, keepRest)
+    set column 3 and row 3 to the identity when keepRest is false. Negations are `-0.0f - x` (subss), not
+    sign flips.
+  - Invert computes the adjugate in place and multiplies it by 1/det. There is no singularity check.
+    GetDeterminant uses the same SSE cofactors but expands them in x87 double: ((m12 C3 + m8 C2) + m4 C1) + m0 C0.
+    It returns the value unrounded, through an alias to a `__cdecl double (const Matrix4*)` worker.
+  - Quaternion::Set(x,y,z) builds three identity Matrix3s, applies Rotate(x,0,0), Rotate(0,y,0) and
+    Rotate(0,0,z), then calls Set(Rx * (Ry * Rz)).
+  - Set(Matrix3) and Set(Matrix4) take the square roots in x87 double, then normalise. The length is
+    computed in x87 and the scaling in SSE.
+    - Matrix3 branch tests: trace >= 0.
+    - Matrix4 branch tests: trace > 1e-6f, and |r| > 1e-6f before dividing.
+    - When |r| <= 1e-6f, the scale factor is r itself (a bug, kept).
+  - Slerp copies `a` when a == b, using x87 copies for y, z and w. It negates b when the dot product is
+    negative. It uses the linear weights when 1 - dot <= 0.001f. Otherwise it runs `_CIacos` and three `fsin`
+    in extended precision.
+  - GetEulerAngles takes the gimbal branch when |sp| > 0.99999f. That branch gives (0, pi/2, acos(clamped)).
+    The normal branch uses `_CIasin` and two `fpatan`.
+  - Set*Axis / SetViewVector:
+    - Normalise the axis (InvSqrt from U1).
+    - Cross it with up. Below |c| <= 0.0001 the default basis rows are used.
+    - Feed the Matrix3 to Set(Matrix3).
+    - Row orders: X (n, c, t), Y (c, n, t), Z (t, c, n), View (c, t, -n).
+    - SetXAxis uses c = up x n. The others use c = n x up with t in the opposite order.
+  - x87 transcendentals (`fsincos`, `fsin`, `fpatan`, msvcr80 `_CIacos`/`_CIasin`) are inline asm on Win32.
+    The CRT intrinsics are looked up in the process's msvcr80.dll, the one the original calls. On x64 they fall
+    back to <cmath>. Math2.cpp is also compiled into the x64 stand-in.
+- Checks after U2: diff_ks_math/small/sync/rand unchanged. Kernel probes (task 92, EditItem 307, plugin 2 732
+  lines) match the previous run, and the original's known plugin-probe difference is unchanged. The x64 harness
+  shows 0 differences. In game, with all of U1-U5 installed: menu reached, clean exit, JetLog identical to
+  the baseline.
+
 ### Third-party deps and their x64 availability
 | 32-bit dep | x64 replacement |
 |---|---|
