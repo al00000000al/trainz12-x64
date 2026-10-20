@@ -740,6 +740,151 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
     Input (U5).
   - In game EmuDevice is still built by the original Input until U5 is ours.
   - Menu check with U1-U4: clean, JetLog identical.
+- **U5, Input** (`src/InputSystem_7c/Input.cpp`, 0x44 bytes) and the **InputExtension** base (0x10):
+  - Init loads one driver per type from the "InputKeyboard" / "InputMouse" / "InputJoystick" options ("Default" is
+    Win32, Win32, DirectX; factories looked up in group F3117B18-...). A name with no factory ends that type's search;
+    a factory already loaded for another type is shared; the first failing type stops the loading, Init still
+    succeeds.
+  - GetDevice builds the emulated mouse / joystick itself; other ids are looked up among the devices handed out,
+    else created by the driver of the type the drivers reported (pushed at the front of the list, updated once).
+  - Original quirks kept: EnumerateAll appends to the caps list without clearing it; the copy and the assignment
+    copy the driver and extension pointers without references (the assignment has no self check); a type reported
+    with no driver is called through null.
+  - The device list removes and inserts by moving AutoReferences one by one (0x10007eb0 / 0x10007f90), kept.
+  - `tests/diff_is_input.cpp`: both modules' Inputs against stand-in factories, drivers, devices and extensions,
+    with Options, the OS, the window, the crash-handler registry, LookupPluginType and Profile patched in both
+    import tables. **305 301 checks, 0 mismatches** (3122 devices, 511 emulated devices, 1520 extension Done calls);
+    a deliberate change in Input.cpp gives 621 mismatches.
+  - In game: menu check clean (JetLog identical); the input scenario gives the same screens.
+- **U6, InputUIExtension** (`src/InputSystem_7c/UIExtension.cpp`, 0x148 bytes), used by trainz.exe and
+  InterfaceSystem:
+  - Focus byte +0x108: 0x01 keyboard, 0x80 mouse, 0x02 deactivated; observers hear lost / got only when both
+    devices have the focus (0x81).
+  - Keys held as a 256-bit set (+0x10c); repeats of a key not down and releases of a key not down are dropped.
+  - Mouse events {header, buttons, x, y, dx, dy, z, dz}: header bits 0..5 modifiers, 7 down, 16..23 kind (1 down,
+    2 up, 3 click, 4 double click, 5 move, 6 drag start, 7 drag end, 8 position), 24..28 button. Moves are summed
+    and sent once per Update.
+  - Double click: a second release within doubleClickTime (250 ms) and < 8 px of the first click. Drag: a held
+    button moved > 50 px, or > 2 px after 200 ms.
+  - Original quirks kept: the button index is not range-checked; the constructor leaves byte +0x109 (attached) as
+    is; UpdateMouseButton calls Update(0) first through the vtable.
+  - `tests/diff_is_uiext.cpp`: both modules' extensions on their own Input, stand-in keyboard / mouse / observers
+    (which stop rounds and remove themselves), random event streams plus click bursts. **1 019 467 checks,
+    0 mismatches**, every mouse event kind seen (2150 double clicks, 530 drag ends); a deliberate change gives 36.
+  - In game: the input scenario gives the same screens (only the route preview slideshow, the caret and a few
+    pixels of the bottom strip differ, as between two runs of the original); menu check clean.
+- Who uses the rest (imports of the game's modules): InputAction / InputActionMapper (U7) by nobody; ForceEffect
+  (U8) by InputDirectX only.
+- **U8, force feedback and the null driver** (`src/InputSystem_7c/Force.cpp`):
+  - ForceEffect (0x88) passes every call to its attached child effects; Create(name, db, flags) builds one effect
+    per entry of a ForceResource.
+  - ForceResource (0x68) loads / saves DirectInput .ffe files: RIFF "FORC", the file GUID, one LIST per effect with
+    "data" blocks, 11 effect type GUIDs (13541C20..2A except custom).
+  - Original quirks kept: an unknown effect is skipped by seeking to start + size, 8 bytes short. SaveEffect writes
+    the name from the start of a template buffer ("efctHere goes effect #%d name ...", 0x44 bytes, NUL at 0x43).
+  - The null driver and device ("Null", "System stub", type 8). `JetGetPluginsInputSystem` registers the "ffe"
+    resource type and the "None" input driver factory.
+  - `tests/diff_is_force.cpp`: an in-memory File with a read budget (the original's LIST loop can spin), plugin
+    factories through a patched PluginType constructor. **41 067 checks, 0 mismatches.** Menu check clean.
+- **U4b, the binding scanner and EmuDevice::Load** (`src/InputSystem_7c/Lexer.cpp`, `Emu.cpp`):
+  - The module's flex 2.5 C++ scanner (36 rules, REJECT-style state buffer, yylineno, 7-bit with bytes > 0x7b
+    clamped to class 1) is written out as the flex skeleton. The DFA tables (acclist, accept, ec, meta, base, def,
+    nxt, chk) are read from the installed original at build time (`extract_data.py`, never committed).
+  - Tokens: numbers (hex, int, float), true / false, inc / dec, pressed / released / changed, positive / negative,
+    the pov directions, +shift / +ctrl / +alt, and KC_ / BC_ / AC_ / PC_ names.
+  - JoinValues (0x10002550) joins an entry's values with spaces (count from the list data, or the first value).
+  - Load reads the "MouseEmulator" / "JoystickEmulator" section. Each entry's name is lexed for a button, axis or
+    pov, and its values for the key, modifiers, speed, direction and pov direction. The load is complete when button
+    0 and both directions of X and Y are bound.
+  - Original quirk kept: an unknown axis given a speed writes at 0x260 + 0x14 * 0xff, past the object.
+  - `tests/diff_is_lex.cpp`: our scanner against the original's, called inside the module by address. Inputs are
+    random texts made of the scanner's words, the names, numbers, punctuation and random bytes (cut words, random
+    tails), through both constructors. **1 959 637 checks, 0 mismatches**; mutations of a rule or of the clamp are
+    caught.
+  - `tests/diff_is_emuload.cpp`: KernelStandard's ConfigParser gives "Syntax error." on any non-empty text outside
+    the game, even a real config.txt, from a file or from memory. So the ConfigParser / ConfigData imports of both
+    modules are patched to stand-ins serving random trees, including parse failures, no root, empty lists and lists
+    with no array. **5 000 trees, 0 mismatches** (1080 complete loads). Three mutations are caught; swapping the up
+    and down bits of `bound` is equivalent (all four bits are required).
+- **U7, InputAction / InputActionMapper** (`src/InputSystem_7c/ActionMapper.cpp`); nobody in the game imports
+  them:
+  - An action (0x20 bytes) is a name, a flush flag and an `Array<StrokeDef, 2>` of strokes `{code, ms}`. The code
+    holds the kind in bits 24..31 (key, button, axis, pov) and the code in bits 16..23.
+    - Key: bit 7 pressed, bits 2 / 1 / 0 shift / ctrl / alt.
+    - Axis: modification (changed / inc / dec) in bits 8..9, direction (any / positive / negative) in bits 10..11.
+    - Pov: direction in bits 12..15 (8 = centred).
+  - The mapper (0x34 bytes) keeps action lists by name in a 97-bucket table. The hash is `h = h*8 ^ c` over the
+    last 16 characters, so only the last 11 count. Buckets are FastDynamicArray<ActionList*, 4>.
+  - Each added device (0x58 bytes) gets copies of the actions it can issue, as `InputActionMapper::DeviceAction`
+    (RTTI name) with a progress count and the time of the last stroke. It also gets per-axis dead zones taken from
+    properties 3 and 4.
+  - OnInputEvent advances the copies:
+    - a timeout is checked against the next stroke's time;
+    - lost / get events reset the progress;
+    - a property 3 / 4 event re-reads the zones.
+    - A completed action is reported through `InputActionObserver::OnInputAction(device, name, event)`. STOP stops
+      the event only if the mapper is exclusive. A flush resets the device's other actions and ends that device's
+      turn.
+  - Load / LoadActionMap read "actionmap" sections with the module's scanner. Save writes the same format through
+    File::WriteLine. Results: 2 invalid, 3 partial, 4 not supported, 5 file error.
+  - Original quirks kept:
+    - InputAction's operator= appends strokes; operator== compares only the left side's strokes.
+    - EndAdd takes the count off the capacity (an empty action with room gets count = capacity).
+    - The zones are read through the event's code, past the eight for other codes.
+    - Inc wants a falling value on the negative side, dec a rising one.
+    - Save's `%0d.%0d` writes 5 ms as "0.5".
+  - `tests/diff_is_mapper.cpp`, both mappers driven with the same random steps:
+    - actions built through each module's own InputAction exports;
+    - stand-in devices, logging observers that sometimes stop;
+    - action maps served through patched ConfigParser / ConfigData imports;
+    - Save captured through patched File::Open / WriteLine / Close and UId::SetRnd;
+    - events mostly aimed at the next stroke of a bound action, some exactly at its deadline.
+    - The whole mapper state (buckets in order, lists, devices, zones, bound actions, references) is compared
+      after every step.
+    - **1 111 475 checks, 0 mismatches.** Every result code was seen, with 3 160 notifications, STOPs and flushes.
+    - Mutations caught: the timeout boundary, axis inc flags, Save's modifier order, a hash over 8 characters, and
+      STOP when not exclusive. A hash over 15 characters is equivalent.
+  - vftables: every exported one matches, plus DeviceAction by RTTI. Only the scanner's FlexLexer classes differ:
+    ours has no virtuals, by design.
+- **InputSystem_7c complete (2026-10-21): 327/327 exports ours.**
+  - The module no longer links `InputSystem_7c_orig.lib`.
+  - In game with InputSystem_7c_orig.dll removed: menu check clean, JetLog identical.
+  - Input scenario: the same screens as the previous run. Only the caret and the network-driven "Content updates"
+    counter differ.
+  - All InputSystem tests (obs, dev, str, emu, input, uiext, force, lex, emuload, mapper): 0 mismatches.
+- **KernelResource_7c complete (2026-10-21): 187/187 exports ours, nothing forwarded.**
+  - Sources: `Resource.cpp` (Resource, RedirResource, ResourceVariant, ResourceInstance, the three bins),
+    `Database.cpp` (ResourceDatabase and its 401-bucket table, the nameless database), `System.cpp`
+    (ResourceSystem, its Task, the loader thread and its heap), `FileExists.cpp` (File::Exists as the original
+    imports it). Analysis: `notes/KernelResource.md`.
+  - Original quirks kept:
+    - Remove(const Resource*) finds by name, and two resources of one name can share a table. Deleting the second
+      one takes the first one's slot, and the first one's own Remove then finds the second by the name left in its
+      freed memory. So `~PString` no longer zeroes the node, as in the original (PString.h, all modules).
+    - The cache bin's priority is NextFloat + oldest + time, summed in double and rounded once. NextFloat is a
+      double function in KernelStandard and is called as one.
+    - The next size check is a static, so a new ResourceSystem skips CheckSize until its clock passes the old one.
+  - `tests/diff_kr_system.cpp`, both modules with their own ResourceSystem in one process:
+    - Patched imports: File::Exists / Subst, Time, Options, Task, LCRand (the bin's seed; the real one reads the
+      clock), plugin type lookup.
+    - Stand-in resource types; resources whose vftable logs loads, sizes and priorities.
+    - Steps: databases, parents, variants, Get / Exists / Remove, held references, instances, Cache, bursts
+      (the LRU pass), Update, DumpUnused, databases deleted.
+    - Every table (bucket order, every resource), the system and the bin are compared after each step.
+    - One scenario in eight runs with the loader thread made but paused, so its queue is driven deterministically.
+      Queued resources are claimed before Remove and before a database goes: the original crashes otherwise too
+      (details in the notes).
+    - **3000 scenarios: 813 619 checks, 0 mismatches.** Statuses seen: 0 redir, 1, 2, 6, 7, 8.
+    - Not reachable here: the loader thread's own loads (Loaded / Loading, ProcessLoaded). Those run only in game.
+  - Bugs fixed on the way: Nameless constructor argument order, the invalid resource's names, the twin-name
+    Remove above, and the bin priority's rounding.
+  - vftables: all match; Thread's is a module-local copy.
+  - In game: menu check clean, also with KernelResource_7c_orig.dll removed. Input scenario: the same screens as
+    the previous run.
+  - Other tests rerun after the header changes: KernelResources, Render2DCore, every InputSystem test, InputWin32,
+    the KernelStandard tests, FDA, LZSS, Blowfish, UId/Version: 0 mismatches. The exception is LCRand's known
+    NaN-only difference. diff_r2d now takes Resource from KernelResource_7c.dll, since ours no longer loads the
+    original.
 - Offline file reading:
   - Outside the game, Jet's MemoryFile cannot read a file opened through File. The read goes through
     IOSlaveResource / IOSlaveFile, and IOSlaveFile reports a size of 0.
