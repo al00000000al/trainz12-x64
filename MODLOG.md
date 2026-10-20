@@ -913,6 +913,25 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
 Tools that are separate processes and can stay 32-bit: Launcher, ContentManager (CMP), CCP, TADDaemon,
 TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
 
+### Prior art: open source around Trainz and Jet (searched 2026-10-21)
+- No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
+  the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's
+  engine, not Jet.)
+- Usable as format references, all on GitHub:
+  - `rileyzzz/ChumpLib` (MIT): .chump / .tzarc loading and saving, plus an early `.ja` test app.
+  - `pgroenbaek/cdp-unpack` (MIT): CDP / CHUMP extraction (Python).
+  - `rileyzzz/BlenderIMExporter` (MIT): writes .im and .kin.
+  - `naseno15/mstn-trainz-studio` (C++/Qt, no licence stated): reads .im / .kin.
+  - `rileyzzz/TrainzTexture` (GPL-3.0, keep as a reference only): .texture.
+  - `rileyzzz/TrainzMapFiles` (no licence): .gnd, Trainz 1.1-2019.
+  - `rileyzzz/TwinklesEditor` (no licence): PFX particles.
+  - `rileyzzz/TANESubstance` (MIT): legacy material shaders.
+  - `rileyzzz/TNICPPHelpers` (MIT): TNI type helpers. The TNI SDK itself is licensed by N3V on request.
+  - `rileyzzz/TrainzScript-antlr4` (MIT): a GS grammar.
+  - `Cethric/trainz-language-server` (Apache-2.0, Rust): GS and Soup parser.
+- SpeedTree: Panda3D (BSD) has an SRT loader, but it calls the SpeedTree SDK. There is no open SRT parser.
+- Mozilla and Cg need nothing found here: WebView2 and the Cg 3.1 x64 binaries cover them.
+
 ### Step 6/7 decisions: Mozilla, Cg, SpeedTree (2026-10-21)
 - **Two separate HTML stacks.**
   - The game's own HTML renderer covers TrainzScript's Browser / HTMLBuffer natives and the in-game info
