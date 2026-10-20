@@ -875,6 +875,11 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
       Queued resources are claimed before Remove and before a database goes: the original crashes otherwise too
       (details in the notes).
     - **3000 scenarios: 813 619 checks, 0 mismatches.** Statuses seen: 0 redir, 1, 2, 6, 7, 8.
+    - Mutations caught (1000 scenarios each): the bin's eviction slack, the LRU pass's limit of five, the size
+      check interval, Inactive after a load, Unqueue's reference, and ~PString zeroing the name (crash). Not
+      caught: Unbin in DumpUnused, the refs check after eviction and the claim's Locking status (all need the
+      loader thread or another thread), the LRU early stop across databases, DumpUnused setting Ready (the
+      resource goes anyway), and the priority's rounding order (rare).
     - Not reachable here: the loader thread's own loads (Loaded / Loading, ProcessLoaded). Those run only in game.
   - Bugs fixed on the way: Nameless constructor argument order, the invalid resource's names, the twin-name
     Remove above, and the bin priority's rounding.
