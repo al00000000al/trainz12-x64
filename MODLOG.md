@@ -913,6 +913,32 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
 Tools that are separate processes and can stay 32-bit: Launcher, ContentManager (CMP), CCP, TADDaemon,
 TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
 
+### KernelStandard_7c U6, small platform (2026-10-21): 308/1762 exports ours
+- `Platform.cpp`, 66 exports: DynamicLibrary, Events / Events::Event, SharedMemory, SharedScratchPad, Job, Jobs.
+  Behaviour notes are in `notes\KernelStandard.md` ("U6 done").
+  - Events is a timed queue with three lists (removed / queue / requeue). Remove(id) defers the delete to the
+    next Update.
+  - Jobs is a worker thread. A job whose children are not dispatched yet waits until the next job has been
+    processed.
+- Fixed on the way: the header's DynamicLibrary slot order. The original's is dtor, Open, **Close, Import**.
+- `tests/diff_ks_platform.cpp` runs one script per scenario on both modules:
+  - Events with our Event vftable. Its Update decides from a hash of tag and count, the same on both sides,
+    and removes itself or others or adds events from inside the update. Every list is compared after each
+    step, links included.
+  - DynamicLibrary on real and bogus libraries and procs.
+  - SharedMemory mappings.
+  - SharedScratchPad from two threads, with growth at the exact capacity.
+  - Jobs batches, including parent/child waiting and a kick job.
+  - Job's own members and its default constructor closure.
+  - **3000 scenarios: 700 360 checks, 0 mismatches.** All 9 mutations caught: the sort tie, the due boundary,
+    Remove(id) ownership, id generation, the pending rescan, parent unlocking, scratch growth, Import's result,
+    and Event's copy links.
+- In game: menu clean. In the input scenario the screens match. The only differences are network-driven: the
+  content update counter (Offline / 2490) and the random route preview.
+- The other modules' tests rerun: 0 mismatches, except LCRand's known NaN-only one.
+- A note for test runs: diff tests that load the game's KernelStandard keep `bin\JetLog.txt` open. A game
+  started during them exits at once.
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's
