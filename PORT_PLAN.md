@@ -73,8 +73,12 @@ at every step and catches mistakes while they are small.
    also with real clicks and keys in game). InputSystem 327/327 ours and verified (2026-10-21: units U1-U8 plus
    the binding scanner; the game runs without InputSystem_7c_orig.dll). KernelResource 187/187 ours and verified
    (2026-10-21; the game runs without KernelResource_7c_orig.dll). Step 5 is done.
-6. Decide the menu engine replacement (XULRunner 1.9 → WebView2 or CEF) and the Cg path (Cg 3.1 x64 or GLSL).
-7. Check whether SpeedTree is linked into trainz.exe (proprietary, no x64 download) and plan around it.
+6. ~~Decide the menu engine replacement and the Cg path.~~ Done 2026-10-21: Mozilla only serves the online
+   web dialog (the add-on HTML is the game's own renderer), so WebView2 behind an IWebBrowser adapter; Cg 3.1 x64
+   runtime (MODLOG "Step 6/7 decisions").
+7. ~~SpeedTree.~~ Done 2026-10-21: not in trainz.exe; it is the TNI plugin plugins\TNISpeedTree.dll (SpeedTree 5,
+   524 .srt trees in the user's content). Keep it 32-bit in a helper process behind a TNI bridge.
+7b. KernelStandard_7c units U6-U14 (1520 exports still forwarded; needed before x64). Order to be chosen.
 8. Render stack (RenderSystem, Render3D*, RenderOpenGL), then InterfaceSystem, WaterSystem.
 9. trainz.exe subsystems through the loader DLL: asset DB, GS compiler/VM, physics, world.
 

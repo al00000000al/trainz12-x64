@@ -900,7 +900,9 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
 | 32-bit dep | x64 replacement |
 |---|---|
 | msvcr80/msvcp80 | modern MSVC CRT (rebuild) |
-| cg.dll / cgGL.dll 2.2 | Cg 3.1 x64 (last NVIDIA release), or port shaders off Cg |
+| cg.dll / cgGL.dll 2.2 | Cg 3.1 x64 (decided 2026-10-21; GLSL later) |
+| mozilla\ (XULRunner 1.9pre) | WebView2 behind an IWebBrowser adapter (decided 2026-10-21) |
+| plugins\TNISpeedTree.dll (SpeedTree 5) | stays 32-bit in a helper process behind a TNI bridge (decided 2026-10-21) |
 | d3dx9_42.dll | d3dx9_43 x64 (June 2010 redist), or remove d3dx |
 | OpenAL32.dll / wrap_oal.dll | OpenAL Soft x64 |
 | nvtt.dll 2.0.6 | nvtt is open source, build x64 |
@@ -910,6 +912,59 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
 
 Tools that are separate processes and can stay 32-bit: Launcher, ContentManager (CMP), CCP, TADDaemon,
 TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
+
+### Step 6/7 decisions: Mozilla, Cg, SpeedTree (2026-10-21)
+- **Two separate HTML stacks.**
+  - The game's own HTML renderer covers TrainzScript's Browser / HTMLBuffer natives and the in-game info
+    windows:
+    - RTTI: `IBrowser`, `HTMLWindow`, `HTMLWindowBase`, `HTMLWindowPhone`, `HTMLBuffer`, `HTMLToken*`,
+      `IHTMLBox/Button/Clock/Video`;
+    - GS natives such as `Browser::LoadHTMLString`.
+    - It contains no Mozilla, so the add-on HTML contract does not depend on XULRunner.
+  - Mozilla (`bin\mozilla`, XULRunner 1.9pre) is used only by `IWebBrowser` / `DlgWebBrowser` /
+    `lyrWebBrowser`:
+    - trainz.exe loads `mozilla\xpcom.dll` and `mozilla\xul.dll` at run time (no static imports anywhere);
+    - it runs the browser on its own thread (`MozillaThread`) and marshals `Mozilla*Event`s (create, destroy,
+      resize, mouse, focus, navigate, clipboard);
+    - XPCOM contracts it uses: `nsWebBrowser`, window-watcher, prefs, cookies, observer, directory service.
+    - What it shows: online pages only, under `game.ts2009.com` (home, news bar, help wiki), simulatorcentral
+      DLC pages and the auran asset search.
+  - **Decision: WebView2** behind a small `IWebBrowser` adapter (navigate, resize, focus, close, events).
+    - It is a native child window and Windows-only like the game; the runtime ships with Windows 11.
+    - CEF is not needed: nothing renders off-screen into the GL scene that we know of. Still to confirm in
+      Ghidra: how `lyrWebBrowser` presents. trainz.exe imports `CreateDIBSection` / `GetBitmapBits`.
+    - A first x64 fallback can simply open the URL in the system browser.
+- **Cg.**
+  - Only RenderOpenGL_7c imports Cg: cg.dll (13 calls) and cgGL.dll (15 calls). The calls are the CgFX effect
+    API (`cgCreateEffectFromFile`, techniques and passes, `cgGLRegisterStates`, `cgGLGetLatestProfile`) plus
+    parameter setters.
+  - Profiles named: vp40 / fp40 / gp4vp / gp4fp. Compile defines name SpeedTree profiles
+    (`-DSPEEDTREE_PIXEL_PROFILE=`).
+  - The user's content (UserData, Builtin) holds no loose .fx/.cg/.cgfx: the shaders are built in.
+  - **Decision:** for x64, the Cg Toolkit 3.1 x64 runtime (same API, redistributable). Translating the
+    effects to GLSL is a later renderer task, not a blocker.
+- **SpeedTree.**
+  - Not in trainz.exe. It is the TNI plugin `bin\plugins\TNISpeedTree.dll` (196 KB, Jan 2014; plus a `_d`
+    debug build), with SpeedTree 5.x statically linked (RTTI `SpeedTree::CCore`, `CForest`, `CTreeCell`,
+    `CInstance`).
+  - Shaders: `bin\plugins\SpeedTreeShaders\*.fx`, compiled by RenderOpenGL through Cg.
+  - Exports: `TNIEntryPoint` only. Imports: KERNEL32, the VC80 CRT and 37 functions of
+    trainznativeinterface.dll:
+    - streams, strings, arrays, objects;
+    - `TNIGraphicsBegin/EndScene`;
+    - `TNIGraphicsGetStreamForCommand`;
+    - view, light, fog and wind queries;
+    - game time;
+    - `TNICheckUserHasProductRight`.
+    It draws by writing command streams, never by touching the renderer.
+  - Content: **524 `.srt` trees** in the user's UserData (for example kuid2:211025:20261 and other community
+    trees), so this matters for add-on compatibility.
+  - **Decision:** a 32-bit helper process.
+    - It loads the original TNISpeedTree.dll with a stand-in trainznativeinterface.dll.
+    - The stand-in forwards the 37 calls over shared memory to the x64 game. The traffic is value data and
+      streams, plus two calls per frame.
+    - The same bridge serves any other 32-bit TNI plugin.
+    - Rewriting the SRT loader and renderer is possible later, but the format is proprietary.
 
 ### TrainzScript native API (the add-on compatibility contract)
 - `scripts\*.gs` (104 headers) declare **859 `native` methods in 60 classes** (Vehicle 82, Train 76, World 72,
