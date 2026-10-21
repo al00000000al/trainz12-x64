@@ -1072,7 +1072,8 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
 - Original behaviour kept: a backslash outside quotes in the body hangs both modules forever.
   - Rule 29 puts the backslash back and enters the bare-string state. Rule 43 there puts it back again and
     returns an empty STRING, which the grammar keeps joining.
-  - Found by minimising a hanging test input down to `version.\n\`\\`.
+  - Found by minimising a hanging test input down to 11 bytes: "version.", a line feed, a backtick and a
+    backslash.
 - `tests/diff_ks_configparser.cpp`, comparing per side the result, version, tree, file name, SaveString and both
   Save encodings, then a re-parse through every overload. Inputs:
   - texts written by the original's ConfigData::Write from random trees, behind a version line;
