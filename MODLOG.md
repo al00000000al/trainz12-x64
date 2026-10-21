@@ -967,6 +967,47 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
 - In game: menu clean except two network-dependent Planet Auran lines (absent with the previous KernelStandard
   too). The input scenario runs through. The other modules' tests and the x64 harness are clean.
 
+### KernelStandard_7c U7b1, ConfigData data model (2026-10-21): 488/1762 exports ours
+- `ConfigData.cpp`, 139 exports: the tree that every config.txt, .kin and tag file becomes. Covered:
+  - constructors, copies and the destructor;
+  - New, operator(), Find x8, Count, Replace, Remove x3, RemoveAll, Extract and AssignNodes;
+  - every typed setter and getter, Add*Array, SetAnsi / SetUnicode / GetAnsi / GetUnicode;
+  - the 14 conversions, 22 operator<< and 23 operator>>, CompareData, CopyData and Crc.
+  - Writers and the binary format are U7b2.
+  - Details are in `notes\KernelStandard.md` ("U7b1 done").
+- The nodes still come from the original's pool: its operator new and delete, and the static `unknownItem`,
+  stay forwarded.
+- Layout: {PString name, type, data, FastDynamicArray<ConfigData*,13> children}, 0x10 bytes.
+  - Types are 0 none, 1 int, 2 float, 3 PString, 4 bytes, 5 ints, 6 floats, 7 PStrings.
+  - The arrays are one Alloc block {count, items}.
+- Quirks kept:
+  - AddPStringArray leaks one reference per old string.
+  - The vector, Color and Quaternion conversions read the block without checking it, so a node with no array
+    gives garbage in the original.
+  - `operator Quaternion` normalises with the sum of squares and fsqrt on the x87, then divss / mulss on SSE.
+    This is matched NaN for NaN with inline asm and intrinsics.
+- Header bugs found on the way:
+  - `AnsiString()` was an inline null pointer. The original points it at a shared empty buffer with a refcount,
+    and its operator= crashed on ours. It is now the original's export.
+  - `UnicodeString` is now declared.
+  - The original's wide-string exports mangle native `wchar_t` (`_W`), while the tree builds with
+    `/Zc:wchar_t-`, so those declarations take `__wchar_t`.
+- `tests/diff_ks_configdata.cpp`:
+  - each side builds a tree through raw exports and runs random ops: add, set any value, remove, extract and
+    move, copy over, swap children;
+  - every op is followed by a dump of the whole tree (names, types, value bits, chunk counts) and its Crc;
+  - read ops call every Find, getter, conversion and operator>>, including on `unknownItem`;
+  - reference counts of the test's strings are checked at the end.
+  - **3000 scenarios: 152 094 checks, 0 mismatches** (and 0 with the sides swapped). All 14 mutations caught.
+  - Three-item Quaternions go through `Quaternion::Set` (U1), whose NaN payloads differ as already accepted in
+    `diff_ks_math2`. The test treats those NaNs as equal.
+  - The first runs found a real bug: the copy constructor dropped int and float values. My reading of the
+    disassembly had been wrong.
+- In game:
+  - The menu is clean (only the StringData memory line differs, as with U7a).
+  - The input scenario matches the U7a screenshots.
+- The other modules' tests are clean, except LCRand's known NaN-only difference. The x64 harness is clean.
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's
