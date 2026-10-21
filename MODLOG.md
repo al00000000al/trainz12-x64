@@ -1094,6 +1094,49 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
 - The other modules' tests and the x64 harness are clean. diff_iw32 had one mismatch once, run from a
   PowerShell-to-bash chain; it was clean when rerun.
 
+### KernelStandard_7c U7c2, StringTables (2026-10-21): 568/1762 exports ours
+- `StringTables.cpp`, 35 exports: StringTablesBase and StringTablesDefaultTraits, the reader and writer of string
+  (localisation) tables as config text or binary files. Details are in `notes\KernelStandard.md` ("U7c2 done").
+  Nothing in this install imports them, so the game check is a regression check only.
+- The base class is abstract. Six of its 20 vftable slots are pure: the table class supplies them. From how the
+  base calls them, they are SaveConfigData(ConfigData&), SaveBin(DynamicBuffer&), and AddTable and AddEntry, one
+  each for the config form and one each for the binary form.
+  - Config form: a node whose value is `Table` and that has a non-zero `Id` child is a table. Its `Entry` nodes
+    with an `Id` are its entries. Valueless nodes are groups, so names are dotted paths.
+  - Binary form: "ST", version 0x101, a names flag and the key character size, then for each table "TABL", an
+    id, an optional name and the entries.
+- The vftable matches the original slot for slot (overloads in MSVC's reverse declaration order). The file and
+  close errors are thrown and caught as `FileEx` by reference, as in the original. The data exports (tokens,
+  "TABL", the result table) stay the original's.
+- `tests/diff_ks_stringtables.cpp`. Each side's object gets a copy of that side's vftable with the pure slots
+  replaced by logging test functions. Inputs:
+  - random tables in a config tree with noise;
+  - its text, written by the original's ConfigParser::Save (sometimes cut);
+  - a binary image (cut, a byte flipped, a word overwritten).
+  Each side reads them through every overload, saves through every overload and reads its own output back. The
+  test also runs the copy, assignment and deleting destructor, CreateNode, the Scan functions and the traits
+  directly.
+  - **3000 scenarios: 288 756 checks, 0 mismatches.** 20 000 scenarios: 1 896 249 checks, 0 mismatches. 1500
+    with the sides swapped: 0 mismatches.
+  - Of 16 mutations, all 16 are caught.
+- Original-only garbage, not compared: `DynamicBuffer::Read(long&)` succeeds when only 1-3 bytes are left and
+  leaves the rest of the value as it was on the stack.
+  - This happens in a binary table cut mid-field (a count, an entry id or a name length).
+  - The test emulates the reader to find such a read and compares everything up to it: about 1.5% of the
+    scenarios.
+- In game:
+  - The menu matches.
+  - The input scenario is unchanged.
+  - No "faulty" box from the game or from a fresh Launcher.
+- The other modules' tests and the x64 harness are clean, except one old difference in `diff_ks_rand`, which the
+  U7c1 build gives too.
+  - It is in LCRand (seed 1129, step 1412): with two NaN arguments we return the second one's NaN, the original
+    (x87) the first one's.
+  - It is not caused by U7c2; it is left for the Rand unit.
+- Also found: test runs killed by a timeout had left
+  2000+ temporary files of the original's `File` (`%08X.T%08X`) in the build and source folders. They are removed,
+  and the new test runs in the temp folder.
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's
