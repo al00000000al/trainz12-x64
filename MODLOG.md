@@ -1008,6 +1008,49 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
   - The input scenario matches the U7a screenshots.
 - The other modules' tests are clean, except LCRand's known NaN-only difference. The x64 harness is clean.
 
+### KernelStandard_7c U7b2, ConfigData text and binary (2026-10-21): 510/1762 exports ours
+- `ConfigWrite.cpp`, 22 exports: Write x3, WriteBin x5, ReadBin x3, and the internal writers (WriteChildList,
+  WriteBlock, WriteDataItem, WriteDataBlock, WriteWrap, WriteTabs, WriteChars, WritePString, FormatDataString,
+  WriteBinFile, ReadBinFile). With U7b1, all of ConfigData is ours except its pool's operator new / delete and
+  `unknownItem`. Details are in `notes\KernelStandard.md` ("U7b2 done").
+- `ConfigData::Writer` is an abstract sink {vftable: deleting destructor, Write, Encoding}. The module has a file
+  writer and a string writer.
+  - The string writer appends each piece with `PStringCache::Ins`, which copies up to a NUL whatever the size.
+    So text written to a PString always gets 16-space indents, and a binary written to a PString reads past each
+    field into the stack (kept: it is the original's behaviour).
+- Text format: one line per item, "name = value;". Arrays are "a,b,c;", a single item is "(x);", and from ten
+  items on ";//count" follows. Bytes are hex, 32 a line. Blocks are "name(value)" plus braces.
+  - Lines wrap past column 100.
+  - Strings are escaped and quoted as the parser expects.
+  - In UTF-16 mode the text goes through msvcr80 `mbstowcs`.
+- Binary: "CD", version 0x101, then depth first: name, a type byte, the value, the child count, the children.
+- `tests/diff_ks_configdata.cpp` now also covers:
+  - text to a PString, a File and a test Writer (whose vftable logs every call and can fail at any call);
+  - the binary to a Writer, a File, a path and a subst drive;
+  - each binary read back, into a new node or an existing one, and files cut at every field boundary;
+  - corrupted magic or version words;
+  - FormatDataString on random texts, and direct calls of the internal writers at random depths.
+  - **3000 scenarios: 157 428 checks, 0 mismatches** (both side orders).
+  - Of the 16 U7b2 mutations, 15 are caught. The 16th (Read(p, 1, 4) against Read(p, 4, 1) for the child
+    count) is equivalent.
+- Cases the test avoids, because the original itself fails there (in File/PString or the CRT, not ConfigData):
+  - a binary cut inside a field: File::Read takes a partial field as read, so heap or stack bytes stay in the
+    value, and a string cut at its text overruns the heap;
+  - a PString array with a null item written as UTF-16 text: `mbstowcs(NULL, ..., -1)` ends the process
+    through the CRT's invalid-parameter handler.
+- Header fixes: AnsiString(const char*) is declared (null gives the empty buffer, Size() 0), and the code builds
+  AnsiStrings where the original does. File gains Read(PString&), Read(long&) and Open(base, path). The base is
+  a subst drive name.
+- In game:
+  - Only Render3DCore / Render3DExtension import ConfigData::Write (for a debug spline.txt), so this unit is
+    hardly exercised in normal play.
+  - The menu shows 0 differences. The input scenario is unchanged. The settings files the game rewrites at exit
+    are byte-identical.
+  - No "faulty built-in assets" box appears from the game or from a fresh Launcher. The one reported came from a
+    Launcher and TADDaemon left running since a failed morning run, with that run's DLLs.
+- `run_diffs.sh` puts the bin on PATH for diff_is_lex only. With it on PATH under Git bash,
+  diff_kernel_uid_version's UId::Write check fails in every build (an environment effect, not a module one).
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's
