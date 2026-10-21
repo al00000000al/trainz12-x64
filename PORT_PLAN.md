@@ -78,8 +78,8 @@ at every step and catches mistakes while they are small.
    runtime (MODLOG "Step 6/7 decisions").
 7. ~~SpeedTree.~~ Done 2026-10-21: not in trainz.exe; it is the TNI plugin plugins\TNISpeedTree.dll (SpeedTree 5,
    524 .srt trees in the user's content). Keep it 32-bit in a helper process behind a TNI bridge.
-7b. KernelStandard_7c units U6-U14 (needed before x64). U6 small platform, U7a Options, U7b ConfigData, U7c1 ConfigParser (flex + Lemon) and U7c2 StringTables done 2026-10-21: 568/1762 ours.
-    Next: U8 Bitmap.
+7b. KernelStandard_7c units U6-U14 (needed before x64). U6 small platform, U7 Options / ConfigData / ConfigParser / StringTables (2026-10-21) and U9 DynamicBuffer / IOSlave / BlockReader / BPE / JIRF (2026-10-22) done: 763/1762 ours.
+    Next: U8 Bitmap (the second half of the U8 + U9 step).
 8. Render stack (RenderSystem, Render3D*, RenderOpenGL), then InterfaceSystem, WaterSystem.
 9. trainz.exe subsystems through the loader DLL: asset DB, GS compiler/VM, physics, world.
 

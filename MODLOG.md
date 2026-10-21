@@ -1137,6 +1137,34 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
   2000+ temporary files of the original's `File` (`%08X.T%08X`) in the build and source folders. They are removed,
   and the new test runs in the temp folder.
 
+### KernelStandard_7c U9, streams and JIRF (2026-10-22): 763/1762 exports ours
+- The first half of the bigger U8 + U9 step: 195 exports in four files. Details are in `notes\KernelStandard.md`
+  ("U9 done").
+  - `Streams.cpp`, DynamicBuffer (51 exports). The strings' binary Read / Write go through a reader / writer object
+    the strings call back.
+  - `IOSlave.cpp`, the byte-stream family: memory, growing memory (an MSVC8 std::vector kept by hand), file, read
+    cursor, write cursor with LZ history, and the scrambled resource stream (header, per-position byte scrambling,
+    4 KB padding).
+  - `BlockReader.cpp`, the "name { ... }" text reader, and BPE (Philip Gage's byte pair encoding, as compiled:
+    codes from 254 down).
+  - `JIRF.cpp`, JIRF chunk files over the resource stream, and the size writers.
+- Three new diff tests: `diff_ks_dynbuf`, `diff_ks_ioslave`, `diff_ks_jirf`.
+  - 649 420 + 392 314 + 141 544 checks, 0 mismatches; 0 with the sides swapped too.
+  - Mutations: 29 of 33 caught, the other 4 equivalent.
+- Original-only garbage, not compared:
+  - bytes of a buffer that no write has set;
+  - BlockReader's unset line buffer (File::ReadLine puts no NUL after a line; the test zeroes the buffers);
+  - reads past a short JIRF stream (they leave stack values);
+  - the bits and bytes MSVC8 does not copy in the File copy.
+- The time-based parts of the resource stream (its key word, its padding) are set or skipped by the tests.
+- Kernel_7c is rebuilt against the new IOSlave header: the same imports.
+- In game (KernelStandard_7c and Kernel_7c deployed):
+  - The menu matches, except the network line.
+  - The input scenario is unchanged.
+  - No "faulty" box from the game or from the Launcher.
+- The other modules' tests and the x64 harness are clean, except the old LCRand NaN case.
+- Next: U8 Bitmap. Its blitters are hand-written assembly: 12 000 lines of disassembly for the class.
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's
