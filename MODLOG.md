@@ -939,6 +939,34 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
 - A note for test runs: diff tests that load the game's KernelStandard keep `bin\JetLog.txt` open. A game
   started during them exits at once.
 
+### KernelStandard_7c U7a, Options (2026-10-21): 349/1762 exports ours
+- `Options.cpp`, 41 exports: the parser for the command line, files and the environment. It covers every Get /
+  GetNext overload, separators, string arrays and ranges. Details are in `notes\KernelStandard.md` ("U7a done").
+- The game's msvcr80 is shared through `Crt80.h`:
+  - atof rounding, ctype and case tables, wcstombs and stdout all come from it;
+  - it is found by enumerating loaded modules, because it is loaded side-by-side and `GetModuleHandle`
+    misses it;
+  - Math2's `_CIacos` lookup had the same bug and was silently falling back to `std::acos`. It is fixed now.
+- Two latent bugs fixed on the way:
+  - **`File` is 0x13c bytes**, not 0x3c: the path buffer sits at +0x38. File locals were overrun by the
+    original's Open and Close; our InputSystem's force-feedback load and save were affected too. The size is
+    now checked by `JET_LAYOUT32`.
+  - **Silently re-exported thunks**: a declaration that mangles differently from the original resolves through
+    the original's import library, and the module re-exports the original function. `tools/check_thunks.py`
+    finds these. It found two (ProcessCmdLine and Init with `char* argv[]`); every other module is clean.
+- `tests/diff_ks_options.cpp`:
+  - option lines from a generator of the syntax (switches, quotes either way, multi-word and empty values,
+    key- / key+, stray signs, tabs and newlines, high bytes);
+  - command lines, ANSI and UTF-16 files, and the environment through msvcr80's `_putenv`;
+  - then every Get and GetNext, with the entry list compared after each step.
+  - **5000 scenarios: 233 527 checks, 0 mismatches.** All 10 mutations caught.
+  - Two behaviours of the original stay outside the comparison, because they read freed or uninitialised
+    memory in both modules:
+    - a cursor left from a replaced value;
+    - UTF-16 files without a trailing wide NUL.
+- In game: menu clean except two network-dependent Planet Auran lines (absent with the previous KernelStandard
+  too). The input scenario runs through. The other modules' tests and the x64 harness are clean.
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's
