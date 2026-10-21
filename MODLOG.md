@@ -1051,6 +1051,48 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
 - `run_diffs.sh` puts the bin on PATH for diff_is_lex only. With it on PATH under Git bash,
   diff_kernel_uid_version's UId::Write check fails in every build (an environment effect, not a module one).
 
+### KernelStandard_7c U7c1, ConfigParser (2026-10-21): 533/1762 exports ours
+- `ConfigParser.cpp` and `ConfigLexer.cpp`, 23 exports: constructors, copy, assignment, destructor, the five
+  Parse overloads, Save x2, SaveString, WriteData, and the getters and setters. Details are in
+  `notes\KernelStandard.md` ("U7c1 done").
+- **The "Syntax error outside the game" mystery is solved.** KernelStandard's ConfigParser does not read Trainz
+  config.txt at all. It reads its own Save format: a `version x.xx` line, then ConfigData::Write text.
+  - The scanner's first state accepts only comments and the `ver` keyword; anything else makes yylex return -2,
+    and Parse returns 3 silently. Every earlier test fed it config.txt.
+  - The game's own config loaders use other parsers. This one serves the Jet modules' own files (Interface*,
+    Render*, InputSystem, CCP, ContentManager).
+- Inside: a flex 2.5.4 C++ scanner (81 rules, 6 start conditions, REJECT-style state buffer) and an old Lemon
+  parser (2000-era hash-table states, 34 rules, `error` recovery).
+  - The DFA and Lemon tables are read from the installed original at build time, like InputSystem's scanner
+    tables. The Lemon action links are converted from addresses to indices.
+  - The skeletons and all 81 scanner actions and 34 grammar actions are hand-ported from the disassembly and
+    Ghidra's decompilation.
+  - Error messages went to a vsprintf buffer that nothing reads (the logging was compiled out), so they are left
+    out.
+- Original behaviour kept: a backslash outside quotes in the body hangs both modules forever.
+  - Rule 29 puts the backslash back and enters the bare-string state. Rule 43 there puts it back again and
+    returns an empty STRING, which the grammar keeps joining.
+  - Found by minimising a hanging test input down to `version.\n\`\\`.
+- `tests/diff_ks_configparser.cpp`, comparing per side the result, version, tree, file name, SaveString and both
+  Save encodings, then a re-parse through every overload. Inputs:
+  - texts written by the original's ConfigData::Write from random trees, behind a version line;
+  - damaged copies of those texts;
+  - token soup (raw strings, special floats, octal ints, hex bytes, comments).
+  - **3000 scenarios: 30 000 checks, 0 mismatches** (and 1500 with the sides swapped).
+  - Of 14 mutations, 12 are caught. The other two are equivalent: `atof` of a special-float token is never 0,
+    and the error counter does not matter after the driver stops at the first error.
+  - Texts with a bare backslash are not drawn, and neither is UTF-16 SaveString content of non-ASCII text (the
+    string writer reads past it into the stack). `KSP_WATCH=<s>` reports where a scenario hangs.
+- **A U7b2 bug was found and fixed**: ConfigData::Write wrapped string-array items one column short (the item
+  wraps to the column, only the comma before it to one less). The U7b2 test had never produced a wrapping string
+  array.
+- In game:
+  - The menu matches, except the network line that varies.
+  - The input scenario is unchanged.
+  - No "faulty" box from the game or from a fresh Launcher.
+- The other modules' tests and the x64 harness are clean. diff_iw32 had one mismatch once, run from a
+  PowerShell-to-bash chain; it was clean when rerun.
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's
