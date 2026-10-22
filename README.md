@@ -9,6 +9,12 @@ This repository holds **only our own work**. It contains no game files, no origi
 no Jet SDK files. The modules in `src/` are a clean C++ rewrite made by studying the game's binaries. You need
 your own installed copy of the game to build against it, test it or run it.
 
+## From author
+I am not programmer, but i wanted project like that long time and i guess many people do. So, seeing ai boom
+in decompiling and rewriting games i decided try do same thing and its already did lot of work.
+I published there stuff that people can work with to help speed up process and make it faster.
+
+
 ## What is here
 
 - `PORT_PLAN.md`: the approach and the numbered queue of next steps.
@@ -53,3 +59,5 @@ Keep a backup of the original files.
 Pick the next step in `PORT_PLAN.md`, read the notes for its module, and follow the existing pattern: rewrite a
 unit, add its names to `implemented.txt`, write or extend a differential test until it shows 0 mismatches, then
 check in game. `MODLOG.md` records what has been measured.
+
+
