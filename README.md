@@ -17,6 +17,8 @@ in decompiling and rewriting games i decided try do same thing and its already d
 I published there stuff that people can work with to help speed up process and make it faster.
 
 Currently its in start, and its 10% of reversed engine stuff.
+It's planned to reverse engine and game, after that start to rewrite and optimize the game. 
+Main goal also is save compatibility with addons
 
 ## What is here
 
