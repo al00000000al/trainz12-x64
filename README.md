@@ -16,6 +16,7 @@ I am not programmer, but i wanted project like that long time and i guess many p
 in decompiling and rewriting games i decided try do same thing and its already did lot of work.
 I published there stuff that people can work with to help speed up process and make it faster.
 
+Currently its in start, and its 10% of reversed engine stuff.
 
 ## What is here
 
