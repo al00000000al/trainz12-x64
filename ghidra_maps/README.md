@@ -5,6 +5,9 @@ They hold addresses, sizes and names only: no decompiled code, no disassembly, n
 To get the decompiled C, import your own copy of the game into Ghidra and run `ghidra_scripts/DecompileAll.java`
 (see `tools/ghidra_analyze.cmd`, `tools/ghidra_all.ps1`).
 
+- `jet/`: the Jet engine modules (`*_7c.dll`, including WaterSystem_7c).
+- `trainz/`: the game itself (`trainz.exe`, `trainznativeinterface.dll`).
+
 - `<module>.functions.tsv` (from `ExportFunctionStats.java`): `entry size namespace name source thunk`.
   `entry` is the virtual address at the module's preferred image base; `source` is Ghidra's symbol source
   (`IMPORTED` = export/import name, `ANALYSIS` = RTTI/vtable naming, `USER_DEFINED` = named during the port, `DEFAULT` = unnamed).
