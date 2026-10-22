@@ -14,3 +14,7 @@ qualified_names_trainz.txt
 log_names_trainz.txt
 
 __pycache__/
+
+# temp files the original File class leaves when a test is killed
+[0-9A-F]*.T[0-9A-F]*
+

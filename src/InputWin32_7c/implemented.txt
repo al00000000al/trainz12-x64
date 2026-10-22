@@ -1,0 +1,2 @@
+# InputWin32_7c exports taken from our code (one mangled name per line); all others forward to InputWin32_7c_orig.dll
+JetGetPluginsInputWin32

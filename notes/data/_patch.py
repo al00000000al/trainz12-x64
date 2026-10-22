@@ -1,0 +1,62 @@
+p = r"D:\trainz12-decomp\notes\KernelStandard.md.tmpl"
+s = open(p, encoding="utf-8").read()
+R = [
+("20 Jet modules 6-168", "21 Jet modules 6-168"),
+("* **Code is ~21% JPEG library and ~7% CRT/STL glue**: 41.6 KB (0x100432e0-0x1004d571) is a statically linked IJG-style",
+ "* **~13% of `.text` is a JPEG library and ~4% CRT/import-thunk glue**: 41.6 KB (0x100432e0-0x1004d571, 84 functions) is a statically linked IJG-style"),
+("Groups 09 + 11 + 14 hold 55% of the code.", "Groups 09 + 11 + 14 hold about 49% of the named code."),
+("`Crc::Calc`: reflected-less CRC, 256-entry table at 0x10072998 (generate; standard 0x04c11db7 MSB-first style, verify).",
+ "`Crc::Calc(buf, len, seed)`: table-driven MSB-first CRC (`crc = crc<<8 ^ T[crc>>24 ^ b]`, input/output complemented), 256-entry table at 0x10072998 (generate it; check polynomial and equality with the original table)."),
+("Every block = `malloc(size + 4)` from **msvcr80** with a 4-byte tag",
+ "Every block = `malloc((n + 0xb) & ~7)` (>= n+4) from **msvcr80** with a 4-byte tag"),
+("`Alloc::Alloc()` (exported ctor, run by a global object) inits the\n  sections and caps; no lazy path.",
+ "`Alloc::Alloc()` (exported ctor, a global instance) inits the\n  sections and caps; no lazy path. Out of memory: `OutputDebugString(\"Alloc::New> out of memory!\")`, then throws `std::bad_alloc`."),
+("31 `String` constructors are thin wrappers over AnsiString.", "`String`'s 16 exports are thin wrappers over AnsiString."),
+("QPC frequency (0x100ae160, written by a CRT-time static init)", "QPC frequency (0x100ae160, written by an unnamed init function)"),
+("has an `{matrix 3x3, eigenvalues/vectors}` object (0x3c).", "has an object of at least 0x3c bytes (3x3 matrix + eigen data)."),
+("* Node bases with a vtable-less/virtual dtor; DLTreeNode is 0x18 (parent/left/right/data), RBTreeNode 0xc + vftable (exported, no\n  importer). 28 exports, 383 bytes, 3 imported. Layout must match: trainz.exe derives from them.",
+ "* Node bases: DLTreeNode >= 0x18, RBTreeNode >= 0xc with an exported vftable (no importer), `DLListNode` 8. 28 exports, 383 bytes, 3 imported\n  (trainz.exe + one Jet module): exact layouts to be read from the constructors when the unit is done."),
+("* `File` (0x3c; no vtable) = `{CRT fd +0,", "* `File` (no vtable; at least 0x39 bytes, probably 0x3c) = `{CRT fd +0,"),
+("* `File::Path` is a fixed `char[0x104]` (copy fails above 0x102 chars and sets a global error byte at 0x100adb92: preserves\n  silently truncating-on-overflow behaviour).",
+ "* `File::Path` is a fixed `char[0x104]`; constructing/assigning from more than 0x102 chars leaves the path empty and sets a global error\n  byte at 0x100adb92 (behaviour to keep)."),
+("`FileSubLink`, `FileSub` (+ `FileSubstList.cpp`): the **virtual file system (\"subst\")**. This\n  is the `.ja` archive reader",
+ "`FileSubLink`, `FileSub` (+ `FileSubstList.cpp`; assert strings give the source names `File.cpp`, `FileSub.cpp`,\n  `FileSubArchive.cpp`, `FileSubstList.cpp`, `StringTables.cpp`): the **virtual file system (\"subst\")**. This\n  is almost certainly the `.ja` archive reader (to confirm when U10 starts)"),
+("`IOSlave` (4, vptr only; slots +0x10 ReadData, +0x14 WriteData)", "`IOSlave` (4, vptr only; slots 0 dtor, +0x10 ReadData, +0x14 WriteData, the rest to be read from the vftable)"),
+("`DynamicBuffer` 0x18\n  `{data, size, cap, pos?, growth 0x200, bool}`. `MemoryFile` 0x14 `{data, size, pos, owned, AnsiString name}`.",
+ "`DynamicBuffer` 0x18\n  `{data +0, size +4, capacity +8, cursor +0xc, growth +0x10 (0x200 default), bool +0x14}`. `MemoryFile` 0x14 `{+0, +4, +8, bool +0xc, AnsiString name +0x10}`."),
+("JIRFFile 0x144 (embeds a 0x100 path/label\n  buffer + stack of chunk offsets).", "JIRFFile >= 0x144 (member-access lower bound)."),
+("* Chunked RIFF-like container (\"Not a JIRF file\")", "* Chunked container (\"Not a JIRF file\"; write side `JIRFWriteHeader/Block/Size`)"),
+("do not hand-translate the DFA. The module also has a second flex-free\n  parser for `ConfigParser::results` tables.", "do not hand-translate the DFA."),
+("* Real corpus: 20 286 .txt, 723 .kin, config.txt only 8 outside archives; most configs sit inside .ja archives: extract via the\n  FileSub layer (so U10 matters for test data) or run the game's own loader to dump.",
+ "* Real corpus: 20 286 .txt and 723 .kin in the install, but only 8 files named `config.txt` are loose; most content lives in the .ja archives, so\n  test data has to be extracted through the FileSub layer (original) or dumped with the game's own loader."),
+("`FrameTrace` 128 KB region at 0x88758-0xa8958", "`FrameTrace` region of ~128 KB at 0x88758-0xa8958"),
+("`Console` (0x1c, debug text console, `f50_font` 8x? bitmap font)", "`Console` (>= 0x1c, debug text console with a built-in bitmap font `f50_font`)"),
+("registers the shutdown function\n  (destroys the cache, `Log::Done`, TLS).",
+ "appends a shutdown callback to a table at 0x100acb70 (up to 0x400 entries); the shutdown routine at 0x1002ec50 destroys the cache, calls `Log::Done` and destroys the TLS singleton."),
+("| `File` | 0x3c | `{fd +0 (-1)", "| `File` | >= 0x39 (0x3c?) | `{fd +0 (-1)"),
+("| `IOSlave` | 4 | `{vptr}`; slots: dtor, +4?, +8?, +0x10 ReadData(void*,ulong), +0x14 WriteData(const void*,ulong), Seek/Tell/GetSize |",
+ "| `IOSlave` | 4 | `{vptr}`; slots: dtor, ..., +0x10 ReadData(void*,ulong), +0x14 WriteData(const void*,ulong), (Seek/Tell/GetSize in the other slots) |"),
+("`{vptr, data*, pos, size}` / `{vptr, handle*, ?}` / `{vptr, alloc, first, last, end, pos}` (MSVC8 vector)",
+ "`{vptr, data* +4, pos +8, size +0xc}` / `{vptr, +4, +8}` / `{vptr, alloc +4, first +8, last +0xc, end +0x10, readPos +0x14}` (MSVC8 vector)"),
+("| `DynamicBuffer` | 0x18 | `{data*, size, cap, pos?, growth (0x200 default), bool}` | by value |",
+ "| `DynamicBuffer` | 0x18 | `{data* +0, size +4, capacity +8, cursor +0xc, growth +0x10 (0x200 default), bool +0x14}` | by value |"),
+("| `MemoryFile` | 0x14 | `{data*, size, pos, bool owned, AnsiString name @0x10}` | by value |",
+ "| `MemoryFile` | 0x14 | `{+0, +4, +8, bool +0xc, AnsiString name +0x10}` | by value |"),
+("| `OS` | 0x18 | `{HINSTANCE +0, +4, appName +8, list* +0xc, HWND +0x10, AnsiString +0x14}` |",
+ "| `OS` | 0x18 | `{instance? +0, +4, const char* +8, list head* +0xc (0xc-byte object), HWND +0x10, AnsiString +0x14}` |"),
+("* Static CRT is **not** safe for U14: `Alloc` must use the same `malloc/free` that orig's code frees with while any orig code\n  remains; build U14 against msvcr80 (or call `HeapAlloc(GetProcessHeap())` after confirming msvcr80 uses the process heap) until\n  the last orig function is gone. Everything above U14 can use any CRT because only `Alloc` memory crosses module lines\n  (MODLOG: Kernel_7c already built this way).",
+ "* **CRT choice matters here, unlike in Kernel_7c.** (a) `Alloc` must use the same `malloc/free` as orig's code while any orig code\n  remains: build U14 against msvcr80 (or `HeapAlloc(GetProcessHeap())` after confirming msvcr80 uses the process heap).\n  (b) **`File` stores a CRT low-level file descriptor (`_open`/`_read`) at +0, and fds are per-CRT-instance**: `File` objects\n  are created by importers (our constructor) and read by orig code or vice versa, so U10 and everything that touches `File`, `FILE*`\n  (`Log` uses `stderr`/`vfprintf`) or `errno` must link the same msvcr80.dll (the game already ships it; make an import lib\n  from its exports with `tools\\gen_implib.py`). (c) Units that only exchange `Alloc` memory and plain data with orig (U1-U9)\n  can use a static CRT as Kernel_7c does, provided they never `free` orig-`malloc`ed memory (the flex scanner in U7 uses\n  `malloc/realloc/free` internally: keep all of it inside the unit)."),
+("Cycles found (cannot be split into separate in-game steps)", "A layer calls the layers below it, so replace from the top down. Cycles found (cannot be split into separate in-game steps)"),
+("0x100ae1e0 (a\n   `Log` client object used by the helper at 0x10036cd0), 0x100ae250 (a `Rand` instance).",
+ "0x100ae1e0 (used as a\n   `LogClient*` by the helper at 0x10036cd0), 0x100ae250 (written only by `Rand`)."),
+("**Allocator contract**: tag format, 4-byte offset and size classes are an ABI between ours and orig as long as both are\n   loaded; and an alignment problem for x64. Whether msvcr80 `malloc` equals `GetProcessHeap` must be checked before U14.",
+ "**Allocator and CRT-handle contract**: tag format, 4-byte offset and size classes are an ABI between ours and orig as long as both are\n   loaded, and an alignment problem for x64 (blocks are 4 mod 8). Whether msvcr80 `malloc` equals `GetProcessHeap` must be checked before U14; CRT fds force msvcr80 for U10 (4.1)."),
+("35 exports (14 imported by 5 Jet modules + trainz.exe + tools)", "35 exports (14 imported: 6 Jet modules + trainz.exe + 4 tools; the LUT itself by 10 modules)"),
+]
+for a, b in R:
+    if a not in s:
+        print("MISSING:", a[:80].replace("\n", "\\n"))
+        continue
+    s = s.replace(a, b)
+open(p, "w", encoding="utf-8").write(s)
+print("patched")

@@ -1,0 +1,911 @@
+# KernelStandard_7c.dll: reconstruction plan
+
+Status: analysis only, finished 2026-10-19 (drafted by one session, corrected and rendered by the next; hand-over in
+`notes\HANDOVER_KernelStandard.md`). No KernelStandard code is reconstructed yet. The x64 harness's stand-in
+(`src\tests\x64\KernelStandardStub.cpp`) is not a reconstruction, but its notes on PString, Options, ReferenceCount
+and Mutex were checked against the decompile and are folded in below.
+Private notes, derived from our own Ghidra project and the original binaries; no decompiled code or SDK text is quoted.
+Reproducible inputs: `notes\data\` (call graph `calls.tsv`, data references `datarefs.tsv`, instruction stats `insnstats.tsv`,
+class table, address map; scripts `notes\ghidra\ClassGraph.java`, `InsnStats.java`, `notes\data\*.py`) and the full
+decompile `decomp\KernelStandard_7c.dll.c` (2250 functions, 0 failures).
+
+## 0. Summary
+
+* The module is the Jet base library: allocator, interned strings, string classes, files/IO/archives, config parser,
+  options, diagnostics, threads, math, Bitmap/JPEG, a few Win32 wrappers. **1762 exports** (1649 code, 113 data/vftable),
+  `.text` 327 509 bytes, 2276 Ghidra functions (292 521 B), 77% named. One msvcr80/msvcp80 dependency, ijl10.dll, DBGHELP,
+  WINMM, VERSION.
+* **Only 666 of the 1762 exports are imported by anything in the install** (trainz.exe 447, the six tool exes 191-311,
+  21 Jet modules 6-168). 1096 exports (mostly whole classes: MultiByteString, StringTables*, BlockReader, BPE, PoolBlockAlloc,
+  SWMRGuard, JIRF writers, FileSub*...) are used only inside the module. Original `Kernel_7c.dll` uses 121.
+  The final x64 module needs the 666 plus whatever the module itself calls, but for the 32-bit drop-in every name must exist
+  (forwarders cover the rest).
+* **~13% of `.text` is a JPEG library and ~4% CRT/import-thunk glue**: 41.6 KB (0x100432e0-0x1004d571, 84 functions) is a statically linked IJG-style
+  libjpeg *encoder*, reachable only from `Bitmap::SaveJPG`; it needs no reimplementation (use libjpeg-turbo in x64).
+  JPEG *decoding* goes through ijl10.dll (Intel, 32-bit only, ordinals 2/3/4 = Init/Free/Read).
+* **State is concentrated and mostly not exported.** The "foundation" (Alloc, the `#StringData` heap, PStringCache with its
+  global lock, the AnsiString null buffer, Log, ThreadLocalStorage) is called from orig-internal code by direct address.
+  Consequence for the incremental method: replace **consumers before foundations** (top-down). The foundation moves last, as
+  one closed unit, at which point nothing of the original module is left (section 4).
+* Stateless leaf classes (math, CRC, sync wrappers, Rand, colour, list nodes) can be replaced first, one at a time, with exact
+  differential tests.
+* **Recommended first unit: U1 "Math-1" (Crc, StdMath incl. the 2 KB `s_sqrtLUT` table that 10 modules read inline, Vector2/3,
+  integer-log helpers, OptimalRects, Eigen3), preceded by U0 (pure-forwarding KernelStandard proxy).** 35 exports, 4.3 KB.
+
+## 1. Export inventory
+
+### 1.1 Per group (grouping is mine; classes in section 1.3)
+
+Counts: "exports" = names in the export table; code size = Ghidra function bytes attributed to the group: by namespace, plus
+unnamed helper functions attributed by single-caller propagation and address neighbourhood (approximate for the 87 KB of
+unnamed `Global` functions: 32.7 KB JPEG, 7 KB import thunks/CRT glue, 2.3 KB unattributed).
+
+| Group | exports (code/data) | imported by anyone | code fns / bytes (incl. unexported + attributed helpers) | Jet modules importing | exes importing |
+|---|---|---|---|---|---|
+| 01 Memory (Alloc, PackedHeap, PoolBlockAlloc) | 42 (41/1) | 18 | 86 / 12,264 | 21 | 7: CCP, ContentManager, Launcher, TADDaemon, TrainzDiag, TrainzUtil, trainz |
+| 02 String core (PString/PStringCache) | 46 (44/2) | 30 | 52 / 6,019 | 21 | 7: CCP, ContentManager, Launcher, TADDaemon, TrainzDiag, TrainzUtil, trainz |
+| 03 AnsiString/UnicodeString/MultiByteString/String | 269 (269/0) | 80 | 246 / 19,737 | 17 | 7: CCP, ContentManager, Launcher, TADDaemon, TrainzDiag, TrainzUtil, trainz |
+| 04 StringTables (localisation tables) | 41 (34/7) | 0 | 37 / 6,669 | 0 | 0: - |
+| 05 Threads and sync | 127 (114/13) | 59 | 105 / 7,419 | 8 | 7: CCP, ContentManager, Launcher, TADDaemon, TrainzDiag, TrainzUtil, trainz |
+| 06 Time, Rand, Crc, Date | 84 (70/14) | 20 | 56 / 4,838 | 9 | 7: CCP, ContentManager, Launcher, TADDaemon, TrainzDiag, TrainzUtil, trainz |
+| 07 Math (Vector/Matrix/Quaternion/Eigen3/StdMath) | 63 (62/1) | 29 | 84 / 20,243 | 8 | 6: CCP, ContentManager, Launcher, TADDaemon, TrainzUtil, trainz |
+| 08 Intrusive lists/trees | 28 (27/1) | 3 | 16 / 387 | 1 | 1: trainz |
+| 09 File and IOSlave streams | 405 (395/10) | 189 | 463 / 62,438 | 13 | 7: CCP, ContentManager, Launcher, TADDaemon, TrainzDiag, TrainzUtil, trainz |
+| 10 JIRF chunk files | 34 (33/1) | 15 | 32 / 3,416 | 1 | 2: TrainzUtil, trainz |
+| 11 ConfigData/ConfigParser/Options | 232 (229/3) | 86 | 257 / 48,372 | 14 | 5: CCP, ContentManager, TADDaemon, TrainzUtil, trainz |
+| 12 Diagnostics (Log, Console, Profile, Exceptions) | 160 (122/38) | 53 | 143 / 18,669 | 19 | 7: CCP, ContentManager, Launcher, TADDaemon, TrainzDiag, TrainzUtil, trainz |
+| 13 Platform (OS, Window, DynamicLibrary, Events) | 110 (101/9) | 45 | 102 / 8,311 | 10 | 7: CCP, ContentManager, Launcher, TADDaemon, TrainzDiag, TrainzUtil, trainz |
+| 14 Bitmap/Color/ImageProcessing (+JPEG) | 121 (108/13) | 39 | 111 / 31,542 | 12 | 7: CCP, ContentManager, Launcher, TADDaemon, TrainzDiag, TrainzUtil, trainz |
+| 15 Embedded JPEG encoder (IJG-style, SaveJPG only) | - | - | 84 / 32,700 | - | - |
+| 99 STL/CRT glue | - | - | 348 / 7,033 | - | - |
+| ?? unowned | - | - | 28 / 2,312 | - | - |
+
+Notes: group 04 (StringTables) has **no importer and no internal caller**: dead in the shipped game (the localisation tables are
+read elsewhere), but its vftable and 41 exports exist. Group 08 is tiny. Groups 09 + 11 + 14 hold about 49% of the named code.
+
+### 1.2 Who imports the module
+
+| Importer | KernelStandard exports used |
+|---|---|
+| trainz.exe | 447 |
+| TrainzUtil.exe | 311 |
+| ContentManager.exe | 283 |
+| Launcher.exe | 281 |
+| TADDaemon.exe | 280 |
+| CCP.exe | 259 |
+| TrainzDiag.exe | 191 |
+| RenderSystem_7c.dll | 168 |
+| InterfaceSystem_7c.dll | 142 |
+| Kernel_7c.dll | 121 |
+| Render3DFoundation_7c.dll | 95 |
+| Render3DCore_7c.dll | 90 |
+| KernelResource_7c.dll | 83 |
+| RenderOpenGL_7c.dll | 60 |
+| InterfaceResources_7c.dll | 57 |
+| InputSystem_7c.dll | 54 |
+| WaterSystem_7c.dll | 54 |
+| Render3DExtension_7c.dll | 46 |
+| RenderDirectX9_7c.dll | 42 |
+| DSMoviePlayer_7c.dll | 30 |
+| Lexer_7c.dll | 30 |
+| Render2DCore_7c.dll | 30 |
+| KernelResources_7c.dll | 27 |
+| DebugSupport_7c.dll | 23 |
+| InputWin32_7c.dll | 21 |
+| VFWMoviePlayer_7c.dll | 20 |
+| InputDirectX_7c.dll | 15 |
+| DebugInterface_7c.dll | 6 |
+
+Every module imports by name (mangled C++ names); no ordinal imports. No other PE in `D:\games\trainz 2012 x64` imports
+KernelStandard (84 PEs scanned; `trainznativeinterface.dll`, `TNISpeedTree*.dll`, JAConverter, XCrashReport, jpatchl do not).
+`Launcher/ContentManager/CCP/TADDaemon/TrainzUtil/TrainzDiag` are native and use 191-311 exports each: they are consumers for
+the differential harness too (TrainzUtil is the best one for JIRF/Config, TADDaemon for sync primitives).
+
+Vftable exports (22) imported by others: `DynamicLibrary` (Kernel, 4 tools, trainz.exe), `Exception` (7 modules incl. Lexer,
+trainz.exe), `IOSlave` (trainz.exe + all tools), `Mutex`, `Semaphore`, `WEvent` (TADDaemon: those derive/construct them).
+Data exports imported (24): `PString::cache`, `StdMath::s_sqrtLUT` (10 modules), `g_jetSTLAllocHeap`, `Time::*`, the Profile
+and ExceptionHandler statics, etc. The remaining data exports are never imported.
+
+### 1.3 Per class
+
+(`fns/bytes` = Ghidra functions in that namespace, exported or not; `globals written` = distinct `.data/.bss` addresses the
+class's own code writes, from `datarefs.tsv`; this is what makes a class stateful.)
+
+| grp | class | exports (data) | imported | fns | bytes | Jet mods | trainz.exe | tool exes | globals written |
+|---|---|---|---|---|---|---|---|---|---|
+| 01 | Alloc | 6 (0) | 3 | 5 | 868 | 21 | yes | 6 | 12 |
+| 01 | DynamicPtr | 5 (0) | 1 | 3 | 47 | 0 | yes | 0 | 0 |
+| 01 | PackedHeap | 14 (0) | 5 | 14 | 2,306 | 0 | yes | 5 | 2 |
+| 01 | PackedHeapMP | 5 (0) | 4 | 5 | 570 | 0 | yes | 6 | 0 |
+| 01 | PoolBlockAlloc | 7 (0) | 0 | 7 | 831 | 0 | - | 0 | 0 |
+| 01 | ReferenceCount | 4 (0) | 4 | 5 | 158 | 17 | yes | 6 | 0 |
+| 01 | g_jetSTLAllocHeap | 1 (1) | 1 | 0 | 0 | 0 | yes | 6 | 0 |
+| 02 | PString | 15 (2) | 11 | 13 | 1,360 | 21 | yes | 6 | 0 |
+| 02 | PStringCache | 31 (0) | 19 | 31 | 3,982 | 21 | yes | 6 | 0 |
+| 03 | AnsiString | 92 (0) | 59 | 87 | 6,990 | 14 | yes | 6 | 5 |
+| 03 | MultiByteString | 78 (0) | 0 | 72 | 6,109 | 0 | - | 0 | 0 |
+| 03 | String | 16 (0) | 15 | 10 | 423 | 17 | yes | 6 | 5 |
+| 03 | UnicodeString | 83 (0) | 6 | 75 | 5,768 | 0 | yes | 0 | 0 |
+| 04 | StringTablesBase | 31 (7) | 0 | 23 | 6,296 | 0 | - | 0 | 5 |
+| 04 | StringTablesDefaultTraits | 10 (0) | 0 | 9 | 285 | 0 | - | 0 | 0 |
+| 05 | CriticalSection | 6 (1) | 4 | 6 | 330 | 7 | yes | 6 | 0 |
+| 05 | Job | 16 (1) | 0 | 14 | 461 | 0 | - | 0 | 0 |
+| 05 | Jobs | 6 (0) | 1 | 6 | 901 | 1 | - | 0 | 0 |
+| 05 | MultiLock | 7 (0) | 3 | 6 | 451 | 1 | yes | 3 | 0 |
+| 05 | Mutex | 6 (1) | 5 | 4 | 129 | 4 | yes | 6 | 0 |
+| 05 | ProtectedLong | 10 (0) | 5 | 3 | 37 | 0 | yes | 6 | 0 |
+| 05 | SWMRGuard | 6 (0) | 0 | 6 | 578 | 0 | - | 0 | 0 |
+| 05 | Semaphore | 6 (1) | 4 | 4 | 134 | 2 | yes | 4 | 0 |
+| 05 | SingleLock | 6 (0) | 4 | 5 | 161 | 6 | yes | 6 | 0 |
+| 05 | SyncObject | 12 (1) | 8 | 8 | 241 | 5 | yes | 6 | 0 |
+| 05 | Thread | 24 (2) | 18 | 23 | 866 | 5 | yes | 6 | 1 |
+| 05 | ThreadLocalStorage | 14 (5) | 0 | 9 | 1,504 | 0 | - | 0 | 5 |
+| 05 | WEvent | 8 (1) | 7 | 5 | 130 | 4 | yes | 6 | 0 |
+| 06 | Crc | 1 (0) | 0 | 1 | 53 | 0 | - | 0 | 0 |
+| 06 | Date | 3 (0) | 2 | 2 | 52 | 0 | yes | 3 | 0 |
+| 06 | LCRand | 18 (0) | 2 | 13 | 1,033 | 1 | - | 0 | 0 |
+| 06 | QuickTimer | 14 (9) | 0 | 5 | 692 | 0 | - | 0 | 6 |
+| 06 | Rand | 27 (0) | 7 | 20 | 2,504 | 1 | yes | 6 | 1 |
+| 06 | Time | 21 (5) | 9 | 15 | 504 | 9 | yes | 6 | 4 |
+| 07 | Eigen3 | 10 (0) | 1 | 9 | 1,549 | 1 | - | 0 | 0 |
+| 07 | Jet | 7 (0) | 2 | 7 | 781 | 2 | - | 0 | 0 |
+| 07 | Matrix3 | 7 (0) | 4 | 7 | 2,037 | 0 | yes | 0 | 0 |
+| 07 | Matrix4 | 12 (0) | 3 | 12 | 6,046 | 6 | yes | 3 | 0 |
+| 07 | OptimalRects | 4 (0) | 3 | 3 | 1,170 | 1 | - | 0 | 0 |
+| 07 | Quaternion | 10 (0) | 8 | 10 | 4,255 | 3 | yes | 5 | 0 |
+| 07 | StdMath | 9 (1) | 5 | 7 | 628 | 5 | yes | 4 | 0 |
+| 07 | Vector2 | 2 (0) | 1 | 1 | 19 | 1 | - | 0 | 0 |
+| 07 | Vector3 | 2 (0) | 2 | 2 | 52 | 1 | yes | 0 | 0 |
+| 08 | DLListNode | 4 (0) | 0 | 2 | 35 | 0 | - | 0 | 0 |
+| 08 | DLTreeNode | 13 (0) | 2 | 8 | 169 | 1 | - | 0 | 0 |
+| 08 | IListNode | 2 (0) | 1 | 0 | 0 | 0 | yes | 0 | 0 |
+| 08 | ISingleListNode | 2 (0) | 0 | 1 | 9 | 0 | - | 0 | 0 |
+| 08 | RBTreeNode | 7 (1) | 0 | 5 | 174 | 0 | - | 0 | 0 |
+| 09 | BPE | 2 (0) | 0 | 2 | 1,472 | 0 | - | 0 | 0 |
+| 09 | BlockReader | 27 (0) | 0 | 27 | 2,909 | 0 | - | 0 | 0 |
+| 09 | DynamicBuffer | 51 (0) | 26 | 33 | 2,299 | 1 | yes | 6 | 0 |
+| 09 | File | 93 (2) | 53 | 74 | 9,903 | 10 | yes | 6 | 3 |
+| 09 | File::Entry | 7 (0) | 5 | 5 | 346 | 1 | yes | 2 | 0 |
+| 09 | File::Find | 17 (1) | 7 | 16 | 3,057 | 3 | yes | 6 | 0 |
+| 09 | File::Path | 53 (0) | 35 | 48 | 6,714 | 9 | yes | 6 | 6 |
+| 09 | File::Time | 7 (0) | 0 | 4 | 72 | 0 | - | 0 | 0 |
+| 09 | FileEx | 7 (1) | 0 | 5 | 119 | 0 | - | 0 | 0 |
+| 09 | FileSubArchive | 2 (0) | 0 | 18 | 3,462 | 0 | - | 0 | 3 |
+| 09 | IOSlave | 12 (1) | 4 | 10 | 327 | 1 | yes | 6 | 0 |
+| 09 | IOSlaveFile | 10 (1) | 7 | 8 | 460 | 0 | yes | 6 | 0 |
+| 09 | IOSlaveMemory | 10 (1) | 3 | 7 | 316 | 1 | yes | 2 | 0 |
+| 09 | IOSlaveMemoryDynamic | 11 (1) | 0 | 10 | 744 | 0 | - | 0 | 0 |
+| 09 | IOSlaveReadCursor | 16 (0) | 11 | 14 | 779 | 1 | - | 1 | 0 |
+| 09 | IOSlaveResource | 12 (1) | 7 | 12 | 2,537 | 0 | yes | 6 | 0 |
+| 09 | IOSlaveWriteCursor | 11 (1) | 3 | 8 | 1,033 | 1 | - | 1 | 0 |
+| 09 | MemoryFile | 49 (0) | 23 | 41 | 3,961 | 4 | yes | 3 | 5 |
+| 09 | SharedMemory | 8 (0) | 5 | 4 | 204 | 0 | yes | 5 | 0 |
+| 10 | JIRFFile | 27 (1) | 11 | 25 | 2,863 | 1 | yes | 1 | 0 |
+| 10 | JIRFWriteBlock | 2 (0) | 2 | 2 | 201 | 1 | - | 0 | 0 |
+| 10 | JIRFWriteHeader | 2 (0) | 2 | 1 | 92 | 1 | yes | 1 | 0 |
+| 10 | JIRFWriteSize | 3 (0) | 0 | 2 | 16 | 0 | - | 0 | 0 |
+| 11 | ConfigData | 166 (1) | 59 | 139 | 20,962 | 10 | yes | 2 | 5 |
+| 11 | ConfigParser | 25 (2) | 9 | 22 | 3,375 | 10 | yes | 3 | 5 |
+| 11 | Options | 41 (0) | 18 | 36 | 6,702 | 9 | yes | 3 | 5 |
+| 12 | BuildVersion | 5 (0) | 0 | 4 | 25 | 0 | - | 0 | 0 |
+| 12 | Console | 18 (1) | 9 | 17 | 2,410 | 3 | - | 0 | 5 |
+| 12 | Debugger | 6 (0) | 2 | 3 | 51 | 1 | yes | 6 | 0 |
+| 12 | Exception | 22 (1) | 12 | 20 | 803 | 2 | yes | 5 | 0 |
+| 12 | ExceptionHandler | 30 (11) | 10 | 17 | 2,841 | 18 | yes | 6 | 17 |
+| 12 | HardwareException | 9 (3) | 0 | 6 | 962 | 0 | - | 0 | 4 |
+| 12 | KernelStandardInit | 2 (0) | 0 | 1 | 147 | 0 | - | 0 | 3 |
+| 12 | Log | 17 (7) | 2 | 9 | 2,677 | 1 | yes | 6 | 12 |
+| 12 | LogClient | 4 (1) | 1 | 3 | 877 | 0 | yes | 6 | 5 |
+| 12 | Profile | 47 (14) | 17 | 32 | 1,750 | 8 | yes | 0 | 16 |
+| 13 | DynamicLibrary | 9 (1) | 6 | 8 | 298 | 1 | yes | 4 | 0 |
+| 13 | Events | 10 (0) | 2 | 10 | 879 | 1 | - | 0 | 0 |
+| 13 | Events::Event | 10 (1) | 0 | 8 | 191 | 0 | - | 0 | 0 |
+| 13 | MousePointer | 3 (0) | 0 | 2 | 18 | 0 | - | 0 | 0 |
+| 13 | OS | 19 (1) | 9 | 15 | 641 | 10 | yes | 6 | 5 |
+| 13 | SharedScratchPad | 7 (3) | 2 | 5 | 794 | 2 | - | 0 | 0 |
+| 13 | Window | 50 (3) | 26 | 44 | 4,196 | 6 | yes | 1 | 4 |
+| 13 | WindowPlacement | 2 (0) | 0 | 2 | 106 | 0 | - | 0 | 1 |
+| 14 | Bitmap | 98 (0) | 38 | 92 | 29,234 | 12 | yes | 6 | 5 |
+| 14 | Color | 1 (0) | 1 | 1 | 318 | 0 | yes | 1 | 0 |
+| 14 | HSVColor | 1 (0) | 0 | 1 | 276 | 0 | - | 0 | 0 |
+| 14 | ImageProcessing | 8 (0) | 0 | 8 | 644 | 0 | - | 0 | 0 |
+| 14 | PackedColor | 13 (13) | 0 | 0 | 0 | 0 | - | 0 | 0 |
+
+### 1.4 Win32 / third-party dependencies of the module
+
+| Dependency | Used by | x64 note |
+|---|---|---|
+| KERNEL32 (CRITICAL_SECTION, Interlocked*, Tls*, VirtualAlloc/Query, CreateThread/Event/Mutex/Semaphore, file mapping, QueryPerformanceCounter, GlobalMemoryStatus, GetVersionExA...) | everywhere | `GlobalMemoryStatus` -> `GlobalMemoryStatusEx` (>4 GB RAM), `GetVersionExA` lies on modern Windows (manifest) |
+| USER32 (49 functions: Window class, message pump, MessageBoxA, SendMessage...) | Window, ExceptionHandler dialogs | `GetWindowLongA/SetWindowLongA` with index 0 (window extra bytes holds `this`): must become `...LongPtr` + `cbWndExtra = sizeof(void*)` |
+| GDI32 (GetDeviceCaps, GetStockObject, GetTextExtentPoint32A, SelectObject), ADVAPI32 `GetUserNameA`, VERSION (3 funcs, BuildVersion/exception report), WINMM `timeGetTime` | Window, Console, ExceptionHandler, Time/Thread/Rand | `timeGetTime` wraps at 49.7 days; keep it (Rand seeds, frame times) or use QPC |
+| DBGHELP `MiniDumpWriteDump` | ExceptionHandler (CRASH.DMP, writes then execs `XCrashReport.exe`) | x64 CONTEXT; needs `EXCEPTION_POINTERS` |
+| **ijl10.dll** ordinals 2,3,4 | `Bitmap::GetInfoJPG`, `Bitmap::LoadJPG` (JPEG decode); 17 816 .jpg in the install | 32-bit only; replace with libjpeg-turbo. Pixel output may differ by IDCT/upsampling rounding: needs a tolerance test, not byte equality |
+| embedded IJG libjpeg (41.6 KB) | `Bitmap::SaveJPG` | replace with libjpeg-turbo |
+| MSVCR80 (129 imports), MSVCP80 (5, `std::string`/`allocator<char>`) | CRT: `_open/_read/_write/_sopen/_findfirst64i32/_stat64i32/_utime64`, `sscanf`, `qsort`, `atof`... | CRT file handles are plain ints in `File` (+0); keep semantics (text vs binary, `_sopen` sharing) |
+
+## 2. Per-group analysis
+
+Legend: **S** = owns global state; **L** = stateless leaf; "moves with" = must be replaced in the same step as, because
+internal calls and shared statics bypass the export table.
+
+### G01 Memory (`Alloc`, `PackedHeap`, `PackedHeapMP`, `PoolBlockAlloc`, `ReferenceCount`, `DynamicPtr`, `g_jetSTLAllocHeap`)  **S**
+* `Alloc::New/Delete` are static members; state is a 128-entry size-class free-list table (8 bytes/entry at 0x100add5c), per-class
+  caps (0x10074ba8) and counts (0x10074da8), **16 striped CRITICAL_SECTIONs** (0x10074fa8-0x10075128, selected by `class & 15`),
+  statistics (0x100adb78-8c) and a shutdown flag (0x100728d6). `Alloc::Alloc()` (exported ctor, a global instance) inits the
+  sections and caps; no lazy path. Out of memory: `OutputDebugString("Alloc::New> out of memory!")`, then throws `std::bad_alloc`.
+* Every block = `malloc((n + 0xb) & ~7)` (>= n+4) from **msvcr80** with a 4-byte tag before the returned pointer:
+  `tag = ((cls ^ 0xffffff55) & 0x1ff) | (cls << 9)`, `cls = (n + 0xb) >> 3`; blocks with cls >= 0x80 (n > ~1 KB) go straight to
+  malloc/free. `Delete` reads `tag >> 9`. So **allocations made by ours and freed by orig (or the reverse) only work if tag
+  format, size-class rules and the underlying CRT heap are identical**; the module's returned pointers are 4 mod 8.
+  64-bit: this breaks 16-byte alignment (Matrix4 / SSE members); the x64 allocator needs a 16-byte aligned header.
+* `PackedHeap` (0x20) / `PackedHeapMP` (0x2c, adds a `CriticalSection` at +0x20): 1 MB blocks from `VirtualAlloc(0x103000, PAGE_READWRITE)`,
+  allocations located by an ordered tree keyed by block address (`FindBlockForAllocation`). The tree and the heap header are
+  MSVC8 `std::set` internals (checked-iterator build, `_invalid_parameter_noinfo` calls): do not use the VS2026 STL for any
+  member of these classes, **sizeof must stay 0x20/0x2c because trainz.exe and tools allocate them** (PackedHeap 5 imports,
+  PackedHeapMP 6, `g_jetSTLAllocHeap` is an exported *object* of PackedHeapMP, 0x100ae1ac).
+* Hidden state: `DAT_100adc18` = the string heap, a `PackedHeapMP("#StringData")` created lazily by the (unexported) helper at
+  0x10039780, which `PString`, `AnsiString` and `PStringCache` use for every buffer up to 0xa0 bytes. Its summary ("Packed Heap
+  Summary" at exit) changes between identical runs (MODLOG): ignore it in log diffs.
+* Dependencies: Win32 only (VirtualAlloc, CRITICAL_SECTION, OutputDebugString) + `Log`/`File` for the debug print paths.
+* Moves with: all of G02/G03 and everything that frees memory: i.e. **last** (see 4).
+
+### G02 PString / PStringCache  **S**
+* `PString` is one pointer to a `PStringCache::Node` (null = empty); its copy/dtor/compare are inlined in every importer
+  (MODLOG). The cache is a hash table (default 0x3e5 = 997 buckets, 12 bytes each) created by `KernelStandardInit`
+  (`FUN_100390b0`) into the exported static `PString::cache`; destroyed in the module shutdown function (sets
+  `PString::isFinished`).
+* **Global lock**: one static `CRITICAL_SECTION` at 0x100acb58, initialised *by the PStringCache constructor* and taken inline
+  by importers through exported `PStringCache::Lock/Unlock`. Ref counting is done under it (node.refs, cache.liveRefs,
+  cache.uniqueCount).
+* Dependencies: Alloc/string heap; `GetANSI/GetUnicode` bridge to the string classes; `PString::Read/Write` use `BinReader/BinWriter`
+  (virtual `IOSlave`-style objects).
+* Node pointers are *compared as integers* in `SortPtr` (identity sort): ordering depends on addresses, never persisted
+  (check: no file format stores it), but x64 pointers are 8 bytes in any `FastDynamicArray<PString>` etc.
+
+### G03 AnsiString / String / UnicodeString / MultiByteString  **S** (shared null buffer + string heap)
+* `AnsiString` and its alias class `String` are **one pointer** to a ref-counted block `{refs @-4, capacity @0, length @4, chars @8}`;
+  refcount via `InterlockedIncrement/Decrement`; a *static null buffer* at 0x100ae254 (+ guard 0x100ae264, function-local
+  static emitted into many functions) is never counted/freed, compared by identity (`lpAddend != &DAT_100ae254`). Buffers up to
+  0xa0 bytes come from the `#StringData` heap, larger from `Alloc`. `String`'s 16 exports are thin wrappers over AnsiString.
+* `UnicodeString` (0xc) is a plain owned buffer `{wchar_t* data, cap, len}`, no sharing. `MultiByteString` (0x10) is MBCS-aware
+  `{data, cap, byteLen, charCount}` and has no importer.
+* Dependencies: CRT (`_mbs*`, `_vsnprintf`, `wcstombs`, `strtol/wcstod`), `PStringCache::GetANSI`. 64-bit: lengths/caps are `uint`;
+  the inline x87/SSE in `GetFloat` (2 functions) is trivial.
+* Orig-internal code (File, Options, ConfigData, Log, ...) manipulates AnsiString buffers directly, including the
+  null-buffer identity check and `PackedHeapMP::Free(DAT_100adc18, p)`. **A replaced AnsiString and an orig consumer cannot
+  coexist unless representation, heap and null buffer are shared.** Moves with G01, G02.
+
+### G04 StringTables (`StringTablesBase`, `StringTablesDefaultTraits`)  **S** (5 PString token statics)
+* Reads/writes localisation string tables, text and binary (`AddBin/SaveBin`, file id tokens `fileTblId`, TABLE/ID/ENTRY/VALUE
+  tokens as exported static PStrings). No importer, no internal caller in this install. Uses File, ConfigData, Exception.
+* Cheapest correct choice: implement last or only as a literal port; test with synthetic tables.
+
+### G05 Threads and sync
+* `SyncObject {vptr, HANDLE}` (8) with `Mutex`, `Semaphore`, `WEvent` (8 each) derived; virtual slots (as used inline
+  by other classes): +4 handle, +8 `Lock(timeout)`, +0x10 `Unlock`. `CriticalSection {vptr, unused HANDLE, CRITICAL_SECTION*}` (0xc;
+  the section (0x18) is `Alloc::New`'d). `SingleLock {SyncObject*, bool locked}`, `MultiLock {HANDLE*, bool*, count, SyncObject**}`
+  (0x10, calls `WaitForMultipleObjects`). `SWMRGuard` (0x20, single-writer multi-reader; no importer), `ProtectedLong` (interlocked
+  long). **L**: all pure wrappers, no globals. Vftables of Mutex/Semaphore/WEvent are imported by TADDaemon.
+* `Thread` (0x20): `{vptr, HANDLE, WEvent{vptr, HANDLE}, bool, entry, param, id}`, `Start` thunk runs the entry under
+  `ExceptionHandler::Main`; `Thread::mainThreadId` (exported static, set by `KernelStandardInit`). **S** (one static).
+* `ThreadLocalStorage` (singleton `0x100add44` created in `KernelStandardInit`, 4 exported TLS index statics): Profile/render
+  trace pointers, per-thread data; 1.5 KB; moves with Profile (G12) and Thread.
+* `Job`/`Jobs` (0x28 / 0x9c): job queue with a worker thread and console progress (`Console::Printf`); `Jobs` has one importer
+  (Jet module), `Job` none.
+* 64-bit: handles stored in `int` slots; `WaitForMultipleObjects` arrays; `TlsAlloc` ok.
+
+### G06 Time, Rand, Crc, Date
+* `Time` (21 exports, 5 data): QPC frequency (0x100ae160, written by an unnamed init function), frame-lock state (exported:
+  `frameLock`, `frameLockCount/Time/Delta`) which `Rand::Randomise`/`LCRand` read. Time is **S** but tiny.
+* `Rand` (0x20, lagged-Fibonacci XOR generator: `{idx +0, lag +4, size +8, ..., table* +0x1c}`) and `LCRand`
+  (linear congruential, 18 exports). The generator itself is integer-exact; the **scaling to float/double/int range uses
+  x87 with the CRT's 53-bit precision control and `fistp` rounding** (`Rand::operator()(uint)` etc.): bit-exact output in an
+  SSE2 build needs care (sections 4 and 5). Seeds come from `timeGetTime`+10 or the frame-lock time.
+* `Crc::Calc(buf, len, seed)`: table-driven MSB-first CRC (`crc = crc<<8 ^ T[crc>>24 ^ b]`, input/output complemented), 256-entry table at 0x10072998 (generate it; check polynomial and equality with the original table).
+* `QuickTimer` (14 exports, 9 data, 6 written globals) is the lightweight profiler: **S**, belongs with Profile (G12).
+
+### G07 Math: Vector2/3, Matrix3/4, Quaternion, Eigen3, StdMath, OptimalRects, free helpers  **L**
+* All value types with no globals except `StdMath::s_sqrtLUT` (static 512-entry table, 2 KB at 0x10072078, **read inline by 10
+  modules**: must stay an exported array with identical contents). `Sqrt/InvSqrt/Sqrt16/InvSqrt16/InvSqrtApprox` are
+  table-driven Newton steps (bit tricks on float, `0x5f3759df` for the approx one).
+* Code is SSE2 scalar (not packed) plus some x87 (`_CIacos/_CIasin`, `ROUND` conversions). 2632 SSE and 507 x87 instructions in
+  62 functions. `/arch:SSE2 /fp:precise` in the new build should reproduce results; verify by bit comparison (not tolerance).
+  Layouts: Vector2 8, Vector3 0xc, Matrix3 0x24, Matrix4 0x40, Quaternion 0x10.
+* `OptimalRects` (4 exports, 1.2 KB) uses a `FastDynamicArray`-like list via `Alloc`; `Eigen3` (3x3 symmetric eigen solver, 1.5 KB)
+  has an object of at least 0x3c bytes (3x3 matrix + eigen data).
+
+### G08 Intrusive lists/trees (`DLListNode`, `DLTreeNode`, `ISingleListNode`, `IListNode`, `RBTreeNode`)  **L**
+* Node bases: DLTreeNode >= 0x18, RBTreeNode >= 0xc with an exported vftable (no importer), `DLListNode` 8. 28 exports, 383 bytes, 3 imported
+  (trainz.exe + one Jet module): exact layouts to be read from the constructors when the unit is done.
+
+### G09 File, Path, Find, IOSlave*, MemoryFile, DynamicBuffer, BlockReader, BPE, SharedMemory, FileSub*  **S**
+* `File` (no vtable; at least 0x39 bytes, probably 0x3c) = `{CRT fd +0, 16 KB buffer ptr +4, cursor +8, ..., position +0x1c, flags +0x28, ...}` over the CRT low-level I/O
+  (`_open/_sopen/_read/_write/_lseek/_commit`), plus `File::callback` (exported static, progress hook) and the static `File::Sep`
+  PString (exported).
+* `File::Path` is a fixed `char[0x104]`; constructing/assigning from more than 0x102 chars leaves the path empty and sets a global error
+  byte at 0x100adb92 (behaviour to keep). `Entry` 0x120 = `{Path, size/time fields...}`; `Find` 0x440 = Entry + CRT
+  find handle + 3 Paths (0x124, 0x228, 0x32c) + an **MSVC8 `std::list/set` header** at +0x430 (self-referential sentinel at
+  +0x434): size and layout depend on the old STL.
+* `FileSubArchive`, `FileSubPath`, `FileSubLink`, `FileSub` (+ `FileSubstList.cpp`; assert strings give the source names `File.cpp`, `FileSub.cpp`,
+  `FileSubArchive.cpp`, `FileSubstList.cpp`, `StringTables.cpp`): the **virtual file system ("subst")**. This
+  is almost certainly the `.ja` archive reader (to confirm when U10 starts) (Base.ja, Data.ja ... 10 .ja files hold most of the 133 417-file install), directory
+  substitution and links; temp names `%08X.T%08X`; the on-disk archive format is parsed here (`SetDefaultBuildVersion`,
+  `SetDefaultProductCode`), exported only via two entries but called from `File::Open`. It owns the substitution list and
+  archive state (globals 0x100adbc4-0x100adbd4). **The most compatibility-critical code in the module.**
+* `IOSlave` family: `IOSlave` (4, vptr only; slots 0 dtor, +0x10 ReadData, +0x14 WriteData, the rest to be read from the vftable), `IOSlaveMemory` 0x10 `{vptr,data,pos,size}`,
+  `IOSlaveFile` 0xc `{vptr, HANDLE, ...}`, `IOSlaveMemoryDynamic` 0x18 (embeds an **MSVC8 `std::vector<char>`** at +4..+0x10),
+  `IOSlaveReadCursor` 0x18, `IOSlaveWriteCursor` 0x20 (buffered, 0x1000 chunks), `IOSlaveResource` 0x24. `DynamicBuffer` 0x18
+  `{data +0, size +4, capacity +8, cursor +0xc, growth +0x10 (0x200 default), bool +0x14}`. `MemoryFile` 0x14 `{+0, +4, +8, bool +0xc, AnsiString name +0x10}`.
+* Known behaviour bugs worth keeping out of the spec: LZSS-through-IOSlaveMemory short-write (MODLOG).
+* Dependencies: G01-G03, Exception (G12), PackedHeap debug printing calls a helper in this region (0x10028530).
+* Moves with: **Log** (opens JetLog.txt through File), Bitmap/Config (callers).
+* 64-bit: `ulong` sizes (4 GB files), `_stat64i32/_utime64` are already 64-bit time; `_findfirst64i32` ok; the `std::list`/`vector`
+  members; mapped files (`CreateFileMapping`) are fine.
+
+### G10 JIRF chunk files (`JIRFFile`, `JIRFWriteBlock/Header/Size`)  **L-ish**
+* Chunked container ("Not a JIRF file"; write side `JIRFWriteHeader/Block/Size`): little-endian u32 sizes, chunk ids. JIRFFile >= 0x144 (member-access lower bound). Used by trainz.exe and TrainzUtil: **an on-disk format that add-ons (compiled assets)
+  depend on**. No pointers in the file; offsets are 32-bit.
+
+### G11 ConfigData, ConfigParser(+flex scanner), Options  **S** (statics: `unknownItem`, parser tables)
+* `ConfigData` (0x14, 166 exports!): tree of named/typed values (the config.txt/kin/etc. data model), conversions to
+  Vector2/3/4, Rect, Color, Quaternion (x87+SSE), text writer (`ConfigData::Writer`, encodings) and **binary format**
+  (`ReadBinFile/WriteBin`). `unknownItem` (exported static object, 0x100ae168).
+* `ConfigParser` (0x18) wraps `ConfigParserCore` + `scfgFlexLexer`: a **flex-generated C++ scanner** (6.9 KB `yylex` + tables in
+  `.rdata`; Flex 2.5 C++ skeleton: vtable with 9 slots). Reproduce by regenerating from a reconstructed .l (actions from the code,
+  tables from flex) and diffing token streams on the corpus; do not hand-translate the DFA.
+* `Options` (0xc, 41 exports): command-line/ini/env option list; `Options::Get` has many overloads that parse numbers
+  (SSE/x87), `GetNext`, `ProcessCmdLine/File/Env/Raw`. Used by 9 Jet modules (`Kernel_7c` too) and trainz.exe.
+  Read so far (0x10035a40 ProcessRaw, 0x10035fc0, 0x100358a0 ProcessFile, 0x10036140 SetSeparators, 0x10036180 GetNext):
+  **one entry per key** (0x18: next, prev, key, value, separators, cursor), found by FUN_10036040. Each token has an
+  optional `/ - +` switch, then a key up to whitespace, `=`, `-` or `+`. A value is quoted, or runs up to the whitespace
+  before the next switch character, so it may span spaces and newlines. `+key=v` on a key with a non-empty value
+  appends `","` + v (separator byte at 0x10053d2c); anything else replaces the value. `key-`/`key+` without `=` stores
+  the sign character as the value. SetSeparators stores the separators and resets the cursor to the value start.
+  GetNext returns the next run up to a separator (trailing spaces trimmed), skips the following whitespace and
+  separators, and keeps the cursor in the entry (mutable state behind a `const` method). ProcessFile reads the file
+  through `File` and copies it as is when `DetectEncoding` reports 1, otherwise converts it with `wcstombs` (so 1
+  presumably means ANSI). Then it runs ProcessRaw.
+* Dependencies: G01-G03, G09 (File/MemoryFile/IOSlave), math (typed getters), `Crc` (binary files).
+* Real corpus: 20 286 .txt and 723 .kin in the install, but only 8 files named `config.txt` are loose; most content lives in the .ja archives, so
+  test data has to be extracted through the FileSub layer (original) or dumped with the game's own loader.
+
+### G12 Diagnostics: Log, LogClient, Console, Profile, QuickTimer, Exception*, ExceptionHandler, HardwareException, Debugger, BuildVersion, KernelStandardInit  **S**
+* `Log` statics: client list, `logFile` (a `File*`), stderr, `writeLock`, `startTime`, `initialized`, `displayModuleName`;
+  JetLog.txt is written at exit (MODLOG). `LogClient::OutputString(V)` formats with `vsprintf` and timestamps (`Time`).
+* `Exception` (0x1110): `{vptr, char msg[0x1000] @4, char callstack[0x100] @0x1004, bool @0x1104, int line @0x1108,
+  const char* file @0x110c}`; `FileEx` derives; `HardwareException` (0x1114) maps SEH codes; vftable of `Exception` imported
+  by 7 modules (they derive custom exceptions): **layout and vtable slot order are ABI**. 64-bit: the file pointer field
+  and the 0x1000/0x100 buffers are fine; the stack-dump code walks x86 EBP frames, `CONTEXT.Eip/Esp/Ebp`,
+  `unaff_FS_OFFSET` SEH chain manipulation (`ExceptionHandler::Main` installs an `__try`-style handler with
+  `FS:[0]`-linked frames): **must be rewritten for x64** (RtlVirtualUnwind/StackWalk64) and is not byte-comparable.
+* `ExceptionHandler` writes `CRASH.DMP` (`MiniDumpWriteDump`), `ERRORLOG.TXT`, runs `XCrashReport.exe`; hardware exception names
+  (`HardwareException::Type` table), stack overflow / FPU stack check detection. 17 globals written: it is a big state machine.
+* `Profile`/`QuickTimer` (47+14 exports, 14+9 data): per-thread trace ring buffers (`FrameTrace` region of ~128 KB at 0x88758-0xa8958,
+  `TraceInfo`, `Info**` function tables at 0xa8b58), timing via QPC. Used by 8 Jet modules (profile macros) but only as
+  counters.
+* `Console` (>= 0x1c, debug text console with a built-in bitmap font `f50_font`), no tool importers.
+* `KernelStandardInit()` is **not imported by anyone**: it is a static object inside KernelStandard that sets locale `".ACP"`,
+  `Thread::mainThreadId`, creates the PStringCache (997 buckets) and TLS singleton, and appends a shutdown callback to a table at 0x100acb70 (up to 0x400 entries); the shutdown routine at 0x1002ec50 destroys the cache, calls `Log::Done` and destroys the TLS singleton. DllMain stores only `hInstance` (`0x100adbd8`).
+* Dependencies: Log needs File + strings + Time; Alloc needs Log for diagnostics: **G01 and G12 are mutually dependent** (see 4).
+
+### G13 Platform: OS, Window, WindowPlacement, DynamicLibrary, Events, SharedScratchPad, MousePointer
+* `OS` 0x18 `{HINSTANCE +0, flag +4, appName* +8, listHead* +0xc (0xc-byte list head), HWND +0x10, AnsiString +0x14}`; `OS::Init`
+  calls `ExceptionHandler::Main`, `Options::Init/ProcessRaw` (default options string `OS::defaultOptions`, 0x72898).
+* `Window` 0x134 (50 exports, `mainWindow` static): Win32 window class, message pump (`HandleMessages`), full-screen/mode
+  switching, `WM_END_OF_MESSAGES/WM_MODE_CHANGED` custom messages (exported consts), `ExceptionHandler::criticalShutdown` hooks.
+  **64-bit hazards**: window extra bytes `this` pointer via `Get/SetWindowLongA(…,0)`, `GWL_STYLE/GWL_EXSTYLE` (fine),
+  `WndProc` casts.
+* `DynamicLibrary` 8 `{vptr, HMODULE}`, slots dtor, +4 Open (`LoadLibraryExA`), +8 Close, +0xc Import (`GetProcAddress`);
+  vftable imported by 6 modules. `Events` 0x2c `{bool manual?=1 @0, ?@4, 3 lists (head/tail/count) @8, @0x14, @0x20}`;
+  `Events::Event` 0x18 `{vptr, links @4/@8, id @0xc, data @0x10, time? @0x14}`; `SharedScratchPad` (0x14, static list + lock,
+  per-thread scratch buffers), `SharedMemory` 0x10 (file mapping).
+* Dependencies: Options, ExceptionHandler, Alloc, Window <-> HardwareException (modal dialogs).
+
+### G14 Bitmap, Color, HSVColor, PackedColor, ImageProcessing (+ embedded JPEG)  **S**-lite
+* `Bitmap` (0x44, 98 exports, 29 KB): load/info for **TGA, BMP, PCX, JPG** (`GetInfoTGA/BMP/PCX/JPG`, `Load*`, `Save`, `SaveJPG`),
+  alpha merge (`AddAlpha`), blitters (a format-pair dispatch via `GetBlitter` returning function pointers), `MapPolygon`, `Circle`,
+  `ClipLine`, `ScaleArbitrary` (SSE+x87, 172 instr in MapPolygon alone), pixel formats. Corpus: 8 443 .tga, 2 651 .bmp, 17 816 .jpg,
+  0 .pcx, 1 .png in the install (.texture/.im are other modules).
+* `Color`/`HSVColor` convert (SSE), `PackedColor` has 13 constant colours as exported data, `ImageProcessing` (brightness/contrast LUTs).
+* Statics: only `PString::cache` use. **IJL decode struct** (`JPEG_CORE_PROPERTIES`, ~0x4e00-byte stack object in the
+  caller) contains pointers: whole decode path is rewritten for libjpeg-turbo.
+* Dependencies: G09 (File/MemoryFile heavy), G01/G03.
+
+## 3. Layouts other modules read or construct inline
+
+Confirmed from the code (offsets in bytes, 32-bit). Everything marked **ABI** is used by importers either by inline field
+access or because they allocate/embed the object (so sizeof matters). "SDK" notes where Auran's SDK header agrees.
+
+| Class | sizeof | Layout (confirmed) | ABI use |
+|---|---|---|---|
+| `PString` | 4 | `Node*` (null=empty). Node: `{next +0, prev +4, len +8, cap +0xc, refs +0x10, hash? +0x14, chars +0x18}`; alloc rounds `(len+0x29)&~0xf` | inline ctor/copy/dtor/compare in every importer; `PString::cache` (data export) + `Lock/Unlock` |
+| `PStringCache` | 0x30 | `{uniqueRefd +0, liveRefs +4, +8, +0xc, +0x10, +0x14, +0x18, bucketCount +0x1c, +0x20, buckets* +0x24 (12-byte bucket {head, tail, count}), +0x28, +0x2c}`; static lock at 0x100acb58 | importers touch refs/liveRefs inline under the lock |
+| `FastDynamicArray<T,13>` | 4 | ring of 0x40-byte chunks `{next, prev, count, items[13]}`; head pointer is the object (MODLOG) | inline |
+| `String`/`AnsiString` | 4 | `char*` block `{refs @-4, cap @0, len @4, chars @8}`; shared null block (0x100ae254) | `operator const char*` exported (reads +8 or null); copy ctor/dtor exported |
+| `UnicodeString` | 0xc | `{wchar_t* data, cap, len}`, owned | exported ops |
+| `MultiByteString` | 0x10 | `{data, cap, byteLen, charCount}` | internal |
+| `ReferenceCount` | 8 | `{vptr, long refs}`; vtable `{DeleteThis(cdecl,this on stack), scalar deleting dtor}`; `AddReference` = `InterlockedIncrement`, `ReleaseReference` calls slot 0 at 0 | virtual base of PluginInstance etc. |
+| `Options` | 0xc | `{head +0, tail +4, count +8}` of 0x18-byte entries `{next, prev, String key +8, value +0xc, separators +0x10, const char* cursor +0x14}` (`Alloc::New(0x18)` in ProcessRaw) | embedded by value in importers; ctor zeroes 3 words; the destructor is inlined in every importer (Kernel_7c 0x1000c280) |
+| `File::Path` | 0x104 | `char[0x104]`; overflow (>0x102 chars) clears/aborts and sets error byte 0x100adb92 | embedded by value, 3-up in `Find` |
+| `File::Entry` | 0x120 | `{Path +0, +0x104.. 6 dwords, 2 words +0x11c}` | by value |
+| `File::Find` | 0x440 | `{Entry, handle +0x120 (-1), Path +0x124, +0x228, +0x32c, +0x430.. MSVC8 list: head +0x434 (sentinel), size +0x438, +0x43c}` | by value |
+| `File` | >= 0x39 (0x3c?) | `{fd +0 (-1), buf +4, cur +8, +0xc, +0x10, +0x14=-1, +0x18, pos +0x1c, ...., flags +0x28, +0x2c, enc? +0x34=1, bool +0x38}`; buffer 0x4000 from `Alloc` | by value / `new File` in importers |
+| `IOSlave` | 4 | `{vptr}`; slots: dtor +0, Seek +4, Tell +8, GetSize +0xc, ReadData(void*,ulong) +0x10, WriteData(const void*,ulong) +0x14 (the order our Kernel_7c's LZSS calls through, proven against the real IOSlaveMemory in the plugin probe) | vftable imported by trainz.exe and tools (they derive IOSlave) |
+| `IOSlaveMemory` / `IOSlaveFile` / `IOSlaveMemoryDynamic` | 0x10 / 0xc / 0x18 | `{vptr, data* +4, pos +8, size +0xc}` / `{vptr, +4, +8}` / `{vptr, alloc +4, first +8, last +0xc, end +0x10, readPos +0x14}` (MSVC8 vector) | by value |
+| `IOSlaveReadCursor` / `WriteCursor` / `Resource` | 0x18 / 0x20 / 0x24 | chunked 0x1000-byte buffered cursors | by value |
+| `DynamicBuffer` | 0x18 | `{data* +0, size +4, capacity +8, cursor +0xc, growth +0x10 (0x200 default), bool +0x14}` | by value |
+| `MemoryFile` | 0x14 | `{+0, +4, +8, bool +0xc, AnsiString name +0x10}` | by value |
+| `DynamicLibrary` | 8 | `{vptr, HMODULE}`; slots dtor, Open +4, Close +8, Import +0xc | vftable imported |
+| `OS` | 0x18 | `{instance? +0, +4, const char* +8, list head* +0xc (0xc-byte object), HWND +0x10, AnsiString +0x14}` | by value (App/Kernel_7c create it) |
+| `Events` | 0x2c | `{bool +0 (=1), +4, list A {+8,+0xc,+0x10}, list B {+0x14,+0x18,+0x1c}, list C {+0x20,+0x24,+0x28}}` | by value |
+| `Events::Event` | 0x18 | `{vptr, link +4, link +8, id +0xc, data +0x10, +0x14}` | derived in importers |
+| `SyncObject`/`Mutex`/`Semaphore`/`WEvent` | 8 | `{vptr, HANDLE}` | vftables imported by TADDaemon |
+| `CriticalSection` | 0xc | `{vptr, HANDLE +4 (unused), CRITICAL_SECTION* +8 (0x18-byte `Alloc::New`)}` | embedded in many classes |
+| `SingleLock` / `MultiLock` | 8 / 0x10 | `{SyncObject*, bool}` / `{HANDLE*, bool*, count, SyncObject**}` | by value |
+| `Thread` | 0x20 | `{vptr, HANDLE +4, WEvent{vptr +8, HANDLE +0xc}, bool +0x10, entry +0x14, param +0x18, threadId +0x1c}` | derived/embedded |
+| `Exception` | 0x1110 | `{vptr, msg[0x1000] @4, stack[0x100] @0x1004, bool @0x1104, line @0x1108, file* @0x110c}`; `FileEx` +0; `HardwareException` 0x1114 | vftable imported by 7 modules |
+| `PackedHeap` / `PackedHeapMP` | 0x20 / 0x2c | `{..., tree (MSVC8 set) @4, ...}`, MP adds `CriticalSection @0x20` | allocated by importers (exports used) |
+| `PoolBlockAlloc` | 0x30 | `{head, ..., align +8, blockSize +0xc, count +0x10, +0x14 total, CriticalSection +0x24}` | no importers |
+| `Rand` | 0x20 | `{idx +0, lag +4, size +8, ... table* +0x1c}`, state table `Alloc`ed | by value |
+| `Vector2/3`, `Matrix3/4`, `Quaternion` | 8, 0xc, 0x24, 0x40, 0x10 | plain floats | by value everywhere |
+| `PluginSystem` objects | | see MODLOG (Kernel_7c) | |
+
+Not confirmed (lower bounds from member access only; confirm before the unit that owns them): `Window` >= 0x134, `JIRFFile`
+>= 0x144, `Console` >= 0x1c, `Profile` >= 0x10, `Bitmap` >= 0x44, `ConfigData` >= 0x14, `ConfigParser` >= 0x18, `StringTablesBase`,
+`SWMRGuard` 0x20, `Job` 0x28, `Jobs` >= 0x9c, `SharedMemory` 0x10, `SharedScratchPad` 0x14. Method: for each, find the
+`Alloc::New(size)` that precedes its constructor in trainz.exe (xrefs) and check against the stride of a `new X[]`.
+
+## 4. How to replace this module (strategy)
+
+### 4.1 Why the Kernel_7c method needs a twist here
+* Kernel_7c called into KernelStandard through exports only. KernelStandard's own foundation classes call each other by
+  address, and the allocator/string/lock state is **not exported** (statics at 0x100acb58, 0x100ae254, 0x100adc18, 0x10074fa8..,
+  `Alloc` free lists). Replacing a foundation class while orig consumers still run puts two implementations on one set of objects
+  and breaks pairing: orig frees a string buffer with `PackedHeapMP::Free(DAT_100adc18, p)` and ignores unknown pointers (silent
+  leak) or uses a different size-class tag (crash).
+* Therefore: **replace consumers first, foundations last** ("top-down"). While orig foundations are still the ones running, our
+  consumers reach them through the same exported API the importers use (via `implib\KernelStandard_7c.lib` built against the
+  `_orig` DLL), exactly like Kernel_7c. Object layouts and vtables of ours and orig are byte-identical, so objects cross freely.
+* A consumer is safe to replace on its own only if (1) layout/vtable/virtual-slot order is identical, (2) every global it writes is
+  exported or private to it, (3) its **callers inside orig** (not just importers) don't hold separate copies of its state. G09's
+  subst list (FileSub*) fails (3) for any orig caller of `File::Open` until those callers are ours: so File moves after Config,
+  Bitmap, JIRF and Log.
+* The foundation unit U14 (+U12/U13, which Alloc depends on) is replaced at once and brings the module to "no orig left".
+  For it we need a different check than in-game incrementality: the diff harness (below) loads ours and orig in one process
+  (both initialise their own statics) and runs identical operation scripts on both; the in-game proof is the switch that deletes
+  `KernelStandard_7c_orig.dll`.
+* **CRT choice matters here, unlike in Kernel_7c.** (a) `Alloc` must use the same `malloc/free` as orig's code while any orig code
+  remains: build U14 against msvcr80 (or `HeapAlloc(GetProcessHeap())` after confirming msvcr80 uses the process heap).
+  (b) **`File` stores a CRT low-level file descriptor (`_open`/`_read`) at +0, and fds are per-CRT-instance**: `File` objects
+  are created by importers (our constructor) and read by orig code or vice versa, so U10 and everything that touches `File`, `FILE*`
+  (`Log` uses `stderr`/`vfprintf`) or `errno` must link the same msvcr80.dll (the game already ships it; make an import lib
+  from its exports with `tools\gen_implib.py`). (c) Units that only exchange `Alloc` memory and plain data with orig (U1-U9)
+  can use a static CRT as Kernel_7c does, provided they never `free` orig-`malloc`ed memory (the flex scanner in U7 uses
+  `malloc/realloc/free` internally: keep all of it inside the unit).
+
+### 4.2 Dependency order among groups (calls that bypass exports)
+```
+Math, Crc, nodes, colour, sync, Rand          (leaves, no shared state)           U1-U5
+   ^
+ConfigData/Parser/Options, StringTables, Bitmap, JIRF, stream helpers             U7-U9     (consume File + strings)
+   ^
+File family (File/Path/Find/Entry/FileSub*/MemoryFile) + IOSlave                   U10       (subst state; Log uses File)
+   ^
+OS/Window, Diagnostics (Log, ExceptionHandler, Profile, Console), Thread/TLS/Time U11-U13   (Alloc calls Log; Log calls File/Time/CS)
+   ^
+Alloc, PackedHeap, PString/PStringCache, AnsiString/UnicodeString/MultiByteString/String, DllMain/startup   U14  (foundation)
+```
+A layer calls the layers below it, so replace from the top down. Cycles found (cannot be split into separate in-game steps): Alloc/PackedHeap <-> Log/File (debug dumps, "out of memory");
+Thread -> ExceptionHandler::Main -> Log/Window; PString::Read -> Config glue; Time <-> Log (timestamps). The cycle is why
+U12-U14 are the last block, replaced in the order **U13 -> U12 -> U14** only if each step keeps working with the
+remaining orig pieces through exports (Thread/TLS/Time/Log first, then Alloc+strings), otherwise as one cut-over.
+
+### 4.3 Units (small, verifiable steps)
+
+Sizes: exports total / imported by others / class-attributed code bytes (named functions in the class namespaces; add roughly
+30% for unnamed helpers).
+
+| Unit | Contents | exports / imported / bytes | Shared state touched | In-game step? |
+|---|---|---|---|---|
+| **U0** | Pure forwarding proxy: all 1762 names, ordinals unchanged, data exports/vftables forwarded to `KernelStandard_7c_orig.dll` | 1762 / 666 / 0 | none | yes (Kernel_7c did it) |
+| **U1** Math-1 | `Crc`, `StdMath` (+`s_sqrtLUT`), `Vector2/3`, `Jet::{ILog2 x2, IntLog2, CeilPow2, FloorPow2, GetBaryCentricWeights}`, `OptimalRects`, `Eigen3` | 35 / 14 / 4 252 | `s_sqrtLUT` (we export it), `Crc` table | yes |
+| **U2** Math-2 | `Matrix3`, `Matrix4`, `Quaternion` | 29 / 15 / 12 338 | none | yes |
+| **U3** small PODs | `Color`, `HSVColor`, `PackedColor` (13 data), `ImageProcessing`, `Date`, `BuildVersion`, `DLListNode`, `DLTreeNode`, `IListNode`, `ISingleListNode`, `RBTreeNode`, `ProtectedLong`, `DynamicPtr`, `MousePointer` | 77 / 12 / 1 804 | none | yes |
+| **U4** sync | `SyncObject`, `Mutex`, `Semaphore`, `WEvent`, `CriticalSection`, `SingleLock`, `MultiLock`, `SWMRGuard` | 57 / 35 / 2 154 | none (CriticalSection uses `Alloc`) | yes |
+| **U5** Rand | `Rand`, `LCRand` | 45 / 9 / 3 537 | reads `Time::frameLock*` (exported) | yes |
+| **U6** small platform | `DynamicLibrary`, `Events`, `Events::Event`, `SharedMemory`, `SharedScratchPad`, `Job`, `Jobs` | 66 / 16 / 3 728 | scratchpad list+lock (private) | yes |
+| **U7** Config | `ConfigData`, `ConfigParser`+flex core, `Options`, `StringTables*` | 273 / 86 / 45 165 | `ConfigData::unknownItem`, parser tables, token PStrings | yes (needs File/AnsiString via orig exports) |
+| **U8** Bitmap | `Bitmap` + replacement of ijl10 / embedded JPEG | 98 / 38 / 29 234 (+32.7 KB JPEG not ported) | none | yes |
+| **U9** JIRF + streams | `JIRF*`, `BlockReader`, `BPE`, `DynamicBuffer`, `IOSlave*` | 196 / 76 / 16 048 | none | yes |
+| **U10** File family | `File`, `Path`, `Find`, `Entry`, `Time`(File::Time), `FileEx`, `MemoryFile`, `FileSub*` | 235 / 123 / 30 347 | subst/archive list (0x100adbc4-d4), `File::callback`, `Sep` | yes, after U7-U9 |
+| **U11** platform core | `OS`, `Window`, `WindowPlacement` | 71 / 35 / 4 943 | `mainWindow`, placement statics | yes |
+| **U12** diagnostics | `Exception`, `HardwareException`, `ExceptionHandler`, `Debugger`, `Log`, `LogClient`, `Console`, `Profile`, `QuickTimer`, `KernelStandardInit`, `AssertEx` | 169 / 53 / 13 247 | 40+ globals (Log, handler, profile) | yes (cycle with U13/U14) |
+| **U13** thread/time | `Thread`, `ThreadLocalStorage`, `Time` | 59 / 27 / 2 874 | TLS singleton, `mainThreadId`, QPC freq | with U12 |
+| **U14** foundation | `Alloc`, `PackedHeap(MP)`, `PoolBlockAlloc`, `ReferenceCount`, `PString`, `PStringCache`, `AnsiString`, `UnicodeString`, `MultiByteString`, `String`, DllMain/CRT glue | 352 / 127 / 29 365 | everything in G01-G03 | one cut-over |
+
+(Class-attributed bytes of all units: 199 036 of 292 521; the rest: JPEG 32.7 KB, unnamed helpers and CRT.)
+
+### 4.4 Differential test per unit
+
+Common harness (two patterns already in `src\tests`): **(a)** in-process: load `KernelStandard_7c_orig.dll` and ours, call each export in
+both through raw exports (thiscall emulated with `__fastcall`, hidden result pointer for `__cdecl` members returning by value; MODLOG
+"Calling into the original modules") and compare results and object bytes; **(b)** same exe linked by name to
+`KernelStandard_7c.dll`, run once in a directory with the original and once with ours, logs diffed (plugin_probe/task_probe).
+Internal functions of orig can be reached by RVA (`diff_blowfish.cpp`).
+
+* **U0**: `tools\menu_check.ps1` on the main menu with identical JetLog (ignoring "Packed Heap Summary" lines); verify the 22 vftables
+  and 24 data exports resolve through forwarders (`dumpbin /imports` of Kernel_7c + loaded-module list).
+* **U1**: bit-exact comparison of every function over random + edge floats (denormals, +-0, inf, NaN payloads, powers of two
+  boundaries) 10^6 rounds each; `s_sqrtLUT` byte-equal (all 512 entries; regenerate procedurally and compare, don't copy);
+  Crc over random buffers/sizes/seeds; Eigen3 on random symmetric matrices incl. repeated eigenvalues; OptimalRects: random
+  invalidate/validate/process sequences comparing the returned `Rect` lists; layout static_asserts.
+* **U2**: all 29 members vs orig on random matrices/quaternions/angles; compare as raw bits (expect exact because SSE2 scalar
+  on both sides; the 507 x87 instructions (`_CIacos`, `fistp` conversions) are the places that may differ in the last bit);
+  chained operations (Rotate*, Invert, Slerp, GetEulerAngles) and the ConfigData typed readers that call them.
+* **U3**: `Color::Convert`/`HSVColor::Convert` exhaustively over all 2^24 RGB values; `ImageProcessing` LUTs over the whole
+  parameter grid; node containers by operation scripts comparing pointer graphs; `Date` formatted output in en-US.
+* **U4**: scripted multithreaded scenarios (handshakes via events so output is deterministic): Wait/Lock timeouts, return codes,
+  abandoned mutex, semaphore counts, SWMRGuard reader/writer mixes, MultiLock WaitAll/WaitAny index results; **vftable compared slot by slot** as in task_probe; run TADDaemon-style construction (it derives these classes).
+* **U5**: for 1000 seeds, 10^6 draws of every overload (`operator()` uint/int/int,int/float/float,float; `NextInt`, `NextFloat`, `Gaussian`)
+  with `Time::frameLock` on and off; compare bit patterns. `Randomise` seeds from `timeGetTime`: compare via explicit `SetSeed`.
+* **U6**: `DynamicLibrary` open/import real and bogus DLLs; Events add/remove/dispatch order with scripted observers; Job queue progress strings.
+* **U7**: the corpus test. Extract (once, with the game's own loader) every config/kin/txt from the .ja archives; parse with orig and
+  ours; dump the whole tree (names, types, values, order, line info) and diff; round-trip `Write` and `WriteBin/ReadBinFile`
+  byte-for-byte; scanner level: token stream comparison on mutated/fuzzed inputs, malformed ones included (orig errors must be
+  reproduced: "Syntax error at %s"); `Options`: scripted command lines/ini/env incl. quotes and `+/-` switches; all `Get` overloads.
+* **U8**: the install's 8 443 .tga, 2 651 .bmp, 17 816 .jpg (+ synthetic .pcx): `GetInfo*` and `Load` results pixel-compared; JPEG decode
+  allowed a small per-channel tolerance (IJL vs libjpeg-turbo) with exact match demanded for TGA/BMP/PCX; `Save/SaveJPG` -> reload; the blitter
+  matrix over all format pairs x flags x random sizes; polygon/line/circle raster ops pixel-exact.
+* **U9**: `JIRFFile` read the real chunk files used by trainz.exe/TrainzUtil, write-read-compare byte-for-byte; `DynamicBuffer`
+  scripted read/write/seek; IOSlave family (note the original's LZSS-through-memory short-read bug; compare with and without).
+* **U10**: path ops (`Make/SetExt/SplitPath/IsMatch...`) exhaustive on a generated path corpus; `Find` on a scratch tree (names, attributes,
+  times, 64-bit sizes); `File` open modes/sharing/seek/commit; **FileSub**: mount the real Base.ja/Data.ja and compare
+  directory listings, file sizes and full-content hashes of every entry (133 417 files in the install) read through both; subst and
+  link operations in scripted sequences; `File::callback` progress calls.
+* **U11**: Window creation/messages are hard to diff; use scripted message sequences to a hidden window on both builds
+  (PostMessage log of `WndProc` callbacks, style/placement getters), and the in-game main menu run.
+* **U12**: Log: identical JetLog.txt lines/prefixes for scripted `Log::Printf` calls under several flags; `Exception` objects
+  (copy semantics: whole 0x1110 bytes compared); ExceptionHandler: deliberately raise access violation / divide by zero /
+  stack overflow in a tiny probe exe under both builds and diff the crash log text (dump path excluded);
+  `Profile` trace/readout formatting.
+* **U13**: Thread start/priority/suspend/exit codes, TLS slot values per thread, `Time` frame lock arithmetic with scripted
+  `IncFrame`.
+* **U14**: stress test against orig: random alloc/free workloads (sizes around class boundaries 0xa0, 1 KB, tag bit patterns) under
+  threads, byte-compare string operations over a corpus (all strings from the config corpus), PString interning (hash chains,
+  refcount, `Unique`, `Read/Write` streams) comparing the full cache state; then the final cut-over: delete `_orig`, game
+  menu, JetLog identical, `PackedHeap` summary ignored.
+
+## 5. Risks and open questions
+
+1. **Float exactness (Rand/LCRand/StdMath/Time::FrameLockMs/ConfigData numeric readers)**: MSVC8 x87 code evaluates expression
+   chains in the CRT's 53-bit precision and rounds only when stored; SSE2 float ops round at each step. Where the original is x87
+   (`Rand::operator()` forms, `Gaussian`, `FrameLockMs`, `ConfigData::operator uint`), reproduce with `double` arithmetic
+   explicitly and verify bit-exact; if a mismatch appears the original is the spec (gameplay RNG sequences, replays).
+2. **STL members in exported objects** (`PackedHeap`/`MP`, `File::Find`, `IOSlaveMemoryDynamic`, probably others in
+   `FileSub*`): MSVC8 checked-iterator layouts; VS2026's STL differs. Rebuild with explicit hand-rolled containers of the same
+   size; confirm each sizeof in the units that own them. The module also pulls 5 `msvcp80` symbols (`std::string`).
+3. **Allocator and CRT-handle contract**: tag format, 4-byte offset and size classes are an ABI between ours and orig as long as both are
+   loaded, and an alignment problem for x64 (blocks are 4 mod 8). Whether msvcr80 `malloc` equals `GetProcessHeap` must be checked before U14; CRT fds force msvcr80 for U10 (4.1).
+4. **Hidden static state discovered only by data xrefs**: the null AnsiString buffer (0x100ae254 and its guard 0x100ae264), the
+   string heap (0x100adc18), the PStringCache lock (0x100acb58), the `FileSub*` subst/archive list (0x100adbc4-d4), 0x100ae1e0 (used as a
+   `LogClient*` by the helper at 0x10036cd0), 0x100ae250 (written only by `Rand`). Each unit's checklist must list the
+   globals it reads/writes (the table is in `data\globals_touched.txt`).
+5. **Flex scanner and parser tables** (G11): tables live in `.rdata`; regenerate from a reconstructed `.l`; any difference in
+   error recovery or line counting changes parse results for slightly malformed add-ons (which ship). Corpus testing must
+   include the install's *invalid* files if any (the game tolerates them).
+6. **.ja archive format** (`FileSubArchive`): decode and document it before U10; it gates all test data and all add-on loading. Check for
+   offset/size fields > 32 bits and for any stored pointers (none seen in the export surface, but not yet read in detail).
+7. **ExceptionHandler is x86-specific** (EBP-chain stack dump, `CONTEXT.Eip`, `FS:[0]` frames, FPU stack check); the x64 version cannot be
+   verified by diffing, only by behaviour tests (crash log contents, XCrashReport launch). Keep it in U12 but port last.
+8. **`Window` uses a 32-bit pointer in extra window bytes** (`SetWindowLongA(h,0,this)`): hazard only on x64 but trivially testable
+   by compiling the x64 build early.
+9. **ijl10.dll replacement**: libjpeg-turbo output may not be bit-identical (IJL has its own IDCT/upsampler); needs per-channel
+   tolerance and a visual check of textures (17 816 JPEGs). Progressive/CMYK/restart-marker behaviour of IJL vs libjpeg should be
+   probed with the corpus; the module also accepts `.jpg` through `MemoryFile` and `GetInfoJPG`.
+10. **`.jet` sections**: KernelStandard has two sections named `.jet` (RW 8 bytes `01 00 00 00 01 00 00 00`, RO 4 bytes holding the address of a stub
+    at 0x100509a0) which no other Jet module has; no code reference found. Unknown purpose (a marker/tool data?); keep them in
+    the link (`#pragma section`) until proven irrelevant.
+11. **Export surface policy**: 1096 exports have no importer. Decide whether the final x64 module still exports them (cheap if
+    source exists; needed only for code in the module itself). `StringTables*`, `MultiByteString`, `BlockReader`, `BPE`,
+    `PoolBlockAlloc`, `SWMRGuard` look dead in this install: schedule them last or port literally without tests beyond layout.
+12. **Name-decoration drift in x64**: all C++ exports change mangling on x64 (no `__thiscall/__cdecl`); the 32-bit drop-in keeps names,
+    the final x64 stage rebuilds trainz.exe and all modules against the new headers, so it is a rebuild, not a drop-in.
+13. **Class attribution is approximate**: ~87 KB of functions in namespace `Global` were attributed to classes by call/address heuristics; the
+    "bytes" columns are estimates (see addrmap `notes\data\addrmap.txt`: code is laid out in per-class translation-unit order, so
+    neighbours are reliable except across template instantiations). Several `Global` helpers are templates (`std::list`/`set`
+    node allocators at 0x10028d20, 0x1000d200...) shared by classes.
+14. Open: who inside trainz.exe reads `PackedColor` constants / `Console` (checked imports only; no behavioural trace);
+    whether `Jobs` runs in the shipped game (one Jet module imports it); whether StringTables is loaded by any script path.
+
+## 6. Recommended first unit
+
+**U0 + U1.**
+* U0: generate the KernelStandard proxy (all 1762 names, forwarders for the 113 data/vftable exports, `_orig` rename) and prove the menu
+  and JetLog (the harness already exists). It also settles the `.jet` sections and data-forwarder question before any real code.
+* U1 = `Crc`, `StdMath` (9 exports + `s_sqrtLUT` table), `Vector2`, `Vector3`, `Jet::{ILog2(int/float), IntLog2, CeilPow2, FloorPow2,
+  GetBaryCentricWeights}`, `OptimalRects`, `Eigen3`: 35 exports (14 imported: 6 Jet modules + trainz.exe + 4 tools; the LUT itself by 10 modules), ~4.3 KB, no globals except the
+  2 KB table, a tiny public surface, everything bit-testable against the original in one process. It exercises the new pipeline
+  (class layouts via `static_assert`, mangled-name linking against `implib\KernelStandard_7c.lib`, forwarding of the rest), and the
+  riskiest cross-cutting point (inline readers of `s_sqrtLUT` in 10 modules) with a 2 KB equality check.
+* Then U2, U3, U4, U5 in any order (all leaf), then U7-U9, then U10, then U11-U14.
+* x64 side: `build64` already links Kernel_7c against a stand-in for the 95 KernelStandard functions it imports
+  (MODLOG "Kernel_7c on x64"). Each reconstructed unit can replace its part of the stand-in, and the x64 task and
+  EditItem probes plus `golden_kernel` must keep matching their 32-bit references: a free x64 regression test for
+  PString, Options, sync, File::Path and ReferenceCount. The stand-in's provisional `JET_OPAQUE_SIZE` x64 sizes
+  (OS, Events, File::Find, IOSlaveMemory) get replaced by the real layouts as their units are done.
+
+## U6 done (2026-10-21): Platform.cpp, 66 exports
+- DynamicLibrary vftable: deleting dtor, Open, **Close, Import** (the header had Import before Close; Kernel_7c
+  called by name, so it never mattered). GetModuleNameAndAddress and SharedMemory::TryExclusiveLock are one folded
+  `return false` stub (0x10014fe0); SharedMemory::Unlock and Job::Process share a bare `ret` (0x1002abe0).
+- Events (0x2c): {bool owns, lastId, removed, queue, requeue}, each list {head, tail, count} of Event* linked
+  through Event+4 (links point at links). Update: deletes `removed`; then while the queue head is due (nextTime
+  <= time): virtual Update(); if the event is still queued it leaves the queue: finished -> deleted when owned
+  (else dropped), not finished -> `requeue`; after the pass `requeue` is sorted back (before the first with
+  nextTime >= its own). Remove(id) searches queue then requeue, owned ones go to `removed` (deleted next Update).
+  Event::Update (base) adds the interval and returns true (finished). Copies of Event and Job copy the links too.
+- Jobs (0xa8): worker thread built inline (= Thread(fn, this, true)), priority 1; waits on {queued semaphore,
+  thread} through an inlined MultiLock; FIFO; a processed job whose children are not all dispatched goes to a
+  pending list that is only rescanned after the next processed job. Update waits 1 ms for the finished
+  semaphore and 5 ms for the lock, then dispatches and deletes every finished job. "JobsConsole" draws three
+  text consoles into 0xb0000 (DOS mono text memory: debug only).
+- SharedScratchPad: per thread, ReferenceCount base (DeleteThis still the original's), array append on create,
+  find+remove on destroy, both under the static CriticalSection.
+
+## U7a done (2026-10-21): Options.cpp, 41 exports
+- Entry (0x18): {next, prev, key (lower case), value, separators, cursor}. Find lower-cases the query on the
+  stack and strcmp's; keys are lower-cased in place when the entry is made.
+- ProcessRaw per token: optional switch / - +, key up to space = - +, then `= value` (quoted to the next quote
+  of either kind; unquoted to the whitespace before the next switch, trailing whitespace dropped), or `-` / `+`
+  right after the key (no space). Key and value are cleared for every token. A token without a key is dropped.
+  `+key...` on a non-empty value appends "," and the value (a missing value appends just ","), else replaced.
+- Get(bool): missing -> fallback (false); no value -> !fallback; "-..."/false/off/0 false; "+..."/true/on/1
+  true; else !fallback. GetNext(bool): the run lower-cased; false/off/true/on, else strtol != 0.
+- Typed Gets copy fallbacks through fld/fstp (SNaN quieted). GetNext(Quaternion) reads three angles through
+  Quaternion::Set. Range "a:b" needs a non-empty b; strchr on a key with no value crashes (both).
+- GetNext's cursor points into the value it was set on: after a ProcessX that replaces the value it dangles.
+  ProcessFile terminates its buffer with one zero byte, so wcstombs (UTF-16 files) reads one wide char of heap
+  garbage past the end unless the file ends with a wide NUL.
+- CRT: atof/atoi/strtol/strtoul/isspace/_strlwr/_stricmp/wcstombs/getenv/printf are msvcr80's
+  (src/KernelStandard_7c/Crt80.h). msvcr80 is loaded side-by-side, so GetModuleHandle("msvcr80.dll") fails:
+  Crt80 finds it by enumerating modules (Math2's _CIacos lookup had the same bug and fell back to std::acos).
+- File is 0x13c bytes (+0x38 path, MAX_PATH): the header said 0x3c, so File locals (ours in InputSystem's
+  Force.cpp too) were overrun by the original's Open/Close.
+- Declarations must mangle exactly: `char* argv[]` is QAPAD; `char* const*` resolved silently to the original's
+  thunk through the import library. tools/check_thunks.py finds such exports.
+
+## U7b1 done (2026-10-21): ConfigData.cpp, 139 exports (the data model)
+- Node (0x10, from the original's PoolBlockAlloc: its ??2 / ??3 stay forwarded, and so does `unknownItem`):
+  {PString name, int type, void* data, FastDynamicArray<ConfigData*,13> children}. Types: 0 none, 1 int,
+  2 float (bits in data), 3 PString (the node pointer is the data), 4 bytes, 5 ints, 6 floats, 7 PStrings; the
+  arrays are one Alloc block {count, items}. A type-3 node may have a null data (an empty string).
+- Copy constructor, operator= and CopyData copy ints and floats raw (an earlier reading said the copy
+  constructor left them 0: wrong, eax is loaded before the type-7 jne).
+- Find / Count / Remove match names by node pointer (interned). Find(key, value) and Remove(key, value) want
+  type 3 and `data == value.node`. Remove(child, n) matches type, name and the data word, not the contents.
+  Replace(key, n) makes the missing nodes up to n and returns the last.
+- CompareData: type 0 counts as 3; strings by node; arrays by count and contents (type 7 item nodes).
+- CalcCRC: name with its NUL, then the value (strings with NUL, array blocks with their count, floats as their
+  FloatText, ints as the 4 data bytes), then the children except those named `skip` (when skip has text).
+- FloatText: msvcr80 `_gcvt(f, 8)` into a static buffer, "5." -> "5.0".
+- AddPStringArray copies the old strings with a reference each and frees the old block without releasing
+  them: one reference per old string leaks (kept).
+- Conversions to Vector/Point/Size/Rect/Color/Quaternion and operator>> into Range read the block without a
+  check: garbage (or a crash) for a node without an array. Ours returns zeros there; the test does not draw it.
+- operator Quaternion: three items go through Quaternion::Set (Euler); otherwise the x87 sums the squares
+  (fld/fmul/faddp, so the NaN of two NaNs is the larger payload), fsqrt, then SSE divss 1/len and mulss with
+  the reciprocal first. Done with inline asm + intrinsics to match NaNs bit for bit. Quaternion::Set (U1)
+  still differs in NaN payloads only (as accepted in diff_ks_math2).
+- operator>>(bool): int != 0; none false; string "1" or "true" in any case (tolower: ASCII by hand, others
+  through msvcr80); floats and arrays leave the bool alone.
+- Header fixes: AnsiString() is the original's export (data = the shared empty buffer at 0x100ae258, its
+  refcount at -4), not an inline null; UnicodeString {text, capacity, length} declared; the original's
+  wide-string exports use native wchar_t (`_W`) while the tree builds with /Zc:wchar_t-, so those
+  declarations take `__wchar_t`.
+- Test: tests/diff_ks_configdata.cpp (trees built by each side through raw exports, every op followed by a
+  tree dump and Crc, reference counts of the test's strings checked at the end).
+
+## U7b2 done (2026-10-21): ConfigWrite.cpp, 22 exports (text and binary)
+- ConfigData::Writer: {vftable}; slots: deleting destructor (base vftable 0x10053d60), Write(data, size, count)
+  -> items written, Encoding() (base 0; 2 = UTF-16). The module's writers: file {vftable 0x10053dd0, File*}
+  (File::Write; Encoding = the File's +0x34 field) and string {0x10053de0, PString*} (PStringCache::Ins of the
+  data at the string's end, up to its NUL whatever the size; Encoding 1). An encoding argument of 0 means "ask
+  the writer".
+- Text: WriteChildList writes each child and "\r\n", with a blank line before a block and after one. An item is
+  "name = value;" (tabs: two spaces a level, at most 16 per call); no name and no value writes nothing; no name
+  drops " = " for arrays only. Arrays: "(x)" for one item, "a,b,c" for more, "//count" after ";" from ten on;
+  bytes as ": " then 32 upper-case hex pairs a line, each line "\r\n" + 4 spaces. WriteWrap breaks the line when
+  the column passes 100 and is 50 past the indent (column after " = " minus 1). A block is "name(value)\r\n{",
+  the children one level deeper, "}". Floats print as FloatText (strncpy'd, 0x30 max).
+- FormatDataString: ` \ \b \t \r \n " get a backslash (b t r n for the controls) and the whole is quoted;
+  otherwise it is quoted when it starts with a digit or holds one of # / space , ; = ( ) { }.
+- WriteChars writes nothing and fails for a length <= 0 (an empty name or string item fails the whole Write);
+  UTF-16 through msvcr80 mbstowcs (a null text with length -1, i.e. a null PString-array item, ends the
+  process in the CRT's invalid-parameter handler: both modules).
+- Binary: "CD" (0x4443), version 0x101, then per node: name (WritePString: u32 length | 0x40000000 when
+  UTF-16, then the bytes), one type byte, the value (int/float 4 bytes, string, count + strings, or the array
+  block with its count), u32 child count, the children. ReadBin(File&) checks both words, ClearData()s (the
+  children stay: new ones are appended) and reads; a type-3 string read as null becomes "" ; children count is
+  read as Read(p, 1, 4); a failure in a PString array frees the items read so far.
+- WriteBin(path, flag) opens with (flag ? 2 : 1) | 0x100; ReadBin(path) with 0x10. Open(base, path) takes a
+  subst drive name as base (File::Subst), not a directory.
+- Original File/PString behaviour met by the test (not ConfigData's): a field cut part way counts as read
+  (heap or stack bytes stay in it), and a string whose text is cut overruns the heap; WriteBin to a PString
+  reads past each binary field into the stack (the string writer copies up to a NUL).
+- Header: AnsiString(const char*) (null makes the empty buffer, Size() 0) declared; the code builds
+  AnsiStrings where the original does and passes them as String&.
+
+## U7c1 done (2026-10-21): ConfigParser.cpp + ConfigLexer.cpp, 23 exports
+- ConfigParser (0x18): {vftable, ConfigLexer* core +4, PString fileName +8, ConfigData* root +0xc, float version
+  +0x10 (left unset by the default constructor; 1.0 with a given tree), AnsiString key +0x14 (MemoryFile::Open's
+  resource key)}. Copy and assignment are shallow (core and root shared). The destructor deletes both.
+  `results` and the vftable stay the original's exports: nobody imports them.
+- Parse(path) / Parse(base, path) (a subst drive; the scanner's name becomes "base:path") / Parse(MemoryFile&) /
+  Parse(name, data, size): the file name kept, File opened (2 if not), MemoryFile::Open (3 if not), then the
+  protected Parse: a new scanner, the root replaced by a node named after the file, the parse: 0 or 3.
+- Save(base?, path, flag, enc): (flag ? 2 : 1) | 0x100; WriteData writes "version %1.2f\r\n" (UTF-16 with a BOM
+  for encoding 2, through AnsiString::GetUnicode into 63 wide chars) then ConfigData::Write. SaveString is
+  ConfigData::Write to the PString alone (no version line).
+- Scanner: flex 2.5.4 C++ skeleton (REJECT-style state buffer, start-condition stack, yylineno), 81 rules. Start
+  conditions: 0 header (comments, "ver..."), 1 block comment, 2 the body, 3 a bare string (until = ; { ( ) or a
+  newline), 4 a quoted string (escapes \" \n \r \t \b, any other \x is x), 5 hex bytes. Token values are
+  Jet::Alloc copies of the text; a quoted string's quotes are cut. Errors: -1 (an unfinished string) and -2 (any
+  other character); LexerError prints to msvcr80's stderr and exit(2)s.
+- Parser: old Lemon (2000-era lempar.c: hash-table states, yy_find_parser_action / yy_reduce / error recovery
+  with the `error` symbol). Tables extracted at build time: 261 action entries (0x100735a0, links resolved to
+  indices), 65 states (0x10073dc8), 34 rules {lhs, nrhs} (0x10074148), hex digit tables (0x10074444 lo,
+  0x1007447c hi). Error messages go to a vsprintf buffer that nobody reads (logging compiled out).
+- Rule actions build ConfigData nodes from the pool: name = value, name(value) { ... }, single numbers (int via
+  msvcr80 strtol base 0, float via atof), the special floats FLOATIND/INF/QNAN (0x7fe00000/0x7f800000/0x7fc00000,
+  negative forms when atof < 0 or NaN), hex bytes, joined string pieces, and data arrays. An array's kind is its
+  first item's unless the first item of another kind is a string (strings: numbers become "%d" / "%f") or a float
+  (floats); the scan stops at that item.
+- Original behaviour kept: a backslash outside quotes in the body loops forever (rule 29 puts it back and enters
+  the bare-string state, rule 43 puts it back again and returns an empty STRING, which the grammar joins without
+  end), in both modules. The test does not draw such texts.
+- Found on the way: ConfigData::Write (U7b2) wrapped a string array's items one column short (the item wraps to
+  the column, only the comma before it to one less). Fixed; caught by this test's SaveString/Save comparison.
+- Test: tests/diff_ks_configparser.cpp (trees written by the original's Write behind a version line, damaged
+  copies, token soup; result, version, tree, file name, SaveString, Save in both encodings, re-parse through every
+  overload, copies). KSP_WATCH=<s> prints where a scenario hangs.
+- Scanner tables (extracted at build time): yy_accept 0x100526c0, yy_acclist 0x10052360, yy_ec 0x10052860 (chars
+  >= 0x7f read as 0x7e), yy_meta 0x100528e0 (ints), yy_base 0x10052990, yy_def 0x10052b58, yy_nxt 0x10052d20,
+  yy_chk 0x10053510; jam state 0xcb. Original yylex 0x10017530, driver 0x1001a670, ConfigParserCore vftable
+  0x100542a4, scfgFlexLexer vftable 0x1005416c.
+
+## U7c2 done (2026-10-21): StringTables.cpp, 35 exports (StringTablesBase, StringTablesDefaultTraits)
+- StringTablesBase (0x20): {vftable, keyCharSize +4, bool namesResolving +8, AnsiString +0xc, UnicodeString +0x10
+  {text, capacity, length}, AnsiString +0x1c}. The constructor leaves +4 and +8 unset (the derived class sets them).
+  Copy / assignment copy all members (the UnicodeString through Set(text, length, length)). The deleting
+  destructor frees with Jet::Alloc. Header: include/jet/StringTables.h.
+- vftable 0x1005607c, 20 slots, overloads in reverse declaration order: 0 deleting dtor; 1-4 AddConfigData
+  (ConfigData&, bool) / (void*, size, bool) / (path, bool) / (PString base, path, bool); 5-8 AddBin (DynamicBuffer&)
+  / (File&) / (path) / (base, path); 9 pure SaveConfigData(ConfigData& root, flags); 10-11 SaveConfigData (path) /
+  (base, path); 12 pure SaveBin(DynamicBuffer&, flags); 13-15 SaveBin (File&) / (path) / (base, path); 16 pure
+  AddTable(const char* name, long id) -> void* table (binary); 17 pure AddTable(const String& name, unsigned id)
+  (config); 18 pure AddEntry(table, const char* name, long id, DynamicBuffer& data, bool) (binary); 19 pure
+  AddEntry(table, const String& name, unsigned id, const ConfigData& node, bool) (config; its result is ignored).
+  The pure slots are named from how the base calls them (nobody in this install derives from the class).
+- The base + path forms make "base:path" with strncpy / strncat (260, as the original: a long base overflows) when
+  the base has text, else use the path. SaveConfigData needs namesResolving (else 2).
+- Config form: AddConfigData(path) parses with a ConfigParser (Parse 2 -> 3, other errors -> 8, no root -> 0);
+  (data, size) parses the buffer named "StringTableBuffer" (any error -> 8). ScanConfigData walks the top-level
+  nodes with an empty AnsiString path: a node's name is appended; a valueless node is a group ('.' appended, its
+  children walked); a node whose value is TABLE_TOKEN ("Table") with a non-zero ID_TOKEN ("Id") child is a table:
+  AddTable(path or an empty name when names are not resolved, id), null -> 8, then each child through
+  ScanTableConfigData with a fresh entry path, where ENTRY_TOKEN ("Entry") nodes with a non-zero Id are entries
+  (AddEntry with the entry path relative to the table, or an empty name). The path is cut back (MakeBufferUnique
+  to (len + 0x11) & ~0xf, length, NUL) only when the node succeeds. A missing / zero Id is 8. VALUE_TOKEN
+  ("Value") is the derived class's business.
+- Binary form: header 8 bytes {'S', 'T', u16 0x101, names flag, key char size, 2 unused}, copied inline (a buffer
+  shorter than 8 leaves the rest as it was on the stack). With names, namesResolving needs the same char size;
+  without names, namesResolving fails (8). Then while 12 bytes are left: "TABL" (fileTblId), long id, [name],
+  long count, per entry long id, [name], then AddEntry reads the data. A name is a long length (more than what is
+  left -> 8) and the bytes: resolved into one growing buffer (a longer name allocates length + 0x200 without
+  freeing the old one, as the original), followed by keyCharSize NULs; skipped with Seek when not resolved.
+- AddBin(path): File::Open(path, 0x10) (2 -> 4, 7 -> 9, other -> 3), AddBin(File&), Close; a failed Close throws
+  FileEx(StringTables.cpp, 0xa8) which is caught at once (the result stays). AddBin(File&): the whole file into a
+  DynamicBuffer {data, pos, capacity = size, size, 0x200, external} (a short read throws FileEx 0xc2, caught: 6).
+  SaveBin(path): Open(path, 0x101) (9 -> 10, other -> 5), SaveBin(File&), Close (failure thrown, caught: 7).
+  SaveBin(File&): a 32 KB DynamicBuffer filled by the pure SaveBin, one File::Write (short: FileEx 0x1e0, 7).
+  SaveConfigData(path): a pool node named by the path, the pure SaveConfigData (failure: returned, the node left
+  allocated), then ConfigParser(root).Save(0, path, false, 0): 0 or 7.
+- CreateNode(parent, "a.b.c"): each part (strchr '.', the PString cut to the part) the first child of that name, a
+  new pool node appended when there is none (or the first match is the missing-key node).
+- Traits: NewKey / NewKeyFromCharPtr Jet::Alloc strdup, DeleteKey, GetHashVal h * 31 + (signed char)c, Compare
+  -1/0/1 over unsigned bytes, DataToConfig = ConfigData::SetUnicode (inlined in the original), DataFromConfig =
+  GetUnicode, DataTo/FromDynamicBuffer = DynamicBuffer::Write/Read(UnicodeString) (u32 bytes | 0x40000000 for
+  UTF-16, then the bytes). LogErr / LogWarn are empty (one shared 0x1002abe0 in the original).
+- Data exports stay the original's: fileTblId "TABL", results, the four token PStrings (its static initialiser
+  fills them). FileEx is the original's class (thrown with our ThrowInfo; matched by name).
+- Original-only garbage, not compared by the test: DynamicBuffer::Read(long&) succeeds when only 1-3 bytes are
+  left and leaves the rest of the value as it was (the stack): a binary table whose count, entry id or name length
+  is cut mid-field. The test emulates the reader (PartialAt) and does not compare what follows such a read.
+- Test: tests/diff_ks_stringtables.cpp: per side a table object with that side's vftable and the pure slots
+  replaced by logging test functions (SaveConfigData / SaveBin build the model with the side's CreateNode and
+  traits). Inputs: a model of tables / entries (dotted names, special ids, UTF-16 texts), its config tree with noise
+  (groups, wrong value kinds, missing / zero / string ids, the missing-key node as a child), its text (the
+  original's ConfigParser::Save, sometimes cut or prefixed with junk), its binary image (cut at >= 8 bytes, a byte
+  flipped, a word overwritten, junk appended). Every overload, the saved outputs read back, the Scan functions with
+  a non-empty path, copy / assignment / deleting destructor, CreateNode, the traits. KST_SWAP, KST_DUMP,
+  KST_TRACE, KST_ONLY=<n>.
+- Test-only find: MSVC evaluates the operands of `a + f(x) + g(x)` in no fixed order (it read the buffer before the
+  call that filled it); calls are sequenced before the log line is built.
+
+## U9 done (2026-10-22): Streams.cpp, IOSlave.cpp, BlockReader.cpp, JIRF.cpp, 195 exports (763/1762 ours)
+- U9a DynamicBuffer (51 exports, 0x1002e120..0x1002ebaf): {data, position, capacity, size, increment (0x200 when
+  0), bool external}, 0x18. Writes at the position (AddLength grows the capacity to a multiple of the increment past
+  position + n, copying the old capacity's bytes; external buffers refuse writes) and move the size along; reads take
+  what is left of the size and succeed when any byte came (a 4-byte read of 1-3 bytes leaves the rest of the value);
+  Read32 zeroes first, Read(bool&) reads a long. Write(ptr, size, count) returns `size`, Seek and SetSize clip to the
+  capacity, GetLength is the capacity. The strings' binary Read / Write go through a BinReader / BinWriter
+  {vftable, buffer} whose slot 1 moves bytes (format: u32 byte count | 0x40000000 for UTF-16, then the bytes).
+  The default constructor closure is exported through Jet_DynamicBufferDefaultCtor. StringTables now uses the class.
+- U9b IOSlave family (vftable: deleting dtor, Seek, Tell, GetSize, ReadData, WriteData; Seek and Tell pure in the
+  base): IOSlaveMemory {data, position, size}; IOSlaveMemoryDynamic over an MSVC8 std::vector<char> (msvcr80's
+  operator new, growth capacity + capacity / 2; an empty write at the end is an invalid parameter, as the checked
+  vector makes it); IOSlaveFile {File* (a closed file counts as none), size grown by writes}; IOSlaveReadCursor
+  {slave, stream position, buffer, offset, filled, capacity} (Access moves the unread bytes to the front or into a
+  buffer of exactly offset + n, then fills from the slave; a failure drops the slave; operator=(IOSlave*) leaks the
+  old buffer); IOSlaveWriteCursor {slave, two history buffers of `chunk`, fills, current} (ReadData from the
+  history or around the slave's position; WriteCopy writes an overlapping copy from one read); IOSlaveResource
+  {slave, base, AnsiString key, write, version, key word, position, size}: a 12-byte header {1, key word ^ crc ^
+  size, size} (the key word from QueryPerformanceCounter, the CRC of the key text), every byte scrambled by its
+  position (CheckWrite / CheckRead: rotations by signed amounts, pos / 3, 5, 11, 23, 509, 7919), 4 KB padding of
+  timeGetTime-based bytes when a written stream goes; an empty key passes through.
+- BlockReader {File*, line, token, cursor, buffer size 0x200, PString name, parent, child, ended, pending}: "name
+  ... { ... }" text through File::ReadLine (which puts no NUL after the line: scans run into what earlier lines
+  left). Next skips blank / comment lines and whole blocks, ends at a "}" line, leaves a "{" pending; Begin makes a
+  child sharing the buffers, End skips the rest of its block. Reads use msvcr80's sscanf "%s", strtol base 0, strtod.
+- BPE: Philip Gage's byte pair encoding with a 0x3a04-byte workspace (blocks of 0x800 bytes / 210 distinct values,
+  hash (right << 5 ^ left) & 0xfff); codes are taken from 254 down (255 is never used); output past the input size
+  falls back to a copy. Decomp keeps the original frame layout (pair stack next to the identity table).
+- U9c JIRFFile : File {+0x13c IOSlaveFile*, +0x140 IOSlaveResource*} (OpenJIRF: write when a bit of mode & 0xf is
+  set; earlier slaves are not freed), header {"JIRF", size, id}, blocks {id, size, data}, padded strings {length + 1
+  (-1 empty, 0 none), text, zeros to 4}; JIRFWriteHeader / JIRFWriteBlock patch the size when they go. The copy
+  copies the File as MSVC8 does (fields, two flag bits of +0x28, the path through Path::operator=). Reads of a short
+  stream leave stack garbage (counts, ids, text) in both.
+- Tests: diff_ks_dynbuf (random operation sequences on every constructor; bytes no write set are tracked and not
+  compared), diff_ks_ioslave (every slave, the cursors, the resource stream read from the original's output and
+  written with the key word set by the test, BlockReader over random block text with its buffers zeroed first,
+  BPE), diff_ks_jirf (a chunk tree written by each side and by the original, read back along the tree).
+  Mutations: 10/10, 12/15 + 3 equivalent, 7/8 + 1 equivalent.
+
+## U8 done (2026-10-22): Bitmap.cpp, BitmapIO.cpp, 98 exports (861/1762 ours)
+- Layout = the Jet SDK's Bitmap: {Size, palette, data, pitch, bytes per pixel, format (INDEX, RGB, ARGB, XRGB,
+  RGB565, UNSPECIFIED), owned, 8 primitives, data size}, 0x44. The primitives {GetPixel (to 32-bit), SetPixel,
+  BlendPixel, BlitSelf, BlitRGB565, BlitRGB888, BlitARGB888, BlendARGB888} are set by Init per format (Done: all a
+  `ret`, format 5; Done does not reset the bytes per pixel). Init refuses sizes over 0x1000, h * pitch or numBytes
+  over 16 MB; the loaders inline a copy of Init for XRGB/ARGB without the 16 MB check.
+- The primitives (0x100079a0..0x10007ff0) are hand-written assembly, rewritten register by register where it
+  matters: the 32/24-bit blends add the high bytes of c*w and d*(-w) in 8 bits (w = a + 1, or (a + 1 + 255 - da)
+  / 2 with a new dest alpha of byte 1 of -((255 - a) * (255 - da)) when the destination is not opaque); the 24-bit
+  fill blend sums the three channels in one 32-bit add (carries cross channels); the 565 blends keep w (or w ^ 0xff)
+  in the low word of the sum. Counts are dec / jne loops (0 = 2^32) except the rep forms. The copies are rep movs
+  element by element: Image's tiling relies on an overlapping copy repeating the pattern (memmove does not).
+- Bugs kept: BlendPixel is Pixel (no blending); Box/Line/Circle/Triangle/Pixel trust the clip rectangle to lie
+  inside the bitmap; Image reads the source past its area when the destination is clipped on the left or top;
+  CopyImage with a negative source x/y moves the destination right/down without shrinking the width; the tiled
+  Image draws whole tiles only up to clip.x + srcArea.w and copies the rest of each row from one tile to the left;
+  Triangle's scan table (alloca, height + 1 rows) overflows when the clip cuts the top vertex off and when an
+  antialiased triangle has a flat bottom; MapPolygon draws a row at the left end's rounded y (float drift can reach
+  the row past the bitmap) and the span's right end inclusively; Crop finds source rows by width (not pitch) and
+  packs its rows; the 24-bit ScaleArbitrary writes rows pitch / 3 * 3 bytes apart; ScaleArbitrary shrinking a 24-bit
+  bitmap returns it unwritten; GrayScale with an empty width reads 0 pixels per row (2^32 in the 16/24-bit
+  primitives); Colorize uses (a * c + 127) / 255 (a static 256-aligned table).
+- Floating point: SSE single precision as in the original (ClipLine, MapPolygon, ScaleArbitrary, SetTransparency;
+  MapPolygon's edge ends floor / ceil in double); Circle's antialiasing is x87 double (sqrt(x^2 + y^2) + 0.5 - r,
+  truncated): equal at the default 53-bit precision control.
+- Files (through the original's File / MemoryFile, U10): TGA types 1 (256 x 24-bit map, 8-bit) and 2 (16 as 555,
+  24, 32 = ARGB), descriptor bit 4 refused, bit 5 top-down (kept as a negative height while reading); BMP 8/24/32,
+  width a multiple of 4, rows always bottom-up (the sign of the height is lost); PCX 8-bit RLE with the end palette
+  (as colours the run length is the whole byte, 192..255: kept); JPEG through ijl10.dll (ordinals 2/3/4,
+  JPEG_PROPERTIES by offset, RGBA_FPX then swapped to 0xffRRGGBB). Short files: the original reads headers and
+  palettes into uninitialised buffers and keeps the last byte on a short read (ours: zeros); kept-index TGAs
+  stored bottom-up all land on row 0. GetInfo PCX gives xmax - xmin (no + 1).
+- Save: TGA (top-down, 24 or 32 bits), BMP (bottom-up; XRGB as 24-bit), JPEG: the original's static IJG 6b encoder
+  with both quantisation tables scaled by 0 (every quantiser 1), RGB rows. Ours: libjpeg-turbo 3.2.0 (vcpkg
+  x86-windows-static, jpeg_set_linear_quality(0)) gives the same bytes.
+- Tests: diff_ks_bitmap_draw (random formats, sizes, pixels and operation lists; every header and pixel row after
+  each operation; KBD_TRACE / KBD_SKIP / KBD_HEAPCHECK for bisecting) and diff_ks_bitmap_io (synthetic TGA / BMP /
+  PCX / garbage / cut files, alpha files, save and reload, and the install's images: KBI_ALL for all of them).
