@@ -5,7 +5,7 @@ are rewritten one by one as drop-in 32-bit DLLs that run inside the original gam
 the original in the same process (differential tests) and in game. Once nothing original is left, the code is
 built for x64.
 
-This repository holds **only our own work**. It contains no game files, no original DLLs, no Ghidra output and
+This repository holds **only our own work**. It contains no game files, no original DLLs, no decompiled code and
 no Jet SDK files. The modules in `src/jet/` are a clean C++ rewrite made by studying the game's binaries. You need
 your own installed copy of the game to build against it, test it or run it.
 
