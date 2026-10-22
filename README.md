@@ -1,5 +1,7 @@
 # trainz12-x64
 
+THIS IS NOT FINAL WORK, I POSTED THAT PEOPLE COULD HELP MAKE IT FASTER
+
 A 64-bit port of Trainz Simulator 2012 that keeps add-ons working. The approach: the game's Jet engine modules
 are rewritten one by one as drop-in 32-bit DLLs that run inside the original game. Each one is checked against
 the original in the same process (differential tests) and in game. Once nothing original is left, the code is
