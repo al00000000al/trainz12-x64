@@ -1,0 +1,214 @@
+entry	new_name	all_vftable_slots
+1000a196	Jet::AlphaBlendCache::vf0	Jet::AlphaBlendCache::vf0, Jet::DecalCache::vf0, Jet::ReferenceCount::vf0, Jet::HazeChunkCache::vf0, Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf0, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf0, Jet::PreHazeChunkCache::vf0
+100014c0	Jet::AlphaBlendCache::vf1	Jet::AlphaBlendCache::vf1
+100011a0	Jet::Decal::vf0	Jet::Decal::vf0
+1000a3dc	Jet::Decal::vf1	Jet::Decal::vf1, Jet::DecalParticle::vf1, Jet::DecalParticle::vf1, Jet::RenderSpline::vf1, Jet::PointDecal::vf1, Jet::PointDecal::vf1, Jet::ProjectedDecal::vf1, Jet::ProjectedDecal::vf1
+1000a3e2	Jet::Decal::vf2	Jet::Decal::vf2, Jet::DecalParticle::vf2, Jet::DecalParticle::vf2, Jet::RenderSpline::vf2, Jet::PointDecal::vf2, Jet::PointDecal::vf2, Jet::ProjectedDecal::vf2, Jet::ProjectedDecal::vf2
+1000a3e8	Jet::Decal::vf5	Jet::Decal::vf5, Jet::DecalParticle::vf5, Jet::PointDecal::vf5, Jet::ProjectedDecal::vf5
+1000a3ee	Jet::DecalCache::vf0	Jet::DecalCache::vf0, Jet::HazeChunkCache::vf0, Jet::PreHazeChunkCache::vf0
+1000a3f4	Jet::DecalCache::vf1	Jet::DecalCache::vf1, Jet::HazeChunkCache::vf1, Jet::PreHazeChunkCache::vf1
+1000a3fa	Jet::DecalCache::vf5	Jet::DecalCache::vf5, Jet::HazeChunkCache::vf5, Jet::PreHazeChunkCache::vf5
+1000a400	Jet::DecalCache::vf6	Jet::DecalCache::vf6
+1000a406	Jet::DecalCache::vf7	Jet::DecalCache::vf7
+10002ef0	Jet::DecalCache::vf1	Jet::DecalCache::vf1
+100031e0	Jet::ReferenceCount::vf1	Jet::ReferenceCount::vf1
+100032e0	Jet::DecalParticle::vf0	Jet::DecalParticle::vf0
+10003670	Jet::DecalParticle::vf0	Jet::DecalParticle::vf0
+10003690	Jet::DecalParticle::vf3	Jet::DecalParticle::vf3, Jet::PointDecal::vf3, Jet::ProjectedDecal::vf3
+10003680	Jet::DecalParticle::vf4	Jet::DecalParticle::vf4, Jet::PointDecal::vf4, Jet::ProjectedDecal::vf4
+1000a1ba	Jet::DecalParticle::vf5	Jet::DecalParticle::vf5, Jet::RenderSpline::vf5, Jet::PointDecal::vf5, Jet::ProjectedDecal::vf5
+1000a1ae	Jet::DecalParticle::vf9	Jet::DecalParticle::vf9, Jet::RenderSpline::vf9, Jet::PointDecal::vf9, Jet::ProjectedDecal::vf9
+1000a1c0	Jet::DecalParticle::vf10	Jet::DecalParticle::vf10, Jet::RenderSpline::vf10, Jet::PointDecal::vf10, Jet::ProjectedDecal::vf10
+1000a1c6	Jet::DecalParticle::vf11	Jet::DecalParticle::vf11, Jet::RenderSpline::vf11, Jet::PointDecal::vf11, Jet::ProjectedDecal::vf11
+1000a1cc	Jet::DecalParticle::vf12	Jet::DecalParticle::vf12, Jet::RenderSpline::vf12, Jet::PointDecal::vf12, Jet::ProjectedDecal::vf12
+1000a1d2	Jet::DecalParticle::vf13	Jet::DecalParticle::vf13, Jet::RenderSpline::vf13, Jet::PointDecal::vf13, Jet::ProjectedDecal::vf13
+1000a1d8	Jet::DecalParticle::vf14	Jet::DecalParticle::vf14, Jet::RenderSpline::vf14, Jet::PointDecal::vf14, Jet::ProjectedDecal::vf14
+1000a1de	Jet::DecalParticle::vf17	Jet::DecalParticle::vf17, Jet::RenderSpline::vf17, Jet::PointDecal::vf17, Jet::ProjectedDecal::vf17
+1000a1e4	Jet::DecalParticle::vf18	Jet::DecalParticle::vf18, Jet::RenderSpline::vf18, Jet::PointDecal::vf18, Jet::ProjectedDecal::vf18
+1000a1ea	Jet::DecalParticle::vf19	Jet::DecalParticle::vf19, Jet::RenderSpline::vf19, Jet::PointDecal::vf19, Jet::ProjectedDecal::vf19
+1000a1f0	Jet::DecalParticle::vf20	Jet::DecalParticle::vf20, Jet::RenderSpline::vf20, Jet::PointDecal::vf20, Jet::ProjectedDecal::vf20
+1000a1f6	Jet::DecalParticle::vf21	Jet::DecalParticle::vf21, Jet::RenderSpline::vf21, Jet::PointDecal::vf21, Jet::ProjectedDecal::vf21
+1000a1fc	Jet::DecalParticle::vf22	Jet::DecalParticle::vf22, Jet::RenderSpline::vf22, Jet::PointDecal::vf22, Jet::ProjectedDecal::vf22
+1000a202	Jet::DecalParticle::vf23	Jet::DecalParticle::vf23, Jet::RenderSpline::vf23, Jet::PointDecal::vf23, Jet::ProjectedDecal::vf23
+1000a208	Jet::DecalParticle::vf24	Jet::DecalParticle::vf24, Jet::RenderSpline::vf24, Jet::PointDecal::vf24, Jet::ProjectedDecal::vf24
+1000a20e	Jet::DecalParticle::vf25	Jet::DecalParticle::vf25, Jet::RenderSpline::vf25, Jet::PointDecal::vf25, Jet::ProjectedDecal::vf25
+1000a214	Jet::DecalParticle::vf26	Jet::DecalParticle::vf26, Jet::RenderSpline::vf26, Jet::PointDecal::vf26, Jet::ProjectedDecal::vf26
+1000a21a	Jet::DecalParticle::vf27	Jet::DecalParticle::vf27, Jet::RenderSpline::vf27, Jet::PointDecal::vf27, Jet::ProjectedDecal::vf27
+1000a220	Jet::DecalParticle::vf28	Jet::DecalParticle::vf28, Jet::RenderSpline::vf28, Jet::PointDecal::vf28, Jet::ProjectedDecal::vf28
+1000a226	Jet::DecalParticle::vf29	Jet::DecalParticle::vf29, Jet::RenderSpline::vf29, Jet::PointDecal::vf29, Jet::ProjectedDecal::vf29
+1000a22c	Jet::DecalParticle::vf30	Jet::DecalParticle::vf30, Jet::PointDecal::vf30, Jet::ProjectedDecal::vf30
+1000a232	Jet::DecalParticle::vf31	Jet::DecalParticle::vf31, Jet::RenderSpline::vf31, Jet::PointDecal::vf31, Jet::ProjectedDecal::vf31
+1000a238	Jet::DecalParticle::vf32	Jet::DecalParticle::vf32, Jet::RenderSpline::vf32, Jet::PointDecal::vf32, Jet::ProjectedDecal::vf32
+1000a23e	Jet::DecalParticle::vf33	Jet::DecalParticle::vf33, Jet::RenderSpline::vf33, Jet::PointDecal::vf33, Jet::ProjectedDecal::vf33
+1000a244	Jet::DecalParticle::vf34	Jet::DecalParticle::vf34, Jet::RenderSpline::vf34, Jet::PointDecal::vf34, Jet::ProjectedDecal::vf34
+1000a24a	Jet::DecalParticle::vf35	Jet::DecalParticle::vf35, Jet::RenderSpline::vf35, Jet::PointDecal::vf35, Jet::ProjectedDecal::vf35
+1000a250	Jet::DecalParticle::vf36	Jet::DecalParticle::vf36, Jet::RenderSpline::vf36, Jet::PointDecal::vf36, Jet::ProjectedDecal::vf36
+1000a256	Jet::DecalParticle::vf37	Jet::DecalParticle::vf37, Jet::RenderSpline::vf37, Jet::PointDecal::vf37, Jet::ProjectedDecal::vf37
+1000a25c	Jet::DecalParticle::vf38	Jet::DecalParticle::vf38, Jet::RenderSpline::vf38, Jet::PointDecal::vf38, Jet::ProjectedDecal::vf38
+1000a262	Jet::DecalParticle::vf39	Jet::DecalParticle::vf39, Jet::RenderSpline::vf39, Jet::PointDecal::vf39, Jet::ProjectedDecal::vf39
+1000a268	Jet::DecalParticle::vf40	Jet::DecalParticle::vf40, Jet::RenderSpline::vf40, Jet::PointDecal::vf40, Jet::ProjectedDecal::vf40
+1000a26e	Jet::DecalParticle::vf41	Jet::DecalParticle::vf41, Jet::RenderSpline::vf41, Jet::PointDecal::vf41, Jet::ProjectedDecal::vf41
+1000a274	Jet::DecalParticle::vf42	Jet::DecalParticle::vf42, Jet::RenderSpline::vf42, Jet::PointDecal::vf42, Jet::ProjectedDecal::vf42
+1000a27a	Jet::DecalParticle::vf43	Jet::DecalParticle::vf43, Jet::RenderSpline::vf43, Jet::PointDecal::vf43, Jet::ProjectedDecal::vf43
+1000a280	Jet::DecalParticle::vf44	Jet::DecalParticle::vf44, Jet::RenderSpline::vf44, Jet::PointDecal::vf44, Jet::ProjectedDecal::vf44
+1000a1b4	Jet::DecalParticle::vf45	Jet::DecalParticle::vf45, Jet::RenderSpline::vf45, Jet::PointDecal::vf45, Jet::ProjectedDecal::vf45
+1000a286	Jet::DecalParticle::vf46	Jet::DecalParticle::vf46, Jet::RenderSpline::vf46, Jet::PointDecal::vf46, Jet::ProjectedDecal::vf46
+1000a28c	Jet::DecalParticle::vf47	Jet::DecalParticle::vf47, Jet::RenderSpline::vf47, Jet::PointDecal::vf47, Jet::ProjectedDecal::vf47
+10003390	Jet::ParticleVisibleBoundingBox::vf0	Jet::ParticleVisibleBoundingBox::vf0
+1000a292	Jet::ParticleVisibleBoundingBox::vf1	Jet::ParticleVisibleBoundingBox::vf1
+1000a298	Jet::ParticleVisibleBoundingBox::vf2	Jet::ParticleVisibleBoundingBox::vf2
+1000a29e	Jet::ParticleVisibleBoundingBox::vf3	Jet::ParticleVisibleBoundingBox::vf3
+1000a2a4	Jet::ParticleVisibleBoundingBox::vf4	Jet::ParticleVisibleBoundingBox::vf4
+1000a2aa	Jet::ParticleVisibleBoundingBox::vf5	Jet::ParticleVisibleBoundingBox::vf5
+1000a2b0	Jet::ParticleVisibleBoundingBox::vf6	Jet::ParticleVisibleBoundingBox::vf6
+1000a2b6	Jet::ParticleVisibleBoundingBox::vf7	Jet::ParticleVisibleBoundingBox::vf7
+1000a2bc	Jet::ParticleVisibleBoundingBox::vf8	Jet::ParticleVisibleBoundingBox::vf8
+1000a2c2	Jet::ParticleVisibleBoundingBox::vf9	Jet::ParticleVisibleBoundingBox::vf9
+1000a2c8	Jet::ParticleVisibleBoundingBox::vf10	Jet::ParticleVisibleBoundingBox::vf10
+1000a2ce	Jet::ParticleVisibleBoundingBox::vf11	Jet::ParticleVisibleBoundingBox::vf11
+1000a2d4	Jet::ParticleVisibleBoundingBox::vf12	Jet::ParticleVisibleBoundingBox::vf12
+1000a2f8	Jet::ParticleVisibleBoundingBox::vf13	Jet::ParticleVisibleBoundingBox::vf13
+1000a2da	Jet::ParticleVisibleBoundingBox::vf14	Jet::ParticleVisibleBoundingBox::vf14
+1000a2e0	Jet::ParticleVisibleBoundingBox::vf15	Jet::ParticleVisibleBoundingBox::vf15
+1000a2e6	Jet::ParticleVisibleBoundingBox::vf16	Jet::ParticleVisibleBoundingBox::vf16
+1000a2ec	Jet::ParticleVisibleBoundingBox::vf17	Jet::ParticleVisibleBoundingBox::vf17
+1000a2f2	Jet::ParticleVisibleBoundingBox::vf18	Jet::ParticleVisibleBoundingBox::vf18
+100036a0	Jet::RenderSpline::vf0	Jet::RenderSpline::vf0
+1000a2fe	Jet::RenderSpline::vf3	Jet::RenderSpline::vf3
+1000a304	Jet::RenderSpline::vf4	Jet::RenderSpline::vf4
+1000a328	Jet::RenderSpline::vf6	Jet::RenderSpline::vf6
+1000a30a	Jet::RenderSpline::vf7	Jet::RenderSpline::vf7
+1000a1a8	Jet::RenderSpline::vf8	Jet::RenderSpline::vf8
+1000a35e	Jet::RenderSpline::vf15	Jet::RenderSpline::vf15
+1000a364	Jet::RenderSpline::vf16	Jet::RenderSpline::vf16
+1000a310	Jet::RenderSpline::vf30	Jet::RenderSpline::vf30
+1000a340	Jet::RenderSpline::vf48	Jet::RenderSpline::vf48
+1000a33a	Jet::RenderSpline::vf49	Jet::RenderSpline::vf49
+1000a34c	Jet::RenderSpline::vf50	Jet::RenderSpline::vf50
+1000a346	Jet::RenderSpline::vf51	Jet::RenderSpline::vf51
+1000a358	Jet::RenderSpline::vf52	Jet::RenderSpline::vf52
+1000a352	Jet::RenderSpline::vf53	Jet::RenderSpline::vf53
+1000a316	Jet::RenderSpline::vf54	Jet::RenderSpline::vf54
+1000a334	Jet::RenderSpline::vf55	Jet::RenderSpline::vf55
+1000a32e	Jet::RenderSpline::vf56	Jet::RenderSpline::vf56
+1000a322	Jet::RenderSpline::vf57	Jet::RenderSpline::vf57
+1000a31c	Jet::RenderSpline::vf58	Jet::RenderSpline::vf58
+100038c0	Jet::FlyThrough::vf0	Jet::FlyThrough::vf0
+10007130	Jet::HazeChunkCache::vf0	Jet::HazeChunkCache::vf0
+1000a40c	Jet::HazeChunkCache::vf1	Jet::HazeChunkCache::vf1
+1000a412	Jet::HazeChunkCache::vf2	Jet::HazeChunkCache::vf2
+1000a418	Jet::HazeChunkCache::vf3	Jet::HazeChunkCache::vf3
+1000a41e	Jet::HazeChunkCache::vf4	Jet::HazeChunkCache::vf4
+1000a424	Jet::HazeChunkCache::vf5	Jet::HazeChunkCache::vf5
+1000a42a	Jet::HazeChunkCache::vf6	Jet::HazeChunkCache::vf6
+1000a430	Jet::HazeChunkCache::vf7	Jet::HazeChunkCache::vf7
+10007120	Jet::HazeChunkCache::vf1	Jet::HazeChunkCache::vf1
+1000a43c	Jet::HazeMaterial::vf2	Jet::HazeMaterial::vf2
+1000a442	Jet::HazeMaterial::vf11	Jet::HazeMaterial::vf11, Jet::HazeOneTextureMaterial::vf11
+1000a448	Jet::HazeMaterial::vf18	Jet::HazeMaterial::vf18, Jet::HazeOneTextureMaterial::vf18
+1000a44e	Jet::HazeMaterial::vf19	Jet::HazeMaterial::vf19, Jet::HazeOneTextureMaterial::vf19
+1000a454	Jet::HazeMaterial::vf20	Jet::HazeMaterial::vf20, Jet::HazeOneTextureMaterial::vf20
+1000a45a	Jet::HazeMaterial::vf21	Jet::HazeMaterial::vf21, Jet::HazeOneTextureMaterial::vf21
+1000a460	Jet::HazeMaterial::vf22	Jet::HazeMaterial::vf22
+100089c0	Jet::HazeMaterial::vf0	Jet::HazeMaterial::vf0
+100089e0	Jet::HazeMaterial::vf1	Jet::HazeMaterial::vf1
+100087c0	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf1	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf1
+10007ca0	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf2	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf2
+10007d20	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf3	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf3
+10008170	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf4	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf4, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf4
+10008350	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf5	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf5, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf5
+1000a466	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf6	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf6, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf6
+10007da0	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf7	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf7
+10008560	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf8	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf8, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf8
+10007e60	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf9	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf9
+1000a46c	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf10	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf10, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf10
+10007f30	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf11	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf11
+100086d0	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf12	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf12, Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf13, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf12, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf13
+1000a502	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf14	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf14, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf14
+1000a4fc	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf15	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf15, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf15
+1000a4f0	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf16	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf16, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf16
+1000a4f6	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf17	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf17, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf17
+1000a4e4	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf18	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf18, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf18
+1000a4ea	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf19	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf19, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf19
+1000a4d8	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf20	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf20, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf20
+1000a4de	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf21	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf21, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf21
+1000a4d2	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf22	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf22, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf22
+1000a568	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf23	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf23, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf23
+1000a562	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf24	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf24, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf24
+1000a526	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf25	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf25, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf25
+1000a520	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf26	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf26, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf26
+1000a51a	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf27	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf27, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf27
+1000a514	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf28	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf28, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf28
+1000a580	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf29	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf29, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf29
+1000a57a	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf30	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf30, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf30
+1000a50e	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf31	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf31, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf31
+1000a508	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf32	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf32, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf32
+1000a574	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf33	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf33, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf33
+1000a56e	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf34	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf34, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf34
+1000a53e	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf35	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf35, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf35
+1000a538	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf36	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf36, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf36
+1000a532	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf37	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf37, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf37
+1000a52c	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf38	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf38, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf38
+10008700	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf39	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf39, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf39
+1000a544	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf40	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf40, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf40
+1000a54a	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf41	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf41, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf41
+100086f0	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf42	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf42, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf42
+100086e0	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf43	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf43, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf43
+10008730	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf44	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf44, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf44
+1000a55c	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf45	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf45, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf45
+10008740	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf46	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf46, Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf47, Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf50, Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf51, Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf52, Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf53, Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf54, Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf55, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf46, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf47, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf48, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf49, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf50, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf51, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf52, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf53, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf54, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf55
+10007fd0	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf48	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf48, Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf49
+1000a472	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf56	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf56, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf56
+1000a478	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf57	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf57, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf57
+1000a47e	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf58	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf58, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf58
+1000a550	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf59	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf59, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf59
+1000a556	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf60	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf60, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf60
+1000a484	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf61	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf61, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf61
+1000a48a	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf62	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf62, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf62
+1000a490	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf63	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf63, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf63
+1000a496	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf64	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf64, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf64
+1000a49c	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf65	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf65, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf65
+1000a4a2	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf66	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf66, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf66
+1000a4a8	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf67	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf67, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf67
+1000a4ae	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf68	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf68, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf68
+1000a4b4	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf69	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf69, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf69
+1000a4ba	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf70	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf70, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf70
+1000a4c0	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf71	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf71, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf71
+1000a4c6	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf72	Jet::GeometryChunkNmlTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf72, Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf72
+1000a19c	Jet::HazeMaterialPlugin::vf0	Jet::HazeMaterialPlugin::vf0, Jet::HazeOneTextureMaterialPlugin::vf0
+1000a1a2	Jet::HazeMaterialPlugin::vf1	Jet::HazeMaterialPlugin::vf1, Jet::HazeOneTextureMaterialPlugin::vf1
+10007770	Jet::HazeMaterialPlugin::vf2	Jet::HazeMaterialPlugin::vf2
+1000a4cc	Jet::HazeMaterialPlugin::vf3	Jet::HazeMaterialPlugin::vf3, Jet::HazeOneTextureMaterialPlugin::vf3
+100087f0	Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf1	Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf1
+10008030	Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf2	Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf2
+100080b0	Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf3	Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf3
+10008440	Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf7	Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf7
+100085b0	Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf9	Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf9
+1000a436	Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf11	Jet::GeometryChunkTemplate<Jet::PackedVertexPT,Jet::GeometryChunkSingleStream>::vf11
+10008b80	Jet::PreHazeChunkCache::vf1	Jet::PreHazeChunkCache::vf1
+1000a3d0	Jet::HazeOneTextureMaterial::vf1	Jet::HazeOneTextureMaterial::vf1
+1000a3ca	Jet::HazeOneTextureMaterial::vf2	Jet::HazeOneTextureMaterial::vf2
+1000a36a	Jet::HazeOneTextureMaterial::vf4	Jet::HazeOneTextureMaterial::vf4
+1000a370	Jet::HazeOneTextureMaterial::vf5	Jet::HazeOneTextureMaterial::vf5
+1000a376	Jet::HazeOneTextureMaterial::vf6	Jet::HazeOneTextureMaterial::vf6
+1000a37c	Jet::HazeOneTextureMaterial::vf7	Jet::HazeOneTextureMaterial::vf7
+1000a382	Jet::HazeOneTextureMaterial::vf8	Jet::HazeOneTextureMaterial::vf8
+1000a388	Jet::HazeOneTextureMaterial::vf9	Jet::HazeOneTextureMaterial::vf9
+1000a38e	Jet::HazeOneTextureMaterial::vf10	Jet::HazeOneTextureMaterial::vf10
+1000a3c4	Jet::HazeOneTextureMaterial::vf12	Jet::HazeOneTextureMaterial::vf12
+1000a3be	Jet::HazeOneTextureMaterial::vf13	Jet::HazeOneTextureMaterial::vf13
+1000a394	Jet::HazeOneTextureMaterial::vf15	Jet::HazeOneTextureMaterial::vf15
+1000a39a	Jet::HazeOneTextureMaterial::vf16	Jet::HazeOneTextureMaterial::vf16
+1000a3a0	Jet::HazeOneTextureMaterial::vf17	Jet::HazeOneTextureMaterial::vf17
+1000a3b8	Jet::HazeOneTextureMaterial::vf22	Jet::HazeOneTextureMaterial::vf22
+1000a3a6	Jet::HazeOneTextureMaterial::vf23	Jet::HazeOneTextureMaterial::vf23
+1000a3ac	Jet::HazeOneTextureMaterial::vf24	Jet::HazeOneTextureMaterial::vf24
+1000a3b2	Jet::HazeOneTextureMaterial::vf25	Jet::HazeOneTextureMaterial::vf25
+10009130	Jet::HazeOneTextureMaterial::vf0	Jet::HazeOneTextureMaterial::vf0
+10009120	Jet::HazeOneTextureMaterial::vf1	Jet::HazeOneTextureMaterial::vf1
+100091a0	Jet::HazeOneTextureMaterialPlugin::vf2	Jet::HazeOneTextureMaterialPlugin::vf2
+1000a3d6	Jet::HazeOneTextureMaterialPlugin::vf4	Jet::HazeOneTextureMaterialPlugin::vf4
+10009410	Jet::PointDecal::vf0	Jet::PointDecal::vf0
+10009870	Jet::PointDecal::vf0	Jet::PointDecal::vf0
+10009a70	Jet::ProjectedDecal::vf0	Jet::ProjectedDecal::vf0
+1000a0b0	Jet::ProjectedDecal::vf0	Jet::ProjectedDecal::vf0

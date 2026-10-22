@@ -1,0 +1,5 @@
+entry	new_name	all_vftable_slots
+10001b27	std::logic_error::vf0	std::logic_error::vf0
+100012b7	std::logic_error::vf1	std::logic_error::vf1, std::out_of_range::vf1, std::length_error::vf1
+10001447	std::out_of_range::vf0	std::out_of_range::vf0
+100016ef	std::length_error::vf0	std::length_error::vf0

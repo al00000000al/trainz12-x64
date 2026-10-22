@@ -1,0 +1,9 @@
+entry	new_name	all_vftable_slots
+10001150	Jet::CompilerError::vf0	Jet::CompilerError::vf0, Jet::FatalCompilerError::vf0
+10005808	Jet::CompilerError::vf1	Jet::CompilerError::vf1, Jet::FatalCompilerError::vf1
+1000580e	Jet::CompilerError::vf2	Jet::CompilerError::vf2, Jet::FatalCompilerError::vf2, Jet::Lexer::Error::vf2
+10005814	Jet::CompilerError::vf3	Jet::CompilerError::vf3, Jet::FatalCompilerError::vf3, Jet::Lexer::Error::vf3
+1000581a	Jet::CompilerError::vf4	Jet::CompilerError::vf4, Jet::FatalCompilerError::vf4, Jet::Lexer::Error::vf4
+100034e0	Jet::Lexer::Error::vf0	Jet::Lexer::Error::vf0
+10002e00	Jet::Lexer::Error::vf1	Jet::Lexer::Error::vf1
+10005940	Jet::Tokenizer::vf2	Jet::Tokenizer::vf2

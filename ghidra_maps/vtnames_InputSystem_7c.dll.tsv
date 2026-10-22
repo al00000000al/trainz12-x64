@@ -1,0 +1,65 @@
+entry	new_name	all_vftable_slots
+10012c2a	Jet::ReferenceCount::vf0	Jet::ReferenceCount::vf0, Jet::KeyboardDevice::vf0, Jet::MouseDevice::vf0, Jet::JoystickDevice::vf0, Jet::EmuDevice::vf0, Jet::InputExtension::vf0, Jet::InputActionMapper::vf0, Jet::InputDevice::vf0, Jet::ForceEffect::vf0, Jet::InputUIExtension::vf0, Jet::NullInputDevice::vf0
+100018e0	Jet::ReferenceCount::vf1	Jet::ReferenceCount::vf1
+10005350	Jet::InputDriver::vf0	Jet::InputDriver::vf0, Jet::NullInputDriver::vf0
+10005380	Jet::InputDriver::vf1	Jet::InputDriver::vf1
+10001980	Jet::ObserverSubject<Jet::InputObserver>::vf0	Jet::ObserverSubject<Jet::InputObserver>::vf0
+10001cf0	Jet::KeyboardDevice::vf0	Jet::KeyboardDevice::vf0, Jet::MouseDevice::vf0, Jet::JoystickDevice::vf0
+10005340	Jet::KeyboardDevice::vf1	Jet::KeyboardDevice::vf1, Jet::MouseDevice::vf1, Jet::JoystickDevice::vf1
+10002150	Jet::EmuDevice::vf0	Jet::EmuDevice::vf0
+10005370	Jet::EmuDevice::vf1	Jet::EmuDevice::vf1
+100026a0	InputLex::vf0	InputLex::vf0
+10012c84	Jet::ForceResource::vf0	Jet::ForceResource::vf0
+10012c7e	Jet::ForceResource::vf1	Jet::ForceResource::vf1
+10012c78	Jet::ForceResource::vf2	Jet::ForceResource::vf2
+10012c72	Jet::ForceResource::vf3	Jet::ForceResource::vf3
+10012c6c	Jet::ForceResource::vf4	Jet::ForceResource::vf4
+10012c66	Jet::ForceResource::vf5	Jet::ForceResource::vf5
+10012c60	Jet::ForceResource::vf6	Jet::ForceResource::vf6
+10012c96	Jet::ForceResource::vf7	Jet::ForceResource::vf7
+10005560	Jet::ForceResource::vf8	Jet::ForceResource::vf8
+10012c5a	Jet::ForceResource::vf9	Jet::ForceResource::vf9
+10012c54	Jet::ForceResource::vf11	Jet::ForceResource::vf11
+10012c4e	Jet::ForceResource::vf12	Jet::ForceResource::vf12
+10012c48	Jet::ForceResource::vf13	Jet::ForceResource::vf13
+10012c42	Jet::ForceResource::vf14	Jet::ForceResource::vf14
+10012c90	Jet::ForceResource::vf15	Jet::ForceResource::vf15
+10012c8a	Jet::ForceResource::vf16	Jet::ForceResource::vf16
+10012c3c	Jet::ForceResource::vf17	Jet::ForceResource::vf17
+100082e0	Jet::InputExtension::vf1	Jet::InputExtension::vf1
+100082f0	Jet::InputAction::vf0	Jet::InputAction::vf0
+10008dd0	Jet::InputActionMapper::vf0	Jet::InputActionMapper::vf0
+1000ca60	Jet::InputActionMapper::vf1	Jet::InputActionMapper::vf1
+10008e30	Jet::ObserverSubject<Jet::InputActionObserver>::vf0	Jet::ObserverSubject<Jet::InputActionObserver>::vf0
+1000bcf0	Jet::InputActionMapper::DeviceAction::vf0	Jet::InputActionMapper::DeviceAction::vf0
+1000f140	Jet::InputDevice::vf0	Jet::InputDevice::vf0
+1000f300	Jet::InputDevice::vf1	Jet::InputDevice::vf1
+1000f310	Jet::ForceEffect::vf1	Jet::ForceEffect::vf1
+1000fc50	FlexLexer::vf0	FlexLexer::vf0
+10010230	icfgFlexLexer::vf0	icfgFlexLexer::vf0
+100106c0	icfgFlexLexer::vf1	icfgFlexLexer::vf1
+10010720	icfgFlexLexer::vf2	icfgFlexLexer::vf2
+10010790	icfgFlexLexer::vf3	icfgFlexLexer::vf3
+10010670	icfgFlexLexer::vf4	icfgFlexLexer::vf4
+1000fc70	icfgFlexLexer::vf5	icfgFlexLexer::vf5
+10010300	icfgFlexLexer::vf6	icfgFlexLexer::vf6
+10010350	icfgFlexLexer::vf7	icfgFlexLexer::vf7
+100103b0	icfgFlexLexer::vf8	icfgFlexLexer::vf8
+10010830	icfgFlexLexer::vf9	icfgFlexLexer::vf9
+10012c30	Jet::ResourceType<Jet::ForceResource>::vf0	Jet::ResourceType<Jet::ForceResource>::vf0, Jet::PluginFactoryOf<Jet::NullInputDriver,Jet::InputDriver>::vf0
+10012c36	Jet::ResourceType<Jet::ForceResource>::vf1	Jet::ResourceType<Jet::ForceResource>::vf1, Jet::PluginFactoryOf<Jet::NullInputDriver,Jet::InputDriver>::vf1
+10010be0	Jet::ResourceType<Jet::ForceResource>::vf2	Jet::ResourceType<Jet::ForceResource>::vf2, Jet::PluginFactoryOf<Jet::NullInputDriver,Jet::InputDriver>::vf2
+10010ac0	Jet::ResourceType<Jet::ForceResource>::vf3	Jet::ResourceType<Jet::ForceResource>::vf3
+10010b50	Jet::ResourceType<Jet::ForceResource>::vf4	Jet::ResourceType<Jet::ForceResource>::vf4
+10012c9c	Jet::ResourceType<Jet::ForceResource>::vf5	Jet::ResourceType<Jet::ForceResource>::vf5
+100108c0	Jet::NullInputDriver::vf0	Jet::NullInputDriver::vf0
+10012af0	Jet::NullInputDriver::vf2	Jet::NullInputDriver::vf2
+10012b60	Jet::NullInputDriver::vf3	Jet::NullInputDriver::vf3
+10010d00	Jet::NullInputDriver::vf1	Jet::NullInputDriver::vf1
+10010b60	Jet::PluginFactoryOf<Jet::NullInputDriver,Jet::InputDriver>::vf3	Jet::PluginFactoryOf<Jet::NullInputDriver,Jet::InputDriver>::vf3
+10010e70	Jet::InputUIExtension::vf0	Jet::InputUIExtension::vf0
+100129e0	Jet::InputUIExtension::vf1	Jet::InputUIExtension::vf1
+10010ed0	Jet::ObserverSubject<Jet::InputUIExtensionObserver>::vf0	Jet::ObserverSubject<Jet::InputUIExtensionObserver>::vf0
+10012a00	Jet::NullInputDevice::vf0	Jet::NullInputDevice::vf0
+100129f0	Jet::NullInputDevice::vf4	Jet::NullInputDevice::vf4
+10012ae0	Jet::NullInputDevice::vf1	Jet::NullInputDevice::vf1

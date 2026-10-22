@@ -1,0 +1,50 @@
+entry	new_name	all_vftable_slots
+100048c2	Jet::ReferenceCount::vf0	Jet::ReferenceCount::vf0, Jet::DebugControl::vf0
+10001020	Jet::ReferenceCount::vf1	Jet::ReferenceCount::vf1
+100011d0	Jet::DebugTextureView::vf0	Jet::DebugTextureView::vf0
+1000493a	Jet::DebugTextureView::vf1	Jet::DebugTextureView::vf1, Jet::OSDProfile::vf1, Jet::OSDConsole::vf1
+1000495e	Jet::DebugTextureView::vf2	Jet::DebugTextureView::vf2, Jet::DebugViewPort::vf2, Jet::OSDProfile::vf2, Jet::OSDConsole::vf2
+10004964	Jet::DebugTextureView::vf3	Jet::DebugTextureView::vf3, Jet::OSDProfile::vf3, Jet::OSDConsole::vf3
+1000496a	Jet::DebugTextureView::vf4	Jet::DebugTextureView::vf4, Jet::OSDProfile::vf4, Jet::OSDConsole::vf4
+10004940	Jet::DebugTextureView::vf5	Jet::DebugTextureView::vf5, Jet::DebugViewPort::vf5, Jet::OSDProfile::vf5, Jet::OSDConsole::vf5
+10004958	Jet::DebugTextureView::vf7	Jet::DebugTextureView::vf7, Jet::OSDConsole::vf7
+10004946	Jet::DebugTextureView::vf8	Jet::DebugTextureView::vf8, Jet::OSDProfile::vf8, Jet::OSDConsole::vf8
+1000494c	Jet::DebugTextureView::vf9	Jet::DebugTextureView::vf9, Jet::OSDProfile::vf9, Jet::OSDConsole::vf9
+10004970	Jet::DebugTextureView::vf10	Jet::DebugTextureView::vf10, Jet::OSDProfile::vf10, Jet::OSDConsole::vf10
+10001c80	Jet::DebugViewPort::vf0	Jet::DebugViewPort::vf0
+100048f8	Jet::DebugViewPort::vf1	Jet::DebugViewPort::vf1
+10004928	Jet::DebugViewPort::vf3	Jet::DebugViewPort::vf3
+1000492e	Jet::DebugViewPort::vf4	Jet::DebugViewPort::vf4
+100048fe	Jet::DebugViewPort::vf6	Jet::DebugViewPort::vf6
+10004904	Jet::DebugViewPort::vf7	Jet::DebugViewPort::vf7
+1000490a	Jet::DebugViewPort::vf8	Jet::DebugViewPort::vf8
+10004910	Jet::DebugViewPort::vf9	Jet::DebugViewPort::vf9
+10004916	Jet::DebugViewPort::vf10	Jet::DebugViewPort::vf10
+1000491c	Jet::DebugViewPort::vf11	Jet::DebugViewPort::vf11
+10004922	Jet::DebugViewPort::vf12	Jet::DebugViewPort::vf12
+10001ba0	Jet::OSDProfile::vf0	Jet::OSDProfile::vf0
+100048c8	Jet::OSDProfile::vf6	Jet::OSDProfile::vf6
+100048ce	Jet::OSDProfile::vf7	Jet::OSDProfile::vf7
+100048d4	Jet::OSDProfile::vf11	Jet::OSDProfile::vf11
+100048da	Jet::OSDProfile::vf12	Jet::OSDProfile::vf12
+100048e0	Jet::OSDProfile::vf13	Jet::OSDProfile::vf13
+100048e6	Jet::OSDProfile::vf14	Jet::OSDProfile::vf14
+100048ec	Jet::OSDProfile::vf15	Jet::OSDProfile::vf15
+10001290	Jet::PortalListConsole::vf0	Jet::PortalListConsole::vf0, Jet::PortalStatsConsole::vf0, Jet::RenderStatsConsole::vf0
+10001050	Jet::DebugControl::vf0	Jet::DebugControl::vf0
+10002880	Jet::DebugControl::vf0	Jet::DebugControl::vf0
+1000498e	Jet::DebugControl::vf1	Jet::DebugControl::vf1
+10004988	Jet::DebugControl::vf2	Jet::DebugControl::vf2
+10004982	Jet::DebugControl::vf3	Jet::DebugControl::vf3
+1000497c	Jet::DebugControl::vf4	Jet::DebugControl::vf4
+10004952	Jet::DebugControl::vf5	Jet::DebugControl::vf5
+10004934	Jet::DebugControl::vf6	Jet::DebugControl::vf6
+10004976	Jet::DebugControl::vf7	Jet::DebugControl::vf7
+100049ac	Jet::DebugControl::vf0	Jet::DebugControl::vf0
+100049a6	Jet::DebugControl::vf1	Jet::DebugControl::vf1
+100049a0	Jet::DebugControl::vf2	Jet::DebugControl::vf2
+1000499a	Jet::DebugControl::vf3	Jet::DebugControl::vf3
+10004994	Jet::DebugControl::vf4	Jet::DebugControl::vf4
+10002870	Jet::DebugControl::vf1	Jet::DebugControl::vf1
+10003a60	Jet::OSDConsole::vf0	Jet::OSDConsole::vf0
+100048f2	Jet::OSDConsole::vf6	Jet::OSDConsole::vf6

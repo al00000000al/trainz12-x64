@@ -1,0 +1,432 @@
+entry	new_name	all_vftable_slots
+10001110	Jet::DisplayTextureOpenGL::vf0	Jet::DisplayTextureOpenGL::vf0
+10001170	Jet::CGShaderConstantOpenGL::vf0	Jet::CGShaderConstantOpenGL::vf0
+10001190	Jet::CGShaderConstantOpenGL::vf1	Jet::CGShaderConstantOpenGL::vf1
+100011c0	Jet::CGShaderConstantOpenGL::vf2	Jet::CGShaderConstantOpenGL::vf2
+100011f0	Jet::CGShaderConstantOpenGL::vf3	Jet::CGShaderConstantOpenGL::vf3
+10001230	Jet::CGShaderConstantOpenGL::vf4	Jet::CGShaderConstantOpenGL::vf4
+10001280	Jet::CGShaderConstantOpenGL::vf5	Jet::CGShaderConstantOpenGL::vf5
+100012d0	Jet::CGShaderConstantOpenGL::vf6	Jet::CGShaderConstantOpenGL::vf6
+10001320	Jet::CGShaderConstantOpenGL::vf7	Jet::CGShaderConstantOpenGL::vf7
+10001340	Jet::CGShaderConstantOpenGL::vf8	Jet::CGShaderConstantOpenGL::vf8
+10001360	Jet::CGShaderConstantOpenGL::vf9	Jet::CGShaderConstantOpenGL::vf9
+10001390	Jet::CGShaderConstantOpenGL::vf10	Jet::CGShaderConstantOpenGL::vf10
+100013c0	Jet::CGShaderConstantOpenGL::vf11	Jet::CGShaderConstantOpenGL::vf11
+10001410	Jet::CGShaderConstantOpenGL::vf12	Jet::CGShaderConstantOpenGL::vf12, Jet::CGShaderTechniqueOpenGL::vf4
+10001420	Jet::CGShaderConstantOpenGL::vf13	Jet::CGShaderConstantOpenGL::vf13
+10001980	Jet::CGShaderTechniqueOpenGL::vf0	Jet::CGShaderTechniqueOpenGL::vf0
+100019b0	Jet::CGShaderTechniqueOpenGL::vf1	Jet::CGShaderTechniqueOpenGL::vf1
+100019d0	Jet::CGShaderTechniqueOpenGL::vf2	Jet::CGShaderTechniqueOpenGL::vf2
+100210f0	Jet::CGShaderTechniqueOpenGL::vf3	Jet::CGShaderTechniqueOpenGL::vf3, Jet::DisplayOpenGL::vf1, Jet::DisplayOpenGLXTerm::vf146, Jet::TextureCombinerOpenGLATI::vf19, Jet::TextureCombinerOpenGLNV::vf19, Jet::TextureCombinerOpenGLNVfp::vf19, Jet::VertexBufferManagerOpenGLARB::vf2, Jet::VertexBufferManagerOpenGLARB::vf3, Jet::VertexBufferManagerOpenGLARB::vf23, Jet::VertexBufferManagerOpenGLPlugin::vf2, Jet::VertexBufferManagerOpenGLPlugin::vf3, Jet::VertexBufferManagerOpenGLSW::vf2, Jet::VertexBufferManagerOpenGLSW::vf3, Jet::VertexBufferManagerOpenGLSW::vf23, Jet::VertexProgramOpenGLARB::vf1, Jet::VertexProgramOpenGLNV::vf1
+10001450	Jet::CGShaderTechniqueOpenGL::vf5	Jet::CGShaderTechniqueOpenGL::vf5
+10001a90	Jet::DisplayDescriptorOpenGL::vf0	Jet::DisplayDescriptorOpenGL::vf0
+10002d50	Jet::DisplayInterfaceOpenGL::vf0	Jet::DisplayInterfaceOpenGL::vf0
+1001e6a0	Jet::DisplayInterfaceOpenGL::vf2	Jet::DisplayInterfaceOpenGL::vf2, Jet::DisplayInterfaceOpenGL::vf3, Jet::DisplayInterfaceOpenGL::vf6, Jet::DisplayInterfaceOpenGL::vf7, Jet::DisplayInterfaceOpenGL::vf8, Jet::DisplayInterfaceOpenGL::vf9, Jet::DisplayInterfaceOpenGL::vf10, Jet::DisplayInterfaceOpenGL::vf11, Jet::DisplayInterfaceOpenGL::vf12, Jet::DisplayInterfaceOpenGL::vf13, Jet::DisplayInterfaceOpenGL::vf14, Jet::DisplayInterfaceOpenGL::vf15, Jet::DisplayInterfaceOpenGL::vf16, Jet::DisplayInterfaceOpenGL::vf17, Jet::DisplayInterfaceOpenGL::vf18, Jet::DisplayInterfaceOpenGL::vf19, Jet::DisplayInterfaceOpenGL::vf20, Jet::DisplayInterfaceOpenGL::vf21, Jet::DisplayInterfaceOpenGL::vf22, Jet::DisplayLibraryOpenGL::vf1, Jet::DisplayLibraryOpenGL::vf2, Jet::DisplayOpenGLXTerm::vf157, Jet::TextureCombinerOpenGLATI::vf17, Jet::TextureCombinerOpenGLNV::vf17, Jet::TextureCombinerOpenGLNVfp::vf17, Jet::TextureCombinerOpenGLPlugin::vf7, Jet::TextureCombinerOpenGLPlugin::vf11, Jet::TextureCombinerOpenGLPlugin::vf17, Jet::TextureCombinerOpenGLPlugin::vf19, Jet::VertexBufferManagerOpenGLPlugin::vf5, Jet::VertexBufferManagerOpenGLPlugin::vf6, Jet::VertexBufferManagerOpenGLPlugin::vf7, Jet::VertexBufferManagerOpenGLPlugin::vf8, Jet::VertexBufferManagerOpenGLPlugin::vf9, Jet::VertexBufferManagerOpenGLPlugin::vf10, Jet::VertexBufferManagerOpenGLPlugin::vf11, Jet::VertexBufferManagerOpenGLPlugin::vf12, Jet::VertexBufferManagerOpenGLPlugin::vf13, Jet::VertexBufferManagerOpenGLPlugin::vf19, Jet::VertexBufferManagerOpenGLPlugin::vf21, Jet::VertexBufferManagerOpenGLPlugin::vf22, Jet::VertexBufferManagerOpenGLPlugin::vf23, Jet::VertexBufferManagerOpenGLSW::vf19, Jet::VertexProgramOpenGLPlugin::vf1, Jet::VertexProgramOpenGLPlugin::vf7, Jet::VertexProgramOpenGLPlugin::vf9, Jet::VertexProgramOpenGLPlugin::vf12, Jet::VertexProgramOpenGLPlugin::vf13, Jet::VertexProgramOpenGLPlugin::vf14, Jet::VertexProgramOpenGLPlugin::vf15, Jet::VertexProgramOpenGLPlugin::vf20, Jet::VertexProgramOpenGLPlugin::vf21, Jet::VertexProgramOpenGLPlugin::vf22, Jet::VertexProgramOpenGLPlugin::vf23, Jet::VertexProgramOpenGLPlugin::vf24, Jet::VertexProgramOpenGLPlugin::vf25, Jet::VertexProgramOpenGLPlugin::vf26, Jet::VertexProgramOpenGLPlugin::vf27, Jet::VertexProgramOpenGLPlugin::vf30, Jet::VertexProgramOpenGLPlugin::vf31, Jet::VertexProgramOpenGLPlugin::vf32, Jet::VertexProgramOpenGLPlugin::vf33, Jet::VertexProgramOpenGLPlugin::vf34
+10002ce0	Jet::DisplayInterfaceOpenGL::vf4	Jet::DisplayInterfaceOpenGL::vf4, Jet::DisplayInterfaceWGL::vf4
+10002d70	Jet::DisplayInterfaceOpenGL::vf5	Jet::DisplayInterfaceOpenGL::vf5
+100226a2	Jet::ReferenceCount::vf0	Jet::ReferenceCount::vf0, Jet::DisplayInterfaceWGL::WinPBufferContext::vf0, Jet::DisplayInterfaceWGL::SharedContextWGL::vf0, Jet::DisplaySaveBufferOpenGL::vf0, Jet::NonRenderContextWGL::vf0, Jet::TextureCombinerOpenGLNVfp::ProgramId::vf0, Jet::VertexBufferManagerOpenGLARB::StaticBufferData::vf0, Jet::StaticBuffer::vf0, Jet::VertexProgramOpenGLNV::ProgramId::vf0
+10002ca0	Jet::ReferenceCount::vf1	Jet::ReferenceCount::vf1
+10002fc0	Jet::DisplayInterfaceWGL::vf0	Jet::DisplayInterfaceWGL::vf0
+10003250	Jet::DisplayInterfaceWGL::vf1	Jet::DisplayInterfaceWGL::vf1
+10003c90	Jet::DisplayInterfaceWGL::vf2	Jet::DisplayInterfaceWGL::vf2
+10003ce0	Jet::DisplayInterfaceWGL::vf3	Jet::DisplayInterfaceWGL::vf3
+10002db0	Jet::DisplayInterfaceWGL::vf5	Jet::DisplayInterfaceWGL::vf5
+10003660	Jet::DisplayInterfaceWGL::vf6	Jet::DisplayInterfaceWGL::vf6
+10003ab0	Jet::DisplayInterfaceWGL::vf7	Jet::DisplayInterfaceWGL::vf7
+10003cf0	Jet::DisplayInterfaceWGL::vf8	Jet::DisplayInterfaceWGL::vf8
+10003d10	Jet::DisplayInterfaceWGL::vf9	Jet::DisplayInterfaceWGL::vf9
+10003d20	Jet::DisplayInterfaceWGL::vf10	Jet::DisplayInterfaceWGL::vf10
+10003d60	Jet::DisplayInterfaceWGL::vf11	Jet::DisplayInterfaceWGL::vf11
+10003060	Jet::DisplayInterfaceWGL::vf12	Jet::DisplayInterfaceWGL::vf12
+100031d0	Jet::DisplayInterfaceWGL::vf13	Jet::DisplayInterfaceWGL::vf13
+10003d70	Jet::DisplayInterfaceWGL::vf14	Jet::DisplayInterfaceWGL::vf14
+10003de0	Jet::DisplayInterfaceWGL::vf15	Jet::DisplayInterfaceWGL::vf15
+10003f50	Jet::DisplayInterfaceWGL::vf16	Jet::DisplayInterfaceWGL::vf16
+10003f90	Jet::DisplayInterfaceWGL::vf17	Jet::DisplayInterfaceWGL::vf17
+100040d0	Jet::DisplayInterfaceWGL::vf18	Jet::DisplayInterfaceWGL::vf18
+10003320	Jet::DisplayInterfaceWGL::vf19	Jet::DisplayInterfaceWGL::vf19
+10004240	Jet::DisplayInterfaceWGL::vf20	Jet::DisplayInterfaceWGL::vf20
+100033d0	Jet::DisplayInterfaceWGL::vf21	Jet::DisplayInterfaceWGL::vf21
+10002ef0	Jet::DisplayInterfaceWGL::vf22	Jet::DisplayInterfaceWGL::vf22
+10002e90	Jet::DisplayInterfaceWGL::WinPBufferContext::vf1	Jet::DisplayInterfaceWGL::WinPBufferContext::vf1
+10002ec0	Jet::DisplayInterfaceWGL::SharedContextWGL::vf1	Jet::DisplayInterfaceWGL::SharedContextWGL::vf1
+10002e80	Jet::DisplayInterfaceWGL::PBufferData::vf0	Jet::DisplayInterfaceWGL::PBufferData::vf0
+10006f30	Jet::DisplayLibraryOpenGL::vf0	Jet::DisplayLibraryOpenGL::vf0, Jet::DisplayLibraryWGL::vf0
+10006ac0	Jet::DisplayLibraryOpenGL::vf3	Jet::DisplayLibraryOpenGL::vf3
+10004490	Jet::DisplayLibraryOpenGL::vf4	Jet::DisplayLibraryOpenGL::vf4, Jet::DisplayLibraryWGL::vf4
+10006f80	Jet::DisplayLibraryWGL::vf1	Jet::DisplayLibraryWGL::vf1
+10007220	Jet::DisplayLibraryWGL::vf2	Jet::DisplayLibraryWGL::vf2
+10007240	Jet::DisplayLibraryWGL::vf3	Jet::DisplayLibraryWGL::vf3
+10007c00	Jet::DisplayOpenGL::vf0	Jet::DisplayOpenGL::vf0
+1000b180	Jet::DisplayOpenGL::vf2	Jet::DisplayOpenGL::vf2, Jet::DisplayOpenGLXTerm::vf2
+1000b360	Jet::DisplayOpenGL::vf3	Jet::DisplayOpenGL::vf3, Jet::DisplayOpenGLXTerm::vf3
+1000b4d0	Jet::DisplayOpenGL::vf4	Jet::DisplayOpenGL::vf4, Jet::DisplayOpenGLXTerm::vf4
+1000b5e0	Jet::DisplayOpenGL::vf5	Jet::DisplayOpenGL::vf5, Jet::DisplayOpenGLXTerm::vf5
+10008570	Jet::DisplayOpenGL::vf6	Jet::DisplayOpenGL::vf6, Jet::DisplayOpenGLXTerm::vf6
+10008580	Jet::DisplayOpenGL::vf7	Jet::DisplayOpenGL::vf7, Jet::DisplayOpenGLXTerm::vf7
+10008590	Jet::DisplayOpenGL::vf8	Jet::DisplayOpenGL::vf8, Jet::DisplayOpenGLXTerm::vf8
+10008680	Jet::DisplayOpenGL::vf9	Jet::DisplayOpenGL::vf9, Jet::DisplayOpenGLXTerm::vf9
+10002930	Jet::DisplayOpenGL::vf10	Jet::DisplayOpenGL::vf10, Jet::DisplayOpenGLXTerm::vf10
+1000b640	Jet::DisplayOpenGL::vf11	Jet::DisplayOpenGL::vf11, Jet::DisplayOpenGLXTerm::vf11
+1000b760	Jet::DisplayOpenGL::vf0	Jet::DisplayOpenGL::vf0
+1000b750	Jet::DisplayOpenGL::vf1	Jet::DisplayOpenGL::vf1
+10007750	Jet::CGShaderLoaderOpenGL::vf0	Jet::CGShaderLoaderOpenGL::vf0
+10001480	Jet::CGShaderLoaderOpenGL::vf1	Jet::CGShaderLoaderOpenGL::vf1
+100017f0	Jet::CGShaderLoaderOpenGL::vf2	Jet::CGShaderLoaderOpenGL::vf2
+10001790	Jet::CGShaderLoaderOpenGL::vf3	Jet::CGShaderLoaderOpenGL::vf3
+10001850	Jet::CGShaderLoaderOpenGL::vf4	Jet::CGShaderLoaderOpenGL::vf4
+10001900	Jet::CGShaderLoaderOpenGL::vf5	Jet::CGShaderLoaderOpenGL::vf5
+1000b8c0	Jet::DisplayOpenGLXTerm::vf0	Jet::DisplayOpenGLXTerm::vf0
+1000b890	Jet::DisplayOpenGLXTerm::vf1	Jet::DisplayOpenGLXTerm::vf1
+100226b4	Jet::DisplayOpenGLXTerm::vf12	Jet::DisplayOpenGLXTerm::vf12
+1000b8a0	Jet::DisplayOpenGLXTerm::vf13	Jet::DisplayOpenGLXTerm::vf13
+10008460	Jet::DisplayOpenGLXTerm::vf14	Jet::DisplayOpenGLXTerm::vf14
+100084e0	Jet::DisplayOpenGLXTerm::vf17	Jet::DisplayOpenGLXTerm::vf17
+10008530	Jet::DisplayOpenGLXTerm::vf18	Jet::DisplayOpenGLXTerm::vf18
+100226ba	Jet::DisplayOpenGLXTerm::vf19	Jet::DisplayOpenGLXTerm::vf19
+1000a3a0	Jet::DisplayOpenGLXTerm::vf20	Jet::DisplayOpenGLXTerm::vf20
+1000a410	Jet::DisplayOpenGLXTerm::vf21	Jet::DisplayOpenGLXTerm::vf21
+1000a430	Jet::DisplayOpenGLXTerm::vf22	Jet::DisplayOpenGLXTerm::vf22
+1000a4d0	Jet::DisplayOpenGLXTerm::vf23	Jet::DisplayOpenGLXTerm::vf23
+1000a520	Jet::DisplayOpenGLXTerm::vf26	Jet::DisplayOpenGLXTerm::vf26
+1002273e	Jet::DisplayOpenGLXTerm::vf27	Jet::DisplayOpenGLXTerm::vf27
+1000a580	Jet::DisplayOpenGLXTerm::vf28	Jet::DisplayOpenGLXTerm::vf28
+1000a5a0	Jet::DisplayOpenGLXTerm::vf29	Jet::DisplayOpenGLXTerm::vf29
+1000a630	Jet::DisplayOpenGLXTerm::vf30	Jet::DisplayOpenGLXTerm::vf30
+1000a610	Jet::DisplayOpenGLXTerm::vf31	Jet::DisplayOpenGLXTerm::vf31
+10007740	Jet::DisplayOpenGLXTerm::vf32	Jet::DisplayOpenGLXTerm::vf32
+1000a960	Jet::DisplayOpenGLXTerm::vf33	Jet::DisplayOpenGLXTerm::vf33
+1000a9c0	Jet::DisplayOpenGLXTerm::vf34	Jet::DisplayOpenGLXTerm::vf34
+1000b5c0	Jet::DisplayOpenGLXTerm::vf35	Jet::DisplayOpenGLXTerm::vf35
+1002270e	Jet::DisplayOpenGLXTerm::vf36	Jet::DisplayOpenGLXTerm::vf36
+10009510	Jet::DisplayOpenGLXTerm::vf37	Jet::DisplayOpenGLXTerm::vf37
+10008e90	Jet::DisplayOpenGLXTerm::vf38	Jet::DisplayOpenGLXTerm::vf38
+100226c0	Jet::DisplayOpenGLXTerm::vf39	Jet::DisplayOpenGLXTerm::vf39
+10008f00	Jet::DisplayOpenGLXTerm::vf40	Jet::DisplayOpenGLXTerm::vf40
+10008f50	Jet::DisplayOpenGLXTerm::vf41	Jet::DisplayOpenGLXTerm::vf41
+10022738	Jet::DisplayOpenGLXTerm::vf42	Jet::DisplayOpenGLXTerm::vf42
+10022732	Jet::DisplayOpenGLXTerm::vf43	Jet::DisplayOpenGLXTerm::vf43
+100028b0	Jet::DisplayOpenGLXTerm::vf44	Jet::DisplayOpenGLXTerm::vf44
+100028c0	Jet::DisplayOpenGLXTerm::vf45	Jet::DisplayOpenGLXTerm::vf45
+100028d0	Jet::DisplayOpenGLXTerm::vf46	Jet::DisplayOpenGLXTerm::vf46
+1002272c	Jet::DisplayOpenGLXTerm::vf47	Jet::DisplayOpenGLXTerm::vf47
+10022726	Jet::DisplayOpenGLXTerm::vf48	Jet::DisplayOpenGLXTerm::vf48
+10022720	Jet::DisplayOpenGLXTerm::vf49	Jet::DisplayOpenGLXTerm::vf49
+10009af0	Jet::DisplayOpenGLXTerm::vf50	Jet::DisplayOpenGLXTerm::vf50
+1002271a	Jet::DisplayOpenGLXTerm::vf51	Jet::DisplayOpenGLXTerm::vf51
+10008b90	Jet::DisplayOpenGLXTerm::vf52	Jet::DisplayOpenGLXTerm::vf52
+10008dd0	Jet::DisplayOpenGLXTerm::vf53	Jet::DisplayOpenGLXTerm::vf53
+10008e30	Jet::DisplayOpenGLXTerm::vf54	Jet::DisplayOpenGLXTerm::vf54
+10001ee0	Jet::DisplayOpenGLXTerm::vf55	Jet::DisplayOpenGLXTerm::vf55
+10022708	Jet::DisplayOpenGLXTerm::vf56	Jet::DisplayOpenGLXTerm::vf56
+1000b8e0	Jet::DisplayOpenGLXTerm::vf57	Jet::DisplayOpenGLXTerm::vf57
+100088c0	Jet::DisplayOpenGLXTerm::vf58	Jet::DisplayOpenGLXTerm::vf58
+1000b920	Jet::DisplayOpenGLXTerm::vf59	Jet::DisplayOpenGLXTerm::vf59
+1000b960	Jet::DisplayOpenGLXTerm::vf60	Jet::DisplayOpenGLXTerm::vf60
+1000b9a0	Jet::DisplayOpenGLXTerm::vf61	Jet::DisplayOpenGLXTerm::vf61
+10008a60	Jet::DisplayOpenGLXTerm::vf62	Jet::DisplayOpenGLXTerm::vf62
+10008a90	Jet::DisplayOpenGLXTerm::vf63	Jet::DisplayOpenGLXTerm::vf63
+10008b40	Jet::DisplayOpenGLXTerm::vf64	Jet::DisplayOpenGLXTerm::vf64
+100226c6	Jet::DisplayOpenGLXTerm::vf65	Jet::DisplayOpenGLXTerm::vf65
+100226cc	Jet::DisplayOpenGLXTerm::vf66	Jet::DisplayOpenGLXTerm::vf66
+100226d2	Jet::DisplayOpenGLXTerm::vf67	Jet::DisplayOpenGLXTerm::vf67
+100226d8	Jet::DisplayOpenGLXTerm::vf68	Jet::DisplayOpenGLXTerm::vf68
+10008670	Jet::DisplayOpenGLXTerm::vf69	Jet::DisplayOpenGLXTerm::vf69
+10022714	Jet::DisplayOpenGLXTerm::vf70	Jet::DisplayOpenGLXTerm::vf70
+10002230	Jet::DisplayOpenGLXTerm::vf71	Jet::DisplayOpenGLXTerm::vf71
+100021a0	Jet::DisplayOpenGLXTerm::vf72	Jet::DisplayOpenGLXTerm::vf72
+100022a0	Jet::DisplayOpenGLXTerm::vf73	Jet::DisplayOpenGLXTerm::vf73
+100022c0	Jet::DisplayOpenGLXTerm::vf74	Jet::DisplayOpenGLXTerm::vf74
+100023d0	Jet::DisplayOpenGLXTerm::vf75	Jet::DisplayOpenGLXTerm::vf75
+10002450	Jet::DisplayOpenGLXTerm::vf76	Jet::DisplayOpenGLXTerm::vf76
+100024a0	Jet::DisplayOpenGLXTerm::vf77	Jet::DisplayOpenGLXTerm::vf77
+10022702	Jet::DisplayOpenGLXTerm::vf78	Jet::DisplayOpenGLXTerm::vf78
+10002200	Jet::DisplayOpenGLXTerm::vf79	Jet::DisplayOpenGLXTerm::vf79
+100226fc	Jet::DisplayOpenGLXTerm::vf80	Jet::DisplayOpenGLXTerm::vf80
+10001fb0	Jet::DisplayOpenGLXTerm::vf81	Jet::DisplayOpenGLXTerm::vf81
+100025d0	Jet::DisplayOpenGLXTerm::vf82	Jet::DisplayOpenGLXTerm::vf82
+1000b5f0	Jet::DisplayOpenGLXTerm::vf84	Jet::DisplayOpenGLXTerm::vf84
+1000b680	Jet::DisplayOpenGLXTerm::vf85	Jet::DisplayOpenGLXTerm::vf85
+1000b700	Jet::DisplayOpenGLXTerm::vf86	Jet::DisplayOpenGLXTerm::vf86
+10022756	Jet::DisplayOpenGLXTerm::vf87	Jet::DisplayOpenGLXTerm::vf87
+1000b600	Jet::DisplayOpenGLXTerm::vf88	Jet::DisplayOpenGLXTerm::vf88
+10022750	Jet::DisplayOpenGLXTerm::vf89	Jet::DisplayOpenGLXTerm::vf89
+1002274a	Jet::DisplayOpenGLXTerm::vf90	Jet::DisplayOpenGLXTerm::vf90
+10022744	Jet::DisplayOpenGLXTerm::vf91	Jet::DisplayOpenGLXTerm::vf91
+100226de	Jet::DisplayOpenGLXTerm::vf92	Jet::DisplayOpenGLXTerm::vf92
+100226e4	Jet::DisplayOpenGLXTerm::vf93	Jet::DisplayOpenGLXTerm::vf93
+100226ea	Jet::DisplayOpenGLXTerm::vf94	Jet::DisplayOpenGLXTerm::vf94
+10002000	Jet::DisplayOpenGLXTerm::vf95	Jet::DisplayOpenGLXTerm::vf95
+10009e50	Jet::DisplayOpenGLXTerm::vf96	Jet::DisplayOpenGLXTerm::vf96
+1000a130	Jet::DisplayOpenGLXTerm::vf97	Jet::DisplayOpenGLXTerm::vf97
+1000a1e0	Jet::DisplayOpenGLXTerm::vf98	Jet::DisplayOpenGLXTerm::vf98
+10001ec0	Jet::DisplayOpenGLXTerm::vf99	Jet::DisplayOpenGLXTerm::vf99
+10009c20	Jet::DisplayOpenGLXTerm::vf100	Jet::DisplayOpenGLXTerm::vf100
+10009c40	Jet::DisplayOpenGLXTerm::vf101	Jet::DisplayOpenGLXTerm::vf101
+10009c60	Jet::DisplayOpenGLXTerm::vf102	Jet::DisplayOpenGLXTerm::vf102
+1000a540	Jet::DisplayOpenGLXTerm::vf103	Jet::DisplayOpenGLXTerm::vf103
+10008bd0	Jet::DisplayOpenGLXTerm::vf104	Jet::DisplayOpenGLXTerm::vf104
+10008c00	Jet::DisplayOpenGLXTerm::vf105	Jet::DisplayOpenGLXTerm::vf105
+10008c50	Jet::DisplayOpenGLXTerm::vf106	Jet::DisplayOpenGLXTerm::vf106
+10008c70	Jet::DisplayOpenGLXTerm::vf107	Jet::DisplayOpenGLXTerm::vf107
+10008db0	Jet::DisplayOpenGLXTerm::vf108	Jet::DisplayOpenGLXTerm::vf108
+10008d20	Jet::DisplayOpenGLXTerm::vf109	Jet::DisplayOpenGLXTerm::vf109
+10001ea0	Jet::DisplayOpenGLXTerm::vf110	Jet::DisplayOpenGLXTerm::vf110
+10008d40	Jet::DisplayOpenGLXTerm::vf111	Jet::DisplayOpenGLXTerm::vf111
+10008cf0	Jet::DisplayOpenGLXTerm::vf112	Jet::DisplayOpenGLXTerm::vf112
+10001da0	Jet::DisplayOpenGLXTerm::vf113	Jet::DisplayOpenGLXTerm::vf113
+10001de0	Jet::DisplayOpenGLXTerm::vf114	Jet::DisplayOpenGLXTerm::vf114
+10001e30	Jet::DisplayOpenGLXTerm::vf115	Jet::DisplayOpenGLXTerm::vf115
+10002880	Jet::DisplayOpenGLXTerm::vf116	Jet::DisplayOpenGLXTerm::vf116
+10008fa0	Jet::DisplayOpenGLXTerm::vf117	Jet::DisplayOpenGLXTerm::vf117
+10008fc0	Jet::DisplayOpenGLXTerm::vf118	Jet::DisplayOpenGLXTerm::vf118
+10009000	Jet::DisplayOpenGLXTerm::vf119	Jet::DisplayOpenGLXTerm::vf119
+10009020	Jet::DisplayOpenGLXTerm::vf120	Jet::DisplayOpenGLXTerm::vf120
+10009040	Jet::DisplayOpenGLXTerm::vf121	Jet::DisplayOpenGLXTerm::vf121
+10009060	Jet::DisplayOpenGLXTerm::vf122	Jet::DisplayOpenGLXTerm::vf122
+10009080	Jet::DisplayOpenGLXTerm::vf123	Jet::DisplayOpenGLXTerm::vf123
+100090a0	Jet::DisplayOpenGLXTerm::vf124	Jet::DisplayOpenGLXTerm::vf124
+100090c0	Jet::DisplayOpenGLXTerm::vf125	Jet::DisplayOpenGLXTerm::vf125
+10009100	Jet::DisplayOpenGLXTerm::vf126	Jet::DisplayOpenGLXTerm::vf126
+10009130	Jet::DisplayOpenGLXTerm::vf127	Jet::DisplayOpenGLXTerm::vf127
+10009170	Jet::DisplayOpenGLXTerm::vf128	Jet::DisplayOpenGLXTerm::vf128
+10009190	Jet::DisplayOpenGLXTerm::vf129	Jet::DisplayOpenGLXTerm::vf129
+100091c0	Jet::DisplayOpenGLXTerm::vf130	Jet::DisplayOpenGLXTerm::vf130
+100091e0	Jet::DisplayOpenGLXTerm::vf131	Jet::DisplayOpenGLXTerm::vf131
+10009250	Jet::DisplayOpenGLXTerm::vf132	Jet::DisplayOpenGLXTerm::vf132
+10009270	Jet::DisplayOpenGLXTerm::vf133	Jet::DisplayOpenGLXTerm::vf133
+100098a0	Jet::DisplayOpenGLXTerm::vf134	Jet::DisplayOpenGLXTerm::vf134
+100092f0	Jet::DisplayOpenGLXTerm::vf135	Jet::DisplayOpenGLXTerm::vf135
+100226f0	Jet::DisplayOpenGLXTerm::vf136	Jet::DisplayOpenGLXTerm::vf136
+10009530	Jet::DisplayOpenGLXTerm::vf137	Jet::DisplayOpenGLXTerm::vf137
+10009500	Jet::DisplayOpenGLXTerm::vf138	Jet::DisplayOpenGLXTerm::vf138
+10009560	Jet::DisplayOpenGLXTerm::vf139	Jet::DisplayOpenGLXTerm::vf139
+10009880	Jet::DisplayOpenGLXTerm::vf140	Jet::DisplayOpenGLXTerm::vf140
+1000b010	Jet::DisplayOpenGLXTerm::vf141	Jet::DisplayOpenGLXTerm::vf141
+1000b030	Jet::DisplayOpenGLXTerm::vf142	Jet::DisplayOpenGLXTerm::vf142
+1000a9f0	Jet::DisplayOpenGLXTerm::vf143	Jet::DisplayOpenGLXTerm::vf143
+1000a6f0	Jet::DisplayOpenGLXTerm::vf144	Jet::DisplayOpenGLXTerm::vf144
+100226f6	Jet::DisplayOpenGLXTerm::vf145	Jet::DisplayOpenGLXTerm::vf145
+1000b0b0	Jet::DisplayOpenGLXTerm::vf147	Jet::DisplayOpenGLXTerm::vf147
+1000b0d0	Jet::DisplayOpenGLXTerm::vf148	Jet::DisplayOpenGLXTerm::vf148
+1000b0f0	Jet::DisplayOpenGLXTerm::vf149	Jet::DisplayOpenGLXTerm::vf149
+1000b120	Jet::DisplayOpenGLXTerm::vf150	Jet::DisplayOpenGLXTerm::vf150
+1000b510	Jet::DisplayOpenGLXTerm::vf151	Jet::DisplayOpenGLXTerm::vf151
+10007ff0	Jet::DisplayOpenGLXTerm::vf152	Jet::DisplayOpenGLXTerm::vf152
+10008030	Jet::DisplayOpenGLXTerm::vf153	Jet::DisplayOpenGLXTerm::vf153
+10008630	Jet::DisplayOpenGLXTerm::vf154	Jet::DisplayOpenGLXTerm::vf154
+10008650	Jet::DisplayOpenGLXTerm::vf155	Jet::DisplayOpenGLXTerm::vf155
+10002940	Jet::DisplayOpenGLXTerm::vf156	Jet::DisplayOpenGLXTerm::vf156
+10002980	Jet::DisplayOpenGLXTerm::vf158	Jet::DisplayOpenGLXTerm::vf158
+10002a10	Jet::DisplayOpenGLXTerm::vf159	Jet::DisplayOpenGLXTerm::vf159
+10002aa0	Jet::DisplayOpenGLXTerm::vf160	Jet::DisplayOpenGLXTerm::vf160
+1000bc90	Jet::DisplayOpenGLXTerm::vf0	Jet::DisplayOpenGLXTerm::vf0
+1000bcb0	Jet::DisplayOpenGLXTerm::vf1	Jet::DisplayOpenGLXTerm::vf1
+1000bcc0	Jet::DisplaySaveBufferOpenGL::vf1	Jet::DisplaySaveBufferOpenGL::vf1
+1000bd60	Jet::DisplaySaveBufferOpenGL::vf2	Jet::DisplaySaveBufferOpenGL::vf2
+1000bd90	Jet::DisplaySaveBufferOpenGL::vf3	Jet::DisplaySaveBufferOpenGL::vf3
+1000e570	Jet::GLDisplayContext::vf0	Jet::GLDisplayContext::vf0
+1000ea20	Jet::NonRenderContextWGL::vf1	Jet::NonRenderContextWGL::vf1
+1000eae0	Jet::NonRenderContextWGL::vf2	Jet::NonRenderContextWGL::vf2
+1000ec10	Jet::NonRenderContextWGL::vf3	Jet::NonRenderContextWGL::vf3
+1000ed10	Jet::NonRenderContextWGL::vf4	Jet::NonRenderContextWGL::vf4
+100226a8	Jet::PluginFactoryOf<Jet::DisplayOpenGL,Jet::Display>::vf0	Jet::PluginFactoryOf<Jet::DisplayOpenGL,Jet::Display>::vf0, Jet::PluginFactoryOf<Jet::DisplayOpenGLXTerm,Jet::Display>::vf0, Jet::PluginFactoryOf<Jet::VertexBufferManagerOpenGLARB,Jet::VertexBufferManagerOpenGLPlugin>::vf0, Jet::PluginFactoryOf<Jet::VertexBufferManagerOpenGLSW,Jet::VertexBufferManagerOpenGLPlugin>::vf0, Jet::PluginFactoryOf<Jet::VertexProgramOpenGLARB,Jet::VertexProgramOpenGLPlugin>::vf0, Jet::PluginFactoryOf<Jet::VertexProgramOpenGLNV,Jet::VertexProgramOpenGLPlugin>::vf0, Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLNV,Jet::TextureCombinerOpenGLPlugin>::vf0, Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLATI,Jet::TextureCombinerOpenGLPlugin>::vf0, Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLNVfp,Jet::TextureCombinerOpenGLPlugin>::vf0, Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLARB,Jet::TextureCombinerOpenGLPlugin>::vf0
+100226ae	Jet::PluginFactoryOf<Jet::DisplayOpenGL,Jet::Display>::vf1	Jet::PluginFactoryOf<Jet::DisplayOpenGL,Jet::Display>::vf1, Jet::PluginFactoryOf<Jet::DisplayOpenGLXTerm,Jet::Display>::vf1, Jet::PluginFactoryOf<Jet::VertexBufferManagerOpenGLARB,Jet::VertexBufferManagerOpenGLPlugin>::vf1, Jet::PluginFactoryOf<Jet::VertexBufferManagerOpenGLSW,Jet::VertexBufferManagerOpenGLPlugin>::vf1, Jet::PluginFactoryOf<Jet::VertexProgramOpenGLARB,Jet::VertexProgramOpenGLPlugin>::vf1, Jet::PluginFactoryOf<Jet::VertexProgramOpenGLNV,Jet::VertexProgramOpenGLPlugin>::vf1, Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLNV,Jet::TextureCombinerOpenGLPlugin>::vf1, Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLATI,Jet::TextureCombinerOpenGLPlugin>::vf1, Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLNVfp,Jet::TextureCombinerOpenGLPlugin>::vf1, Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLARB,Jet::TextureCombinerOpenGLPlugin>::vf1
+1000fd80	Jet::PluginFactoryOf<Jet::DisplayOpenGL,Jet::Display>::vf2	Jet::PluginFactoryOf<Jet::DisplayOpenGL,Jet::Display>::vf2, Jet::PluginFactoryOf<Jet::DisplayOpenGLXTerm,Jet::Display>::vf2, Jet::PluginFactoryOf<Jet::VertexBufferManagerOpenGLARB,Jet::VertexBufferManagerOpenGLPlugin>::vf2, Jet::PluginFactoryOf<Jet::VertexBufferManagerOpenGLSW,Jet::VertexBufferManagerOpenGLPlugin>::vf2, Jet::PluginFactoryOf<Jet::VertexProgramOpenGLARB,Jet::VertexProgramOpenGLPlugin>::vf2, Jet::PluginFactoryOf<Jet::VertexProgramOpenGLNV,Jet::VertexProgramOpenGLPlugin>::vf2, Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLNV,Jet::TextureCombinerOpenGLPlugin>::vf2, Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLATI,Jet::TextureCombinerOpenGLPlugin>::vf2, Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLNVfp,Jet::TextureCombinerOpenGLPlugin>::vf2, Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLARB,Jet::TextureCombinerOpenGLPlugin>::vf2
+1000f7e0	Jet::PluginFactoryOf<Jet::DisplayOpenGL,Jet::Display>::vf3	Jet::PluginFactoryOf<Jet::DisplayOpenGL,Jet::Display>::vf3
+1000f870	Jet::PluginFactoryOf<Jet::DisplayOpenGLXTerm,Jet::Display>::vf3	Jet::PluginFactoryOf<Jet::DisplayOpenGLXTerm,Jet::Display>::vf3
+1000f900	Jet::PluginFactoryOf<Jet::VertexBufferManagerOpenGLARB,Jet::VertexBufferManagerOpenGLPlugin>::vf3	Jet::PluginFactoryOf<Jet::VertexBufferManagerOpenGLARB,Jet::VertexBufferManagerOpenGLPlugin>::vf3
+1000f990	Jet::PluginFactoryOf<Jet::VertexBufferManagerOpenGLSW,Jet::VertexBufferManagerOpenGLPlugin>::vf3	Jet::PluginFactoryOf<Jet::VertexBufferManagerOpenGLSW,Jet::VertexBufferManagerOpenGLPlugin>::vf3
+1000fa20	Jet::PluginFactoryOf<Jet::VertexProgramOpenGLARB,Jet::VertexProgramOpenGLPlugin>::vf3	Jet::PluginFactoryOf<Jet::VertexProgramOpenGLARB,Jet::VertexProgramOpenGLPlugin>::vf3
+1000fab0	Jet::PluginFactoryOf<Jet::VertexProgramOpenGLNV,Jet::VertexProgramOpenGLPlugin>::vf3	Jet::PluginFactoryOf<Jet::VertexProgramOpenGLNV,Jet::VertexProgramOpenGLPlugin>::vf3
+1000fb40	Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLNV,Jet::TextureCombinerOpenGLPlugin>::vf3	Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLNV,Jet::TextureCombinerOpenGLPlugin>::vf3
+1000fbd0	Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLATI,Jet::TextureCombinerOpenGLPlugin>::vf3	Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLATI,Jet::TextureCombinerOpenGLPlugin>::vf3
+1000fc60	Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLNVfp,Jet::TextureCombinerOpenGLPlugin>::vf3	Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLNVfp,Jet::TextureCombinerOpenGLPlugin>::vf3
+1000fcf0	Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLARB,Jet::TextureCombinerOpenGLPlugin>::vf3	Jet::PluginFactoryOf<Jet::TextureCombinerOpenGLARB,Jet::TextureCombinerOpenGLPlugin>::vf3
+10022762	Jet::TextureCombinerOpenGLARB::vf0	Jet::TextureCombinerOpenGLARB::vf0, Jet::TextureCombinerOpenGLATI::vf0, Jet::TextureCombinerOpenGLNV::vf0, Jet::TextureCombinerOpenGLNVfp::vf0, Jet::TextureCombinerOpenGLPlugin::vf0
+10022768	Jet::TextureCombinerOpenGLARB::vf1	Jet::TextureCombinerOpenGLARB::vf1, Jet::TextureCombinerOpenGLATI::vf1, Jet::TextureCombinerOpenGLNV::vf1, Jet::TextureCombinerOpenGLNVfp::vf1, Jet::TextureCombinerOpenGLPlugin::vf1, Jet::VertexProgramOpenGLARB::vf1, Jet::VertexProgramOpenGLNV::vf1, Jet::VertexProgramOpenGLPlugin::vf1
+1002276e	Jet::TextureCombinerOpenGLARB::vf2	Jet::TextureCombinerOpenGLARB::vf2, Jet::TextureCombinerOpenGLATI::vf2, Jet::TextureCombinerOpenGLNV::vf2, Jet::TextureCombinerOpenGLNVfp::vf2, Jet::TextureCombinerOpenGLPlugin::vf2, Jet::VertexProgramOpenGLARB::vf2, Jet::VertexProgramOpenGLNV::vf2, Jet::VertexProgramOpenGLPlugin::vf2
+10010140	Jet::TextureCombinerOpenGLARB::vf3	Jet::TextureCombinerOpenGLARB::vf3
+10011ea0	Jet::TextureCombinerOpenGLARB::vf4	Jet::TextureCombinerOpenGLARB::vf4
+10011f70	Jet::TextureCombinerOpenGLARB::vf5	Jet::TextureCombinerOpenGLARB::vf5
+100120b0	Jet::TextureCombinerOpenGLARB::vf0	Jet::TextureCombinerOpenGLARB::vf0
+100120a0	Jet::TextureCombinerOpenGLARB::vf1	Jet::TextureCombinerOpenGLARB::vf1
+100121e0	Jet::TextureCombiner::Instruction::vf0	Jet::TextureCombiner::Instruction::vf0
+10022786	Jet::TextureCombinerOpenGLATI::vf3	Jet::TextureCombinerOpenGLATI::vf3, Jet::TextureCombinerOpenGLPlugin::vf3
+10012cc0	Jet::TextureCombinerOpenGLATI::vf4	Jet::TextureCombinerOpenGLATI::vf4
+10012d00	Jet::TextureCombinerOpenGLATI::vf5	Jet::TextureCombinerOpenGLATI::vf5
+10012d70	Jet::TextureCombinerOpenGLATI::vf6	Jet::TextureCombinerOpenGLATI::vf6
+10012480	Jet::TextureCombinerOpenGLATI::vf7	Jet::TextureCombinerOpenGLATI::vf7
+10022774	Jet::TextureCombinerOpenGLATI::vf8	Jet::TextureCombinerOpenGLATI::vf8, Jet::TextureCombinerOpenGLNV::vf8, Jet::TextureCombinerOpenGLNVfp::vf8, Jet::TextureCombinerOpenGLPlugin::vf8
+1002277a	Jet::TextureCombinerOpenGLATI::vf9	Jet::TextureCombinerOpenGLATI::vf9, Jet::TextureCombinerOpenGLNV::vf9, Jet::TextureCombinerOpenGLNVfp::vf9, Jet::TextureCombinerOpenGLPlugin::vf9
+10022780	Jet::TextureCombinerOpenGLATI::vf10	Jet::TextureCombinerOpenGLATI::vf10, Jet::TextureCombinerOpenGLNV::vf10, Jet::TextureCombinerOpenGLNVfp::vf10, Jet::TextureCombinerOpenGLPlugin::vf10
+100124a0	Jet::TextureCombinerOpenGLATI::vf11	Jet::TextureCombinerOpenGLATI::vf11
+1002278c	Jet::TextureCombinerOpenGLATI::vf12	Jet::TextureCombinerOpenGLATI::vf12, Jet::TextureCombinerOpenGLPlugin::vf12
+1002275c	Jet::TextureCombinerOpenGLATI::vf13	Jet::TextureCombinerOpenGLATI::vf13, Jet::TextureCombinerOpenGLNV::vf13, Jet::TextureCombinerOpenGLNVfp::vf13, Jet::TextureCombinerOpenGLPlugin::vf13
+10018e90	Jet::TextureCombinerOpenGLATI::vf18	Jet::TextureCombinerOpenGLATI::vf18, Jet::TextureCombinerOpenGLNV::vf18, Jet::TextureCombinerOpenGLNVfp::vf18, Jet::TextureCombinerOpenGLPlugin::vf18
+10015c20	Jet::TextureCombinerOpenGLATI::vf0	Jet::TextureCombinerOpenGLATI::vf0
+10015c40	Jet::TextureCombinerOpenGLATI::vf1	Jet::TextureCombinerOpenGLATI::vf1
+10016050	Jet::TextureCombinerOpenGLNV::vf3	Jet::TextureCombinerOpenGLNV::vf3
+10017730	Jet::TextureCombinerOpenGLNV::vf4	Jet::TextureCombinerOpenGLNV::vf4
+100178f0	Jet::TextureCombinerOpenGLNV::vf5	Jet::TextureCombinerOpenGLNV::vf5
+10017ac0	Jet::TextureCombinerOpenGLNV::vf6	Jet::TextureCombinerOpenGLNV::vf6
+10016030	Jet::TextureCombinerOpenGLNV::vf7	Jet::TextureCombinerOpenGLNV::vf7
+10016180	Jet::TextureCombinerOpenGLNV::vf11	Jet::TextureCombinerOpenGLNV::vf11
+10017b10	Jet::TextureCombinerOpenGLNV::vf12	Jet::TextureCombinerOpenGLNV::vf12
+10017be0	Jet::TextureCombinerOpenGLNV::vf14	Jet::TextureCombinerOpenGLNV::vf14
+10017c30	Jet::TextureCombinerOpenGLNV::vf15	Jet::TextureCombinerOpenGLNV::vf15
+10017c80	Jet::TextureCombinerOpenGLNV::vf16	Jet::TextureCombinerOpenGLNV::vf16
+10017060	Jet::TextureCombinerOpenGLNV::vf20	Jet::TextureCombinerOpenGLNV::vf20
+100163c0	Jet::TextureCombinerOpenGLNV::vf21	Jet::TextureCombinerOpenGLNV::vf21
+100165a0	Jet::TextureCombinerOpenGLNV::vf22	Jet::TextureCombinerOpenGLNV::vf22
+10016640	Jet::TextureCombinerOpenGLNV::vf23	Jet::TextureCombinerOpenGLNV::vf23
+10016890	Jet::TextureCombinerOpenGLNV::vf24	Jet::TextureCombinerOpenGLNV::vf24
+10016960	Jet::TextureCombinerOpenGLNV::vf25	Jet::TextureCombinerOpenGLNV::vf25
+10016900	Jet::TextureCombinerOpenGLNV::vf26	Jet::TextureCombinerOpenGLNV::vf26
+10016ae0	Jet::TextureCombinerOpenGLNV::vf27	Jet::TextureCombinerOpenGLNV::vf27
+10016b30	Jet::TextureCombinerOpenGLNV::vf28	Jet::TextureCombinerOpenGLNV::vf28
+10017ef0	Jet::TextureCombinerOpenGLNV::vf0	Jet::TextureCombinerOpenGLNV::vf0
+10017ee0	Jet::TextureCombinerOpenGLNV::vf1	Jet::TextureCombinerOpenGLNV::vf1
+100180b0	Jet::TextureCombinerOpenGLNVfp::vf3	Jet::TextureCombinerOpenGLNVfp::vf3
+10018ab0	Jet::TextureCombinerOpenGLNVfp::vf4	Jet::TextureCombinerOpenGLNVfp::vf4
+10018b50	Jet::TextureCombinerOpenGLNVfp::vf5	Jet::TextureCombinerOpenGLNVfp::vf5
+10018b90	Jet::TextureCombinerOpenGLNVfp::vf6	Jet::TextureCombinerOpenGLNVfp::vf6
+10018090	Jet::TextureCombinerOpenGLNVfp::vf7	Jet::TextureCombinerOpenGLNVfp::vf7
+10018230	Jet::TextureCombinerOpenGLNVfp::vf11	Jet::TextureCombinerOpenGLNVfp::vf11
+10018bc0	Jet::TextureCombinerOpenGLNVfp::vf12	Jet::TextureCombinerOpenGLNVfp::vf12
+10018c90	Jet::TextureCombinerOpenGLNVfp::vf0	Jet::TextureCombinerOpenGLNVfp::vf0
+10018c80	Jet::TextureCombinerOpenGLNVfp::vf1	Jet::TextureCombinerOpenGLNVfp::vf1
+10018200	Jet::TextureCombinerOpenGLNVfp::ProgramId::vf1	Jet::TextureCombinerOpenGLNVfp::ProgramId::vf1
+100227a4	Jet::TextureCombinerOpenGLPlugin::vf4	Jet::TextureCombinerOpenGLPlugin::vf4, Jet::VertexProgramOpenGLPlugin::vf4
+100227aa	Jet::TextureCombinerOpenGLPlugin::vf5	Jet::TextureCombinerOpenGLPlugin::vf5, Jet::VertexProgramOpenGLARB::vf5, Jet::VertexProgramOpenGLNV::vf5, Jet::VertexProgramOpenGLPlugin::vf5
+100227b0	Jet::TextureCombinerOpenGLPlugin::vf6	Jet::TextureCombinerOpenGLPlugin::vf6, Jet::VertexProgramOpenGLPlugin::vf6
+1002279e	Jet::TextureCombinerOpenGLPlugin::vf14	Jet::TextureCombinerOpenGLPlugin::vf14
+10022798	Jet::TextureCombinerOpenGLPlugin::vf15	Jet::TextureCombinerOpenGLPlugin::vf15
+10022792	Jet::TextureCombinerOpenGLPlugin::vf16	Jet::TextureCombinerOpenGLPlugin::vf16
+10018ff0	Jet::TextureCombinerOpenGLPlugin::vf0	Jet::TextureCombinerOpenGLPlugin::vf0
+10018fe0	Jet::TextureCombinerOpenGLPlugin::vf1	Jet::TextureCombinerOpenGLPlugin::vf1
+100191f0	Jet::VertexBufferManagerOpenGLARB::vf0	Jet::VertexBufferManagerOpenGLARB::vf0
+10019490	Jet::VertexBufferManagerOpenGLARB::vf1	Jet::VertexBufferManagerOpenGLARB::vf1
+1001a660	Jet::VertexBufferManagerOpenGLARB::vf4	Jet::VertexBufferManagerOpenGLARB::vf4, Jet::VertexBufferManagerOpenGLPlugin::vf4, Jet::VertexBufferManagerOpenGLSW::vf4
+10019870	Jet::VertexBufferManagerOpenGLARB::vf5	Jet::VertexBufferManagerOpenGLARB::vf5
+100198b0	Jet::VertexBufferManagerOpenGLARB::vf6	Jet::VertexBufferManagerOpenGLARB::vf6
+10019d20	Jet::VertexBufferManagerOpenGLARB::vf7	Jet::VertexBufferManagerOpenGLARB::vf7
+10019f00	Jet::VertexBufferManagerOpenGLARB::vf8	Jet::VertexBufferManagerOpenGLARB::vf8
+10019ed0	Jet::VertexBufferManagerOpenGLARB::vf9	Jet::VertexBufferManagerOpenGLARB::vf9
+10019e60	Jet::VertexBufferManagerOpenGLARB::vf10	Jet::VertexBufferManagerOpenGLARB::vf10
+10019b80	Jet::VertexBufferManagerOpenGLARB::vf11	Jet::VertexBufferManagerOpenGLARB::vf11
+10019a00	Jet::VertexBufferManagerOpenGLARB::vf12	Jet::VertexBufferManagerOpenGLARB::vf12
+10019fb0	Jet::VertexBufferManagerOpenGLARB::vf13	Jet::VertexBufferManagerOpenGLARB::vf13, Jet::VertexBufferManagerOpenGLSW::vf13
+10019ca0	Jet::VertexBufferManagerOpenGLARB::vf16	Jet::VertexBufferManagerOpenGLARB::vf16
+10019cd0	Jet::VertexBufferManagerOpenGLARB::vf17	Jet::VertexBufferManagerOpenGLARB::vf17
+10019d10	Jet::VertexBufferManagerOpenGLARB::vf18	Jet::VertexBufferManagerOpenGLARB::vf18, Jet::VertexBufferManagerOpenGLSW::vf18
+10019010	Jet::VertexBufferManagerOpenGLARB::vf19	Jet::VertexBufferManagerOpenGLARB::vf19
+10019550	Jet::VertexBufferManagerOpenGLARB::vf20	Jet::VertexBufferManagerOpenGLARB::vf20
+10019890	Jet::VertexBufferManagerOpenGLARB::vf21	Jet::VertexBufferManagerOpenGLARB::vf21
+100198e0	Jet::VertexBufferManagerOpenGLARB::vf22	Jet::VertexBufferManagerOpenGLARB::vf22
+10019590	Jet::VertexBufferManagerOpenGLARB::vf24	Jet::VertexBufferManagerOpenGLARB::vf24
+100195e0	Jet::VertexBufferManagerOpenGLARB::vf25	Jet::VertexBufferManagerOpenGLARB::vf25
+10019be0	Jet::VertexBufferManagerOpenGLARB::vf26	Jet::VertexBufferManagerOpenGLARB::vf26
+1001a390	Jet::VertexBufferManagerOpenGLARB::vf0	Jet::VertexBufferManagerOpenGLARB::vf0
+1001a380	Jet::VertexBufferManagerOpenGLARB::vf1	Jet::VertexBufferManagerOpenGLARB::vf1
+100190a0	Jet::VertexBufferManagerOpenGLARB::StaticBufferData::vf1	Jet::VertexBufferManagerOpenGLARB::StaticBufferData::vf1
+1001a470	Jet::VertexBufferManagerOpenGLPlugin::vf0	Jet::VertexBufferManagerOpenGLPlugin::vf0
+1001a5a0	Jet::VertexBufferManagerOpenGLPlugin::vf1	Jet::VertexBufferManagerOpenGLPlugin::vf1
+100227c2	Jet::VertexBufferManagerOpenGLPlugin::vf14	Jet::VertexBufferManagerOpenGLPlugin::vf14
+100227c8	Jet::VertexBufferManagerOpenGLPlugin::vf15	Jet::VertexBufferManagerOpenGLPlugin::vf15
+100227ce	Jet::VertexBufferManagerOpenGLPlugin::vf16	Jet::VertexBufferManagerOpenGLPlugin::vf16, Jet::VertexBufferManagerOpenGLSW::vf16
+100227d4	Jet::VertexBufferManagerOpenGLPlugin::vf17	Jet::VertexBufferManagerOpenGLPlugin::vf17, Jet::VertexBufferManagerOpenGLSW::vf17
+100227bc	Jet::VertexBufferManagerOpenGLPlugin::vf18	Jet::VertexBufferManagerOpenGLPlugin::vf18
+100227b6	Jet::VertexBufferManagerOpenGLPlugin::vf20	Jet::VertexBufferManagerOpenGLPlugin::vf20, Jet::VertexBufferManagerOpenGLSW::vf20
+1001dc60	Jet::VertexBufferManagerOpenGLPlugin::vf0	Jet::VertexBufferManagerOpenGLPlugin::vf0
+1001dc80	Jet::VertexBufferManagerOpenGLPlugin::vf1	Jet::VertexBufferManagerOpenGLPlugin::vf1
+1001dc90	Jet::StaticBuffer::vf1	Jet::StaticBuffer::vf1
+1001dd60	Jet::VertexBufferManagerOpenGLSW::vf0	Jet::VertexBufferManagerOpenGLSW::vf0
+1001de30	Jet::VertexBufferManagerOpenGLSW::vf1	Jet::VertexBufferManagerOpenGLSW::vf1
+1001df10	Jet::VertexBufferManagerOpenGLSW::vf5	Jet::VertexBufferManagerOpenGLSW::vf5
+1001e020	Jet::VertexBufferManagerOpenGLSW::vf6	Jet::VertexBufferManagerOpenGLSW::vf6
+1001df90	Jet::VertexBufferManagerOpenGLSW::vf7	Jet::VertexBufferManagerOpenGLSW::vf7
+1001df60	Jet::VertexBufferManagerOpenGLSW::vf8	Jet::VertexBufferManagerOpenGLSW::vf8
+1001df30	Jet::VertexBufferManagerOpenGLSW::vf9	Jet::VertexBufferManagerOpenGLSW::vf9
+1001dff0	Jet::VertexBufferManagerOpenGLSW::vf10	Jet::VertexBufferManagerOpenGLSW::vf10
+1001e050	Jet::VertexBufferManagerOpenGLSW::vf11	Jet::VertexBufferManagerOpenGLSW::vf11
+1001e040	Jet::VertexBufferManagerOpenGLSW::vf12	Jet::VertexBufferManagerOpenGLSW::vf12
+1001e070	Jet::VertexBufferManagerOpenGLSW::vf0	Jet::VertexBufferManagerOpenGLSW::vf0
+1001e060	Jet::VertexBufferManagerOpenGLSW::vf1	Jet::VertexBufferManagerOpenGLSW::vf1
+1001e4a0	Jet::VertexProgramOpenGLARB::vf0	Jet::VertexProgramOpenGLARB::vf0
+1001f080	Jet::VertexProgramOpenGLARB::vf2	Jet::VertexProgramOpenGLARB::vf2
+10020900	Jet::VertexProgramOpenGLARB::vf0	Jet::VertexProgramOpenGLARB::vf0
+100209a0	Jet::VertexProgramOpenGLARB::vf1	Jet::VertexProgramOpenGLARB::vf1
+100227ec	Jet::VertexProgramOpenGLARB::vf0	Jet::VertexProgramOpenGLARB::vf0, Jet::VertexProgramOpenGLNV::vf0, Jet::VertexProgramOpenGLPlugin::vf0
+10020990	Jet::VertexProgramOpenGLARB::vf3	Jet::VertexProgramOpenGLARB::vf3
+10020980	Jet::VertexProgramOpenGLARB::vf4	Jet::VertexProgramOpenGLARB::vf4
+100209e0	Jet::VertexProgramOpenGLARB::vf6	Jet::VertexProgramOpenGLARB::vf6
+10020a00	Jet::VertexProgramOpenGLARB::vf7	Jet::VertexProgramOpenGLARB::vf7
+100227f2	Jet::VertexProgramOpenGLARB::vf8	Jet::VertexProgramOpenGLARB::vf8, Jet::VertexProgramOpenGLNV::vf8, Jet::VertexProgramOpenGLPlugin::vf8
+100209f0	Jet::VertexProgramOpenGLARB::vf9	Jet::VertexProgramOpenGLARB::vf9
+100227f8	Jet::VertexProgramOpenGLARB::vf10	Jet::VertexProgramOpenGLARB::vf10, Jet::VertexProgramOpenGLNV::vf10, Jet::VertexProgramOpenGLPlugin::vf10
+100227fe	Jet::VertexProgramOpenGLARB::vf11	Jet::VertexProgramOpenGLARB::vf11, Jet::VertexProgramOpenGLNV::vf11, Jet::VertexProgramOpenGLPlugin::vf11
+100209d0	Jet::VertexProgramOpenGLARB::vf12	Jet::VertexProgramOpenGLARB::vf12
+10020940	Jet::VertexProgramOpenGLARB::vf13	Jet::VertexProgramOpenGLARB::vf13
+10020a70	Jet::VertexProgramOpenGLARB::vf14	Jet::VertexProgramOpenGLARB::vf14
+10020a60	Jet::VertexProgramOpenGLARB::vf15	Jet::VertexProgramOpenGLARB::vf15
+10022810	Jet::VertexProgramOpenGLARB::vf16	Jet::VertexProgramOpenGLARB::vf16, Jet::VertexProgramOpenGLNV::vf16, Jet::VertexProgramOpenGLPlugin::vf16
+10020930	Jet::VertexProgramOpenGLARB::vf17	Jet::VertexProgramOpenGLARB::vf17
+10020a30	Jet::VertexProgramOpenGLARB::vf18	Jet::VertexProgramOpenGLARB::vf18
+10022804	Jet::VertexProgramOpenGLARB::vf19	Jet::VertexProgramOpenGLARB::vf19, Jet::VertexProgramOpenGLPlugin::vf19
+10020920	Jet::VertexProgramOpenGLARB::vf20	Jet::VertexProgramOpenGLARB::vf20, Jet::VertexProgramOpenGLARB::vf21
+100209b0	Jet::VertexProgramOpenGLARB::vf22	Jet::VertexProgramOpenGLARB::vf22
+100208f0	Jet::VertexProgramOpenGLARB::vf23	Jet::VertexProgramOpenGLARB::vf23
+10020a10	Jet::VertexProgramOpenGLARB::vf24	Jet::VertexProgramOpenGLARB::vf24, Jet::VertexProgramOpenGLARB::vf27
+10020950	Jet::VertexProgramOpenGLARB::vf25	Jet::VertexProgramOpenGLARB::vf25
+10020a40	Jet::VertexProgramOpenGLARB::vf26	Jet::VertexProgramOpenGLARB::vf26
+100208e0	Jet::VertexProgramOpenGLARB::vf28	Jet::VertexProgramOpenGLARB::vf28
+1002280a	Jet::VertexProgramOpenGLARB::vf29	Jet::VertexProgramOpenGLARB::vf29, Jet::VertexProgramOpenGLNV::vf29, Jet::VertexProgramOpenGLPlugin::vf29
+10020970	Jet::VertexProgramOpenGLARB::vf30	Jet::VertexProgramOpenGLARB::vf30
+10020a50	Jet::VertexProgramOpenGLARB::vf31	Jet::VertexProgramOpenGLARB::vf31
+100209c0	Jet::VertexProgramOpenGLARB::vf32	Jet::VertexProgramOpenGLARB::vf32
+10020960	Jet::VertexProgramOpenGLARB::vf33	Jet::VertexProgramOpenGLARB::vf33, Jet::VertexProgramOpenGLNV::vf33
+10020a20	Jet::VertexProgramOpenGLARB::vf34	Jet::VertexProgramOpenGLARB::vf34
+10020ae0	Jet::VertexProgramBasic::VPSymbol::vf0	Jet::VertexProgramBasic::VPSymbol::vf0
+10020e90	Jet::VertexProgramOpenGLNV::vf0	Jet::VertexProgramOpenGLNV::vf0
+10021300	Jet::VertexProgramOpenGLNV::vf0	Jet::VertexProgramOpenGLNV::vf0
+10022816	Jet::VertexProgramOpenGLNV::vf1	Jet::VertexProgramOpenGLNV::vf1
+10021910	Jet::VertexProgramOpenGLNV::vf2	Jet::VertexProgramOpenGLNV::vf2
+10021670	Jet::VertexProgramOpenGLNV::vf3	Jet::VertexProgramOpenGLNV::vf3
+1002281c	Jet::VertexProgramOpenGLNV::vf4	Jet::VertexProgramOpenGLNV::vf4
+10021540	Jet::VertexProgramOpenGLNV::vf5	Jet::VertexProgramOpenGLNV::vf5
+10021340	Jet::VertexProgramOpenGLNV::vf6	Jet::VertexProgramOpenGLNV::vf6
+100221e0	Jet::VertexProgramOpenGLNV::vf0	Jet::VertexProgramOpenGLNV::vf0
+100222a0	Jet::VertexProgramOpenGLNV::vf1	Jet::VertexProgramOpenGLNV::vf1
+10022240	Jet::VertexProgramOpenGLNV::vf3	Jet::VertexProgramOpenGLNV::vf3
+10022370	Jet::VertexProgramOpenGLNV::vf4	Jet::VertexProgramOpenGLNV::vf4
+100223d0	Jet::VertexProgramOpenGLNV::vf6	Jet::VertexProgramOpenGLNV::vf6
+10022320	Jet::VertexProgramOpenGLNV::vf7	Jet::VertexProgramOpenGLNV::vf7
+100223c0	Jet::VertexProgramOpenGLNV::vf9	Jet::VertexProgramOpenGLNV::vf9
+100222d0	Jet::VertexProgramOpenGLNV::vf12	Jet::VertexProgramOpenGLNV::vf12
+10022280	Jet::VertexProgramOpenGLNV::vf13	Jet::VertexProgramOpenGLNV::vf13
+10022380	Jet::VertexProgramOpenGLNV::vf14	Jet::VertexProgramOpenGLNV::vf14
+100222b0	Jet::VertexProgramOpenGLNV::vf15	Jet::VertexProgramOpenGLNV::vf15
+10022300	Jet::VertexProgramOpenGLNV::vf17	Jet::VertexProgramOpenGLNV::vf17
+100222c0	Jet::VertexProgramOpenGLNV::vf18	Jet::VertexProgramOpenGLNV::vf18
+100223b0	Jet::VertexProgramOpenGLNV::vf19	Jet::VertexProgramOpenGLNV::vf19
+10022360	Jet::VertexProgramOpenGLNV::vf20	Jet::VertexProgramOpenGLNV::vf20, Jet::VertexProgramOpenGLNV::vf21
+10022350	Jet::VertexProgramOpenGLNV::vf22	Jet::VertexProgramOpenGLNV::vf22
+100222f0	Jet::VertexProgramOpenGLNV::vf23	Jet::VertexProgramOpenGLNV::vf23
+10022250	Jet::VertexProgramOpenGLNV::vf24	Jet::VertexProgramOpenGLNV::vf24
+10022390	Jet::VertexProgramOpenGLNV::vf25	Jet::VertexProgramOpenGLNV::vf25
+100222e0	Jet::VertexProgramOpenGLNV::vf26	Jet::VertexProgramOpenGLNV::vf26
+10022230	Jet::VertexProgramOpenGLNV::vf27	Jet::VertexProgramOpenGLNV::vf27
+100223a0	Jet::VertexProgramOpenGLNV::vf28	Jet::VertexProgramOpenGLNV::vf28
+10022200	Jet::VertexProgramOpenGLNV::vf30	Jet::VertexProgramOpenGLNV::vf30
+10022330	Jet::VertexProgramOpenGLNV::vf31	Jet::VertexProgramOpenGLNV::vf31
+10022260	Jet::VertexProgramOpenGLNV::vf32	Jet::VertexProgramOpenGLNV::vf32
+10022220	Jet::VertexProgramOpenGLNV::vf34	Jet::VertexProgramOpenGLNV::vf34
+100214a0	Jet::VertexProgramOpenGLNV::ProgramId::vf1	Jet::VertexProgramOpenGLNV::ProgramId::vf1
+10022510	Jet::VertexProgramOpenGLPlugin::vf0	Jet::VertexProgramOpenGLPlugin::vf0
+10022690	Jet::VertexProgramOpenGLPlugin::vf0	Jet::VertexProgramOpenGLPlugin::vf0
+10022680	Jet::VertexProgramOpenGLPlugin::vf1	Jet::VertexProgramOpenGLPlugin::vf1
+100227da	Jet::VertexProgramOpenGLPlugin::vf3	Jet::VertexProgramOpenGLPlugin::vf3
+100227e6	Jet::VertexProgramOpenGLPlugin::vf17	Jet::VertexProgramOpenGLPlugin::vf17
+10022822	Jet::VertexProgramOpenGLPlugin::vf18	Jet::VertexProgramOpenGLPlugin::vf18
+100227e0	Jet::VertexProgramOpenGLPlugin::vf28	Jet::VertexProgramOpenGLPlugin::vf28

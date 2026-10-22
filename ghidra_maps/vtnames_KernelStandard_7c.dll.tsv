@@ -1,0 +1,90 @@
+entry	new_name	all_vftable_slots
+10001400	std::bad_alloc::vf0	std::bad_alloc::vf0
+1004d688	std::bad_alloc::vf1	std::bad_alloc::vf1
+100033f0	std::logic_error::vf0	std::logic_error::vf0, std::length_error::vf0, std::out_of_range::vf0
+100033c0	std::logic_error::vf1	std::logic_error::vf1, std::length_error::vf1, std::out_of_range::vf1
+100034c0	Jet::IOSlave::vf0	Jet::IOSlave::vf0
+1004d750	Jet::IOSlave::vf1	Jet::IOSlave::vf1, Jet::IOSlave::vf2, Jet::ConfigData::Writer::vf1, FlexLexer::vf1, FlexLexer::vf2, FlexLexer::vf3, FlexLexer::vf4, FlexLexer::vf5, FlexLexer::vf6, Jet::BinWriter::vf1, Jet::BinReader::vf1, Jet::StringTablesBase::vf9, Jet::StringTablesBase::vf12, Jet::StringTablesBase::vf16, Jet::StringTablesBase::vf17, Jet::StringTablesBase::vf18, Jet::StringTablesBase::vf19
+10003570	Jet::IOSlaveMemory::vf0	Jet::IOSlaveMemory::vf0
+100036e0	Jet::IOSlaveMemoryDynamic::vf0	Jet::IOSlaveMemoryDynamic::vf0
+10003780	Jet::IOSlaveFile::vf0	Jet::IOSlaveFile::vf0
+100038a0	Jet::IOSlaveWriteCursor::vf0	Jet::IOSlaveWriteCursor::vf0
+10008510	Jet::Exception::vf0	Jet::Exception::vf0, Jet::FileEx::vf0
+10011900	Jet::ConfigData::Writer::vf0	Jet::ConfigData::Writer::vf0, FileWriter::vf0, StringWriter::vf0
+1000e700	Jet::SyncObject::vf0	Jet::SyncObject::vf0, Jet::Mutex::vf0, Jet::Semaphore::vf0, Jet::WEvent::vf0
+100118d0	FileWriter::vf1	FileWriter::vf1
+10011930	StringWriter::vf1	StringWriter::vf1
+100143e0	Jet::HardwareException::vf0	Jet::HardwareException::vf0
+10015bd0	Jet::ConfigParser::vf0	Jet::ConfigParser::vf0
+10017510	FlexLexer::vf0	FlexLexer::vf0
+10019220	scfgFlexLexer::vf0	scfgFlexLexer::vf0
+10019710	scfgFlexLexer::vf1	scfgFlexLexer::vf1, Jet::ConfigParserCore::vf1
+10019770	scfgFlexLexer::vf2	scfgFlexLexer::vf2, Jet::ConfigParserCore::vf2
+100197e0	scfgFlexLexer::vf3	scfgFlexLexer::vf3, Jet::ConfigParserCore::vf3
+100196c0	scfgFlexLexer::vf4	scfgFlexLexer::vf4, Jet::ConfigParserCore::vf4
+100192b0	scfgFlexLexer::vf6	scfgFlexLexer::vf6, Jet::ConfigParserCore::vf6
+10019300	scfgFlexLexer::vf7	scfgFlexLexer::vf7, Jet::ConfigParserCore::vf7
+10019360	scfgFlexLexer::vf8	scfgFlexLexer::vf8, Jet::ConfigParserCore::vf8
+10019880	scfgFlexLexer::vf9	scfgFlexLexer::vf9, Jet::ConfigParserCore::vf9
+1001a5a0	Jet::ConfigParserCore::vf0	Jet::ConfigParserCore::vf0
+10017530	Jet::ConfigParserCore::vf5	Jet::ConfigParserCore::vf5
+1001bd30	Jet::DynamicLibrary::vf0	Jet::DynamicLibrary::vf0
+1001cca0	AssertEx::vf0	AssertEx::vf0
+1001cc90	AssertEx::vf1	AssertEx::vf1
+1001f330	Jet::BinWriter::vf0	Jet::BinWriter::vf0, FileStringWriter::vf0, Jet::DynamicBuffer::Writer::vf0
+1002e1b0	Jet::BinReader::vf0	Jet::BinReader::vf0, FileStringReader::vf0, Jet::DynamicBuffer::Reader::vf0
+1001f2f0	FileStringReader::vf1	FileStringReader::vf1
+1001f310	FileStringWriter::vf1	FileStringWriter::vf1
+10028da0	Jet::FileSub::vf0	Jet::FileSub::vf0, Jet::FileSubLink::vf0, Jet::FileSubPath::vf0
+100251a0	Jet::FileSub::vf8	Jet::FileSub::vf8, Jet::FileSubLink::vf8
+100252c0	Jet::FileSub::vf11	Jet::FileSub::vf11, Jet::FileSubArchive::vf11, Jet::FileSubLink::vf11, Jet::FileSubPath::vf11
+10025630	Jet::FileSubArchive::vf0	Jet::FileSubArchive::vf0
+10025890	Jet::FileSubArchive::vf2	Jet::FileSubArchive::vf2
+100258a0	Jet::FileSubArchive::vf3	Jet::FileSubArchive::vf3
+100258c0	Jet::FileSubArchive::vf4	Jet::FileSubArchive::vf4
+100268b0	Jet::FileSubArchive::vf5	Jet::FileSubArchive::vf5
+100258d0	Jet::FileSubArchive::vf6	Jet::FileSubArchive::vf6
+10025970	Jet::FileSubArchive::vf7	Jet::FileSubArchive::vf7
+100261b0	Jet::FileSubArchive::vf8	Jet::FileSubArchive::vf8
+10026780	Jet::FileSubArchive::vf9	Jet::FileSubArchive::vf9
+10026870	Jet::FileSubArchive::vf10	Jet::FileSubArchive::vf10
+100276c0	Jet::FileSubArchive::vf12	Jet::FileSubArchive::vf12
+10026a50	Jet::FileSubArchive::vf16	Jet::FileSubArchive::vf16
+10026890	Jet::FileSubArchive::vf18	Jet::FileSubArchive::vf18, Jet::FileSubPath::vf18
+10025240	Jet::FileSubArchive::vf19	Jet::FileSubArchive::vf19
+10025260	Jet::FileSubArchive::vf20	Jet::FileSubArchive::vf20
+100251f0	Jet::FileSubArchive::vf21	Jet::FileSubArchive::vf21
+10028dc0	Jet::FileSubLink::vf1	Jet::FileSubLink::vf1
+10028de0	Jet::FileSubLink::vf3	Jet::FileSubLink::vf3
+10028ec0	Jet::FileSubLink::vf5	Jet::FileSubLink::vf5
+10028df0	Jet::FileSubLink::vf6	Jet::FileSubLink::vf6
+10028e20	Jet::FileSubLink::vf7	Jet::FileSubLink::vf7
+10028e50	Jet::FileSubLink::vf9	Jet::FileSubLink::vf9
+10028e80	Jet::FileSubLink::vf10	Jet::FileSubLink::vf10
+10028ea0	Jet::FileSubLink::vf18	Jet::FileSubLink::vf18
+10028fd0	Jet::FileSubPath::vf2	Jet::FileSubPath::vf2
+10028fe0	Jet::FileSubPath::vf3	Jet::FileSubPath::vf3
+10028ff0	Jet::FileSubPath::vf4	Jet::FileSubPath::vf4
+100296c0	Jet::FileSubPath::vf5	Jet::FileSubPath::vf5
+10029000	Jet::FileSubPath::vf6	Jet::FileSubPath::vf6
+10029140	Jet::FileSubPath::vf7	Jet::FileSubPath::vf7
+100291b0	Jet::FileSubPath::vf8	Jet::FileSubPath::vf8
+100293a0	Jet::FileSubPath::vf9	Jet::FileSubPath::vf9
+10029440	Jet::FileSubPath::vf10	Jet::FileSubPath::vf10
+100294d0	Jet::FileSubPath::vf12	Jet::FileSubPath::vf12
+10029560	Jet::FileSubPath::vf13	Jet::FileSubPath::vf13
+10029630	Jet::FileSubPath::vf14	Jet::FileSubPath::vf14
+100296d0	Jet::FileSubPath::vf15	Jet::FileSubPath::vf15
+10029830	Jet::FileSubPath::vf16	Jet::FileSubPath::vf16
+100298d0	Jet::FileSubPath::vf17	Jet::FileSubPath::vf17
+10028ed0	Jet::FileSubPath::vf21	Jet::FileSubPath::vf21
+1002bd20	Jet::IOSlaveResource::vf0	Jet::IOSlaveResource::vf0
+1002d620	Jet::Job::vf0	Jet::Job::vf0
+1002e120	Jet::DynamicBuffer::Reader::vf1	Jet::DynamicBuffer::Reader::vf1
+1002e170	Jet::DynamicBuffer::Writer::vf1	Jet::DynamicBuffer::Writer::vf1
+1003d2e0	Jet::RBTreeNode::vf0	Jet::RBTreeNode::vf0
+1003d340	Jet::ReferenceCount::vf1	Jet::ReferenceCount::vf1
+1003d4f0	Jet::SharedScratchPad::vf1	Jet::SharedScratchPad::vf1
+1003e030	Jet::StringTablesBase::vf0	Jet::StringTablesBase::vf0
+1003fc90	Jet::Thread::vf0	Jet::Thread::vf0
+1003fc30	Jet::CriticalSection::vf0	Jet::CriticalSection::vf0

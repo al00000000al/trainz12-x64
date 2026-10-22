@@ -1,0 +1,331 @@
+entry	new_name	all_vftable_slots
+10004f70	CEnumPins::vf0	CEnumPins::vf0
+10004fd0	CEnumPins::vf1	CEnumPins::vf1
+10004ff0	CEnumPins::vf2	CEnumPins::vf2
+10008090	CEnumPins::vf3	CEnumPins::vf3
+100081a0	CEnumPins::vf4	CEnumPins::vf4
+10005020	CEnumPins::vf5	CEnumPins::vf5
+10008e40	CEnumPins::vf6	CEnumPins::vf6
+10009c30	CEnumPins::vf7	CEnumPins::vf7
+100050b0	CEnumMediaTypes::vf0	CEnumMediaTypes::vf0
+10005110	CEnumMediaTypes::vf1	CEnumMediaTypes::vf1
+10005130	CEnumMediaTypes::vf2	CEnumMediaTypes::vf2
+100081f0	CEnumMediaTypes::vf3	CEnumMediaTypes::vf3
+10008370	CEnumMediaTypes::vf4	CEnumMediaTypes::vf4
+10005160	CEnumMediaTypes::vf5	CEnumMediaTypes::vf5
+10008f50	CEnumMediaTypes::vf6	CEnumMediaTypes::vf6
+10009c50	CEnumMediaTypes::vf7	CEnumMediaTypes::vf7
+10005fe0	CMediaSample::vf0	CMediaSample::vf0
+10006040	CMediaSample::vf1	CMediaSample::vf1
+10006060	CMediaSample::vf2	CMediaSample::vf2
+100060e0	CMediaSample::vf3	CMediaSample::vf3
+10006100	CMediaSample::vf4	CMediaSample::vf4
+10006110	CMediaSample::vf5	CMediaSample::vf5
+10006180	CMediaSample::vf6	CMediaSample::vf6
+10006270	CMediaSample::vf7	CMediaSample::vf7
+10006290	CMediaSample::vf8	CMediaSample::vf8
+100062f0	CMediaSample::vf9	CMediaSample::vf9
+10006310	CMediaSample::vf10	CMediaSample::vf10
+10006330	CMediaSample::vf11	CMediaSample::vf11
+10006340	CMediaSample::vf12	CMediaSample::vf12
+10006360	CMediaSample::vf13	CMediaSample::vf13
+100063a0	CMediaSample::vf14	CMediaSample::vf14
+100062b0	CMediaSample::vf15	CMediaSample::vf15
+100062d0	CMediaSample::vf16	CMediaSample::vf16
+100061f0	CMediaSample::vf17	CMediaSample::vf17
+10006230	CMediaSample::vf18	CMediaSample::vf18
+100063f0	CMediaSample::vf19	CMediaSample::vf19
+100064b0	CMediaSample::vf20	CMediaSample::vf20
+10009c80	CMediaSample::vf21	CMediaSample::vf21
+10009c00	CDynamicOutputPin::vf0	CDynamicOutputPin::vf0
+10009be0	CDynamicOutputPin::vf1	CDynamicOutputPin::vf1
+10009c10	CDynamicOutputPin::vf2	CDynamicOutputPin::vf2
+10009840	CDynamicOutputPin::vf3	CDynamicOutputPin::vf3
+10009c20	CDynamicOutputPin::vf0	CDynamicOutputPin::vf0
+10009bf0	CDynamicOutputPin::vf1	CDynamicOutputPin::vf1
+10009bd0	CDynamicOutputPin::vf2	CDynamicOutputPin::vf2
+10005530	CDynamicOutputPin::vf3	CDynamicOutputPin::vf3, Jet::DSMovieOutputPin::vf3
+10005500	CDynamicOutputPin::vf4	CDynamicOutputPin::vf4, CRendererInputPin::vf4, Jet::DSMovieOutputPin::vf4, Jet::DSVideoInputPin::vf4
+10009b80	CDynamicOutputPin::vf0	CDynamicOutputPin::vf0, CMemAllocator::vf0, CDeferredCommand::vf0
+10011bb0	CDynamicOutputPin::vf1	CDynamicOutputPin::vf1, CMemAllocator::vf1, CDeferredCommand::vf1
+10009ba0	CDynamicOutputPin::vf2	CDynamicOutputPin::vf2, CMemAllocator::vf2, CDeferredCommand::vf2
+10009100	CDynamicOutputPin::vf3	CDynamicOutputPin::vf3, CRendererInputPin::vf3, Jet::DSMovieOutputPin::vf3, Jet::DSVideoInputPin::vf3
+100086c0	CDynamicOutputPin::vf4	CDynamicOutputPin::vf4, CRendererInputPin::vf4, Jet::DSMovieOutputPin::vf4, Jet::DSVideoInputPin::vf4
+10006720	CDynamicOutputPin::vf5	CDynamicOutputPin::vf5
+10005380	CDynamicOutputPin::vf6	CDynamicOutputPin::vf6, CRendererInputPin::vf6, Jet::DSMovieOutputPin::vf6, Jet::DSVideoInputPin::vf6
+100088f0	CDynamicOutputPin::vf7	CDynamicOutputPin::vf7, CRendererInputPin::vf7, Jet::DSMovieOutputPin::vf7, Jet::DSVideoInputPin::vf7
+100053c0	CDynamicOutputPin::vf8	CDynamicOutputPin::vf8, CRendererInputPin::vf8, Jet::DSMovieOutputPin::vf8, Jet::DSVideoInputPin::vf8
+10005440	CDynamicOutputPin::vf9	CDynamicOutputPin::vf9, CRendererInputPin::vf9, Jet::DSMovieOutputPin::vf9, Jet::DSVideoInputPin::vf9
+100089b0	CDynamicOutputPin::vf10	CDynamicOutputPin::vf10, Jet::DSMovieOutputPin::vf10
+10005460	CDynamicOutputPin::vf11	CDynamicOutputPin::vf11, CRendererInputPin::vf11, Jet::DSMovieOutputPin::vf11, Jet::DSVideoInputPin::vf11
+10009220	CDynamicOutputPin::vf12	CDynamicOutputPin::vf12, CRendererInputPin::vf12, Jet::DSMovieOutputPin::vf12, Jet::DSVideoInputPin::vf12
+10003c20	CDynamicOutputPin::vf13	CDynamicOutputPin::vf13, CRendererInputPin::vf13, Jet::DSMovieOutputPin::vf13, Jet::DSVideoInputPin::vf13
+10005840	CDynamicOutputPin::vf14	CDynamicOutputPin::vf14
+10005850	CDynamicOutputPin::vf15	CDynamicOutputPin::vf15
+10005860	CDynamicOutputPin::vf16	CDynamicOutputPin::vf16
+10005540	CDynamicOutputPin::vf17	CDynamicOutputPin::vf17, CRendererInputPin::vf17, Jet::DSMovieOutputPin::vf17, Jet::DSVideoInputPin::vf17
+100066c0	CDynamicOutputPin::vf0	CDynamicOutputPin::vf0
+10005290	CDynamicOutputPin::vf1	CDynamicOutputPin::vf1, CRendererInputPin::vf1, Jet::DSMovieOutputPin::vf1, Jet::DSVideoInputPin::vf1
+100052b0	CDynamicOutputPin::vf2	CDynamicOutputPin::vf2, CRendererInputPin::vf2, Jet::DSMovieOutputPin::vf2, Jet::DSVideoInputPin::vf2
+10009cb0	CDynamicOutputPin::vf3	CDynamicOutputPin::vf3
+100054a0	CDynamicOutputPin::vf4	CDynamicOutputPin::vf4, CRendererInputPin::vf4, Jet::DSMovieOutputPin::vf4, Jet::DSVideoInputPin::vf4
+10006a30	CDynamicOutputPin::vf5	CDynamicOutputPin::vf5
+10006a80	CDynamicOutputPin::vf6	CDynamicOutputPin::vf6
+100054d0	CDynamicOutputPin::vf7	CDynamicOutputPin::vf7, CRendererInputPin::vf7, Jet::DSMovieOutputPin::vf7, Jet::DSVideoInputPin::vf7
+100028c0	CDynamicOutputPin::vf8	CDynamicOutputPin::vf8, CDynamicOutputPin::vf15, CBaseRenderer::vf8, CBaseRenderer::vf43, CBaseRenderer::vf44, CBaseVideoRenderer::vf8, CBaseVideoRenderer::vf43, CBaseVideoRenderer::vf44, Jet::DSMovieReader::vf8, Jet::DSVideoRenderer::vf8
+100052e0	CDynamicOutputPin::vf9	CDynamicOutputPin::vf9, Jet::DSMovieOutputPin::vf9
+100055a0	CDynamicOutputPin::vf10	CDynamicOutputPin::vf10
+100055f0	CDynamicOutputPin::vf11	CDynamicOutputPin::vf11
+10006c40	CDynamicOutputPin::vf12	CDynamicOutputPin::vf12
+10005490	CDynamicOutputPin::vf13	CDynamicOutputPin::vf13, CRendererInputPin::vf13
+10005670	CDynamicOutputPin::vf14	CDynamicOutputPin::vf14
+10005770	CDynamicOutputPin::vf16	CDynamicOutputPin::vf16
+100057b0	CDynamicOutputPin::vf17	CDynamicOutputPin::vf17
+10005650	CDynamicOutputPin::vf18	CDynamicOutputPin::vf18
+100057e0	CDynamicOutputPin::vf19	CDynamicOutputPin::vf19
+10006ab0	CDynamicOutputPin::vf20	CDynamicOutputPin::vf20
+10006ae0	CDynamicOutputPin::vf21	CDynamicOutputPin::vf21
+100058b0	CDynamicOutputPin::vf22	CDynamicOutputPin::vf22
+10006870	CDynamicOutputPin::vf23	CDynamicOutputPin::vf23
+100069a0	CDynamicOutputPin::vf24	CDynamicOutputPin::vf24
+100069e0	CDynamicOutputPin::vf25	CDynamicOutputPin::vf25
+10007260	CMemAllocator::vf3	CMemAllocator::vf3
+10006e70	CMemAllocator::vf4	CMemAllocator::vf4
+10007060	CMemAllocator::vf5	CMemAllocator::vf5
+10007120	CMemAllocator::vf6	CMemAllocator::vf6
+10006ed0	CMemAllocator::vf7	CMemAllocator::vf7
+10008c20	CMemAllocator::vf8	CMemAllocator::vf8
+10006f70	CMemAllocator::vf9	CMemAllocator::vf9
+10007000	CMemAllocator::vf10	CMemAllocator::vf10
+10006d30	CMemAllocator::vf0	CMemAllocator::vf0
+1000a7b0	CMemAllocator::vf1	CMemAllocator::vf1, CBaseRenderer::vf1, CBaseVideoRenderer::vf1, CPosPassThru::vf1, CRendererPosPassThru::vf1, CDeferredCommand::vf1, Jet::DSMovieReader::vf1, Jet::DSVideoRenderer::vf1
+1000a7d0	CMemAllocator::vf2	CMemAllocator::vf2, CBaseRenderer::vf2, CBaseVideoRenderer::vf2, CPosPassThru::vf2, CRendererPosPassThru::vf2, CDeferredCommand::vf2, Jet::DSMovieReader::vf2, Jet::DSVideoRenderer::vf2
+10009cd0	CMemAllocator::vf3	CMemAllocator::vf3
+10007380	CMemAllocator::vf4	CMemAllocator::vf4
+100099d0	CMemAllocator::vf5	CMemAllocator::vf5
+10004a40	CRendererInputPin::vf0	CRendererInputPin::vf0, Jet::DSVideoInputPin::vf0
+10004aa0	CRendererInputPin::vf1	CRendererInputPin::vf1, Jet::DSVideoInputPin::vf1
+10004a70	CRendererInputPin::vf2	CRendererInputPin::vf2, Jet::DSVideoInputPin::vf2
+100059c0	CRendererInputPin::vf3	CRendererInputPin::vf3, Jet::DSVideoInputPin::vf3
+10005a70	CRendererInputPin::vf4	CRendererInputPin::vf4, Jet::DSVideoInputPin::vf4
+10005ea0	CRendererInputPin::vf5	CRendererInputPin::vf5, Jet::DSVideoInputPin::vf5
+1000ce30	CRendererInputPin::vf6	CRendererInputPin::vf6, Jet::DSVideoInputPin::vf6
+10005cc0	CRendererInputPin::vf7	CRendererInputPin::vf7, Jet::DSVideoInputPin::vf7
+10005d20	CRendererInputPin::vf8	CRendererInputPin::vf8, Jet::DSVideoInputPin::vf8
+10004a50	CRendererInputPin::vf0	CRendererInputPin::vf0, CBaseRenderer::vf0, CBaseVideoRenderer::vf0, Jet::DSMovieReader::vf0, Jet::DSVideoRenderer::vf0, Jet::DSVideoInputPin::vf0
+10002720	CRendererInputPin::vf1	CRendererInputPin::vf1, CBaseRenderer::vf1, CBaseVideoRenderer::vf1, Jet::DSMovieReader::vf1, Jet::DSVideoRenderer::vf1, Jet::DSVideoInputPin::vf1
+10004a10	CRendererInputPin::vf2	CRendererInputPin::vf2, CBaseRenderer::vf2, CBaseVideoRenderer::vf2, Jet::DSMovieReader::vf2, Jet::DSVideoRenderer::vf2, Jet::DSVideoInputPin::vf2
+10005e50	CRendererInputPin::vf3	CRendererInputPin::vf3, Jet::DSVideoInputPin::vf3
+10004ab0	CRendererInputPin::vf0	CRendererInputPin::vf0, CBaseRenderer::vf0, CBaseVideoRenderer::vf0, Jet::DSMovieReader::vf0, Jet::DSVideoRenderer::vf0, Jet::DSVideoInputPin::vf0
+10004ad0	CRendererInputPin::vf1	CRendererInputPin::vf1, CBaseRenderer::vf1, CBaseVideoRenderer::vf1, Jet::DSMovieReader::vf1, Jet::DSVideoRenderer::vf1, Jet::DSVideoInputPin::vf1
+10002760	CRendererInputPin::vf2	CRendererInputPin::vf2, CBaseRenderer::vf2, CBaseVideoRenderer::vf2, Jet::DSMovieReader::vf2, Jet::DSVideoRenderer::vf2, Jet::DSVideoInputPin::vf2
+10008830	CRendererInputPin::vf5	CRendererInputPin::vf5, Jet::DSMovieOutputPin::vf5, Jet::DSVideoInputPin::vf5
+1000d140	CRendererInputPin::vf10	CRendererInputPin::vf10, Jet::DSVideoInputPin::vf10
+1000af80	CRendererInputPin::vf14	CRendererInputPin::vf14, Jet::DSVideoInputPin::vf14
+1000b030	CRendererInputPin::vf15	CRendererInputPin::vf15, Jet::DSVideoInputPin::vf15
+1000b0e0	CRendererInputPin::vf16	CRendererInputPin::vf16, Jet::DSVideoInputPin::vf16
+10005960	CRendererInputPin::vf0	CRendererInputPin::vf0, Jet::DSVideoInputPin::vf0
+1000d270	CRendererInputPin::vf3	CRendererInputPin::vf3
+1000b200	CRendererInputPin::vf5	CRendererInputPin::vf5, Jet::DSVideoInputPin::vf5
+1000b210	CRendererInputPin::vf6	CRendererInputPin::vf6, Jet::DSVideoInputPin::vf6
+1000b1f0	CRendererInputPin::vf8	CRendererInputPin::vf8, Jet::DSVideoInputPin::vf8
+1000b230	CRendererInputPin::vf9	CRendererInputPin::vf9, Jet::DSVideoInputPin::vf9
+10005300	CRendererInputPin::vf10	CRendererInputPin::vf10, Jet::DSVideoInputPin::vf10
+1000b190	CRendererInputPin::vf11	CRendererInputPin::vf11, Jet::DSVideoInputPin::vf11
+1000b1c0	CRendererInputPin::vf12	CRendererInputPin::vf12, Jet::DSVideoInputPin::vf12
+10005eb0	CRendererInputPin::vf14	CRendererInputPin::vf14, Jet::DSVideoInputPin::vf14
+10007fa0	CBaseRenderer::vf3	CBaseRenderer::vf3, CBaseVideoRenderer::vf3, Jet::DSMovieReader::vf3, Jet::DSVideoRenderer::vf3
+10008010	CBaseRenderer::vf4	CBaseRenderer::vf4, CBaseVideoRenderer::vf4, Jet::DSMovieReader::vf4, Jet::DSVideoRenderer::vf4
+10004c40	CBaseRenderer::vf3	CBaseRenderer::vf3, CBaseVideoRenderer::vf3, Jet::DSMovieReader::vf3, Jet::DSVideoRenderer::vf3
+1000c2b0	CBaseRenderer::vf4	CBaseRenderer::vf4, CBaseVideoRenderer::vf4, Jet::DSVideoRenderer::vf4
+1000c3b0	CBaseRenderer::vf5	CBaseRenderer::vf5, CBaseVideoRenderer::vf5, Jet::DSVideoRenderer::vf5
+1000c510	CBaseRenderer::vf6	CBaseRenderer::vf6, CBaseVideoRenderer::vf6, Jet::DSVideoRenderer::vf6
+1000c1f0	CBaseRenderer::vf7	CBaseRenderer::vf7, CBaseVideoRenderer::vf7, Jet::DSVideoRenderer::vf7
+10007b30	CBaseRenderer::vf8	CBaseRenderer::vf8, CBaseVideoRenderer::vf8, Jet::DSMovieReader::vf8, Jet::DSVideoRenderer::vf8
+10007bb0	CBaseRenderer::vf9	CBaseRenderer::vf9, CBaseVideoRenderer::vf9, Jet::DSMovieReader::vf9, Jet::DSVideoRenderer::vf9
+10009760	CBaseRenderer::vf10	CBaseRenderer::vf10, CBaseVideoRenderer::vf10, Jet::DSMovieReader::vf10, Jet::DSVideoRenderer::vf10
+1000a8a0	CBaseRenderer::vf11	CBaseRenderer::vf11, CBaseVideoRenderer::vf11, Jet::DSVideoRenderer::vf11
+10004cd0	CBaseRenderer::vf12	CBaseRenderer::vf12, CBaseVideoRenderer::vf12, Jet::DSMovieReader::vf12, Jet::DSVideoRenderer::vf12
+10004d30	CBaseRenderer::vf13	CBaseRenderer::vf13, Jet::DSMovieReader::vf13
+10004e20	CBaseRenderer::vf14	CBaseRenderer::vf14, CBaseVideoRenderer::vf14, Jet::DSMovieReader::vf14, Jet::DSVideoRenderer::vf14
+1000c0f0	CBaseRenderer::vf0	CBaseRenderer::vf0
+1000d290	CBaseRenderer::vf3	CBaseRenderer::vf3
+10004c90	CBaseRenderer::vf4	CBaseRenderer::vf4, CBaseVideoRenderer::vf4, Jet::DSMovieReader::vf4, Jet::DSVideoRenderer::vf4
+10004ee0	CBaseRenderer::vf5	CBaseRenderer::vf5, CBaseVideoRenderer::vf5, Jet::DSMovieReader::vf5, Jet::DSVideoRenderer::vf5
+1000a890	CBaseRenderer::vf6	CBaseRenderer::vf6, CBaseVideoRenderer::vf6, Jet::DSVideoRenderer::vf6
+1000c640	CBaseRenderer::vf7	CBaseRenderer::vf7, CBaseVideoRenderer::vf7
+1000bfd0	CBaseRenderer::vf9	CBaseRenderer::vf9, CBaseVideoRenderer::vf9, Jet::DSVideoRenderer::vf9
+1000c150	CBaseRenderer::vf10	CBaseRenderer::vf10, CBaseVideoRenderer::vf10, Jet::DSVideoRenderer::vf10
+1000c180	CBaseRenderer::vf11	CBaseRenderer::vf11, CBaseVideoRenderer::vf11, Jet::DSVideoRenderer::vf11
+1000c240	CBaseRenderer::vf12	CBaseRenderer::vf12, CBaseVideoRenderer::vf12, Jet::DSVideoRenderer::vf12
+10004b00	CBaseRenderer::vf13	CBaseRenderer::vf13, CBaseVideoRenderer::vf13, Jet::DSVideoRenderer::vf13
+1000af10	CBaseRenderer::vf14	CBaseRenderer::vf14
+1000af20	CBaseRenderer::vf15	CBaseRenderer::vf15
+1000d250	CBaseRenderer::vf16	CBaseRenderer::vf16, CBaseRenderer::vf17
+1000d260	CBaseRenderer::vf18	CBaseRenderer::vf18, CBaseRenderer::vf19
+10004af0	CBaseRenderer::vf20	CBaseRenderer::vf20, CBaseVideoRenderer::vf20, Jet::DSVideoRenderer::vf20
+1000aa30	CBaseRenderer::vf21	CBaseRenderer::vf21
+1000a970	CBaseRenderer::vf22	CBaseRenderer::vf22, CBaseVideoRenderer::vf22, Jet::DSVideoRenderer::vf22
+1000a9d0	CBaseRenderer::vf23	CBaseRenderer::vf23
+1000cbe0	CBaseRenderer::vf24	CBaseRenderer::vf24, CBaseVideoRenderer::vf24
+1000cc70	CBaseRenderer::vf25	CBaseRenderer::vf25, CBaseVideoRenderer::vf25, Jet::DSVideoRenderer::vf25
+1000c720	CBaseRenderer::vf26	CBaseRenderer::vf26, CBaseVideoRenderer::vf26, Jet::DSVideoRenderer::vf26
+1000a9f0	CBaseRenderer::vf27	CBaseRenderer::vf27, CBaseVideoRenderer::vf27, Jet::DSVideoRenderer::vf27
+1000aba0	CBaseRenderer::vf28	CBaseRenderer::vf28, CBaseVideoRenderer::vf28, Jet::DSVideoRenderer::vf28
+1000a930	CBaseRenderer::vf29	CBaseRenderer::vf29, CBaseVideoRenderer::vf29, Jet::DSVideoRenderer::vf29
+1000a940	CBaseRenderer::vf30	CBaseRenderer::vf30, CBaseVideoRenderer::vf30, Jet::DSVideoRenderer::vf30
+1000ad50	CBaseRenderer::vf31	CBaseRenderer::vf31, CBaseVideoRenderer::vf31, Jet::DSVideoRenderer::vf31
+1000ae10	CBaseRenderer::vf32	CBaseRenderer::vf32, CBaseVideoRenderer::vf32, Jet::DSVideoRenderer::vf32
+1000c760	CBaseRenderer::vf33	CBaseRenderer::vf33, CBaseVideoRenderer::vf33, Jet::DSVideoRenderer::vf33
+1000a910	CBaseRenderer::vf34	CBaseRenderer::vf34, CBaseVideoRenderer::vf34, Jet::DSVideoRenderer::vf34
+1000c810	CBaseRenderer::vf35	CBaseRenderer::vf35, CBaseVideoRenderer::vf35, Jet::DSVideoRenderer::vf35
+1000a960	CBaseRenderer::vf36	CBaseRenderer::vf36, CBaseVideoRenderer::vf36
+1000c7a0	CBaseRenderer::vf37	CBaseRenderer::vf37, CBaseVideoRenderer::vf37, Jet::DSVideoRenderer::vf37
+1000c8b0	CBaseRenderer::vf38	CBaseRenderer::vf38, CBaseVideoRenderer::vf38, Jet::DSVideoRenderer::vf38
+1000ca50	CBaseRenderer::vf39	CBaseRenderer::vf39, CBaseVideoRenderer::vf39, Jet::DSVideoRenderer::vf39
+1000ab00	CBaseRenderer::vf40	CBaseRenderer::vf40, CBaseVideoRenderer::vf40, Jet::DSVideoRenderer::vf40
+1000ab30	CBaseRenderer::vf41	CBaseRenderer::vf41, CBaseVideoRenderer::vf41, Jet::DSVideoRenderer::vf41
+1000aab0	CBaseRenderer::vf42	CBaseRenderer::vf42, CBaseVideoRenderer::vf42, Jet::DSVideoRenderer::vf42
+10004a20	CBaseVideoRenderer::vf0	CBaseVideoRenderer::vf0, Jet::DSVideoRenderer::vf0
+10004a90	CBaseVideoRenderer::vf1	CBaseVideoRenderer::vf1, Jet::DSVideoRenderer::vf1
+10004a60	CBaseVideoRenderer::vf2	CBaseVideoRenderer::vf2, Jet::DSVideoRenderer::vf2
+1000b5c0	CBaseVideoRenderer::vf3	CBaseVideoRenderer::vf3, Jet::DSVideoRenderer::vf3
+1000b5b0	CBaseVideoRenderer::vf4	CBaseVideoRenderer::vf4, Jet::DSVideoRenderer::vf4
+10004a00	CBaseVideoRenderer::vf0	CBaseVideoRenderer::vf0, Jet::DSVideoRenderer::vf0
+10004a80	CBaseVideoRenderer::vf1	CBaseVideoRenderer::vf1, Jet::DSVideoRenderer::vf1
+10004a30	CBaseVideoRenderer::vf2	CBaseVideoRenderer::vf2, Jet::DSVideoRenderer::vf2
+1000ba80	CBaseVideoRenderer::vf3	CBaseVideoRenderer::vf3, Jet::DSVideoRenderer::vf3
+1000bac0	CBaseVideoRenderer::vf4	CBaseVideoRenderer::vf4, Jet::DSVideoRenderer::vf4
+1000bb00	CBaseVideoRenderer::vf5	CBaseVideoRenderer::vf5, Jet::DSVideoRenderer::vf5
+1000bd40	CBaseVideoRenderer::vf6	CBaseVideoRenderer::vf6, Jet::DSVideoRenderer::vf6
+1000bb70	CBaseVideoRenderer::vf7	CBaseVideoRenderer::vf7, Jet::DSVideoRenderer::vf7
+1000bd10	CBaseVideoRenderer::vf8	CBaseVideoRenderer::vf8, Jet::DSVideoRenderer::vf8
+1000bd70	CBaseVideoRenderer::vf13	CBaseVideoRenderer::vf13
+1000d0a0	CBaseVideoRenderer::vf0	CBaseVideoRenderer::vf0, Jet::DSVideoRenderer::vf0
+1000d2b0	CBaseVideoRenderer::vf3	CBaseVideoRenderer::vf3
+1000b500	CBaseVideoRenderer::vf14	CBaseVideoRenderer::vf14, Jet::DSVideoRenderer::vf14
+1000b530	CBaseVideoRenderer::vf15	CBaseVideoRenderer::vf15, Jet::DSVideoRenderer::vf15
+1000b320	CBaseVideoRenderer::vf16	CBaseVideoRenderer::vf16, Jet::DSVideoRenderer::vf16
+1000b330	CBaseVideoRenderer::vf17	CBaseVideoRenderer::vf17, Jet::DSVideoRenderer::vf17
+1000b350	CBaseVideoRenderer::vf18	CBaseVideoRenderer::vf18, Jet::DSVideoRenderer::vf18
+1000b360	CBaseVideoRenderer::vf19	CBaseVideoRenderer::vf19, Jet::DSVideoRenderer::vf19
+1000ba50	CBaseVideoRenderer::vf21	CBaseVideoRenderer::vf21, Jet::DSVideoRenderer::vf21
+1000b600	CBaseVideoRenderer::vf23	CBaseVideoRenderer::vf23
+1000b390	CBaseVideoRenderer::vf45	CBaseVideoRenderer::vf45, Jet::DSVideoRenderer::vf45
+1000b490	CBaseVideoRenderer::vf46	CBaseVideoRenderer::vf46, Jet::DSVideoRenderer::vf46
+1000b260	CBaseVideoRenderer::vf47	CBaseVideoRenderer::vf47, Jet::DSVideoRenderer::vf47
+1000cf40	CBaseVideoRenderer::vf48	CBaseVideoRenderer::vf48, Jet::DSVideoRenderer::vf48
+1000ef80	CPosPassThru::vf0	CPosPassThru::vf0, CRendererPosPassThru::vf0
+10011b00	CPosPassThru::vf3	CPosPassThru::vf3
+10011b10	CPosPassThru::vf0	CPosPassThru::vf0, CRendererPosPassThru::vf0
+10011af0	CPosPassThru::vf1	CPosPassThru::vf1, CRendererPosPassThru::vf1
+10011b20	CPosPassThru::vf2	CPosPassThru::vf2, CRendererPosPassThru::vf2
+1000ee90	CPosPassThru::vf3	CPosPassThru::vf3, CRendererPosPassThru::vf3
+1000eeb0	CPosPassThru::vf4	CPosPassThru::vf4, CRendererPosPassThru::vf4
+1000eee0	CPosPassThru::vf5	CPosPassThru::vf5, CRendererPosPassThru::vf5
+1000ef00	CPosPassThru::vf6	CPosPassThru::vf6, CRendererPosPassThru::vf6
+1000f450	CPosPassThru::vf7	CPosPassThru::vf7, CRendererPosPassThru::vf7
+1000f4d0	CPosPassThru::vf8	CPosPassThru::vf8, CRendererPosPassThru::vf8
+1000f490	CPosPassThru::vf9	CPosPassThru::vf9, CRendererPosPassThru::vf9
+1000f510	CPosPassThru::vf10	CPosPassThru::vf10, CRendererPosPassThru::vf10
+1000f550	CPosPassThru::vf11	CPosPassThru::vf11, CRendererPosPassThru::vf11
+1000f590	CPosPassThru::vf12	CPosPassThru::vf12, CRendererPosPassThru::vf12
+1000f5d0	CPosPassThru::vf13	CPosPassThru::vf13, CRendererPosPassThru::vf13
+1000f650	CPosPassThru::vf14	CPosPassThru::vf14, CRendererPosPassThru::vf14
+1000f610	CPosPassThru::vf15	CPosPassThru::vf15, CRendererPosPassThru::vf15
+1000f6b0	CPosPassThru::vf16	CPosPassThru::vf16, CRendererPosPassThru::vf16
+1000f6f0	CPosPassThru::vf17	CPosPassThru::vf17, CRendererPosPassThru::vf17
+10011a80	CPosPassThru::vf0	CPosPassThru::vf0, CRendererPosPassThru::vf0
+10011aa0	CPosPassThru::vf1	CPosPassThru::vf1, CRendererPosPassThru::vf1
+10011ac0	CPosPassThru::vf2	CPosPassThru::vf2, CRendererPosPassThru::vf2
+1000f0a0	CPosPassThru::vf3	CPosPassThru::vf3, CRendererPosPassThru::vf3
+1000f0e0	CPosPassThru::vf4	CPosPassThru::vf4, CRendererPosPassThru::vf4
+1000f120	CPosPassThru::vf5	CPosPassThru::vf5, CRendererPosPassThru::vf5
+1000f160	CPosPassThru::vf6	CPosPassThru::vf6, CRendererPosPassThru::vf6
+1000f1e0	CPosPassThru::vf7	CPosPassThru::vf7, CRendererPosPassThru::vf7
+1000f220	CPosPassThru::vf8	CPosPassThru::vf8, CRendererPosPassThru::vf8
+1000f1a0	CPosPassThru::vf9	CPosPassThru::vf9, CRendererPosPassThru::vf9
+10010ae0	CPosPassThru::vf10	CPosPassThru::vf10, CRendererPosPassThru::vf10
+10010aa0	CPosPassThru::vf11	CPosPassThru::vf11, CRendererPosPassThru::vf11
+10010a50	CPosPassThru::vf12	CPosPassThru::vf12, CRendererPosPassThru::vf12
+1000f260	CPosPassThru::vf13	CPosPassThru::vf13, CRendererPosPassThru::vf13
+1000f2b0	CPosPassThru::vf14	CPosPassThru::vf14, CRendererPosPassThru::vf14
+1000f300	CPosPassThru::vf15	CPosPassThru::vf15, CRendererPosPassThru::vf15
+1000f370	CPosPassThru::vf16	CPosPassThru::vf16, CRendererPosPassThru::vf16
+1000f3f0	CPosPassThru::vf17	CPosPassThru::vf17, CRendererPosPassThru::vf17
+1000f3b0	CPosPassThru::vf18	CPosPassThru::vf18, CRendererPosPassThru::vf18
+10010b20	CPosPassThru::vf19	CPosPassThru::vf19, CRendererPosPassThru::vf19
+10011ae0	CPosPassThru::vf20	CPosPassThru::vf20
+10011b60	CRendererPosPassThru::vf3	CRendererPosPassThru::vf3
+1000f830	CRendererPosPassThru::vf20	CRendererPosPassThru::vf20
+10010700	CDeferredCommand::vf3	CDeferredCommand::vf3
+10010740	CDeferredCommand::vf4	CDeferredCommand::vf4
+10010780	CDeferredCommand::vf5	CDeferredCommand::vf5
+10010750	CDeferredCommand::vf6	CDeferredCommand::vf6
+100106a0	CDeferredCommand::vf0	CDeferredCommand::vf0
+10011c50	CDeferredCommand::vf3	CDeferredCommand::vf3
+10004b2e	Jet::ReferenceCount::vf0	Jet::ReferenceCount::vf0, Jet::MovieJetFileReader::vf0
+10001000	Jet::ReferenceCount::vf1	Jet::ReferenceCount::vf1
+10001d90	Jet::MovieJetFileReader::vf1	Jet::MovieJetFileReader::vf1
+10004b22	Jet::MovieJetFileReader::vf2	Jet::MovieJetFileReader::vf2
+10004b16	Jet::MovieJetFileReader::vf3	Jet::MovieJetFileReader::vf3
+10004b1c	Jet::MovieJetFileReader::vf4	Jet::MovieJetFileReader::vf4
+10004b04	Jet::MovieJetFileReader::vf5	Jet::MovieJetFileReader::vf5
+10004b10	Jet::MovieJetFileReader::vf6	Jet::MovieJetFileReader::vf6
+10004b0a	Jet::MovieJetFileReader::vf7	Jet::MovieJetFileReader::vf7
+100079d0	Jet::DSMovieReader::vf0	Jet::DSMovieReader::vf0
+10001190	Jet::DSMovieReader::vf3	Jet::DSMovieReader::vf3
+10001250	Jet::DSMovieReader::vf6	Jet::DSMovieReader::vf6
+10001260	Jet::DSMovieReader::vf7	Jet::DSMovieReader::vf7
+10007c50	Jet::DSMovieReader::vf4	Jet::DSMovieReader::vf4
+10007d00	Jet::DSMovieReader::vf5	Jet::DSMovieReader::vf5
+10007dc0	Jet::DSMovieReader::vf6	Jet::DSMovieReader::vf6
+10004c70	Jet::DSMovieReader::vf7	Jet::DSMovieReader::vf7
+10007ec0	Jet::DSMovieReader::vf11	Jet::DSMovieReader::vf11
+10001dc0	Jet::DSMoviePlayer::vf0	Jet::DSMoviePlayer::vf0
+100019a0	Jet::DSMoviePlayer::vf1	Jet::DSMoviePlayer::vf1
+10002740	Jet::DSMoviePlayer::vf0	Jet::DSMoviePlayer::vf0
+10002730	Jet::DSMoviePlayer::vf1	Jet::DSMoviePlayer::vf1
+10004b34	Jet::PluginFactoryOf<Jet::DSMoviePlayer,Jet::MoviePlayer>::vf0	Jet::PluginFactoryOf<Jet::DSMoviePlayer,Jet::MoviePlayer>::vf0
+10004b3a	Jet::PluginFactoryOf<Jet::DSMoviePlayer,Jet::MoviePlayer>::vf1	Jet::PluginFactoryOf<Jet::DSMoviePlayer,Jet::MoviePlayer>::vf1
+100029e0	Jet::PluginFactoryOf<Jet::DSMoviePlayer,Jet::MoviePlayer>::vf2	Jet::PluginFactoryOf<Jet::DSMoviePlayer,Jet::MoviePlayer>::vf2
+10002960	Jet::PluginFactoryOf<Jet::DSMoviePlayer,Jet::MoviePlayer>::vf3	Jet::PluginFactoryOf<Jet::DSMoviePlayer,Jet::MoviePlayer>::vf3
+10002a10	Jet::DSMovieOutputPin::vf0	Jet::DSMovieOutputPin::vf0
+10002a30	Jet::DSMovieOutputPin::vf1	Jet::DSMovieOutputPin::vf1
+10002a50	Jet::DSMovieOutputPin::vf2	Jet::DSMovieOutputPin::vf2
+10002f30	Jet::DSMovieOutputPin::vf3	Jet::DSMovieOutputPin::vf3
+10003040	Jet::DSMovieOutputPin::vf4	Jet::DSMovieOutputPin::vf4
+10003400	Jet::DSMovieOutputPin::vf5	Jet::DSMovieOutputPin::vf5
+10003190	Jet::DSMovieOutputPin::vf6	Jet::DSMovieOutputPin::vf6
+10003550	Jet::DSMovieOutputPin::vf7	Jet::DSMovieOutputPin::vf7
+10003010	Jet::DSMovieOutputPin::vf8	Jet::DSMovieOutputPin::vf8
+10003960	Jet::DSMovieOutputPin::vf9	Jet::DSMovieOutputPin::vf9
+10003a80	Jet::DSMovieOutputPin::vf10	Jet::DSMovieOutputPin::vf10
+10002d40	Jet::DSMovieOutputPin::vf0	Jet::DSMovieOutputPin::vf0
+10003c00	Jet::DSMovieOutputPin::vf3	Jet::DSMovieOutputPin::vf3
+100054c0	Jet::DSMovieOutputPin::vf5	Jet::DSMovieOutputPin::vf5
+100054e0	Jet::DSMovieOutputPin::vf6	Jet::DSMovieOutputPin::vf6
+10002dd0	Jet::DSMovieOutputPin::vf8	Jet::DSMovieOutputPin::vf8
+10002a70	Jet::DSMovieOutputPin::vf10	Jet::DSMovieOutputPin::vf10
+10002a80	Jet::DSMovieOutputPin::vf11	Jet::DSMovieOutputPin::vf11
+10002d20	Jet::DSMovieOutputPin::vf12	Jet::DSMovieOutputPin::vf12
+10002d90	Jet::DSMovieOutputPin::vf13	Jet::DSMovieOutputPin::vf13
+10003bd0	Jet::DSMovieOutputPin::vf0	Jet::DSMovieOutputPin::vf0
+10003ba0	Jet::DSMovieOutputPin::vf1	Jet::DSMovieOutputPin::vf1
+10003c10	Jet::DSMovieOutputPin::vf2	Jet::DSMovieOutputPin::vf2
+100054f0	Jet::DSMovieOutputPin::vf14	Jet::DSMovieOutputPin::vf14
+10003bf0	Jet::DSMovieOutputPin::vf15	Jet::DSMovieOutputPin::vf15
+10003bc0	Jet::DSMovieOutputPin::vf16	Jet::DSMovieOutputPin::vf16
+10003be0	Jet::DSMovieOutputPin::vf0	Jet::DSMovieOutputPin::vf0
+10003bb0	Jet::DSMovieOutputPin::vf1	Jet::DSMovieOutputPin::vf1
+10003b90	Jet::DSMovieOutputPin::vf2	Jet::DSMovieOutputPin::vf2
+10003e10	Jet::DSVideoRenderer::vf3	Jet::DSVideoRenderer::vf3
+10004940	Jet::DSVideoRenderer::vf7	Jet::DSVideoRenderer::vf7
+10004230	Jet::DSVideoRenderer::vf23	Jet::DSVideoRenderer::vf23
+10004900	Jet::DSVideoRenderer::vf24	Jet::DSVideoRenderer::vf24
+10004150	Jet::DSVideoRenderer::vf36	Jet::DSVideoRenderer::vf36
+10004380	Jet::DSVideoRenderer::vf43	Jet::DSVideoRenderer::vf43
+100040a0	Jet::DSVideoRenderer::vf44	Jet::DSVideoRenderer::vf44
+10004210	Jet::DSVideoRenderer::vf13	Jet::DSVideoRenderer::vf13
+10003c90	Jet::DSVideoInputPin::vf3	Jet::DSVideoInputPin::vf3
+10003cc0	Jet::DSVideoInputPin::vf13	Jet::DSVideoInputPin::vf13

@@ -1,0 +1,277 @@
+entry	new_name	all_vftable_slots
+100041e0	Jet::UI::Auxiliary::vf42	Jet::UI::Auxiliary::vf42
+10004350	Jet::UI::Auxiliary::vf49	Jet::UI::Auxiliary::vf49
+10004300	Jet::UI::Auxiliary::vf50	Jet::UI::Auxiliary::vf50
+100042b0	Jet::UI::Auxiliary::vf58	Jet::UI::Auxiliary::vf58
+10004390	Jet::UI::Auxiliary::vf68	Jet::UI::Auxiliary::vf68
+100045d0	Jet::UI::Auxiliary::vf0	Jet::UI::Auxiliary::vf0, Jet::UI::Region::vf0
+10004610	Jet::UI::Auxiliary::vf1	Jet::UI::Auxiliary::vf1
+100045f0	Jet::UI::Value::vf0	Jet::UI::Value::vf0
+100045c0	Jet::UI::Value::vf1	Jet::UI::Value::vf1
+1004fda6	Jet::ReferenceCount::vf0	Jet::ReferenceCount::vf0, Jet::UI::DragNDropState::vf0, Jet::InputUIExtension::vf0, Jet::UI::NormalState::vf0, Jet::OSDSystem::vf0, Jet::OSDFont::vf0, Jet::UI::Paragraph::TextItem::vf0, Jet::UI::State::vf0
+10004660	Jet::ReferenceCount::vf1	Jet::ReferenceCount::vf1
+10005560	Jet::UI::Base::vf0	Jet::UI::Base::vf0
+10005580	Jet::UI::Base::vf1	Jet::UI::Base::vf1
+100066f0	Jet::UI::Button::vf0	Jet::UI::Button::vf0
+100066e0	Jet::UI::Button::vf1	Jet::UI::Button::vf1
+10007590	Jet::UI::Check::vf0	Jet::UI::Check::vf0, Jet::UI::Radio::vf0
+100075b0	Jet::UI::Check::vf1	Jet::UI::Check::vf1, Jet::UI::Radio::vf1
+10007c30	Jet::UI::Cluster::vf0	Jet::UI::Cluster::vf0
+10007c50	Jet::UI::Cluster::vf1	Jet::UI::Cluster::vf1
+10007ec0	Jet::Canvas::vf0	Jet::Canvas::vf0
+1004fe3c	Jet::Canvas::vf1	Jet::Canvas::vf1, Jet::OSD::vf1, Jet::OSDConsole::vf1, Jet::SelectionBox::vf1, Jet::UI::InterfaceSprite::vf1, Jet::OSDLine::vf1, Jet::OSDProfile::vf1
+1004fe5a	Jet::Canvas::vf2	Jet::Canvas::vf2, Jet::OSD::vf2, Jet::OSDConsole::vf2, Jet::SelectionBox::vf2, Jet::UI::InterfaceSprite::vf2, Jet::OSDLine::vf2, Jet::OSDProfile::vf2
+1004fe60	Jet::Canvas::vf3	Jet::Canvas::vf3, Jet::OSD::vf3, Jet::OSDConsole::vf3, Jet::SelectionBox::vf3, Jet::UI::InterfaceSprite::vf3, Jet::OSDLine::vf3, Jet::OSDProfile::vf3
+1004fe66	Jet::Canvas::vf4	Jet::Canvas::vf4, Jet::OSD::vf4, Jet::OSDConsole::vf4, Jet::SelectionBox::vf4, Jet::UI::InterfaceSprite::vf4, Jet::OSDLine::vf4, Jet::OSDProfile::vf4
+1004fe42	Jet::Canvas::vf5	Jet::Canvas::vf5, Jet::OSD::vf5, Jet::OSDConsole::vf5, Jet::SelectionBox::vf5, Jet::UI::InterfaceSprite::vf5, Jet::OSDLine::vf5, Jet::OSDProfile::vf5
+1004fe72	Jet::Canvas::vf6	Jet::Canvas::vf6
+1004fe54	Jet::Canvas::vf7	Jet::Canvas::vf7, Jet::OSD::vf7, Jet::OSDConsole::vf7, Jet::SelectionBox::vf7, Jet::OSDLine::vf7
+1004fe48	Jet::Canvas::vf8	Jet::Canvas::vf8, Jet::OSD::vf8, Jet::OSDConsole::vf8, Jet::SelectionBox::vf8, Jet::UI::InterfaceSprite::vf8, Jet::OSDLine::vf8, Jet::OSDProfile::vf8
+1004fe4e	Jet::Canvas::vf9	Jet::Canvas::vf9, Jet::OSD::vf9, Jet::OSDConsole::vf9, Jet::SelectionBox::vf9, Jet::UI::InterfaceSprite::vf9, Jet::OSDLine::vf9, Jet::OSDProfile::vf9
+1004fe6c	Jet::Canvas::vf10	Jet::Canvas::vf10, Jet::OSD::vf10, Jet::OSDConsole::vf10, Jet::SelectionBox::vf10, Jet::UI::InterfaceSprite::vf10, Jet::OSDLine::vf10, Jet::OSDProfile::vf10
+10008950	Jet::UI::Custom::vf0	Jet::UI::Custom::vf0, Jet::UI::Progress::vf0, Jet::UI::IProperties::vf0
+10008970	Jet::UI::Custom::vf1	Jet::UI::Custom::vf1
+1004fea2	Jet::UI::Desktop::vf0	Jet::UI::Desktop::vf0, Jet::UI::InterfaceSystem::vf0, Jet::OSDProfile::vf0
+1004fe9c	Jet::UI::Desktop::vf1	Jet::UI::Desktop::vf1, Jet::UI::InterfaceSystem::vf1, Jet::OSDProfile::vf1
+10009ab0	Jet::UI::Desktop::vf2	Jet::UI::Desktop::vf2
+10009af0	Jet::UI::Desktop::vf3	Jet::UI::Desktop::vf3
+10009b40	Jet::UI::Desktop::vf4	Jet::UI::Desktop::vf4
+1000b710	Jet::UI::Desktop::vf5	Jet::UI::Desktop::vf5
+1000b650	Jet::UI::Desktop::vf6	Jet::UI::Desktop::vf6
+1000b510	Jet::UI::Desktop::vf7	Jet::UI::Desktop::vf7
+1000be60	Jet::UI::Desktop::vf8	Jet::UI::Desktop::vf8
+1000c4b0	Jet::UI::Desktop::vf9	Jet::UI::Desktop::vf9
+1000c740	Jet::UI::Desktop::vf10	Jet::UI::Desktop::vf10
+10008a20	Jet::UI::Desktop::vf11	Jet::UI::Desktop::vf11
+1000c330	Jet::UI::Desktop::vf12	Jet::UI::Desktop::vf12
+10009f50	Jet::UI::Desktop::vf13	Jet::UI::Desktop::vf13
+10008b40	Jet::UI::Desktop::vf14	Jet::UI::Desktop::vf14
+10008a30	Jet::UI::Desktop::vf15	Jet::UI::Desktop::vf15
+10008b20	Jet::UI::Desktop::vf16	Jet::UI::Desktop::vf16
+10008b30	Jet::UI::Desktop::vf17	Jet::UI::Desktop::vf17
+1000c810	Jet::UI::Desktop::vf18	Jet::UI::Desktop::vf18
+10008b10	Jet::UI::Desktop::vf19	Jet::UI::Desktop::vf19
+10008b00	Jet::UI::Desktop::vf20	Jet::UI::Desktop::vf20
+100098f0	Jet::UI::Desktop::vf21	Jet::UI::Desktop::vf21
+100098d0	Jet::UI::Desktop::vf22	Jet::UI::Desktop::vf22
+10008a40	Jet::UI::Desktop::vf23	Jet::UI::Desktop::vf23
+10009f00	Jet::UI::Desktop::vf24	Jet::UI::Desktop::vf24
+10009f30	Jet::UI::Desktop::vf25	Jet::UI::Desktop::vf25
+10009e70	Jet::UI::Desktop::vf26	Jet::UI::Desktop::vf26
+10008a50	Jet::UI::Desktop::vf27	Jet::UI::Desktop::vf27
+10008a80	Jet::UI::Desktop::vf28	Jet::UI::Desktop::vf28
+10009890	Jet::UI::Desktop::vf30	Jet::UI::Desktop::vf30
+100098b0	Jet::UI::Desktop::vf31	Jet::UI::Desktop::vf31
+1000a670	Jet::UI::Desktop::vf0	Jet::UI::Desktop::vf0
+1000a690	Jet::UI::Desktop::vf1	Jet::UI::Desktop::vf1
+1004fe96	Jet::UI::InterfaceSystem::vf2	Jet::UI::InterfaceSystem::vf2, Jet::OSDProfile::vf2
+1004fe90	Jet::UI::InterfaceSystem::vf3	Jet::UI::InterfaceSystem::vf3, Jet::OSDProfile::vf3
+1004fe8a	Jet::UI::InterfaceSystem::vf4	Jet::UI::InterfaceSystem::vf4
+1000a6a0	Jet::UI::InterfaceSystem::vf0	Jet::UI::InterfaceSystem::vf0, Jet::OSDFontPlugin::vf0
+1000a660	Jet::UI::InterfaceSystem::vf1	Jet::UI::InterfaceSystem::vf1
+10009380	Jet::OSD::vf0	Jet::OSD::vf0
+1004fdca	Jet::UI::DialogResource::vf0	Jet::UI::DialogResource::vf0
+1004fdd0	Jet::UI::DialogResource::vf1	Jet::UI::DialogResource::vf1
+1004fdd6	Jet::UI::DialogResource::vf2	Jet::UI::DialogResource::vf2
+1004fddc	Jet::UI::DialogResource::vf3	Jet::UI::DialogResource::vf3
+1004fde2	Jet::UI::DialogResource::vf4	Jet::UI::DialogResource::vf4
+1004fde8	Jet::UI::DialogResource::vf5	Jet::UI::DialogResource::vf5
+1004fdee	Jet::UI::DialogResource::vf6	Jet::UI::DialogResource::vf6
+1004fdf4	Jet::UI::DialogResource::vf7	Jet::UI::DialogResource::vf7
+10008dc0	Jet::UI::DialogResource::vf8	Jet::UI::DialogResource::vf8
+1004fdfa	Jet::UI::DialogResource::vf9	Jet::UI::DialogResource::vf9
+1004fe00	Jet::UI::DialogResource::vf10	Jet::UI::DialogResource::vf10
+1004fe06	Jet::UI::DialogResource::vf12	Jet::UI::DialogResource::vf12
+1004fe0c	Jet::UI::DialogResource::vf13	Jet::UI::DialogResource::vf13
+1004fe12	Jet::UI::DialogResource::vf14	Jet::UI::DialogResource::vf14
+1004fe18	Jet::UI::DialogResource::vf17	Jet::UI::DialogResource::vf17
+1000a7c0	Jet::UI::DNDPack::vf0	Jet::UI::DNDPack::vf0
+1000a750	Jet::UI::DragNDropState::vf1	Jet::UI::DragNDropState::vf1
+1000a930	Jet::UI::DNDControlsPack::vf0	Jet::UI::DNDControlsPack::vf0
+1000b620	Jet::InputUIExtension::vf0	Jet::InputUIExtension::vf0
+1004fea8	Jet::InputUIExtension::vf1	Jet::InputUIExtension::vf1
+1004feae	Jet::InputUIExtension::vf2	Jet::InputUIExtension::vf2
+1004feb4	Jet::InputUIExtension::vf3	Jet::InputUIExtension::vf3
+1000cae0	Jet::InputUIExtension::vf1	Jet::InputUIExtension::vf1
+1000b3b0	Jet::OSDConsole::vf0	Jet::OSDConsole::vf0
+1000be30	Jet::ResourceNamelessDatabase::vf0	Jet::ResourceNamelessDatabase::vf0
+1004fe1e	Jet::ResourceNamelessDatabase::vf1	Jet::ResourceNamelessDatabase::vf1
+1004fe24	Jet::ResourceNamelessDatabase::vf2	Jet::ResourceNamelessDatabase::vf2
+1004fe2a	Jet::ResourceNamelessDatabase::vf3	Jet::ResourceNamelessDatabase::vf3
+1004fe30	Jet::ResourceNamelessDatabase::vf4	Jet::ResourceNamelessDatabase::vf4
+100133b0	Jet::CallCpp<Jet::UI::Desktop>::vf0	Jet::CallCpp<Jet::UI::Desktop>::vf0, Jet::CallBackBase::vf0, Jet::CallCpp<Jet::UI::Dialog>::vf0, Jet::CallCpp<Jet::UI::DialogFiles>::vf0, Jet::CallCpp<Jet::UI::DialogMessage>::vf0, Jet::CallCpp<Jet::UI::DialogOpenFile>::vf0, Jet::CallCpp<Jet::UI::DropDown>::vf0, Jet::CallCpp<Jet::UI::Window>::vf0, Jet::CallCpp<Jet::UI::ListView>::vf0, Jet::CallCpp<Jet::UI::Progress>::vf0, Jet::CallCpp<Jet::UI::IProperties>::vf0, Jet::CallCpp<Jet::UI::RollUp>::vf0, Jet::CallCpp<Jet::UI::Scroller>::vf0, Jet::CallCpp<Jet::UI::Tab>::vf0
+1000df80	Jet::CallCpp<Jet::UI::Desktop>::vf1	Jet::CallCpp<Jet::UI::Desktop>::vf1
+1000dfe0	Jet::CallCpp<Jet::UI::Desktop>::vf2	Jet::CallCpp<Jet::UI::Desktop>::vf2
+1000f640	Jet::UI::NormalState::vf1	Jet::UI::NormalState::vf1
+1000f670	Jet::UI::NormalState::vf11	Jet::UI::NormalState::vf11
+1000f680	Jet::UI::NormalState::vf12	Jet::UI::NormalState::vf12
+1000fba0	Jet::UI::NormalState::vf16	Jet::UI::NormalState::vf16
+1000fce0	Jet::UI::NormalState::vf17	Jet::UI::NormalState::vf17
+1000fde0	Jet::UI::NormalState::vf18	Jet::UI::NormalState::vf18
+1000fe60	Jet::UI::NormalState::vf19	Jet::UI::NormalState::vf19
+1000fd60	Jet::UI::NormalState::vf20	Jet::UI::NormalState::vf20
+1000f8d0	Jet::UI::NormalState::vf21	Jet::UI::NormalState::vf21
+1000f9c0	Jet::UI::NormalState::vf22	Jet::UI::NormalState::vf22
+1000fa60	Jet::UI::NormalState::vf23	Jet::UI::NormalState::vf23
+1000fb00	Jet::UI::NormalState::vf24	Jet::UI::NormalState::vf24
+1000f700	Jet::UI::NormalState::vf27	Jet::UI::NormalState::vf27
+1000f6a0	Jet::UI::NormalState::vf28	Jet::UI::NormalState::vf28
+1000fee0	Jet::UI::NormalState::vf29	Jet::UI::NormalState::vf29
+1000ffa0	Jet::UI::NormalState::vf45	Jet::UI::NormalState::vf45
+100100d0	Jet::UI::SelectBase::vf0	Jet::UI::SelectBase::vf0
+1000ffe0	Jet::UI::SelectBase::vf14	Jet::UI::SelectBase::vf14
+1000fff0	Jet::UI::SelectBase::vf15	Jet::UI::SelectBase::vf15
+100101d0	Jet::UI::SelectBase::vf16	Jet::UI::SelectBase::vf16
+10010010	Jet::UI::SelectBase::vf17	Jet::UI::SelectBase::vf17
+10010020	Jet::UI::SelectBase::vf18	Jet::UI::SelectBase::vf18
+10010030	Jet::UI::SelectBase::vf25	Jet::UI::SelectBase::vf25
+10010170	Jet::UI::RegionSelect::vf0	Jet::UI::RegionSelect::vf0
+10011740	Jet::SelectionBox::vf0	Jet::SelectionBox::vf0
+1004fe78	Jet::SelectionBox::vf6	Jet::SelectionBox::vf6
+100134e0	Jet::UI::Dialog::vf0	Jet::UI::Dialog::vf0, Jet::UI::Tab::vf0
+10013500	Jet::UI::Dialog::vf1	Jet::UI::Dialog::vf1
+10042240	Jet::CallCpp<Jet::UI::Dialog>::vf1	Jet::CallCpp<Jet::UI::Dialog>::vf1, Jet::CallCpp<Jet::UI::DialogFiles>::vf1, Jet::CallCpp<Jet::UI::DialogMessage>::vf1, Jet::CallCpp<Jet::UI::DialogOpenFile>::vf1, Jet::CallCpp<Jet::UI::DropDown>::vf1, Jet::CallCpp<Jet::UI::Window>::vf1, Jet::CallCpp<Jet::UI::ListView>::vf1, Jet::CallCpp<Jet::UI::Progress>::vf1, Jet::CallCpp<Jet::UI::IProperties>::vf1, Jet::CallCpp<Jet::UI::RollUp>::vf1, Jet::CallCpp<Jet::UI::Scroller>::vf1, Jet::CallCpp<Jet::UI::Tab>::vf1
+10013380	Jet::CallCpp<Jet::UI::Dialog>::vf2	Jet::CallCpp<Jet::UI::Dialog>::vf2, Jet::CallCpp<Jet::UI::DialogFiles>::vf2, Jet::CallCpp<Jet::UI::DialogMessage>::vf2, Jet::CallCpp<Jet::UI::DialogOpenFile>::vf2, Jet::CallCpp<Jet::UI::DropDown>::vf2, Jet::CallCpp<Jet::UI::Window>::vf2, Jet::CallCpp<Jet::UI::ListView>::vf2, Jet::CallCpp<Jet::UI::Progress>::vf2, Jet::CallCpp<Jet::UI::IProperties>::vf2, Jet::CallCpp<Jet::UI::RollUp>::vf2, Jet::CallCpp<Jet::UI::Scroller>::vf2, Jet::CallCpp<Jet::UI::Tab>::vf2
+100159d0	Jet::UI::DialogFiles::vf0	Jet::UI::DialogFiles::vf0
+100159c0	Jet::UI::DialogFiles::vf1	Jet::UI::DialogFiles::vf1
+100167f0	Jet::UI::DialogMessage::vf0	Jet::UI::DialogMessage::vf0, Jet::UI::DialogPopup::vf0
+10016810	Jet::UI::DialogMessage::vf1	Jet::UI::DialogMessage::vf1
+10018fd0	Jet::UI::DialogOpenFile::vf0	Jet::UI::DialogOpenFile::vf0
+10019010	Jet::UI::DialogOpenFile::vf1	Jet::UI::DialogOpenFile::vf1
+10019020	Jet::UI::DialogPopup::vf4	Jet::UI::DialogPopup::vf4
+100194b0	Jet::UI::DialogPopup::vf5	Jet::UI::DialogPopup::vf5
+10019210	Jet::UI::DialogPopup::vf14	Jet::UI::DialogPopup::vf14
+100191b0	Jet::UI::DialogPopup::vf49	Jet::UI::DialogPopup::vf49
+10019050	Jet::UI::DialogPopup::vf50	Jet::UI::DialogPopup::vf50
+100194f0	Jet::UI::DialogPopup::vf77	Jet::UI::DialogPopup::vf77
+10019590	Jet::UI::DialogPopup::vf1	Jet::UI::DialogPopup::vf1
+10019730	Jet::UI::DialogQuery::vf24	Jet::UI::DialogQuery::vf24
+10019a10	Jet::UI::DialogQuery::vf31	Jet::UI::DialogQuery::vf31
+10019a40	Jet::UI::DialogQuery::vf0	Jet::UI::DialogQuery::vf0, Jet::UI::Paragraph::vf0
+10019a30	Jet::UI::DialogQuery::vf1	Jet::UI::DialogQuery::vf1
+10019d30	Jet::UI::DialogToolTip::vf24	Jet::UI::DialogToolTip::vf24
+10019e10	Jet::UI::DialogToolTip::vf31	Jet::UI::DialogToolTip::vf31
+10019e90	Jet::UI::DialogToolTip::vf0	Jet::UI::DialogToolTip::vf0, Jet::UI::Slider::vf0, Jet::UI::Spin::vf0
+10019eb0	Jet::UI::DialogToolTip::vf1	Jet::UI::DialogToolTip::vf1
+1001a6d0	Jet::UI::DNDShadowControlPack::vf0	Jet::UI::DNDShadowControlPack::vf0
+1001bb10	Jet::UI::DropDown::vf0	Jet::UI::DropDown::vf0, Jet::UI::Scroller::vf0
+1001bb30	Jet::UI::DropDown::vf1	Jet::UI::DropDown::vf1
+1001ec80	Jet::UI::EditBox::vf0	Jet::UI::EditBox::vf0
+1001eca0	Jet::UI::EditBox::vf1	Jet::UI::EditBox::vf1
+1001f2a0	Jet::UI::GControl::vf0	Jet::UI::GControl::vf0, Jet::UI::Sep::vf0
+1001f2c0	Jet::UI::GControl::vf1	Jet::UI::GControl::vf1, Jet::UI::Sep::vf1
+10022ce0	Jet::UI::Group::vf0	Jet::UI::Group::vf0
+10022cd0	Jet::UI::Group::vf1	Jet::UI::Group::vf1
+10023f10	Jet::UI::InterfaceSpriteControl::vf0	Jet::UI::InterfaceSpriteControl::vf0
+10023d80	Jet::UI::InterfaceSprite::vf0	Jet::UI::InterfaceSprite::vf0
+1004fe7e	Jet::UI::InterfaceSprite::vf6	Jet::UI::InterfaceSprite::vf6
+1004fe84	Jet::UI::InterfaceSprite::vf7	Jet::UI::InterfaceSprite::vf7
+1004fdac	Jet::ResourceType<Jet::UI::DialogResource>::vf0	Jet::ResourceType<Jet::UI::DialogResource>::vf0, Jet::PluginFactoryOf<Jet::UI::DialogMessage,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Desktop,Jet::UI::InterfaceSystem>::vf0, Jet::PluginFactoryOf<Jet::UI::ListView,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Auxiliary,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Dialog,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::DragnDrop,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Group,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Button,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Sep,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Static,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Check,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::EditBox,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Slider,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Menu,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::MenuItem,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Radio,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Progress,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Row,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Scroller,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Switch,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::DropDown,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Spin,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Tab,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Window,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::SplitWin,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Cluster,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::Custom,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::RollUp,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::DialogFiles,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::DialogOpenFile,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::DialogPopup,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::DialogQuery,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::UI::DialogToolTip,Jet::UI::Region>::vf0, Jet::PluginFactoryOf<Jet::OSDFont8a,Jet::OSDFontPlugin>::vf0
+1004fdb2	Jet::ResourceType<Jet::UI::DialogResource>::vf1	Jet::ResourceType<Jet::UI::DialogResource>::vf1, Jet::PluginFactoryOf<Jet::UI::DialogMessage,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Desktop,Jet::UI::InterfaceSystem>::vf1, Jet::PluginFactoryOf<Jet::UI::ListView,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Auxiliary,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Dialog,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::DragnDrop,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Group,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Button,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Sep,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Static,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Check,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::EditBox,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Slider,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Menu,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::MenuItem,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Radio,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Progress,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Row,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Scroller,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Switch,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::DropDown,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Spin,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Tab,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Window,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::SplitWin,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Cluster,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::Custom,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::RollUp,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::DialogFiles,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::DialogOpenFile,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::DialogPopup,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::DialogQuery,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::UI::DialogToolTip,Jet::UI::Region>::vf1, Jet::PluginFactoryOf<Jet::OSDFont8a,Jet::OSDFontPlugin>::vf1
+100284a0	Jet::ResourceType<Jet::UI::DialogResource>::vf2	Jet::ResourceType<Jet::UI::DialogResource>::vf2, Jet::PluginFactoryOf<Jet::UI::DialogMessage,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Desktop,Jet::UI::InterfaceSystem>::vf2, Jet::PluginFactoryOf<Jet::UI::ListView,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Auxiliary,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Dialog,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::DragnDrop,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Group,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Button,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Sep,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Static,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Check,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::EditBox,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Slider,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Menu,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::MenuItem,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Radio,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Progress,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Row,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Scroller,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Switch,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::DropDown,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Spin,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Tab,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Window,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::SplitWin,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Cluster,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::Custom,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::RollUp,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::DialogFiles,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::DialogOpenFile,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::DialogPopup,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::DialogQuery,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::UI::DialogToolTip,Jet::UI::Region>::vf2, Jet::PluginFactoryOf<Jet::OSDFont8a,Jet::OSDFontPlugin>::vf2
+10027060	Jet::ResourceType<Jet::UI::DialogResource>::vf3	Jet::ResourceType<Jet::UI::DialogResource>::vf3
+1004fe36	Jet::ResourceType<Jet::UI::DialogResource>::vf5	Jet::ResourceType<Jet::UI::DialogResource>::vf5
+100270e0	Jet::PluginFactoryOf<Jet::UI::DialogMessage,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::DialogMessage,Jet::UI::Region>::vf3
+1001a9c0	Jet::UI::DragnDrop::vf42	Jet::UI::DragnDrop::vf42
+10028530	Jet::UI::DragnDrop::vf0	Jet::UI::DragnDrop::vf0, Jet::UI::ListView::vf0
+10028520	Jet::UI::DragnDrop::vf1	Jet::UI::DragnDrop::vf1
+10028510	Jet::UI::Paragraph::vf1	Jet::UI::Paragraph::vf1
+10027170	Jet::PluginFactoryOf<Jet::UI::Desktop,Jet::UI::InterfaceSystem>::vf3	Jet::PluginFactoryOf<Jet::UI::Desktop,Jet::UI::InterfaceSystem>::vf3
+10027200	Jet::PluginFactoryOf<Jet::UI::ListView,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::ListView,Jet::UI::Region>::vf3
+10027290	Jet::PluginFactoryOf<Jet::UI::Auxiliary,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Auxiliary,Jet::UI::Region>::vf3
+10027320	Jet::PluginFactoryOf<Jet::UI::Dialog,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Dialog,Jet::UI::Region>::vf3
+100273b0	Jet::PluginFactoryOf<Jet::UI::DragnDrop,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::DragnDrop,Jet::UI::Region>::vf3
+10027440	Jet::PluginFactoryOf<Jet::UI::Group,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Group,Jet::UI::Region>::vf3
+100274d0	Jet::PluginFactoryOf<Jet::UI::Button,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Button,Jet::UI::Region>::vf3
+10027560	Jet::PluginFactoryOf<Jet::UI::Sep,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Sep,Jet::UI::Region>::vf3
+100275f0	Jet::PluginFactoryOf<Jet::UI::Static,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Static,Jet::UI::Region>::vf3
+10027680	Jet::PluginFactoryOf<Jet::UI::Check,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Check,Jet::UI::Region>::vf3
+10027710	Jet::PluginFactoryOf<Jet::UI::EditBox,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::EditBox,Jet::UI::Region>::vf3
+100277a0	Jet::PluginFactoryOf<Jet::UI::Slider,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Slider,Jet::UI::Region>::vf3
+10027830	Jet::PluginFactoryOf<Jet::UI::Menu,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Menu,Jet::UI::Region>::vf3
+100278c0	Jet::PluginFactoryOf<Jet::UI::MenuItem,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::MenuItem,Jet::UI::Region>::vf3
+10027950	Jet::PluginFactoryOf<Jet::UI::Radio,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Radio,Jet::UI::Region>::vf3
+100279e0	Jet::PluginFactoryOf<Jet::UI::Progress,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Progress,Jet::UI::Region>::vf3
+10027a70	Jet::PluginFactoryOf<Jet::UI::Row,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Row,Jet::UI::Region>::vf3
+10027b00	Jet::PluginFactoryOf<Jet::UI::Scroller,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Scroller,Jet::UI::Region>::vf3
+10027b90	Jet::PluginFactoryOf<Jet::UI::Switch,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Switch,Jet::UI::Region>::vf3
+10027c20	Jet::PluginFactoryOf<Jet::UI::DropDown,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::DropDown,Jet::UI::Region>::vf3
+10027cb0	Jet::PluginFactoryOf<Jet::UI::Spin,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Spin,Jet::UI::Region>::vf3
+10027d40	Jet::PluginFactoryOf<Jet::UI::Tab,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Tab,Jet::UI::Region>::vf3
+10027dd0	Jet::PluginFactoryOf<Jet::UI::Window,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Window,Jet::UI::Region>::vf3
+10027e60	Jet::PluginFactoryOf<Jet::UI::SplitWin,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::SplitWin,Jet::UI::Region>::vf3
+10027ef0	Jet::PluginFactoryOf<Jet::UI::Cluster,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Cluster,Jet::UI::Region>::vf3
+10027f80	Jet::PluginFactoryOf<Jet::UI::Custom,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::Custom,Jet::UI::Region>::vf3
+10028010	Jet::PluginFactoryOf<Jet::UI::RollUp,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::RollUp,Jet::UI::Region>::vf3
+100280a0	Jet::PluginFactoryOf<Jet::UI::DialogFiles,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::DialogFiles,Jet::UI::Region>::vf3
+10028130	Jet::PluginFactoryOf<Jet::UI::DialogOpenFile,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::DialogOpenFile,Jet::UI::Region>::vf3
+100281c0	Jet::PluginFactoryOf<Jet::UI::DialogPopup,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::DialogPopup,Jet::UI::Region>::vf3
+10028250	Jet::PluginFactoryOf<Jet::UI::DialogQuery,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::DialogQuery,Jet::UI::Region>::vf3
+100282e0	Jet::PluginFactoryOf<Jet::UI::DialogToolTip,Jet::UI::Region>::vf3	Jet::PluginFactoryOf<Jet::UI::DialogToolTip,Jet::UI::Region>::vf3
+10028370	Jet::PluginFactoryOf<Jet::OSDFont8a,Jet::OSDFontPlugin>::vf3	Jet::PluginFactoryOf<Jet::OSDFont8a,Jet::OSDFontPlugin>::vf3
+10028650	Jet::UI::InterfaceTask::vf0	Jet::UI::InterfaceTask::vf0
+1004fdc4	Jet::UI::InterfaceTask::vf1	Jet::UI::InterfaceTask::vf1
+1004fdb8	Jet::UI::InterfaceTask::vf2	Jet::UI::InterfaceTask::vf2
+1004fdbe	Jet::UI::InterfaceTask::vf3	Jet::UI::InterfaceTask::vf3
+10028550	Jet::UI::InterfaceTask::vf4	Jet::UI::InterfaceTask::vf4
+10028580	Jet::UI::InterfaceTask::vf5	Jet::UI::InterfaceTask::vf5
+1002e8e0	Jet::UI::Window::vf0	Jet::UI::Window::vf0
+1002e8d0	Jet::UI::Window::vf1	Jet::UI::Window::vf1
+1002fc80	Jet::UI::ListView::vf1	Jet::UI::ListView::vf1
+10031ed0	Jet::UI::Menu::vf0	Jet::UI::Menu::vf0
+10031ef0	Jet::UI::Menu::vf1	Jet::UI::Menu::vf1
+10032b10	Jet::UI::MenuItem::vf0	Jet::UI::MenuItem::vf0, Jet::UI::Switch::vf0
+10032b30	Jet::UI::MenuItem::vf1	Jet::UI::MenuItem::vf1
+10032bb0	Jet::OSDSystem::vf1	Jet::OSDSystem::vf1
+10033320	Jet::OSDFont::vf1	Jet::OSDFont::vf1
+100345e0	Jet::OSDFont8a::vf0	Jet::OSDFont8a::vf0
+100345d0	Jet::OSDFont8a::vf1	Jet::OSDFont8a::vf1
+10034920	Jet::OSDFontPlugin::vf1	Jet::OSDFontPlugin::vf1
+10034a90	Jet::OSDLine::vf0	Jet::OSDLine::vf0
+100352f0	Jet::OSDProfile::vf0	Jet::OSDProfile::vf0
+10037d30	Jet::UI::Paragraph::TextItem::vf1	Jet::UI::Paragraph::TextItem::vf1
+1003ac30	Jet::UI::Progress::vf1	Jet::UI::Progress::vf1
+1003ad30	Jet::UI::IPropBase::vf24	Jet::UI::IPropBase::vf24, Jet::UI::IPropValue::vf24
+1003ad40	Jet::UI::IPropBase::vf42	Jet::UI::IPropBase::vf42
+1003b110	Jet::UI::IPropBase::vf92	Jet::UI::IPropBase::vf92
+1003ad80	Jet::UI::IPropBase::vf95	Jet::UI::IPropBase::vf95
+1003b300	Jet::UI::IPropBase::vf0	Jet::UI::IPropBase::vf0
+1003b2f0	Jet::UI::IPropBase::vf1	Jet::UI::IPropBase::vf1
+1003afc0	Jet::UI::IPropValue::vf42	Jet::UI::IPropValue::vf42
+1003b1d0	Jet::UI::IPropValue::vf92	Jet::UI::IPropValue::vf92
+1003b020	Jet::UI::IPropValue::vf95	Jet::UI::IPropValue::vf95
+1003b320	Jet::UI::IPropValue::vf0	Jet::UI::IPropValue::vf0
+1003b340	Jet::UI::IPropValue::vf1	Jet::UI::IPropValue::vf1
+1003bcc0	Jet::UI::IProperties::vf24	Jet::UI::IProperties::vf24
+1003b670	Jet::UI::IProperties::vf42	Jet::UI::IProperties::vf42
+1003c2d0	Jet::UI::IProperties::vf46	Jet::UI::IProperties::vf46
+1003c4b0	Jet::UI::IProperties::vf75	Jet::UI::IProperties::vf75
+1003c9a0	Jet::UI::IProperties::vf1	Jet::UI::IProperties::vf1
+100413e0	Jet::UI::Region::vf1	Jet::UI::Region::vf1
+10041cd0	Jet::UI::RollUp::vf24	Jet::UI::RollUp::vf24
+10041bb0	Jet::UI::RollUp::vf31	Jet::UI::RollUp::vf31
+10041f50	Jet::UI::RollUp::vf32	Jet::UI::RollUp::vf32
+100419a0	Jet::UI::RollUp::vf42	Jet::UI::RollUp::vf42
+10042030	Jet::UI::RollUp::vf45	Jet::UI::RollUp::vf45
+10042090	Jet::UI::RollUp::vf46	Jet::UI::RollUp::vf46
+10042180	Jet::UI::RollUp::vf57	Jet::UI::RollUp::vf57
+100421e0	Jet::UI::RollUp::vf58	Jet::UI::RollUp::vf58
+10042140	Jet::UI::RollUp::vf61	Jet::UI::RollUp::vf61
+100422a0	Jet::UI::RollUp::vf0	Jet::UI::RollUp::vf0
+100422c0	Jet::UI::RollUp::vf1	Jet::UI::RollUp::vf1
+10042e30	Jet::UI::Row::vf0	Jet::UI::Row::vf0
+10042e50	Jet::UI::Row::vf1	Jet::UI::Row::vf1
+10044d30	Jet::UI::Scroller::vf1	Jet::UI::Scroller::vf1
+10045890	Jet::UI::Slider::vf1	Jet::UI::Slider::vf1, Jet::UI::Spin::vf1
+100473b0	Jet::UI::SplitWin::vf0	Jet::UI::SplitWin::vf0
+100473a0	Jet::UI::SplitWin::vf1	Jet::UI::SplitWin::vf1
+100473d0	Jet::UI::State::vf1	Jet::UI::State::vf1
+100498c0	Jet::UI::Static::vf0	Jet::UI::Static::vf0
+100498b0	Jet::UI::Static::vf1	Jet::UI::Static::vf1
+1004b360	Jet::UI::Switch::vf1	Jet::UI::Switch::vf1
+1004c1e0	Jet::UI::Tab::vf1	Jet::UI::Tab::vf1
+1004c4e0	Jet::UI::Timer::RegionEvent::vf0	Jet::UI::Timer::RegionEvent::vf0
+1004c4d0	Jet::UI::Timer::RegionEvent::vf1	Jet::UI::Timer::RegionEvent::vf1
+1004c500	Jet::UI::Timer::RegionEvent::vf2	Jet::UI::Timer::RegionEvent::vf2
+1004f840	Jet::UI::TreeView::vf0	Jet::UI::TreeView::vf0
+1004f860	Jet::UI::TreeView::vf1	Jet::UI::TreeView::vf1

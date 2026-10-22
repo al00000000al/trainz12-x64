@@ -1,0 +1,189 @@
+entry	new_name	all_vftable_slots
+1005727c	Jet::ReferenceCount::vf0	Jet::ReferenceCount::vf0, Jet::SharedContext::vf0, Jet::RenderingCache::vf0, Jet::NonRenderContext::vf0, Jet::StaticBuffer::vf0, Jet::DisplaySaveBuffer::vf0, Jet::DisplaySelector::vf0, Jet::ExtendedGfxLanguage::vf0, Jet::GenericGeometryChunkMultiStream::vf0, Jet::GenericGeometryChunkMultiStream::ItemOffsetTable::vf0, Jet::GenericGeometryChunkSingleStream::vf0, Jet::GenericGeometryChunkSingleStream::ItemOffsetTable::vf0, Jet::GeometryChunk::vf0, Jet::GeometryChunkMultiStream::vf0, Jet::GeometryChunkSingleStream::vf0, Jet::GLSLShaderBase::vf0, Jet::MaterialManager::vf0, Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf0, Jet::Texture::vf0, Jet::TextureCombiner::vf0, Jet::TextureCombinerManager::vf0, Jet::TextureManager::vf0, Jet::TextureRes::vf0, Jet::VertexProgram::vf0, Jet::VertexProgramBasic::vf0, Jet::VertexProgramManager::vf0, Jet::VertexType::vf0
+100241f0	Jet::ReferenceCount::vf1	Jet::ReferenceCount::vf1, Jet::GenericGeometryChunkSingleStream::ItemOffsetTable::vf1
+100015f0	Jet::ResourceObserver::vf1	Jet::ResourceObserver::vf1
+10004840	Jet::DisplayTexture::vf0	Jet::DisplayTexture::vf0
+100572b8	Jet::TextureResource::vf1	Jet::TextureResource::vf1, Jet::AsciiTextureResource::vf1, Jet::BinaryTextureResourceExport::vf1, Jet::BitmapTextureResource::vf1, Jet::MaterialResource::vf1, Jet::TextureCombinerResource::vf1, Jet::VertexProgramResource::vf1
+100572be	Jet::TextureResource::vf2	Jet::TextureResource::vf2, Jet::BinaryTextureResourceExport::vf2, Jet::MaterialResource::vf2, Jet::TextureCombinerResource::vf2, Jet::VertexProgramResource::vf2
+100572c4	Jet::TextureResource::vf3	Jet::TextureResource::vf3, Jet::BinaryTextureResourceExport::vf3, Jet::MaterialResource::vf3, Jet::TextureCombinerResource::vf3, Jet::VertexProgramResource::vf3
+100572d0	Jet::TextureResource::vf4	Jet::TextureResource::vf4, Jet::AsciiTextureResource::vf4, Jet::BinaryTextureResourceExport::vf4, Jet::BitmapTextureResource::vf4, Jet::MaterialResource::vf4, Jet::TextureCombinerResource::vf4, Jet::VertexProgramResource::vf4
+100572d6	Jet::TextureResource::vf5	Jet::TextureResource::vf5, Jet::AsciiTextureResource::vf5, Jet::BinaryTextureResourceExport::vf5, Jet::BitmapTextureResource::vf5, Jet::MaterialResource::vf5, Jet::TextureCombinerResource::vf5, Jet::VertexProgramResource::vf5
+100572dc	Jet::TextureResource::vf6	Jet::TextureResource::vf6, Jet::AsciiTextureResource::vf6, Jet::BinaryTextureResourceExport::vf6, Jet::BitmapTextureResource::vf6, Jet::MaterialResource::vf6, Jet::TextureCombinerResource::vf6, Jet::VertexProgramResource::vf6
+100010e0	Jet::TextureResource::vf8	Jet::TextureResource::vf8
+100572e2	Jet::TextureResource::vf9	Jet::TextureResource::vf9, Jet::AsciiTextureResource::vf9, Jet::BinaryTextureResourceExport::vf9, Jet::BitmapTextureResource::vf9, Jet::MaterialResource::vf9, Jet::TextureCombinerResource::vf9, Jet::VertexProgramResource::vf9
+100572e8	Jet::TextureResource::vf11	Jet::TextureResource::vf11, Jet::BinaryTextureResourceExport::vf11, Jet::BitmapTextureResource::vf11
+100572ee	Jet::TextureResource::vf12	Jet::TextureResource::vf12, Jet::BinaryTextureResourceExport::vf12, Jet::MaterialResource::vf12, Jet::TextureCombinerResource::vf12, Jet::VertexProgramResource::vf12
+100572ca	Jet::TextureResource::vf13	Jet::TextureResource::vf13, Jet::BinaryTextureResourceExport::vf13, Jet::MaterialResource::vf13, Jet::TextureCombinerResource::vf13, Jet::VertexProgramResource::vf13
+100572f4	Jet::TextureResource::vf17	Jet::TextureResource::vf17, Jet::AsciiTextureResource::vf17, Jet::BinaryTextureResourceExport::vf17, Jet::BitmapTextureResource::vf17, Jet::MaterialResource::vf17, Jet::TextureCombinerResource::vf17, Jet::VertexProgramResource::vf17
+10001a00	Jet::AsciiTextureResource::vf8	Jet::AsciiTextureResource::vf8
+10007b50	Jet::AsciiTextureResource::vf1	Jet::AsciiTextureResource::vf1
+100045b0	Jet::SharedContext::vf1	Jet::SharedContext::vf1
+10002780	Jet::Display::DisplayContext::vf0	Jet::Display::DisplayContext::vf0
+10007f40	Jet::BinaryTextureResourceExport::vf8	Jet::BinaryTextureResourceExport::vf8
+100084b0	Jet::BitmapTextureResource::vf0	Jet::BitmapTextureResource::vf0
+10008580	Jet::BitmapTextureResource::vf3	Jet::BitmapTextureResource::vf3
+10008cc0	Jet::BitmapTextureResource::vf8	Jet::BitmapTextureResource::vf8
+10008360	Jet::BitmapTextureResource::vf10	Jet::BitmapTextureResource::vf10
+10008480	Jet::BitmapTextureResource::vf12	Jet::BitmapTextureResource::vf12
+10008640	Jet::BitmapTextureResource::vf13	Jet::BitmapTextureResource::vf13
+10008620	Jet::BitmapTextureResource::vf18	Jet::BitmapTextureResource::vf18
+10008e50	Jet::BitmapTextureResource::vf21	Jet::BitmapTextureResource::vf21
+100088d0	Jet::BitmapTextureResource::vf24	Jet::BitmapTextureResource::vf24
+10008e80	Jet::BitmapTextureResource::vf25	Jet::BitmapTextureResource::vf25
+10008e90	Jet::BitmapTextureResource::vf26	Jet::BitmapTextureResource::vf26
+100085d0	Jet::BitmapTextureResource::vf30	Jet::BitmapTextureResource::vf30
+10008c10	Jet::BitmapTextureResource::vf32	Jet::BitmapTextureResource::vf32
+10008df0	Jet::BitmapTextureResource::vf40	Jet::BitmapTextureResource::vf40
+100086b0	Jet::BitmapTextureResource::vf42	Jet::BitmapTextureResource::vf42
+100087f0	Jet::BitmapTextureResource::vf43	Jet::BitmapTextureResource::vf43
+100087b0	Jet::BitmapTextureResource::vf44	Jet::BitmapTextureResource::vf44
+10008bd0	Jet::BitmapTextureResource::vf45	Jet::BitmapTextureResource::vf45
+10008660	Jet::BitmapTextureResource::vf0	Jet::BitmapTextureResource::vf0
+100090a0	Jet::BitmapTextureResource::vf1	Jet::BitmapTextureResource::vf1
+10009140	std::logic_error::vf0	std::logic_error::vf0, std::length_error::vf0, std::out_of_range::vf0
+10009110	std::logic_error::vf1	std::logic_error::vf1, std::length_error::vf1, std::out_of_range::vf1
+10009490	Jet::CGShaderTechnique::vf5	Jet::CGShaderTechnique::vf5
+10009530	Jet::CGShaderConstant::vf13	Jet::CGShaderConstant::vf13
+100093f0	Jet::CGShaderLoader::vf0	Jet::CGShaderLoader::vf0
+1000c9c0	Jet::Element::vf0	Jet::Element::vf0
+1000ad70	Jet::Layer::vf0	Jet::Layer::vf0
+1000aa80	Jet::SystemResourceViewer::vf0	Jet::SystemResourceViewer::vf0
+1000b440	Jet::LayerManager::vf0	Jet::LayerManager::vf0
+1000b250	Jet::LayerGroup::vf0	Jet::LayerGroup::vf0
+1000b070	Jet::ClearLayer::vf0	Jet::ClearLayer::vf0
+1000b980	Jet::DisplayLight::vf0	Jet::DisplayLight::vf0
+1000b6c0	Jet::RenderingCache::vf1	Jet::RenderingCache::vf1
+1000cd00	Jet::ModifierHost::vf0	Jet::ModifierHost::vf0
+1000cbc0	Jet::Modifier::vf0	Jet::Modifier::vf0
+1000ce70	Jet::ModifierList::vf0	Jet::ModifierList::vf0
+1000cfa0	Jet::ModifierUpdateTask::vf0	Jet::ModifierUpdateTask::vf0
+1000d180	Jet::SystemResourceManager::vf0	Jet::SystemResourceManager::vf0
+1000efd0	Jet::NonRenderContext::vf1	Jet::NonRenderContext::vf1
+1001d1c0	Jet::Display::vf0	Jet::Display::vf0
+1001d1b0	Jet::Display::vf1	Jet::Display::vf1
+1000f130	Jet::ApiDataBase::vf0	Jet::ApiDataBase::vf0
+1000f4d0	Jet::Instruction::vf0	Jet::Instruction::vf0
+1000f600	Jet::VertexInstruction::vf0	Jet::VertexInstruction::vf0, Jet::TextureInstruction::vf0
+1000fe60	Jet::TextureCombiner::Instruction::vf0	Jet::TextureCombiner::Instruction::vf0
+1001d500	Jet::DisplayDescriptor::vf0	Jet::DisplayDescriptor::vf0
+1001df70	Jet::StaticBuffer::vf1	Jet::StaticBuffer::vf1
+1001e4a0	Jet::NullDisplayDescriptor::vf0	Jet::NullDisplayDescriptor::vf0
+1001e5b0	Jet::NullVertexBufferManager::vf0	Jet::NullVertexBufferManager::vf0
+1001e660	Jet::NullVertexBufferManager::vf5	Jet::NullVertexBufferManager::vf5
+1001e680	Jet::NullVertexBufferManager::vf6	Jet::NullVertexBufferManager::vf6
+1001e6a0	Jet::NullVertexBufferManager::vf21	Jet::NullVertexBufferManager::vf21
+1001e6b0	Jet::NullVertexBufferManager::vf22	Jet::NullVertexBufferManager::vf22
+1001df10	Jet::DisplayNull::vf6	Jet::DisplayNull::vf6
+1001df20	Jet::DisplayNull::vf10	Jet::DisplayNull::vf10
+1001eb60	Jet::DisplayNull::vf0	Jet::DisplayNull::vf0
+1001eb80	Jet::DisplayNull::vf1	Jet::DisplayNull::vf1
+1001e0d0	Jet::DisplayTextureNull::vf0	Jet::DisplayTextureNull::vf0
+1001eb90	Jet::DisplaySaveBuffer::vf1	Jet::DisplaySaveBuffer::vf1
+1001ec20	Jet::DisplaySelector::vf1	Jet::DisplaySelector::vf1
+10020450	Jet::ElementLoader::vf0	Jet::ElementLoader::vf0
+100204b0	Jet::ExtendedGfxLanguage::vf1	Jet::ExtendedGfxLanguage::vf1
+10022e40	Jet::GenericGeometryChunkMultiStream::vf1	Jet::GenericGeometryChunkMultiStream::vf1
+10022ea0	Jet::GenericGeometryChunkMultiStream::ItemOffsetTable::vf1	Jet::GenericGeometryChunkMultiStream::ItemOffsetTable::vf1
+10024190	Jet::GenericGeometryChunkSingleStream::vf1	Jet::GenericGeometryChunkSingleStream::vf1
+10024a90	Jet::GeometryChunk::vf1	Jet::GeometryChunk::vf1
+1002b2e0	Jet::GeometryChunkMultiStream::vf1	Jet::GeometryChunkMultiStream::vf1
+1002b7a0	Jet::GeometryChunkSingleStream::vf1	Jet::GeometryChunkSingleStream::vf1
+1002ba80	Jet::GfxLanguagePreParser::vf0	Jet::GfxLanguagePreParser::vf0
+10053a20	Jet::GfxLanguagePreParser::vf1	Jet::GfxLanguagePreParser::vf1, gfxppFlexLexer::vf1, gfxqkFlexLexer::vf1, Jet::GfxLanguageQuickParser::vf1, tpFlexLexer::vf1, Jet::TextureProgramParser::vf1, vpFlexLexer::vf1, Jet::VertexProgramParser::vf1
+1002f780	Jet::GfxLanguagePreParser::vf2	Jet::GfxLanguagePreParser::vf2, gfxppFlexLexer::vf2, gfxqkFlexLexer::vf2, Jet::GfxLanguageQuickParser::vf2, tpFlexLexer::vf2, Jet::TextureProgramParser::vf2, vpFlexLexer::vf2, Jet::VertexProgramParser::vf2
+1002f7f0	Jet::GfxLanguagePreParser::vf3	Jet::GfxLanguagePreParser::vf3, gfxppFlexLexer::vf3, gfxqkFlexLexer::vf3, Jet::GfxLanguageQuickParser::vf3, tpFlexLexer::vf3, Jet::TextureProgramParser::vf3, vpFlexLexer::vf3, Jet::VertexProgramParser::vf3
+100461f0	Jet::GfxLanguagePreParser::vf4	Jet::GfxLanguagePreParser::vf4, gfxppFlexLexer::vf4, gfxqkFlexLexer::vf4, Jet::GfxLanguageQuickParser::vf4, tpFlexLexer::vf4, Jet::TextureProgramParser::vf4, vpFlexLexer::vf4, Jet::VertexProgramParser::vf4
+1002cf30	Jet::GfxLanguagePreParser::vf5	Jet::GfxLanguagePreParser::vf5
+10045ee0	Jet::GfxLanguagePreParser::vf6	Jet::GfxLanguagePreParser::vf6, gfxppFlexLexer::vf6, gfxqkFlexLexer::vf6, Jet::GfxLanguageQuickParser::vf6, tpFlexLexer::vf6, Jet::TextureProgramParser::vf6, vpFlexLexer::vf6, Jet::VertexProgramParser::vf6
+1002e680	Jet::GfxLanguagePreParser::vf7	Jet::GfxLanguagePreParser::vf7, gfxppFlexLexer::vf7, gfxqkFlexLexer::vf7, Jet::GfxLanguageQuickParser::vf7, tpFlexLexer::vf7, Jet::TextureProgramParser::vf7, vpFlexLexer::vf7, Jet::VertexProgramParser::vf7
+10045f30	Jet::GfxLanguagePreParser::vf8	Jet::GfxLanguagePreParser::vf8, gfxppFlexLexer::vf8, gfxqkFlexLexer::vf8, Jet::GfxLanguageQuickParser::vf8, tpFlexLexer::vf8, Jet::TextureProgramParser::vf8, vpFlexLexer::vf8, Jet::VertexProgramParser::vf8
+1002e830	Jet::GfxLanguagePreParser::vf9	Jet::GfxLanguagePreParser::vf9, gfxppFlexLexer::vf9, gfxqkFlexLexer::vf9, Jet::GfxLanguageQuickParser::vf9, tpFlexLexer::vf9, Jet::TextureProgramParser::vf9, vpFlexLexer::vf9, Jet::VertexProgramParser::vf9
+1002cf10	FlexLexer::vf0	FlexLexer::vf0
+1002e5f0	gfxppFlexLexer::vf0	gfxppFlexLexer::vf0
+1002f5a0	gfxqkFlexLexer::vf0	gfxqkFlexLexer::vf0
+1002f8a0	Jet::GfxLanguageQuickParser::vf0	Jet::GfxLanguageQuickParser::vf0
+1002efd0	Jet::GfxLanguageQuickParser::vf5	Jet::GfxLanguageQuickParser::vf5
+1002faa0	Jet::GLSLShaderBase::vf1	Jet::GLSLShaderBase::vf1
+10033700	Jet::Material::vf0	Jet::Material::vf0
+10033720	Jet::Material::vf1	Jet::Material::vf1
+1005729a	Jet::MaterialPlugin::vf0	Jet::MaterialPlugin::vf0, Jet::PluginFactoryBase<Jet::Material>::vf0, Jet::ResourceType<Jet::TextureResource>::vf0, Jet::ResourceType<Jet::AsciiTextureResource>::vf0, Jet::BitmapTextureResourceType::vf0, Jet::ResourceType<Jet::MaterialResource>::vf0, Jet::ResourceType<Jet::TextureCombinerResource>::vf0, Jet::ResourceType<Jet::VertexProgramResource>::vf0
+100572a0	Jet::MaterialPlugin::vf1	Jet::MaterialPlugin::vf1, Jet::PluginFactoryBase<Jet::Material>::vf1, Jet::ResourceType<Jet::TextureResource>::vf1, Jet::ResourceType<Jet::AsciiTextureResource>::vf1, Jet::BitmapTextureResourceType::vf1, Jet::ResourceType<Jet::MaterialResource>::vf1, Jet::ResourceType<Jet::TextureCombinerResource>::vf1, Jet::ResourceType<Jet::VertexProgramResource>::vf1
+10032480	Jet::MaterialPlugin::vf2	Jet::MaterialPlugin::vf2, Jet::PluginFactoryBase<Jet::Material>::vf2
+10033a50	Jet::MaterialConfig::vf0	Jet::MaterialConfig::vf0
+10035170	Jet::MaterialManager::vf1	Jet::MaterialManager::vf1
+100572fa	Jet::MaterialResource::vf0	Jet::MaterialResource::vf0, Jet::TextureCombinerResource::vf0, Jet::VertexProgramResource::vf0
+10057318	Jet::MaterialResource::vf7	Jet::MaterialResource::vf7, Jet::TextureCombinerResource::vf7, Jet::VertexProgramResource::vf7
+10035f50	Jet::MaterialResource::vf8	Jet::MaterialResource::vf8
+10057300	Jet::MaterialResource::vf10	Jet::MaterialResource::vf10, Jet::TextureCombinerResource::vf10, Jet::VertexProgramResource::vf10
+10057306	Jet::MaterialResource::vf14	Jet::MaterialResource::vf14, Jet::TextureCombinerResource::vf14, Jet::VertexProgramResource::vf14
+10057312	Jet::MaterialResource::vf15	Jet::MaterialResource::vf15, Jet::TextureCombinerResource::vf15, Jet::VertexProgramResource::vf15
+1005730c	Jet::MaterialResource::vf16	Jet::MaterialResource::vf16, Jet::TextureCombinerResource::vf16, Jet::VertexProgramResource::vf16
+100383c0	Jet::NullMaterial::vf0	Jet::NullMaterial::vf0
+100383b0	Jet::NullMaterial::vf1	Jet::NullMaterial::vf1
+100382a0	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf1	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf1
+10037bb0	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf2	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf2
+10037c30	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf3	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf3
+10037ca0	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf4	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf4
+10037e80	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf5	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf5
+10037f70	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf7	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf7
+10038080	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf8	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf8
+100380d0	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf9	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf9
+100381f0	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf12	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf12, Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf13
+10038210	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf39	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf39
+10038250	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf44	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf44
+10038260	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf46	Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf46, Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf47, Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf48, Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf49, Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf50, Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf51, Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf52, Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf53, Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf54, Jet::GeometryChunkTemplate<Jet::PackedVertexPNT,Jet::GeometryChunkSingleStream>::vf55
+100384e0	Jet::Overlay::vf0	Jet::Overlay::vf0
+10038c60	Jet::Projector::vf0	Jet::Projector::vf0
+10039fd0	Jet::Thread::vf0	Jet::Thread::vf0
+10057294	Jet::Thread::vf1	Jet::Thread::vf1
+10057282	Jet::Thread::vf2	Jet::Thread::vf2
+10057288	Jet::Thread::vf3	Jet::Thread::vf3
+1005728e	Jet::Thread::vf4	Jet::Thread::vf4
+10039250	Jet::RenderKernel::vf0	Jet::RenderKernel::vf0
+100572b2	Jet::RenderKernel::vf1	Jet::RenderKernel::vf1
+100572a6	Jet::RenderKernel::vf2	Jet::RenderKernel::vf2
+100572ac	Jet::RenderKernel::vf3	Jet::RenderKernel::vf3
+1003a780	Jet::RenderKernel::vf0	Jet::RenderKernel::vf0
+1003bb60	Jet::ResourceType<Jet::TextureResource>::vf2	Jet::ResourceType<Jet::TextureResource>::vf2, Jet::ResourceType<Jet::AsciiTextureResource>::vf2, Jet::BitmapTextureResourceType::vf2, Jet::ResourceType<Jet::MaterialResource>::vf2, Jet::ResourceType<Jet::TextureCombinerResource>::vf2, Jet::ResourceType<Jet::VertexProgramResource>::vf2
+1003b6b0	Jet::ResourceType<Jet::TextureResource>::vf3	Jet::ResourceType<Jet::TextureResource>::vf3
+1005731e	Jet::ResourceType<Jet::TextureResource>::vf5	Jet::ResourceType<Jet::TextureResource>::vf5, Jet::ResourceType<Jet::AsciiTextureResource>::vf5, Jet::ResourceType<Jet::MaterialResource>::vf5, Jet::ResourceType<Jet::TextureCombinerResource>::vf5, Jet::ResourceType<Jet::VertexProgramResource>::vf5
+1003b740	Jet::ResourceType<Jet::AsciiTextureResource>::vf3	Jet::ResourceType<Jet::AsciiTextureResource>::vf3
+1003b7c0	Jet::BitmapTextureResourceType::vf3	Jet::BitmapTextureResourceType::vf3
+10008eb0	Jet::BitmapTextureResourceType::vf5	Jet::BitmapTextureResourceType::vf5
+1003b890	Jet::ResourceType<Jet::MaterialResource>::vf3	Jet::ResourceType<Jet::MaterialResource>::vf3
+1003a930	Jet::TextureCombinerResource::vf8	Jet::TextureCombinerResource::vf8
+1003b920	Jet::ResourceType<Jet::TextureCombinerResource>::vf3	Jet::ResourceType<Jet::TextureCombinerResource>::vf3
+1003b9b0	Jet::ResourceType<Jet::TextureCombinerResource>::vf4	Jet::ResourceType<Jet::TextureCombinerResource>::vf4
+1003ac60	Jet::VertexProgramResource::vf8	Jet::VertexProgramResource::vf8
+1003baa0	Jet::ResourceType<Jet::VertexProgramResource>::vf3	Jet::ResourceType<Jet::VertexProgramResource>::vf3
+1003bb50	Jet::ResourceType<Jet::VertexProgramResource>::vf4	Jet::ResourceType<Jet::VertexProgramResource>::vf4
+1003f4f0	Jet::Texture::vf1	Jet::Texture::vf1
+100401f0	Jet::TextureCombiner::vf1	Jet::TextureCombiner::vf1
+10040850	Jet::TextureCombinerManager::vf1	Jet::TextureCombinerManager::vf1
+100413c0	Jet::TextureManager::vf1	Jet::TextureManager::vf1
+10043500	Jet::TexApiSection::vf0	Jet::TexApiSection::vf0
+100431a0	Jet::ParseItem::vf0	Jet::ParseItem::vf0, Jet::TexHeaderItem::vf0, Jet::TexApiDataItem::vf0
+100432b0	Jet::TexRegisterDefinition::vf0	Jet::TexRegisterDefinition::vf0
+10043370	Jet::TexApiCodeLine::vf0	Jet::TexApiCodeLine::vf0
+10044be0	Jet::TexApiCodeLine::vf0	Jet::TexApiCodeLine::vf0
+10045e50	tpFlexLexer::vf0	tpFlexLexer::vf0
+100462a0	Jet::TextureProgramParser::vf0	Jet::TextureProgramParser::vf0
+10044d30	Jet::TextureProgramParser::vf5	Jet::TextureProgramParser::vf5
+10046640	Jet::TextureRes::vf1	Jet::TextureRes::vf1
+10046fe0	Jet::TextureRes::vf1	Jet::TextureRes::vf1
+100490c0	Jet::VertexBufferManager::vf0	Jet::VertexBufferManager::vf0
+10049250	Jet::VertexProgram::vf1	Jet::VertexProgram::vf1
+1004a880	Jet::VertexProgramBasic::vf1	Jet::VertexProgramBasic::vf1
+1004e190	Jet::VertexProgramBasic::vf4	Jet::VertexProgramBasic::vf4
+1004e1d0	Jet::VertexProgramBasic::vf13	Jet::VertexProgramBasic::vf13
+1004e1a0	Jet::VertexProgramBasic::vf14	Jet::VertexProgramBasic::vf14
+1004e1e0	Jet::VertexProgramBasic::vf17	Jet::VertexProgramBasic::vf17
+1004e1b0	Jet::VertexProgramBasic::vf30	Jet::VertexProgramBasic::vf30
+1004e180	Jet::VertexProgramBasic::vf31	Jet::VertexProgramBasic::vf31
+1004e1c0	Jet::VertexProgramBasic::vf32	Jet::VertexProgramBasic::vf32
+1004a920	Jet::VertexProgramBasic::VPSymbol::vf0	Jet::VertexProgramBasic::VPSymbol::vf0
+10053840	vpFlexLexer::vf0	vpFlexLexer::vf0
+10053b70	Jet::VertexProgramManager::vf1	Jet::VertexProgramManager::vf1
+10054ed0	Jet::VertexProgramParser::vf0	Jet::VertexProgramParser::vf0
+10051bd0	Jet::VertexProgramParser::vf5	Jet::VertexProgramParser::vf5
+100562b0	Jet::VertexType::vf1	Jet::VertexType::vf1

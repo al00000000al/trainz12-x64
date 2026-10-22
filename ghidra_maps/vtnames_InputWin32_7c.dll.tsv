@@ -1,0 +1,50 @@
+entry	new_name	all_vftable_slots
+10004228	Jet::ReferenceCount::vf0	Jet::ReferenceCount::vf0, Jet::Win32Joystick::vf0, Jet::Win32Keyboard::vf0, Jet::Win32Mouse::vf0
+10001110	Jet::ReferenceCount::vf1	Jet::ReferenceCount::vf1
+10001240	Jet::InputDriverWin32::vf0	Jet::InputDriverWin32::vf0
+1000423a	Jet::InputDriverWin32::vf1	Jet::InputDriverWin32::vf1
+10001280	Jet::InputDriverWin32::vf2	Jet::InputDriverWin32::vf2
+10001430	Jet::InputDriverWin32::vf3	Jet::InputDriverWin32::vf3
+100016d0	Jet::InputDriverWin32::vf4	Jet::InputDriverWin32::vf4
+100016e0	Jet::InputDriverWin32::vf5	Jet::InputDriverWin32::vf5
+100017f0	Jet::InputDriverWin32::vf0	Jet::InputDriverWin32::vf0
+10001810	Jet::InputDriverWin32::vf1	Jet::InputDriverWin32::vf1
+1000422e	Jet::PluginFactoryOf<Jet::InputDriverWin32,Jet::InputDriver>::vf0	Jet::PluginFactoryOf<Jet::InputDriverWin32,Jet::InputDriver>::vf0
+10004234	Jet::PluginFactoryOf<Jet::InputDriverWin32,Jet::InputDriver>::vf1	Jet::PluginFactoryOf<Jet::InputDriverWin32,Jet::InputDriver>::vf1
+100019b0	Jet::PluginFactoryOf<Jet::InputDriverWin32,Jet::InputDriver>::vf2	Jet::PluginFactoryOf<Jet::InputDriverWin32,Jet::InputDriver>::vf2
+10001930	Jet::PluginFactoryOf<Jet::InputDriverWin32,Jet::InputDriver>::vf3	Jet::PluginFactoryOf<Jet::InputDriverWin32,Jet::InputDriver>::vf3
+10001dc0	Jet::Win32Joystick::vf0	Jet::Win32Joystick::vf0
+10004240	Jet::Win32Joystick::vf1	Jet::Win32Joystick::vf1, Jet::Win32Keyboard::vf1, Jet::Win32Mouse::vf1
+10004246	Jet::Win32Joystick::vf2	Jet::Win32Joystick::vf2, Jet::Win32Keyboard::vf2, Jet::Win32Mouse::vf2
+1000424c	Jet::Win32Joystick::vf3	Jet::Win32Joystick::vf3, Jet::Win32Keyboard::vf3, Jet::Win32Mouse::vf3
+100019f0	Jet::Win32Joystick::vf4	Jet::Win32Joystick::vf4
+10001f60	Jet::Win32Joystick::vf5	Jet::Win32Joystick::vf5
+10002050	Jet::Win32Joystick::vf6	Jet::Win32Joystick::vf6
+10004288	Jet::Win32Joystick::vf7	Jet::Win32Joystick::vf7, Jet::Win32Keyboard::vf7, Jet::Win32Mouse::vf7
+10004282	Jet::Win32Joystick::vf8	Jet::Win32Joystick::vf8, Jet::Win32Keyboard::vf8, Jet::Win32Mouse::vf8
+1000427c	Jet::Win32Joystick::vf9	Jet::Win32Joystick::vf9, Jet::Win32Keyboard::vf9, Jet::Win32Mouse::vf9
+10004276	Jet::Win32Joystick::vf10	Jet::Win32Joystick::vf10, Jet::Win32Keyboard::vf10, Jet::Win32Mouse::vf10
+10004270	Jet::Win32Joystick::vf11	Jet::Win32Joystick::vf11, Jet::Win32Keyboard::vf11, Jet::Win32Mouse::vf11
+10004264	Jet::Win32Joystick::vf12	Jet::Win32Joystick::vf12, Jet::Win32Keyboard::vf12, Jet::Win32Mouse::vf12
+1000426a	Jet::Win32Joystick::vf13	Jet::Win32Joystick::vf13, Jet::Win32Keyboard::vf13, Jet::Win32Mouse::vf13
+10002170	Jet::Win32Joystick::vf14	Jet::Win32Joystick::vf14
+1000425e	Jet::Win32Joystick::vf15	Jet::Win32Joystick::vf15, Jet::Win32Keyboard::vf15, Jet::Win32Mouse::vf15
+10004258	Jet::Win32Joystick::vf16	Jet::Win32Joystick::vf16
+10004252	Jet::Win32Joystick::vf17	Jet::Win32Joystick::vf17
+100023b0	Jet::Win32Joystick::vf1	Jet::Win32Joystick::vf1
+100024e0	Jet::Win32Keyboard::vf0	Jet::Win32Keyboard::vf0
+100023c0	Jet::Win32Keyboard::vf4	Jet::Win32Keyboard::vf4
+10002630	Jet::Win32Keyboard::vf5	Jet::Win32Keyboard::vf5
+100026a0	Jet::Win32Keyboard::vf6	Jet::Win32Keyboard::vf6
+10002790	Jet::Win32Keyboard::vf14	Jet::Win32Keyboard::vf14
+10002dc0	Jet::Win32Keyboard::vf16	Jet::Win32Keyboard::vf16
+10002de0	Jet::Win32Keyboard::vf17	Jet::Win32Keyboard::vf17
+10003120	Jet::Win32Keyboard::vf1	Jet::Win32Keyboard::vf1
+10003320	Jet::Win32Mouse::vf0	Jet::Win32Mouse::vf0
+10003130	Jet::Win32Mouse::vf4	Jet::Win32Mouse::vf4
+100035b0	Jet::Win32Mouse::vf5	Jet::Win32Mouse::vf5
+10003660	Jet::Win32Mouse::vf6	Jet::Win32Mouse::vf6
+10003bb0	Jet::Win32Mouse::vf14	Jet::Win32Mouse::vf14
+100041d0	Jet::Win32Mouse::vf16	Jet::Win32Mouse::vf16
+100041f0	Jet::Win32Mouse::vf17	Jet::Win32Mouse::vf17
+10004220	Jet::Win32Mouse::vf1	Jet::Win32Mouse::vf1

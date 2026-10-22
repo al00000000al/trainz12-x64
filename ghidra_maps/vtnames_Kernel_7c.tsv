@@ -1,0 +1,40 @@
+entry	new_name	all_vftable_slots
+10001040	Jet::App::vf0	Jet::App::vf0
+10001230	Jet::Task::vf0	Jet::Task::vf0
+10001a20	Jet::PluginType::vf2	Jet::PluginType::vf2
+1000dbbc	Jet::ReferenceCount::vf0	Jet::ReferenceCount::vf0, Jet::PluginSystem::vf0
+10001b10	Jet::ReferenceCount::vf1	Jet::ReferenceCount::vf1
+100025d0	Jet::PluginInstance::vf0	Jet::PluginInstance::vf0, Jet::Encrypt::vf0, Jet::Compress::vf0
+100025e0	Jet::PluginInstance::vf1	Jet::PluginInstance::vf1
+10002620	Jet::Encrypt::vf1	Jet::Encrypt::vf1
+100021f0	Jet::BFEncrypt::vf0	Jet::BFEncrypt::vf0
+10002230	Jet::BFEncrypt::vf1	Jet::BFEncrypt::vf1
+10001db0	Jet::BFEncrypt::vf2	Jet::BFEncrypt::vf2
+100024d0	Jet::BFEncrypt::vf3	Jet::BFEncrypt::vf3
+10002550	Jet::BFEncrypt::vf4	Jet::BFEncrypt::vf4
+10002600	Jet::BFEncrypt::vf0	Jet::BFEncrypt::vf0
+100025f0	Jet::BFEncrypt::vf1	Jet::BFEncrypt::vf1
+10002b50	Jet::Compress::vf1	Jet::Compress::vf1
+10003390	Jet::EditItem::vf0	Jet::EditItem::vf0
+10003380	Jet::EditItem::vf1	Jet::EditItem::vf1
+10003420	Jet::Mutex::vf0	Jet::Mutex::vf0
+1000dbd4	Jet::Mutex::vf1	Jet::Mutex::vf1
+10004490	Jet::EditItemManager::vf0	Jet::EditItemManager::vf0
+10004480	Jet::EditItemManager::vf1	Jet::EditItemManager::vf1
+100044b0	Jet::EditItemStack::vf0	Jet::EditItemStack::vf0
+10004d00	Jet::LogTask::vf0	Jet::LogTask::vf0
+10005780	Jet::LogTask::vf2	Jet::LogTask::vf2
+10004d60	Jet::EntryPoint::vf2	Jet::EntryPoint::vf2
+10005350	Jet::PluginFactoryOf<Jet::LZSSCompress,Jet::Compress>::vf2	Jet::PluginFactoryOf<Jet::LZSSCompress,Jet::Compress>::vf2, Jet::PluginFactoryOf<Jet::BFEncrypt,Jet::Encrypt>::vf2
+10005250	Jet::PluginFactoryOf<Jet::LZSSCompress,Jet::Compress>::vf3	Jet::PluginFactoryOf<Jet::LZSSCompress,Jet::Compress>::vf3
+100052f0	Jet::PluginFactoryOf<Jet::BFEncrypt,Jet::Encrypt>::vf3	Jet::PluginFactoryOf<Jet::BFEncrypt,Jet::Encrypt>::vf3
+10006ec0	Jet::LZSSCompress::vf0	Jet::LZSSCompress::vf0
+10007150	Jet::LZSSCompress::vf1	Jet::LZSSCompress::vf1
+100076f0	Jet::LZSSCompress::vf0	Jet::LZSSCompress::vf0
+100076e0	Jet::LZSSCompress::vf1	Jet::LZSSCompress::vf1
+10009530	Jet::PluginGroup::vf0	Jet::PluginGroup::vf0
+10009540	Jet::PluginGroup::vf1	Jet::PluginGroup::vf1
+10009470	Jet::PluginGroup::vf2	Jet::PluginGroup::vf2
+100097a0	Jet::PluginLibrary::vf0	Jet::PluginLibrary::vf0
+100097d0	Jet::PluginLibrary::vf1	Jet::PluginLibrary::vf1
+10009d60	Jet::PluginSystem::vf1	Jet::PluginSystem::vf1

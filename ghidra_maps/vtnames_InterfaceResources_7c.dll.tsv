@@ -1,0 +1,64 @@
+entry	new_name	all_vftable_slots
+100095f8	Jet::BorderResource::vf0	Jet::BorderResource::vf0, Jet::CursorResource::vf0, Jet::FontBaseResource::vf0, Jet::FontResource::vf0, Jet::BitmapBorderResource::vf0, Jet::IconResource::vf0
+100095fe	Jet::BorderResource::vf1	Jet::BorderResource::vf1, Jet::CursorResource::vf1, Jet::FontBaseResource::vf1, Jet::FontResource::vf1, Jet::BitmapBorderResource::vf1, Jet::IconResource::vf1
+10009604	Jet::BorderResource::vf2	Jet::BorderResource::vf2, Jet::CursorResource::vf2, Jet::FontBaseResource::vf2, Jet::FontResource::vf2, Jet::BitmapBorderResource::vf2, Jet::IconResource::vf2
+1000960a	Jet::BorderResource::vf3	Jet::BorderResource::vf3, Jet::FontBaseResource::vf3, Jet::FontResource::vf3, Jet::BitmapBorderResource::vf3, Jet::IconResource::vf3
+10009610	Jet::BorderResource::vf4	Jet::BorderResource::vf4, Jet::CursorResource::vf4, Jet::FontBaseResource::vf4, Jet::FontResource::vf4, Jet::BitmapBorderResource::vf4, Jet::IconResource::vf4
+10009616	Jet::BorderResource::vf5	Jet::BorderResource::vf5, Jet::CursorResource::vf5, Jet::FontBaseResource::vf5, Jet::FontResource::vf5, Jet::BitmapBorderResource::vf5, Jet::IconResource::vf5
+1000961c	Jet::BorderResource::vf6	Jet::BorderResource::vf6, Jet::CursorResource::vf6, Jet::FontBaseResource::vf6, Jet::FontResource::vf6, Jet::BitmapBorderResource::vf6, Jet::IconResource::vf6
+10009658	Jet::BorderResource::vf7	Jet::BorderResource::vf7, Jet::CursorResource::vf7, Jet::FontBaseResource::vf7, Jet::FontResource::vf7, Jet::BitmapBorderResource::vf7, Jet::IconResource::vf7
+10001140	Jet::BorderResource::vf8	Jet::BorderResource::vf8
+10009622	Jet::BorderResource::vf9	Jet::BorderResource::vf9, Jet::CursorResource::vf9, Jet::FontBaseResource::vf9, Jet::FontResource::vf9, Jet::BitmapBorderResource::vf9, Jet::IconResource::vf9
+10009628	Jet::BorderResource::vf10	Jet::BorderResource::vf10, Jet::CursorResource::vf10, Jet::FontBaseResource::vf10, Jet::BitmapBorderResource::vf10, Jet::IconResource::vf10
+1000962e	Jet::BorderResource::vf11	Jet::BorderResource::vf11, Jet::FontBaseResource::vf11, Jet::FontResource::vf11
+10009634	Jet::BorderResource::vf12	Jet::BorderResource::vf12, Jet::CursorResource::vf12, Jet::FontBaseResource::vf12, Jet::FontResource::vf12, Jet::BitmapBorderResource::vf12, Jet::IconResource::vf12
+1000963a	Jet::BorderResource::vf13	Jet::BorderResource::vf13, Jet::CursorResource::vf13, Jet::FontBaseResource::vf13, Jet::FontResource::vf13, Jet::BitmapBorderResource::vf13, Jet::IconResource::vf13
+10009640	Jet::BorderResource::vf14	Jet::BorderResource::vf14, Jet::CursorResource::vf14, Jet::FontBaseResource::vf14
+10009652	Jet::BorderResource::vf15	Jet::BorderResource::vf15, Jet::CursorResource::vf15, Jet::FontBaseResource::vf15, Jet::BitmapBorderResource::vf15
+1000964c	Jet::BorderResource::vf16	Jet::BorderResource::vf16, Jet::CursorResource::vf16, Jet::FontBaseResource::vf16, Jet::BitmapBorderResource::vf16, Jet::IconResource::vf16
+10009646	Jet::BorderResource::vf17	Jet::BorderResource::vf17, Jet::CursorResource::vf17, Jet::FontBaseResource::vf17, Jet::FontResource::vf17, Jet::BitmapBorderResource::vf17, Jet::IconResource::vf17
+10002000	Jet::CursorResource::vf8	Jet::CursorResource::vf8
+100095e6	Jet::CursorResource::vf18	Jet::CursorResource::vf18
+100095ec	Jet::CursorResource::vf19	Jet::CursorResource::vf19
+100095f2	Jet::CursorResource::vf20	Jet::CursorResource::vf20
+10002760	Jet::Font::vf0	Jet::Font::vf0
+100095d4	Jet::ReferenceCount::vf0	Jet::ReferenceCount::vf0
+10004e30	Jet::ReferenceCount::vf1	Jet::ReferenceCount::vf1
+10008dc0	Jet::FontFx::vf0	Jet::FontFx::vf0, Jet::FontFx::vf3, Jet::FontFx::vf4, Jet::FontFx::vf6, Jet::FontFx::vf7, Jet::FontFxBitmap::vf6, Jet::FontFxTT::vf4, Jet::FontBaseResource::vf18, Jet::FontBaseResource::vf19, Jet::FontBaseResource::vf20, Jet::FontBaseResource::vf21, Jet::FontBaseResource::vf22, Jet::FontBaseResource::vf23, Jet::FontBaseResource::vf24, Jet::FontBaseResource::vf25, Jet::FontBaseResource::vf26, Jet::FontBaseResource::vf27, Jet::FontBaseResource::vf28, Jet::FontBaseResource::vf29, Jet::FontBaseResource::vf30, Jet::FontBaseResource::vf31, Jet::FontBaseResource::vf32
+10004f60	Jet::FontFx::vf1	Jet::FontFx::vf1
+10004f80	Jet::FontFx::vf2	Jet::FontFx::vf2, Jet::FontFxBitmap::vf2, Jet::FontFxTT::vf2
+10004f90	Jet::FontFx::vf5	Jet::FontFx::vf5, Jet::FontFxTT::vf5
+10004fa0	Jet::FontFx::vf8	Jet::FontFx::vf8, Jet::FontFxBitmap::vf8
+10004fb0	Jet::FontFx::vf9	Jet::FontFx::vf9, Jet::FontFxBitmap::vf9
+10004fd0	Jet::FontFx::vf10	Jet::FontFx::vf10, Jet::FontFxBitmap::vf10
+10004fe0	Jet::FontFx::vf11	Jet::FontFx::vf11, Jet::FontFxBitmap::vf11
+10005a80	Jet::FontFx::vf0	Jet::FontFx::vf0
+10005a70	Jet::FontFx::vf1	Jet::FontFx::vf1
+10005ab0	Jet::FontFxBitmap::vf0	Jet::FontFxBitmap::vf0
+10005aa0	Jet::FontFxBitmap::vf1	Jet::FontFxBitmap::vf1
+10006320	Jet::FontFxTT::vf0	Jet::FontFxTT::vf0
+10006340	Jet::FontFxTT::vf1	Jet::FontFxTT::vf1
+10006730	Jet::FontBaseResource::vf8	Jet::FontBaseResource::vf8
+10006850	Jet::FontResource::vf8	Jet::FontResource::vf8
+10008dd0	Jet::BitmapBorderResource::vf8	Jet::BitmapBorderResource::vf8
+10001890	Jet::BitmapBorderResource::vf11	Jet::BitmapBorderResource::vf11
+10001e10	Jet::BitmapBorderResource::vf14	Jet::BitmapBorderResource::vf14
+100011d0	Jet::BitmapBorderResource::vf18	Jet::BitmapBorderResource::vf18
+10001a70	Jet::BitmapBorderResource::vf19	Jet::BitmapBorderResource::vf19
+10001ae0	Jet::BitmapBorderResource::vf20	Jet::BitmapBorderResource::vf20
+100095da	Jet::ResourceType<Jet::BitmapBorderResource>::vf0	Jet::ResourceType<Jet::BitmapBorderResource>::vf0, Jet::ResourceType<Jet::CursorResource>::vf0, Jet::FontResourceType::vf0, Jet::ResourceType<Jet::IconResource>::vf0
+100095e0	Jet::ResourceType<Jet::BitmapBorderResource>::vf1	Jet::ResourceType<Jet::BitmapBorderResource>::vf1, Jet::ResourceType<Jet::CursorResource>::vf1, Jet::FontResourceType::vf1, Jet::ResourceType<Jet::IconResource>::vf1
+100095b0	Jet::ResourceType<Jet::BitmapBorderResource>::vf2	Jet::ResourceType<Jet::BitmapBorderResource>::vf2, Jet::ResourceType<Jet::CursorResource>::vf2, Jet::FontResourceType::vf2, Jet::ResourceType<Jet::IconResource>::vf2
+10009380	Jet::ResourceType<Jet::BitmapBorderResource>::vf3	Jet::ResourceType<Jet::BitmapBorderResource>::vf3
+10009410	Jet::ResourceType<Jet::BitmapBorderResource>::vf4	Jet::ResourceType<Jet::BitmapBorderResource>::vf4
+1000965e	Jet::ResourceType<Jet::BitmapBorderResource>::vf5	Jet::ResourceType<Jet::BitmapBorderResource>::vf5, Jet::ResourceType<Jet::CursorResource>::vf5, Jet::ResourceType<Jet::IconResource>::vf5
+10009420	Jet::ResourceType<Jet::CursorResource>::vf3	Jet::ResourceType<Jet::CursorResource>::vf3
+100094a0	Jet::FontResourceType::vf3	Jet::FontResourceType::vf3
+10007540	Jet::FontResourceType::vf5	Jet::FontResourceType::vf5
+10008ef0	Jet::IconResource::vf8	Jet::IconResource::vf8
+100083e0	Jet::IconResource::vf11	Jet::IconResource::vf11
+10008d10	Jet::IconResource::vf14	Jet::IconResource::vf14
+100095a0	Jet::IconResource::vf15	Jet::IconResource::vf15, Jet::ResourceType<Jet::IconResource>::vf4
+100085c0	Jet::IconResource::vf18	Jet::IconResource::vf18
+10008790	Jet::IconResource::vf19	Jet::IconResource::vf19
+10009530	Jet::ResourceType<Jet::IconResource>::vf3	Jet::ResourceType<Jet::IconResource>::vf3

@@ -1,0 +1,40 @@
+entry	new_name	all_vftable_slots
+1000307c	Jet::BitmapBaseResource::vf0	Jet::BitmapBaseResource::vf0, Jet::BitmapFrameBaseResource::vf0, Jet::BitmapResource::vf0, Jet::ColourResource::vf0
+10003082	Jet::BitmapBaseResource::vf1	Jet::BitmapBaseResource::vf1, Jet::BitmapFrameBaseResource::vf1, Jet::BitmapResource::vf1, Jet::ColourResource::vf1
+10003088	Jet::BitmapBaseResource::vf2	Jet::BitmapBaseResource::vf2, Jet::BitmapFrameBaseResource::vf2, Jet::BitmapResource::vf2, Jet::BitmapFrameResource::vf2, Jet::ColourResource::vf2
+1000308e	Jet::BitmapBaseResource::vf3	Jet::BitmapBaseResource::vf3, Jet::BitmapFrameBaseResource::vf3, Jet::BitmapResource::vf3, Jet::ColourResource::vf3
+10003094	Jet::BitmapBaseResource::vf4	Jet::BitmapBaseResource::vf4, Jet::BitmapFrameBaseResource::vf4, Jet::BitmapResource::vf4, Jet::BitmapFrameResource::vf4, Jet::ColourResource::vf4
+1000309a	Jet::BitmapBaseResource::vf5	Jet::BitmapBaseResource::vf5, Jet::BitmapFrameBaseResource::vf5, Jet::BitmapResource::vf5, Jet::BitmapFrameResource::vf5, Jet::ColourResource::vf5
+100030a0	Jet::BitmapBaseResource::vf6	Jet::BitmapBaseResource::vf6, Jet::BitmapFrameBaseResource::vf6, Jet::BitmapResource::vf6, Jet::BitmapFrameResource::vf6, Jet::ColourResource::vf6
+100030a6	Jet::BitmapBaseResource::vf7	Jet::BitmapBaseResource::vf7, Jet::BitmapFrameBaseResource::vf7, Jet::BitmapResource::vf7, Jet::BitmapFrameResource::vf7, Jet::ColourResource::vf7
+10001050	Jet::BitmapBaseResource::vf8	Jet::BitmapBaseResource::vf8, Jet::BitmapFrameBaseResource::vf8
+100030ac	Jet::BitmapBaseResource::vf9	Jet::BitmapBaseResource::vf9, Jet::BitmapFrameBaseResource::vf9, Jet::BitmapResource::vf9, Jet::BitmapFrameResource::vf9, Jet::ColourResource::vf9
+100030b2	Jet::BitmapBaseResource::vf10	Jet::BitmapBaseResource::vf10, Jet::BitmapFrameBaseResource::vf10, Jet::BitmapFrameResource::vf10, Jet::ColourResource::vf10
+100030b8	Jet::BitmapBaseResource::vf11	Jet::BitmapBaseResource::vf11, Jet::BitmapFrameBaseResource::vf11, Jet::BitmapResource::vf11
+100030be	Jet::BitmapBaseResource::vf12	Jet::BitmapBaseResource::vf12, Jet::BitmapFrameBaseResource::vf12, Jet::BitmapResource::vf12, Jet::BitmapFrameResource::vf12, Jet::ColourResource::vf12
+100030c4	Jet::BitmapBaseResource::vf13	Jet::BitmapBaseResource::vf13, Jet::BitmapFrameBaseResource::vf13, Jet::BitmapResource::vf13, Jet::BitmapFrameResource::vf13, Jet::ColourResource::vf13
+100030ca	Jet::BitmapBaseResource::vf14	Jet::BitmapBaseResource::vf14, Jet::BitmapFrameBaseResource::vf14, Jet::ColourResource::vf14
+100030d0	Jet::BitmapBaseResource::vf15	Jet::BitmapBaseResource::vf15, Jet::BitmapFrameBaseResource::vf15
+100030d6	Jet::BitmapBaseResource::vf16	Jet::BitmapBaseResource::vf16, Jet::BitmapFrameBaseResource::vf16, Jet::BitmapFrameResource::vf16, Jet::ColourResource::vf16
+100030dc	Jet::BitmapBaseResource::vf17	Jet::BitmapBaseResource::vf17, Jet::BitmapFrameBaseResource::vf17, Jet::BitmapResource::vf17, Jet::BitmapFrameResource::vf17, Jet::ColourResource::vf17
+10001ec0	Jet::BitmapResource::vf8	Jet::BitmapResource::vf8
+10003070	Jet::ResourceType<Jet::BitmapResource>::vf0	Jet::ResourceType<Jet::BitmapResource>::vf0, Jet::ResourceType<Jet::BitmapFrameResource>::vf0, Jet::ResourceType<Jet::ColourResource>::vf0
+10003076	Jet::ResourceType<Jet::BitmapResource>::vf1	Jet::ResourceType<Jet::BitmapResource>::vf1, Jet::ResourceType<Jet::BitmapFrameResource>::vf1, Jet::ResourceType<Jet::ColourResource>::vf1
+10003040	Jet::ResourceType<Jet::BitmapResource>::vf2	Jet::ResourceType<Jet::BitmapResource>::vf2, Jet::ResourceType<Jet::BitmapFrameResource>::vf2, Jet::ResourceType<Jet::ColourResource>::vf2
+10002e70	Jet::ResourceType<Jet::BitmapResource>::vf3	Jet::ResourceType<Jet::BitmapResource>::vf3
+100030e2	Jet::ResourceType<Jet::BitmapResource>::vf5	Jet::ResourceType<Jet::BitmapResource>::vf5, Jet::ResourceType<Jet::BitmapFrameResource>::vf5, Jet::ResourceType<Jet::ColourResource>::vf5
+100019d0	Jet::BitmapFrameResource::vf0	Jet::BitmapFrameResource::vf0
+10001a30	Jet::BitmapFrameResource::vf1	Jet::BitmapFrameResource::vf1
+10001a50	Jet::BitmapFrameResource::vf3	Jet::BitmapFrameResource::vf3
+10002750	Jet::BitmapFrameResource::vf8	Jet::BitmapFrameResource::vf8
+10001a90	Jet::BitmapFrameResource::vf11	Jet::BitmapFrameResource::vf11
+10001dd0	Jet::BitmapFrameResource::vf14	Jet::BitmapFrameResource::vf14
+10002f90	Jet::BitmapFrameResource::vf15	Jet::BitmapFrameResource::vf15, Jet::ResourceType<Jet::BitmapFrameResource>::vf4
+10001970	Jet::BitmapFrameResource::vf21	Jet::BitmapFrameResource::vf21
+100019b0	Jet::BitmapFrameResource::vf22	Jet::BitmapFrameResource::vf22
+10002f00	Jet::ResourceType<Jet::BitmapFrameResource>::vf3	Jet::ResourceType<Jet::BitmapFrameResource>::vf3
+100027d0	Jet::ColourResource::vf8	Jet::ColourResource::vf8
+10002320	Jet::ColourResource::vf11	Jet::ColourResource::vf11
+10002800	Jet::ColourResource::vf15	Jet::ColourResource::vf15, Jet::ResourceType<Jet::ColourResource>::vf4
+10002690	Jet::ColourResource::vf19	Jet::ColourResource::vf19, Jet::ColourResource::vf20
+10002fa0	Jet::ResourceType<Jet::ColourResource>::vf3	Jet::ResourceType<Jet::ColourResource>::vf3

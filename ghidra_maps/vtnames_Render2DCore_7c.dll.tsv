@@ -1,0 +1,37 @@
+entry	new_name	all_vftable_slots
+10001340	Jet::Canvas::vf0	Jet::Canvas::vf0
+10004ce4	Jet::Canvas::vf1	Jet::Canvas::vf1, Jet::SelectionBox::vf1, Jet::SpriteManager::vf1
+10004cea	Jet::Canvas::vf2	Jet::Canvas::vf2, Jet::SelectionBox::vf2, Jet::SpriteManager::vf2
+10004cf0	Jet::Canvas::vf3	Jet::Canvas::vf3, Jet::SelectionBox::vf3, Jet::SpriteManager::vf3
+10004cf6	Jet::Canvas::vf4	Jet::Canvas::vf4, Jet::SelectionBox::vf4, Jet::SpriteManager::vf4
+10004cfc	Jet::Canvas::vf5	Jet::Canvas::vf5, Jet::SelectionBox::vf5, Jet::SpriteManager::vf5
+10004d02	Jet::Canvas::vf7	Jet::Canvas::vf7, Jet::SelectionBox::vf7
+10004d08	Jet::Canvas::vf8	Jet::Canvas::vf8, Jet::SelectionBox::vf8, Jet::SpriteManager::vf8
+10004d0e	Jet::Canvas::vf9	Jet::Canvas::vf9, Jet::SelectionBox::vf9, Jet::SpriteManager::vf9
+10004d14	Jet::Canvas::vf10	Jet::Canvas::vf10, Jet::SelectionBox::vf10, Jet::SpriteManager::vf10
+100023e0	Jet::SpriteInstance::vf0	Jet::SpriteInstance::vf0
+10004c7e	Jet::ResourceType<Jet::SpriteResource>::vf0	Jet::ResourceType<Jet::SpriteResource>::vf0
+10004c84	Jet::ResourceType<Jet::SpriteResource>::vf1	Jet::ResourceType<Jet::SpriteResource>::vf1
+10002a00	Jet::ResourceType<Jet::SpriteResource>::vf2	Jet::ResourceType<Jet::SpriteResource>::vf2
+100029a0	Jet::ResourceType<Jet::SpriteResource>::vf3	Jet::ResourceType<Jet::SpriteResource>::vf3
+10003e40	Jet::ResourceType<Jet::SpriteResource>::vf4	Jet::ResourceType<Jet::SpriteResource>::vf4, Jet::SpriteResource::vf15
+10004c8a	Jet::ResourceType<Jet::SpriteResource>::vf5	Jet::ResourceType<Jet::SpriteResource>::vf5
+10002be0	Jet::SelectionBox::vf0	Jet::SelectionBox::vf0
+10003240	Jet::SpriteManager::vf0	Jet::SpriteManager::vf0
+10004c90	Jet::SpriteResource::vf0	Jet::SpriteResource::vf0
+10004c96	Jet::SpriteResource::vf1	Jet::SpriteResource::vf1
+10004c9c	Jet::SpriteResource::vf2	Jet::SpriteResource::vf2
+10004ca2	Jet::SpriteResource::vf3	Jet::SpriteResource::vf3
+10004ca8	Jet::SpriteResource::vf4	Jet::SpriteResource::vf4
+10004cae	Jet::SpriteResource::vf5	Jet::SpriteResource::vf5
+10004cb4	Jet::SpriteResource::vf6	Jet::SpriteResource::vf6
+10004cba	Jet::SpriteResource::vf7	Jet::SpriteResource::vf7
+10003f40	Jet::SpriteResource::vf8	Jet::SpriteResource::vf8
+10004cc0	Jet::SpriteResource::vf9	Jet::SpriteResource::vf9
+10004000	Jet::SpriteResource::vf10	Jet::SpriteResource::vf10
+10004010	Jet::SpriteResource::vf11	Jet::SpriteResource::vf11
+10004cc6	Jet::SpriteResource::vf12	Jet::SpriteResource::vf12
+10004ccc	Jet::SpriteResource::vf13	Jet::SpriteResource::vf13
+10004cd2	Jet::SpriteResource::vf14	Jet::SpriteResource::vf14
+10004cd8	Jet::SpriteResource::vf16	Jet::SpriteResource::vf16
+10004cde	Jet::SpriteResource::vf17	Jet::SpriteResource::vf17

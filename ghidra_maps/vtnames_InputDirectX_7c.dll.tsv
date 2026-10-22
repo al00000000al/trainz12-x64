@@ -1,0 +1,72 @@
+entry	new_name	all_vftable_slots
+10006030	Jet::ForceEffectDirectX::vf0	Jet::ForceEffectDirectX::vf0, Jet::InputDeviceDirectX::vf0, Jet::ReferenceCount::vf0, Jet::DirectXJoystick::vf0, Jet::DirectXKeyboard::vf0, Jet::DirectXMouse::vf0
+100010c0	Jet::ForceEffectDirectX::vf1	Jet::ForceEffectDirectX::vf1
+10006036	Jet::ForceEffectDirectX::vf2	Jet::ForceEffectDirectX::vf2
+1000603c	Jet::ForceEffectDirectX::vf3	Jet::ForceEffectDirectX::vf3
+100012d0	Jet::ForceEffectDirectX::vf4	Jet::ForceEffectDirectX::vf4
+10001000	Jet::ForceEffectDirectX::vf5	Jet::ForceEffectDirectX::vf5
+10001340	Jet::ForceEffectDirectX::vf6	Jet::ForceEffectDirectX::vf6
+100013c0	Jet::ForceEffectDirectX::vf7	Jet::ForceEffectDirectX::vf7
+10001400	Jet::ForceEffectDirectX::vf8	Jet::ForceEffectDirectX::vf8
+10001590	Jet::ForceEffectDirectX::vf9	Jet::ForceEffectDirectX::vf9
+10001640	Jet::ForceEffectDirectX::vf10	Jet::ForceEffectDirectX::vf10
+10006042	Jet::ForceEffectDirectX::vf11	Jet::ForceEffectDirectX::vf11
+10001180	Jet::ForceEffectDirectX::vf12	Jet::ForceEffectDirectX::vf12
+100016a0	Jet::ForceEffectDirectX::vf13	Jet::ForceEffectDirectX::vf13
+10001ca0	Jet::InputDeviceDirectX::vf0	Jet::InputDeviceDirectX::vf0, Jet::DirectXKeyboard::vf0, Jet::DirectXMouse::vf0
+10006048	Jet::InputDeviceDirectX::vf1	Jet::InputDeviceDirectX::vf1, Jet::DirectXJoystick::vf1, Jet::DirectXKeyboard::vf1, Jet::DirectXMouse::vf1
+1000604e	Jet::InputDeviceDirectX::vf2	Jet::InputDeviceDirectX::vf2, Jet::DirectXJoystick::vf2, Jet::DirectXKeyboard::vf2, Jet::DirectXMouse::vf2
+10006054	Jet::InputDeviceDirectX::vf3	Jet::InputDeviceDirectX::vf3, Jet::DirectXJoystick::vf3, Jet::DirectXKeyboard::vf3, Jet::DirectXMouse::vf3
+1000747e	Jet::InputDeviceDirectX::vf4	Jet::InputDeviceDirectX::vf4, Jet::InputDeviceDirectX::vf14, Jet::InputDeviceDirectX::vf18
+10006090	Jet::InputDeviceDirectX::vf5	Jet::InputDeviceDirectX::vf5
+1000608a	Jet::InputDeviceDirectX::vf6	Jet::InputDeviceDirectX::vf6
+10006084	Jet::InputDeviceDirectX::vf7	Jet::InputDeviceDirectX::vf7, Jet::DirectXKeyboard::vf7, Jet::DirectXMouse::vf7
+1000607e	Jet::InputDeviceDirectX::vf8	Jet::InputDeviceDirectX::vf8, Jet::DirectXKeyboard::vf8, Jet::DirectXMouse::vf8
+10006078	Jet::InputDeviceDirectX::vf9	Jet::InputDeviceDirectX::vf9, Jet::DirectXKeyboard::vf9, Jet::DirectXMouse::vf9
+10006072	Jet::InputDeviceDirectX::vf10	Jet::InputDeviceDirectX::vf10, Jet::DirectXKeyboard::vf10, Jet::DirectXMouse::vf10
+1000606c	Jet::InputDeviceDirectX::vf11	Jet::InputDeviceDirectX::vf11, Jet::DirectXKeyboard::vf11, Jet::DirectXMouse::vf11
+10006060	Jet::InputDeviceDirectX::vf12	Jet::InputDeviceDirectX::vf12, Jet::DirectXKeyboard::vf12, Jet::DirectXMouse::vf12
+10006066	Jet::InputDeviceDirectX::vf13	Jet::InputDeviceDirectX::vf13, Jet::DirectXKeyboard::vf13, Jet::DirectXMouse::vf13
+10001d60	Jet::InputDeviceDirectX::vf15	Jet::InputDeviceDirectX::vf15, Jet::DirectXKeyboard::vf15, Jet::DirectXMouse::vf15
+10001da0	Jet::InputDeviceDirectX::vf16	Jet::InputDeviceDirectX::vf16, Jet::DirectXKeyboard::vf16, Jet::DirectXMouse::vf16
+1000605a	Jet::InputDeviceDirectX::vf17	Jet::InputDeviceDirectX::vf17, Jet::DirectXJoystick::vf17, Jet::DirectXKeyboard::vf17, Jet::DirectXMouse::vf17
+10001db0	Jet::InputDeviceDirectX::vf1	Jet::InputDeviceDirectX::vf1, Jet::DirectXKeyboard::vf1, Jet::DirectXMouse::vf1
+1000609c	Jet::PluginFactoryOf<Jet::InputDriverDirectX,Jet::InputDriver>::vf0	Jet::PluginFactoryOf<Jet::InputDriverDirectX,Jet::InputDriver>::vf0
+100060a2	Jet::PluginFactoryOf<Jet::InputDriverDirectX,Jet::InputDriver>::vf1	Jet::PluginFactoryOf<Jet::InputDriverDirectX,Jet::InputDriver>::vf1
+10001f50	Jet::PluginFactoryOf<Jet::InputDriverDirectX,Jet::InputDriver>::vf2	Jet::PluginFactoryOf<Jet::InputDriverDirectX,Jet::InputDriver>::vf2
+10001ed0	Jet::PluginFactoryOf<Jet::InputDriverDirectX,Jet::InputDriver>::vf3	Jet::PluginFactoryOf<Jet::InputDriverDirectX,Jet::InputDriver>::vf3
+100020b0	Jet::ReferenceCount::vf1	Jet::ReferenceCount::vf1
+10002230	Jet::InputDriverDirectX::vf0	Jet::InputDriverDirectX::vf0
+10006096	Jet::InputDriverDirectX::vf1	Jet::InputDriverDirectX::vf1
+10002290	Jet::InputDriverDirectX::vf2	Jet::InputDriverDirectX::vf2
+10002320	Jet::InputDriverDirectX::vf3	Jet::InputDriverDirectX::vf3
+10002520	Jet::InputDriverDirectX::vf4	Jet::InputDriverDirectX::vf4
+10002540	Jet::InputDriverDirectX::vf5	Jet::InputDriverDirectX::vf5
+10002aa0	Jet::InputDriverDirectX::vf0	Jet::InputDriverDirectX::vf0
+10002a90	Jet::InputDriverDirectX::vf1	Jet::InputDriverDirectX::vf1
+10002ce0	Jet::DirectXJoystick::vf0	Jet::DirectXJoystick::vf0
+10002b60	Jet::DirectXJoystick::vf4	Jet::DirectXJoystick::vf4
+10003400	Jet::DirectXJoystick::vf5	Jet::DirectXJoystick::vf5
+100036d0	Jet::DirectXJoystick::vf6	Jet::DirectXJoystick::vf6
+100044f0	Jet::DirectXJoystick::vf7	Jet::DirectXJoystick::vf7
+100045f0	Jet::DirectXJoystick::vf8	Jet::DirectXJoystick::vf8
+10004630	Jet::DirectXJoystick::vf9	Jet::DirectXJoystick::vf9
+10004660	Jet::DirectXJoystick::vf10	Jet::DirectXJoystick::vf10
+100046a0	Jet::DirectXJoystick::vf11	Jet::DirectXJoystick::vf11
+100047d0	Jet::DirectXJoystick::vf12	Jet::DirectXJoystick::vf12
+100046e0	Jet::DirectXJoystick::vf13	Jet::DirectXJoystick::vf13
+10003ad0	Jet::DirectXJoystick::vf14	Jet::DirectXJoystick::vf14
+10003310	Jet::DirectXJoystick::vf15	Jet::DirectXJoystick::vf15
+100042f0	Jet::DirectXJoystick::vf16	Jet::DirectXJoystick::vf16
+10002df0	Jet::DirectXJoystick::vf18	Jet::DirectXJoystick::vf18
+10004b90	Jet::DirectXJoystick::vf1	Jet::DirectXJoystick::vf1
+10004c20	Jet::DirectXKeyboard::vf4	Jet::DirectXKeyboard::vf4
+10004ea0	Jet::DirectXKeyboard::vf5	Jet::DirectXKeyboard::vf5
+10004f10	Jet::DirectXKeyboard::vf6	Jet::DirectXKeyboard::vf6
+10005000	Jet::DirectXKeyboard::vf14	Jet::DirectXKeyboard::vf14
+10004db0	Jet::DirectXKeyboard::vf18	Jet::DirectXKeyboard::vf18
+10005780	Jet::DirectXMouse::vf4	Jet::DirectXMouse::vf4
+10005b00	Jet::DirectXMouse::vf5	Jet::DirectXMouse::vf5
+10005b80	Jet::DirectXMouse::vf6	Jet::DirectXMouse::vf6
+10005c50	Jet::DirectXMouse::vf14	Jet::DirectXMouse::vf14
+100059f0	Jet::DirectXMouse::vf18	Jet::DirectXMouse::vf18

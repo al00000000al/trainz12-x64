@@ -1,0 +1,221 @@
+entry	new_name	all_vftable_slots
+10001a40	Jet::AnimationModifier::vf0	Jet::AnimationModifier::vf0
+10031176	Jet::AnimationModifier::vf1	Jet::AnimationModifier::vf1
+1003117c	Jet::AnimationModifier::vf2	Jet::AnimationModifier::vf2
+10031182	Jet::AnimationModifier::vf3	Jet::AnimationModifier::vf3
+10031188	Jet::AnimationModifier::vf4	Jet::AnimationModifier::vf4
+1003118e	Jet::AnimationModifier::vf5	Jet::AnimationModifier::vf5
+10031194	Jet::AnimationModifier::vf6	Jet::AnimationModifier::vf6
+1003119a	Jet::AnimationModifier::vf7	Jet::AnimationModifier::vf7
+100313e6	Jet::AnimationModifier::vf10	Jet::AnimationModifier::vf10
+100314ee	Jet::AnimationModifier::vf11	Jet::AnimationModifier::vf11
+100314e8	Jet::AnimationModifier::vf12	Jet::AnimationModifier::vf12
+100314e2	Jet::AnimationModifier::vf21	Jet::AnimationModifier::vf21
+100314dc	Jet::AnimationModifier::vf22	Jet::AnimationModifier::vf22
+10002180	Jet::Animator::vf0	Jet::Animator::vf0
+10001480	Jet::AnimationObserver::vf0	Jet::AnimationObserver::vf0
+1003110a	Jet::AnimationResource::vf0	Jet::AnimationResource::vf0, Jet::AnimationTxtResource::vf0, Jet::GeometryBaseResource::vf0
+10031110	Jet::AnimationResource::vf1	Jet::AnimationResource::vf1, Jet::AnimationTxtResource::vf1, Jet::GeometryBaseResource::vf1, Jet::MovieTextureResource::vf1
+10031116	Jet::AnimationResource::vf2	Jet::AnimationResource::vf2, Jet::AnimationTxtResource::vf2, Jet::GeometryBaseResource::vf2
+1003111c	Jet::AnimationResource::vf3	Jet::AnimationResource::vf3, Jet::AnimationTxtResource::vf3, Jet::GeometryBaseResource::vf3
+10031122	Jet::AnimationResource::vf4	Jet::AnimationResource::vf4, Jet::AnimationTxtResource::vf4, Jet::GeometryBaseResource::vf4, Jet::MovieTextureResource::vf4
+10031128	Jet::AnimationResource::vf5	Jet::AnimationResource::vf5, Jet::AnimationTxtResource::vf5, Jet::GeometryBaseResource::vf5, Jet::MovieTextureResource::vf5
+1003112e	Jet::AnimationResource::vf6	Jet::AnimationResource::vf6, Jet::AnimationTxtResource::vf6, Jet::GeometryBaseResource::vf6, Jet::MovieTextureResource::vf6
+10031134	Jet::AnimationResource::vf7	Jet::AnimationResource::vf7, Jet::AnimationTxtResource::vf7, Jet::GeometryBaseResource::vf7
+10001570	Jet::AnimationResource::vf8	Jet::AnimationResource::vf8
+1003113a	Jet::AnimationResource::vf9	Jet::AnimationResource::vf9, Jet::AnimationTxtResource::vf9, Jet::GeometryBaseResource::vf9, Jet::MovieTextureResource::vf9
+10031140	Jet::AnimationResource::vf11	Jet::AnimationResource::vf11, Jet::AnimationTxtResource::vf11, Jet::GeometryBaseResource::vf11
+10031146	Jet::AnimationResource::vf12	Jet::AnimationResource::vf12, Jet::AnimationTxtResource::vf12, Jet::GeometryBaseResource::vf12
+1003114c	Jet::AnimationResource::vf13	Jet::AnimationResource::vf13, Jet::AnimationTxtResource::vf13, Jet::GeometryBaseResource::vf13
+10031152	Jet::AnimationResource::vf14	Jet::AnimationResource::vf14, Jet::AnimationTxtResource::vf14, Jet::GeometryBaseResource::vf14
+10031158	Jet::AnimationResource::vf17	Jet::AnimationResource::vf17, Jet::AnimationTxtResource::vf17, Jet::GeometryBaseResource::vf17, Jet::MovieTextureResource::vf17
+100023a0	Jet::ParticleBone::vf0	Jet::ParticleBone::vf0
+100311a0	Jet::ParticleBone::vf1	Jet::ParticleBone::vf1, Jet::TextureProjector::vf1, Jet::OccludedTextureProjector::vf1
+100311a6	Jet::ParticleBone::vf2	Jet::ParticleBone::vf2, Jet::TextureProjector::vf2, Jet::OccludedTextureProjector::vf2
+100311ac	Jet::ParticleBone::vf4	Jet::ParticleBone::vf4
+100313ec	Jet::ParticleBone::vf5	Jet::ParticleBone::vf5, Jet::TextureProjector::vf5, Jet::OccludedTextureProjector::vf5
+100313f2	Jet::ParticleBone::vf9	Jet::ParticleBone::vf9, Jet::TextureProjector::vf9, Jet::OccludedTextureProjector::vf9
+100313f8	Jet::ParticleBone::vf10	Jet::ParticleBone::vf10, Jet::TextureProjector::vf10, Jet::OccludedTextureProjector::vf10
+100313fe	Jet::ParticleBone::vf11	Jet::ParticleBone::vf11, Jet::TextureProjector::vf11, Jet::OccludedTextureProjector::vf11
+10031404	Jet::ParticleBone::vf12	Jet::ParticleBone::vf12, Jet::TextureProjector::vf12, Jet::OccludedTextureProjector::vf12
+1003140a	Jet::ParticleBone::vf13	Jet::ParticleBone::vf13, Jet::TextureProjector::vf13, Jet::OccludedTextureProjector::vf13
+10031410	Jet::ParticleBone::vf14	Jet::ParticleBone::vf14, Jet::TextureProjector::vf14, Jet::OccludedTextureProjector::vf14
+10031416	Jet::ParticleBone::vf15	Jet::ParticleBone::vf15, Jet::TextureProjector::vf15, Jet::OccludedTextureProjector::vf15
+1003141c	Jet::ParticleBone::vf16	Jet::ParticleBone::vf16, Jet::TextureProjector::vf16, Jet::OccludedTextureProjector::vf16
+10031422	Jet::ParticleBone::vf17	Jet::ParticleBone::vf17, Jet::TextureProjector::vf17, Jet::OccludedTextureProjector::vf17
+10031428	Jet::ParticleBone::vf18	Jet::ParticleBone::vf18, Jet::TextureProjector::vf18, Jet::OccludedTextureProjector::vf18
+1003142e	Jet::ParticleBone::vf19	Jet::ParticleBone::vf19, Jet::TextureProjector::vf19, Jet::OccludedTextureProjector::vf19
+10031434	Jet::ParticleBone::vf20	Jet::ParticleBone::vf20, Jet::TextureProjector::vf20, Jet::OccludedTextureProjector::vf20
+1003143a	Jet::ParticleBone::vf21	Jet::ParticleBone::vf21, Jet::TextureProjector::vf21, Jet::OccludedTextureProjector::vf21
+10031440	Jet::ParticleBone::vf22	Jet::ParticleBone::vf22, Jet::TextureProjector::vf22, Jet::OccludedTextureProjector::vf22
+10031446	Jet::ParticleBone::vf23	Jet::ParticleBone::vf23, Jet::TextureProjector::vf23, Jet::OccludedTextureProjector::vf23
+1003144c	Jet::ParticleBone::vf24	Jet::ParticleBone::vf24, Jet::TextureProjector::vf24, Jet::OccludedTextureProjector::vf24
+10031452	Jet::ParticleBone::vf25	Jet::ParticleBone::vf25, Jet::TextureProjector::vf25, Jet::OccludedTextureProjector::vf25
+10031458	Jet::ParticleBone::vf26	Jet::ParticleBone::vf26, Jet::TextureProjector::vf26, Jet::OccludedTextureProjector::vf26
+1003145e	Jet::ParticleBone::vf27	Jet::ParticleBone::vf27, Jet::TextureProjector::vf27, Jet::OccludedTextureProjector::vf27
+10031464	Jet::ParticleBone::vf28	Jet::ParticleBone::vf28, Jet::TextureProjector::vf28, Jet::OccludedTextureProjector::vf28
+1003146a	Jet::ParticleBone::vf29	Jet::ParticleBone::vf29, Jet::TextureProjector::vf29, Jet::OccludedTextureProjector::vf29
+10031470	Jet::ParticleBone::vf30	Jet::ParticleBone::vf30, Jet::TextureProjector::vf30, Jet::OccludedTextureProjector::vf30
+10031476	Jet::ParticleBone::vf31	Jet::ParticleBone::vf31, Jet::TextureProjector::vf31, Jet::OccludedTextureProjector::vf31
+1003147c	Jet::ParticleBone::vf32	Jet::ParticleBone::vf32, Jet::TextureProjector::vf32, Jet::OccludedTextureProjector::vf32
+10031482	Jet::ParticleBone::vf33	Jet::ParticleBone::vf33, Jet::TextureProjector::vf33, Jet::OccludedTextureProjector::vf33
+10031488	Jet::ParticleBone::vf34	Jet::ParticleBone::vf34, Jet::TextureProjector::vf34, Jet::OccludedTextureProjector::vf34
+1003148e	Jet::ParticleBone::vf35	Jet::ParticleBone::vf35, Jet::TextureProjector::vf35, Jet::OccludedTextureProjector::vf35
+10031494	Jet::ParticleBone::vf36	Jet::ParticleBone::vf36, Jet::TextureProjector::vf36, Jet::OccludedTextureProjector::vf36
+1003149a	Jet::ParticleBone::vf37	Jet::ParticleBone::vf37, Jet::TextureProjector::vf37, Jet::OccludedTextureProjector::vf37
+100314a0	Jet::ParticleBone::vf38	Jet::ParticleBone::vf38, Jet::TextureProjector::vf38, Jet::OccludedTextureProjector::vf38
+100314a6	Jet::ParticleBone::vf39	Jet::ParticleBone::vf39, Jet::TextureProjector::vf39, Jet::OccludedTextureProjector::vf39
+100314ac	Jet::ParticleBone::vf40	Jet::ParticleBone::vf40, Jet::TextureProjector::vf40, Jet::OccludedTextureProjector::vf40
+100314b2	Jet::ParticleBone::vf41	Jet::ParticleBone::vf41, Jet::TextureProjector::vf41, Jet::OccludedTextureProjector::vf41
+100314b8	Jet::ParticleBone::vf42	Jet::ParticleBone::vf42, Jet::TextureProjector::vf42, Jet::OccludedTextureProjector::vf42
+100314be	Jet::ParticleBone::vf43	Jet::ParticleBone::vf43, Jet::TextureProjector::vf43, Jet::OccludedTextureProjector::vf43
+100314c4	Jet::ParticleBone::vf44	Jet::ParticleBone::vf44, Jet::TextureProjector::vf44, Jet::OccludedTextureProjector::vf44
+100314ca	Jet::ParticleBone::vf45	Jet::ParticleBone::vf45, Jet::TextureProjector::vf45, Jet::OccludedTextureProjector::vf45
+100314d0	Jet::ParticleBone::vf46	Jet::ParticleBone::vf46, Jet::TextureProjector::vf46, Jet::OccludedTextureProjector::vf46
+100314d6	Jet::ParticleBone::vf47	Jet::ParticleBone::vf47, Jet::TextureProjector::vf47, Jet::OccludedTextureProjector::vf47
+10006440	Jet::InfluenceMesh::vf0	Jet::InfluenceMesh::vf0
+100074a0	Jet::GeometryConfigData::vf0	Jet::GeometryConfigData::vf0
+1000b080	Jet::AnimationTxtResource::vf8	Jet::AnimationTxtResource::vf8
+1000b360	AnimationMaintenanceObserver::vf0	AnimationMaintenanceObserver::vf0
+1000b290	AnimationMaintenanceObserver::vf1	AnimationMaintenanceObserver::vf1
+1000c7a0	Jet::AnimatorChannels::vf0	Jet::AnimatorChannels::vf0
+100310f8	Jet::GenericMeshAppData::vf0	Jet::GenericMeshAppData::vf0, Jet::ReferenceCount::vf0, Jet::MovieStream::vf0, Jet::MovieJetFileReader::vf0, Jet::MovieTexture::vf0, Jet::Texture::vf0, Jet::ShadowCache::vf0, Jet::ShadowBaseChunk::vf0, Jet::ShadowSWChunk::vf0, Jet::ShadowHWChunk::vf0, Jet::ShadowInfluenceMesh::vf0, Jet::ShadowProgramStore::vf0, Jet::StaticBufferData::vf0, Jet::ShadowVolumeGeom::vf0, Jet::ProjectorCache::vf0
+1000cb30	Jet::GenericMeshAppData::vf1	Jet::GenericMeshAppData::vf1
+1000ccd0	Jet::ReferenceCount::vf1	Jet::ReferenceCount::vf1
+1000ce90	Jet::GeometryBaseResource::vf8	Jet::GeometryBaseResource::vf8
+1003115e	Jet::GeometryBaseResource::vf10	Jet::GeometryBaseResource::vf10
+10031164	Jet::GeometryBaseResource::vf15	Jet::GeometryBaseResource::vf15
+1003116a	Jet::GeometryBaseResource::vf16	Jet::GeometryBaseResource::vf16
+10016210	Jet::GeometryDefinitionGeneric::vf35	Jet::GeometryDefinitionGeneric::vf35
+1001aa00	Jet::MovieTextureResource::vf8	Jet::MovieTextureResource::vf8
+100311b2	Jet::MovieTextureResource::vf14	Jet::MovieTextureResource::vf14
+100311b8	Jet::MovieTextureResource::vf19	Jet::MovieTextureResource::vf19
+100311be	Jet::MovieTextureResource::vf21	Jet::MovieTextureResource::vf21
+100311c4	Jet::MovieTextureResource::vf27	Jet::MovieTextureResource::vf27
+100311ca	Jet::MovieTextureResource::vf30	Jet::MovieTextureResource::vf30
+100311d0	Jet::MovieTextureResource::vf31	Jet::MovieTextureResource::vf31
+100311d6	Jet::MovieTextureResource::vf42	Jet::MovieTextureResource::vf42
+100311dc	Jet::MovieTextureResource::vf44	Jet::MovieTextureResource::vf44
+1001d150	Jet::MovieTextureResource::vf1	Jet::MovieTextureResource::vf1
+1001ad20	Jet::MovieStream::vf1	Jet::MovieStream::vf1
+1001b380	Jet::MovieCanvas::vf0	Jet::MovieCanvas::vf0
+100311e2	Jet::MovieCanvas::vf1	Jet::MovieCanvas::vf1, Jet::RenderTexture::vf1
+100311e8	Jet::MovieCanvas::vf2	Jet::MovieCanvas::vf2, Jet::RenderTexture::vf2
+100311ee	Jet::MovieCanvas::vf3	Jet::MovieCanvas::vf3, Jet::RenderTexture::vf3
+100311f4	Jet::MovieCanvas::vf4	Jet::MovieCanvas::vf4, Jet::RenderTexture::vf4
+100311fa	Jet::MovieCanvas::vf5	Jet::MovieCanvas::vf5, Jet::RenderTexture::vf5
+10031200	Jet::MovieCanvas::vf8	Jet::MovieCanvas::vf8
+10031206	Jet::MovieCanvas::vf9	Jet::MovieCanvas::vf9
+1003120c	Jet::MovieCanvas::vf10	Jet::MovieCanvas::vf10, Jet::RenderTexture::vf10
+1001d230	Jet::ResourceObserver::vf1	Jet::ResourceObserver::vf1
+1001d2d0	Jet::MovieJetFileReader::vf1	Jet::MovieJetFileReader::vf1
+1001d9c0	Jet::MoviePlayer::vf0	Jet::MoviePlayer::vf0
+1001d9e0	Jet::MoviePlayer::vf1	Jet::MoviePlayer::vf1
+1001d9f0	Jet::MovieTexture::vf1	Jet::MovieTexture::vf1
+1003122a	Jet::MovieTexture::vf3	Jet::MovieTexture::vf3, Jet::Texture::vf3
+10031224	Jet::MovieTexture::vf5	Jet::MovieTexture::vf5, Jet::Texture::vf5
+1003126c	Jet::MovieTexture::vf7	Jet::MovieTexture::vf7, Jet::Texture::vf7
+10031266	Jet::MovieTexture::vf8	Jet::MovieTexture::vf8, Jet::Texture::vf8
+10031260	Jet::MovieTexture::vf9	Jet::MovieTexture::vf9, Jet::Texture::vf9
+1003125a	Jet::MovieTexture::vf10	Jet::MovieTexture::vf10, Jet::Texture::vf10
+10031254	Jet::MovieTexture::vf11	Jet::MovieTexture::vf11, Jet::Texture::vf11
+1003124e	Jet::MovieTexture::vf12	Jet::MovieTexture::vf12, Jet::Texture::vf12
+10031248	Jet::MovieTexture::vf13	Jet::MovieTexture::vf13, Jet::Texture::vf13
+10031242	Jet::MovieTexture::vf14	Jet::MovieTexture::vf14, Jet::Texture::vf14
+10031230	Jet::MovieTexture::vf18	Jet::MovieTexture::vf18, Jet::Texture::vf18
+10031212	Jet::MovieTexture::vf19	Jet::MovieTexture::vf19, Jet::Texture::vf19
+1003123c	Jet::MovieTexture::vf20	Jet::MovieTexture::vf20, Jet::Texture::vf20
+10031236	Jet::MovieTexture::vf21	Jet::MovieTexture::vf21, Jet::Texture::vf21
+10031272	Jet::MovieTexture::vf22	Jet::MovieTexture::vf22, Jet::Texture::vf22
+1001f330	Jet::ObjectLOD::vf0	Jet::ObjectLOD::vf0
+100200c0	Jet::TextureProjector::vf0	Jet::TextureProjector::vf0
+10021210	Jet::TextureProjector::vf0	Jet::TextureProjector::vf0
+100203c0	Jet::OccludedTextureProjector::vf0	Jet::OccludedTextureProjector::vf0
+10021220	Jet::OccludedTextureProjector::vf0	Jet::OccludedTextureProjector::vf0
+10021230	Jet::Texture::vf1	Jet::Texture::vf1
+1003128a	Jet::Texture::vf2	Jet::Texture::vf2
+10031284	Jet::Texture::vf4	Jet::Texture::vf4
+1003127e	Jet::Texture::vf6	Jet::Texture::vf6
+1003121e	Jet::Texture::vf15	Jet::Texture::vf15
+10031278	Jet::Texture::vf16	Jet::Texture::vf16
+10031218	Jet::Texture::vf17	Jet::Texture::vf17
+100310fe	Jet::ResourceType<Jet::AnimationResource>::vf0	Jet::ResourceType<Jet::AnimationResource>::vf0, Jet::ResourceType<Jet::AnimationTxtResource>::vf0, Jet::MovieTextureResourceType::vf0
+10031104	Jet::ResourceType<Jet::AnimationResource>::vf1	Jet::ResourceType<Jet::AnimationResource>::vf1, Jet::ResourceType<Jet::AnimationTxtResource>::vf1, Jet::MovieTextureResourceType::vf1
+10021a80	Jet::ResourceType<Jet::AnimationResource>::vf2	Jet::ResourceType<Jet::AnimationResource>::vf2, Jet::ResourceType<Jet::AnimationTxtResource>::vf2, Jet::MovieTextureResourceType::vf2
+100218d0	Jet::ResourceType<Jet::AnimationResource>::vf3	Jet::ResourceType<Jet::AnimationResource>::vf3
+10031170	Jet::ResourceType<Jet::AnimationResource>::vf5	Jet::ResourceType<Jet::AnimationResource>::vf5, Jet::ResourceType<Jet::AnimationTxtResource>::vf5
+10021970	Jet::ResourceType<Jet::AnimationTxtResource>::vf3	Jet::ResourceType<Jet::AnimationTxtResource>::vf3
+10021a00	Jet::MovieTextureResourceType::vf3	Jet::MovieTextureResourceType::vf3
+1001f0a0	Jet::MovieTextureResourceType::vf5	Jet::MovieTextureResourceType::vf5
+10021b00	Jet::RenderTexture::vf0	Jet::RenderTexture::vf0
+10031290	Jet::RenderTexture::vf8	Jet::RenderTexture::vf8
+10031296	Jet::RenderTexture::vf9	Jet::RenderTexture::vf9
+10021fc0	Jet::Shadow::vf0	Jet::Shadow::vf0, Jet::ShadowBlob::vf0
+10021df0	Jet::ShadowGenerator::vf0	Jet::ShadowGenerator::vf0
+10021ef0	Jet::ShadowBlobGenerator::vf0	Jet::ShadowBlobGenerator::vf0
+1003129c	Jet::ShadowCache::vf0	Jet::ShadowCache::vf0
+100312a2	Jet::ShadowCache::vf1	Jet::ShadowCache::vf1
+100312a8	Jet::ShadowCache::vf5	Jet::ShadowCache::vf5
+100312ae	Jet::ShadowCache::vf6	Jet::ShadowCache::vf6
+100312b4	Jet::ShadowCache::vf7	Jet::ShadowCache::vf7
+10022210	Jet::ShadowCache::vf1	Jet::ShadowCache::vf1
+10022b70	Jet::ShadowVolumeGenerator::vf0	Jet::ShadowVolumeGenerator::vf0
+100238e0	Jet::ShadowBaseChunk::vf1	Jet::ShadowBaseChunk::vf1
+100312ba	Jet::ShadowBaseChunk::vf6	Jet::ShadowBaseChunk::vf6, Jet::ShadowSWChunk::vf6, Jet::ShadowHWChunk::vf6
+100312c0	Jet::ShadowBaseChunk::vf8	Jet::ShadowBaseChunk::vf8, Jet::ShadowSWChunk::vf8, Jet::ShadowHWChunk::vf8
+100313c8	Jet::ShadowBaseChunk::vf9	Jet::ShadowBaseChunk::vf9, Jet::ShadowSWChunk::vf9, Jet::ShadowHWChunk::vf9
+100312c6	Jet::ShadowBaseChunk::vf10	Jet::ShadowBaseChunk::vf10, Jet::ShadowSWChunk::vf10, Jet::ShadowHWChunk::vf10
+100312cc	Jet::ShadowBaseChunk::vf11	Jet::ShadowBaseChunk::vf11, Jet::ShadowSWChunk::vf11, Jet::ShadowHWChunk::vf11
+1003135c	Jet::ShadowBaseChunk::vf14	Jet::ShadowBaseChunk::vf14, Jet::ShadowSWChunk::vf14, Jet::ShadowHWChunk::vf14
+10031356	Jet::ShadowBaseChunk::vf15	Jet::ShadowBaseChunk::vf15, Jet::ShadowSWChunk::vf15, Jet::ShadowHWChunk::vf15
+1003134a	Jet::ShadowBaseChunk::vf16	Jet::ShadowBaseChunk::vf16, Jet::ShadowSWChunk::vf16, Jet::ShadowHWChunk::vf16
+10031350	Jet::ShadowBaseChunk::vf17	Jet::ShadowBaseChunk::vf17, Jet::ShadowSWChunk::vf17, Jet::ShadowHWChunk::vf17
+1003133e	Jet::ShadowBaseChunk::vf18	Jet::ShadowBaseChunk::vf18, Jet::ShadowSWChunk::vf18, Jet::ShadowHWChunk::vf18
+10031344	Jet::ShadowBaseChunk::vf19	Jet::ShadowBaseChunk::vf19, Jet::ShadowSWChunk::vf19, Jet::ShadowHWChunk::vf19
+10031332	Jet::ShadowBaseChunk::vf20	Jet::ShadowBaseChunk::vf20, Jet::ShadowSWChunk::vf20, Jet::ShadowHWChunk::vf20
+10031338	Jet::ShadowBaseChunk::vf21	Jet::ShadowBaseChunk::vf21, Jet::ShadowSWChunk::vf21, Jet::ShadowHWChunk::vf21
+1003132c	Jet::ShadowBaseChunk::vf22	Jet::ShadowBaseChunk::vf22, Jet::ShadowSWChunk::vf22, Jet::ShadowHWChunk::vf22
+100313c2	Jet::ShadowBaseChunk::vf23	Jet::ShadowBaseChunk::vf23, Jet::ShadowSWChunk::vf23, Jet::ShadowHWChunk::vf23
+100313bc	Jet::ShadowBaseChunk::vf24	Jet::ShadowBaseChunk::vf24, Jet::ShadowSWChunk::vf24, Jet::ShadowHWChunk::vf24
+10031380	Jet::ShadowBaseChunk::vf25	Jet::ShadowBaseChunk::vf25, Jet::ShadowSWChunk::vf25, Jet::ShadowHWChunk::vf25
+1003137a	Jet::ShadowBaseChunk::vf26	Jet::ShadowBaseChunk::vf26, Jet::ShadowSWChunk::vf26, Jet::ShadowHWChunk::vf26
+10031374	Jet::ShadowBaseChunk::vf27	Jet::ShadowBaseChunk::vf27, Jet::ShadowSWChunk::vf27, Jet::ShadowHWChunk::vf27
+1003136e	Jet::ShadowBaseChunk::vf28	Jet::ShadowBaseChunk::vf28, Jet::ShadowSWChunk::vf28, Jet::ShadowHWChunk::vf28
+100313e0	Jet::ShadowBaseChunk::vf29	Jet::ShadowBaseChunk::vf29, Jet::ShadowSWChunk::vf29, Jet::ShadowHWChunk::vf29
+100313da	Jet::ShadowBaseChunk::vf30	Jet::ShadowBaseChunk::vf30, Jet::ShadowSWChunk::vf30, Jet::ShadowHWChunk::vf30
+10031368	Jet::ShadowBaseChunk::vf31	Jet::ShadowBaseChunk::vf31, Jet::ShadowSWChunk::vf31, Jet::ShadowHWChunk::vf31
+10031362	Jet::ShadowBaseChunk::vf32	Jet::ShadowBaseChunk::vf32, Jet::ShadowSWChunk::vf32, Jet::ShadowHWChunk::vf32
+100313d4	Jet::ShadowBaseChunk::vf33	Jet::ShadowBaseChunk::vf33, Jet::ShadowSWChunk::vf33, Jet::ShadowHWChunk::vf33
+100313ce	Jet::ShadowBaseChunk::vf34	Jet::ShadowBaseChunk::vf34, Jet::ShadowSWChunk::vf34, Jet::ShadowHWChunk::vf34
+10031398	Jet::ShadowBaseChunk::vf35	Jet::ShadowBaseChunk::vf35, Jet::ShadowSWChunk::vf35, Jet::ShadowHWChunk::vf35
+10031392	Jet::ShadowBaseChunk::vf36	Jet::ShadowBaseChunk::vf36, Jet::ShadowSWChunk::vf36, Jet::ShadowHWChunk::vf36
+1003138c	Jet::ShadowBaseChunk::vf37	Jet::ShadowBaseChunk::vf37, Jet::ShadowSWChunk::vf37, Jet::ShadowHWChunk::vf37
+10031386	Jet::ShadowBaseChunk::vf38	Jet::ShadowBaseChunk::vf38, Jet::ShadowSWChunk::vf38, Jet::ShadowHWChunk::vf38
+1003139e	Jet::ShadowBaseChunk::vf40	Jet::ShadowBaseChunk::vf40, Jet::ShadowSWChunk::vf40, Jet::ShadowHWChunk::vf40
+100313a4	Jet::ShadowBaseChunk::vf41	Jet::ShadowBaseChunk::vf41, Jet::ShadowSWChunk::vf41, Jet::ShadowHWChunk::vf41
+100313b6	Jet::ShadowBaseChunk::vf45	Jet::ShadowBaseChunk::vf45, Jet::ShadowSWChunk::vf45, Jet::ShadowHWChunk::vf45
+100312d2	Jet::ShadowBaseChunk::vf56	Jet::ShadowBaseChunk::vf56, Jet::ShadowSWChunk::vf56, Jet::ShadowHWChunk::vf56
+100312d8	Jet::ShadowBaseChunk::vf57	Jet::ShadowBaseChunk::vf57, Jet::ShadowSWChunk::vf57, Jet::ShadowHWChunk::vf57
+100312de	Jet::ShadowBaseChunk::vf58	Jet::ShadowBaseChunk::vf58, Jet::ShadowSWChunk::vf58, Jet::ShadowHWChunk::vf58
+100313aa	Jet::ShadowBaseChunk::vf59	Jet::ShadowBaseChunk::vf59, Jet::ShadowSWChunk::vf59, Jet::ShadowHWChunk::vf59
+100313b0	Jet::ShadowBaseChunk::vf60	Jet::ShadowBaseChunk::vf60, Jet::ShadowSWChunk::vf60, Jet::ShadowHWChunk::vf60
+100312e4	Jet::ShadowBaseChunk::vf61	Jet::ShadowBaseChunk::vf61, Jet::ShadowSWChunk::vf61, Jet::ShadowHWChunk::vf61
+100312ea	Jet::ShadowBaseChunk::vf62	Jet::ShadowBaseChunk::vf62, Jet::ShadowSWChunk::vf62, Jet::ShadowHWChunk::vf62
+100312f0	Jet::ShadowBaseChunk::vf63	Jet::ShadowBaseChunk::vf63, Jet::ShadowSWChunk::vf63, Jet::ShadowHWChunk::vf63
+100312f6	Jet::ShadowBaseChunk::vf64	Jet::ShadowBaseChunk::vf64, Jet::ShadowSWChunk::vf64, Jet::ShadowHWChunk::vf64
+100312fc	Jet::ShadowBaseChunk::vf65	Jet::ShadowBaseChunk::vf65, Jet::ShadowSWChunk::vf65, Jet::ShadowHWChunk::vf65
+10031302	Jet::ShadowBaseChunk::vf66	Jet::ShadowBaseChunk::vf66, Jet::ShadowSWChunk::vf66, Jet::ShadowHWChunk::vf66
+10031308	Jet::ShadowBaseChunk::vf67	Jet::ShadowBaseChunk::vf67, Jet::ShadowSWChunk::vf67, Jet::ShadowHWChunk::vf67
+1003130e	Jet::ShadowBaseChunk::vf68	Jet::ShadowBaseChunk::vf68, Jet::ShadowSWChunk::vf68, Jet::ShadowHWChunk::vf68
+10031314	Jet::ShadowBaseChunk::vf69	Jet::ShadowBaseChunk::vf69, Jet::ShadowSWChunk::vf69, Jet::ShadowHWChunk::vf69
+1003131a	Jet::ShadowBaseChunk::vf70	Jet::ShadowBaseChunk::vf70, Jet::ShadowSWChunk::vf70, Jet::ShadowHWChunk::vf70
+10031320	Jet::ShadowBaseChunk::vf71	Jet::ShadowBaseChunk::vf71, Jet::ShadowSWChunk::vf71, Jet::ShadowHWChunk::vf71
+10031326	Jet::ShadowBaseChunk::vf72	Jet::ShadowBaseChunk::vf72, Jet::ShadowSWChunk::vf72, Jet::ShadowHWChunk::vf72
+10023950	Jet::ShadowSWChunk::vf1	Jet::ShadowSWChunk::vf1
+100239c0	Jet::ShadowHWChunk::vf1	Jet::ShadowHWChunk::vf1
+10023a20	Jet::ShadowInfluenceMesh::vf1	Jet::ShadowInfluenceMesh::vf1
+10024380	Jet::ShadowProgramStore::vf1	Jet::ShadowProgramStore::vf1
+10024e90	Jet::ShadowVolume::vf0	Jet::ShadowVolume::vf0
+10027ee0	Jet::StaticBufferData::vf1	Jet::StaticBufferData::vf1
+10027f50	Jet::ShadowVolumeGeom::vf1	Jet::ShadowVolumeGeom::vf1
+1002c790	Jet::ProjectorCache::vf1	Jet::ProjectorCache::vf1
