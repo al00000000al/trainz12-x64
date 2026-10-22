@@ -20,7 +20,7 @@ Currently its in start, and its 10% of reversed engine stuff.
 It's planned to reverse engine and game, after that start to rewrite and optimize the game. 
 Main goal also is save compatibility with addons
 
-Soon i post discord here!
+Soon i post discord here!!
 
 ## What is here
 
