@@ -1165,6 +1165,35 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
 - The other modules' tests and the x64 harness are clean, except the old LCRand NaN case.
 - Next: U8 Bitmap. Its blitters are hand-written assembly: 12 000 lines of disassembly for the class.
 
+### KernelStandard_7c U8, Bitmap (2026-10-22): 861/1762 exports ours
+- 98 exports in two files. Details are in `notes\KernelStandard.md` ("U8 done").
+  - `Bitmap.cpp`: construction, the per-format pixel primitives, drawing (pixels, lines, boxes, circles,
+    triangles, textured polygons), blits and tiling, scaling, crop / flip / rotate, the colour operations.
+  - `BitmapIO.cpp`: TGA, BMP, PCX and JPEG info and loading, the alpha files, saving TGA / BMP / JPEG.
+- The primitives were hand-written assembly. They are rewritten register by register where the arithmetic
+  depends on it: the 24-bit blend adds all three channels in one 32-bit sum, so carries cross channels.
+- The copies are element-by-element forward copies (rep movs): the tiled Image repeats a pattern through an
+  overlapping copy.
+- JPEG decoding still goes through ijl10.dll. Encoding uses libjpeg-turbo 3.2.0 (vcpkg x86-windows-static) in
+  place of the original's static IJG encoder: the same bytes (quality 100, every quantiser 1).
+- Bugs kept (they are listed in the notes): BlendPixel does not blend; drawing trusts the clip to lie inside the
+  bitmap; Triangle's alloca'd scan table overflows in two cases; MapPolygon and the 24-bit ScaleArbitrary write
+  past their rows; PCX colour runs are the whole byte long.
+- Two new diff tests: `diff_ks_bitmap_draw` and `diff_ks_bitmap_io`.
+  - Drawing: 3000 scenarios, 665 324 checks, 0 mismatches; 0 with the sides swapped and another seed.
+  - Files: 1500 synthetic scenarios, 0 mismatches. JPEG saves are byte-equal.
+  - All 28 904 images of the install (TGA, BMP, JPG): 0 mismatches. Images over 2048 x 4096 are compared by
+    GetInfo only: their 64 MB block fails now and then on either side in the 32-bit test process.
+  - Mutations: 43 of 43 caught.
+- Test traps, all original behaviour: a constructed bitmap's pixels and bytes per pixel are not set; GetInfo
+  and loaders read short headers into uninitialised buffers; Crop and PCX indices are packed rows.
+- The other modules' tests are clean, except the old LCRand NaN case. `Bitmap.cpp` also builds in the x64 stand-in.
+- In game (KernelStandard_7c deployed, U9 build kept as `KernelStandard_7c.dll.u9`):
+  - The menu log matches the baseline (0 lines differ).
+  - The route list shows its thumbnails.
+  - No "faulty" box from the Launcher.
+- Next: U10, the File family.
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's
