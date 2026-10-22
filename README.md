@@ -6,7 +6,7 @@ the original in the same process (differential tests) and in game. Once nothing 
 built for x64.
 
 This repository holds **only our own work**. It contains no game files, no original DLLs, no Ghidra output and
-no Jet SDK files. The modules in `src/` are a clean C++ rewrite made by studying the game's binaries. You need
+no Jet SDK files. The modules in `src/jet/` are a clean C++ rewrite made by studying the game's binaries. You need
 your own installed copy of the game to build against it, test it or run it.
 
 ## From author
@@ -21,7 +21,9 @@ I published there stuff that people can work with to help speed up process and m
 - `MODLOG.md`: confirmed facts about the binaries (with addresses) and what each step did and measured.
 - `notes/`: per-module analysis (`KernelStandard.md` is the main one: units, layouts, kept bugs, test notes).
   `notes/data/*.py` and `notes/ghidra/*.java` are the scripts behind it (their data dumps are not included).
-- `src/`: the rewritten modules and their tests (CMake):
+- `src/`: our code, split like the game: `src/jet/` for the Jet engine modules, `src/trainz/` (later) for
+  trainz.exe and trainznativeinterface.dll.
+- `src/jet/`: the rewritten Jet modules and their tests (CMake):
   - `Kernel_7c`: all exports ours.
   - `KernelStandard_7c`: 861 of 1762 exports ours; the rest forward to the renamed original.
   - `InputSystem_7c`, `InputWin32_7c`, `KernelResource_7c`, `KernelResources_7c`, `Render2DCore_7c`.
@@ -32,6 +34,7 @@ I published there stuff that people can work with to help speed up process and m
 - `tools/`: export / import dumps, `.def` and import-library generation, thunk checks, the SSE lifter,
   screenshots through desktop duplication, census.
 - `ghidra_scripts/`: headless Ghidra scripts (function stats, decompile, vtables, TrainzScript native mapping).
+- `ghidra_maps/jet/`, `ghidra_maps/trainz/`: function and vtable tables (addresses, sizes, names) from Ghidra.
 - `gs_native_api.tsv`, `gs_native_handlers.tsv`: the TrainzScript native API and the trainz.exe address of each.
 
 ## Building (32-bit drop-in modules)
@@ -40,13 +43,13 @@ Requirements: Visual Studio 2022 or later (x86 tools), CMake, Python 3, and an i
 61388). For `KernelStandard_7c`, libjpeg-turbo from vcpkg (`vcpkg install libjpeg-turbo:x86-windows-static`).
 
 The CMake files still use the paths of the original setup (`D:/trainz12-decomp/...`, `D:/games/...`). Change
-`IMPLIB`, `EXPORTS`, `ORIG_KS` / `ORIG_IS` and `VCPKG_X86` in `src/CMakeLists.txt` to your paths. The export lists
+`IMPLIB`, `EXPORTS`, `ORIG_KS` / `ORIG_IS` and `VCPKG_X86` in `src/jet/CMakeLists.txt` to your paths. The export lists
 (`exports/*.tsv`) and the import libraries of the original modules (`implib/`) are generated from your own game
 files with `tools/dump_exports.py` and `tools/gen_implib.py`. A few data tables are also read from your installed
 game at build time and never committed.
 
 ```
-cmake -S src -B build32 -A Win32
+cmake -S src/jet -B build32 -A Win32
 cmake --build build32 --config Release
 ```
 

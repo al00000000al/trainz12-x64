@@ -2,7 +2,7 @@
 
 Status: analysis only, finished 2026-10-19 (drafted by one session, corrected and rendered by the next; hand-over in
 `notes\HANDOVER_KernelStandard.md`). No KernelStandard code is reconstructed yet. The x64 harness's stand-in
-(`src\tests\x64\KernelStandardStub.cpp`) is not a reconstruction, but its notes on PString, Options, ReferenceCount
+(`src\jet\tests\x64\KernelStandardStub.cpp`) is not a reconstruction, but its notes on PString, Options, ReferenceCount
 and Mutex were checked against the decompile and are folded in below.
 Private notes, derived from our own Ghidra project and the original binaries; no decompiled code or SDK text is quoted.
 Reproducible inputs: `notes\data\` (call graph `calls.tsv`, data references `datarefs.tsv`, instruction stats `insnstats.tsv`,
@@ -527,7 +527,7 @@ Sizes: exports total / imported by others / class-attributed code bytes (named f
 
 ### 4.4 Differential test per unit
 
-Common harness (two patterns already in `src\tests`): **(a)** in-process: load `KernelStandard_7c_orig.dll` and ours, call each export in
+Common harness (two patterns already in `src\jet\tests`): **(a)** in-process: load `KernelStandard_7c_orig.dll` and ours, call each export in
 both through raw exports (thiscall emulated with `__fastcall`, hidden result pointer for `__cdecl` members returning by value; MODLOG
 "Calling into the original modules") and compare results and object bytes; **(b)** same exe linked by name to
 `KernelStandard_7c.dll`, run once in a directory with the original and once with ours, logs diffed (plugin_probe/task_probe).
@@ -667,7 +667,7 @@ Internal functions of orig can be reached by RVA (`diff_blowfish.cpp`).
   ProcessFile terminates its buffer with one zero byte, so wcstombs (UTF-16 files) reads one wide char of heap
   garbage past the end unless the file ends with a wide NUL.
 - CRT: atof/atoi/strtol/strtoul/isspace/_strlwr/_stricmp/wcstombs/getenv/printf are msvcr80's
-  (src/KernelStandard_7c/Crt80.h). msvcr80 is loaded side-by-side, so GetModuleHandle("msvcr80.dll") fails:
+  (src/jet/KernelStandard_7c/Crt80.h). msvcr80 is loaded side-by-side, so GetModuleHandle("msvcr80.dll") fails:
   Crt80 finds it by enumerating modules (Math2's _CIacos lookup had the same bug and fell back to std::acos).
 - File is 0x13c bytes (+0x38 path, MAX_PATH): the header said 0x3c, so File locals (ours in InputSystem's
   Force.cpp too) were overrun by the original's Open/Close.
