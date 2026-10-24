@@ -57,7 +57,41 @@ JET_CRT80(char*, getenv, (const char* name), (name))
 JET_CRT80(int, vprintf, (const char* format, va_list ap), (format, ap))
 JET_CRT80(double, strtod, (const char* s, char** end), (s, end))
 JET_CRT80(void, _invalid_parameter_noinfo, (), ())
+JET_CRT80(int, tolower, (int c), (c))
+// low-level I/O (File, unit U10a): the descriptors in File objects are msvcr80's, because the original's FileSub
+// code opens files into them
+JET_CRT80(int, _read, (int fd, void* dst, unsigned int n), (fd, dst, n))
+JET_CRT80(int, _write, (int fd, const void* src, unsigned int n), (fd, src, n))
+JET_CRT80(long, _lseek, (int fd, long offset, int origin), (fd, offset, origin))
+JET_CRT80(long, _tell, (int fd), (fd))
+JET_CRT80(int, _close, (int fd), (fd))
+JET_CRT80(int, _commit, (int fd), (fd))
+JET_CRT80(long, _filelength, (int fd), (fd))
+JET_CRT80(int, _unlink, (const char* path), (path))
+JET_CRT80(int, rename, (const char* from, const char* to), (from, to))
+JET_CRT80(int, _chdir, (const char* path), (path))
+JET_CRT80(int, _rmdir, (const char* path), (path))
+JET_CRT80(char*, _getcwd, (char* buf, int n), (buf, n))
+JET_CRT80(int, _fstat64i32, (int fd, void* st), (fd, st))
+JET_CRT80(int, _stat64i32, (const char* path, void* st), (path, st))
+JET_CRT80(int, _futime64, (int fd, void* times), (fd, times))
+JET_CRT80(int, _utime64, (const char* path, void* times), (path, times))
+JET_CRT80(void, _splitpath, (const char* path, char* drive, char* dir, char* name, char* ext),
+          (path, drive, dir, name, ext))
 #undef JET_CRT80
+
+// int _open(const char*, int, int) and _sopen(const char*, int, int, int): msvcr80 exports them as C++ overloads
+inline int open(const char* path, int oflag, int pmode)
+{
+    static auto const f = reinterpret_cast<int(__cdecl*)(const char*, int, int)>(Proc("?_open@@YAHPBDHH@Z"));
+    return f(path, oflag, pmode);
+}
+inline int sopen(const char* path, int oflag, int shflag, int pmode)
+{
+    static auto const f =
+        reinterpret_cast<int(__cdecl*)(const char*, int, int, int)>(Proc("?_sopen@@YAHPBDHHH@Z"));
+    return f(path, oflag, shflag, pmode);
+}
 
 // sscanf of one "%s" (the only form KernelStandard uses)
 inline int sscanf_s1(const char* s, const char* format, char* out)

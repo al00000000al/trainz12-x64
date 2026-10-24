@@ -1194,6 +1194,39 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
   - No "faulty" box from the Launcher.
 - Next: U10, the File family.
 
+### KernelStandard_7c U10a, files and paths (2026-10-25): 1048/1762 exports ours
+- U10 is split in two. U10a, 187 exports in three files (details in `notes\KernelStandard.md`, "U10a done"):
+  - `FilePath.cpp`: File::Path (50 of 52), File::Time, File::Entry.
+  - `File.cpp`: File (buffered I/O, the BPE-compressed "CFIL" format, ReadLine / WriteLine in ANSI and UTF-16,
+    blocks, stamps) and FileEx.
+  - `MemoryFile.cpp`: MemoryFile.
+- U10b keeps the substitute system for later: Subst*, the path statics that consult it, Path::GetSubst, Find,
+  FileSub* (the .ja archive reader and writer), File::Sep and the progress callback. Our File::Open looks a
+  "name:path" up in the original's list and lets the original's FileSub objects open the file into our object.
+  Its helpers are __stdcall (ret 14h).
+- The .ja files are "ARCH" containers ("INFO", "FIL " records with a File::Entry and the data, "IDX "). The
+  largest is 1.68 GB, so every offset fits in 32 bits (notes, "U10b preparation").
+- File descriptors are msvcr80's (`Crt80.h`), because the original's FileSubs fill our objects.
+- A header bug was fixed: Exception is 0x1110 bytes, not 0x110c, so StringTables' `throw FileEx` wrote 4 bytes
+  past the object.
+- Bugs kept: SafeRead / SafeWrite compare the items moved with the item size; the typed reads count a short read
+  as failed; MemoryFile never converts UTF-16 memory (it clears the first character before wcstombs); failed
+  opens 5 / 6 leave a closed descriptor in the object.
+- The original crashes on some inputs: msvcr80's invalid-parameter exit on fd -1 or a closed fd, and
+  MakeRelativeTo / Normalize("") reading address 0. The test avoids these inputs.
+- New diff test `diff_ks_file`:
+  - Paths: the whole 0x104-byte buffer is compared after each call.
+  - File scripts over every open mode, compressed files written and sought, and MemoryFile.
+  - A directory and a new .ja archive written and read back through the original's substitutes.
+  - 2000 scenarios: 734 279 checks, 1 mismatch. The original failed to open a file that had just been renamed
+    (code 2), and it did not happen again on a rerun, so it looks like an outside file lock. With the sides
+    swapped: 500 scenarios, 0 mismatches.
+- The U7-U9 tests and the Platform test are clean.
+- In game (the U8 build kept as `KernelStandard_7c_u8.dll`):
+  - The menu log matches the baseline (0 lines differ).
+  - The Launcher shows no "faulty" box.
+- Next: U10b, the substitutes and the .ja archive.
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's

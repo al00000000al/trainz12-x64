@@ -909,3 +909,57 @@ Internal functions of orig can be reached by RVA (`diff_blowfish.cpp`).
 - Tests: diff_ks_bitmap_draw (random formats, sizes, pixels and operation lists; every header and pixel row after
   each operation; KBD_TRACE / KBD_SKIP / KBD_HEAPCHECK for bisecting) and diff_ks_bitmap_io (synthetic TGA / BMP /
   PCX / garbage / cut files, alpha files, save and reload, and the install's images: KBI_ALL for all of them).
+
+## U10a done (2026-10-25): FilePath.cpp, File.cpp, MemoryFile.cpp, 187 exports (1048/1762 ours)
+- U10 was split: U10a is everything a File object and a path need (Path 50 of 52, Time, Entry, FileEx, File,
+  MemoryFile); U10b keeps the substitute system: Path::GetSubst, the path statics that consult it (Exists,
+  ExistsIgnoreCase, IsDirectory, Unlink, Remove, Rename, Md, Prune, TrueName, SetReadonly, CheckWriteMode,
+  GetStamp(path), Subst, SubstExists, SubstLink, GetSubstBuildVersion / ProductCode), Find, FileSub*, File::Sep,
+  File::callback and SetCallBack (only the original's FileSubArchive reads the callback).
+- Of the original's own code that is left, only Log (JetLog.txt, a plain path) still calls File internally, so
+  nothing in the original needed patching.
+- File {fd, cur, buffer (16 KB), count, mode, size (-1 unknown), dataStart, position, rawPos, dirty, flags (bit 0
+  own buffer, bit 1 descriptor owned by a FileSub), FileSubstitute*, FileSub*, encoding, Path}, 0x13c. Descriptors
+  are msvcr80's (Crt80.h: _open/_sopen are exported as C++ overloads), because the original's FileSubs open files
+  into our objects. Mode: 0x0f write (2 = BPE "CFIL" output), 0xf0 read (0x10 auto, 0x20 plain, 0x30 compressed),
+  0xf00 create (0x100 truncate, 0x200 append, 0x300 new), 0x1000 refused. Results: 1 read error, 2 cannot open,
+  3 already open, 4 bad mode, 5 compressed for writing, 6 not compressed, 8 exists.
+- "CFIL" files: {"CFIL", version 0x101, size} then chunks of 16 KB, each a u16 header (0x8000 | n raw, else the
+  BPE size) and the data; version 0x101 archives store only the 4-byte magic. Writing goes plain to the file and
+  Close packs it into a hidden "%08X.T%08X" temp file (pid, counter) that replaces it. The counter is the
+  original's (0x100adbc4, shared with its FileSub temp files until U10b).
+- Open "name:path" with a name of two or more characters looks the name up in the original's subst list (head
+  0x100741c8, lock 0x100741d8, sorted by PString node) and lets 0x10029b60 / 0x10029c00 (__stdcall, ret 14h) open
+  the file through the substitute's FileSubs; FileSub virtuals are __cdecl with the object first (+0x10 archive
+  version, +0x20 close, +0x4c / +0x50 lock / unlock the shared descriptor).
+- Bugs kept: SafeRead / SafeWrite compare the items moved with the item size (not the count); a failed read
+  sets size to 0; Open returning 5 or 6 closes the descriptor but leaves it in the object; the typed Read / Write
+  move sizeof bytes as one item of size 1 (a short read is false); Seek of a compressed file with nothing buffered
+  takes the old position as the buffered chunk's start; ReadBlock / WriteBlock / Size / GetStamp on a closed file
+  pass -1 to msvcr80 (its invalid-parameter handler ends the process); Path::Normalize("") and some
+  MakeRelativeTo inputs (same directory, a base with no name) read address 0 in the original (ours returns);
+  Path::DelPath's memmove copies len + 1 bytes from the name (reads past the string); DelName(true) also cuts the
+  separator; DelFileName keeps the directory and the extension; SetExt has no length check.
+- MemoryFile {cur, start, size, owned, AnsiString name}, 0x14. Open(data, size, unicode, encoding) meant to
+  convert UTF-16 but clears the first character before wcstombs (it indexes with the size it has just zeroed), so
+  it always ends up plain over the caller's data (the size without a byte-order mark) and leaks the conversion
+  buffer. ReadData with no mark seeks the file to 0, not back where it was. Read(PString&) is {u32 length,
+  bit 30 UTF-16} and releases the old node the inlined way (no Destroy).
+- Exception is 0x1110 bytes (the header said 0x110c: StringTables' throw FileEx wrote 4 bytes past the object);
+  FileEx vftable {deleting destructor, Class "File", IsHardwareException, Description, Reason}, the last three the
+  original's.
+- Test: diff_ks_file (paths over a random corpus with the whole 0x104-byte buffer compared, Time, Entry, File
+  scripts over every mode around the 16 KB edges, compressed files written and sought, a directory and a new .ja
+  archive through the original's substitutes, MemoryFile). KFD_TRACE / KFD_CONTEXT / KFD_SWAP / KFD_DUMP.
+
+## U10b preparation: the .ja archive ("ARCH") as far as read (2026-10-25)
+- All ten .ja files of the install (Base.ja, Data.ja, Builtin\ts12a..h.ja, up to 1.68 GB: every offset fits 31
+  bits) are FileSubArchive containers: "ARCH", then 8-byte chunks {id, u32 size}: "INFO" (0x20 bytes: 'ARC0'
+  0x41524330, version 0x101 or 0x102 (others refused), then u32 fields, Base.ja: 0x8d6, 0x03bf9a6c, 0xefcc, 0...),
+  one "FIL " per file {u32 size = 0x120 + data, File::Entry (0x120: name, sizes, crc, attrib 0x80 compressed),
+  data (a "CFIL" stream when compressed)} and an index ("IDX " string at 0x100554b8) read by 0x10027010 into an
+  STLport-style tree in PackedHeapMP 0x100ae180 (not exported: ours can keep its own).
+- FileSubArchive (0x278 bytes) also writes: new archives get "ARCH" + INFO; a file opened for writing goes to a
+  hidden temp file and Close (vf8) appends a "FIL " record (BPE chunks for mode 2, the CRC of the plain data,
+  File::callback progress), the directory being rewritten at destruction (0x10027330). Per-thread read cursors
+  (vf7, 0x100268c0) share the archive's descriptor under two CriticalSections.

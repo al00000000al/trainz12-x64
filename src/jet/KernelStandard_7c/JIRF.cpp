@@ -41,9 +41,11 @@ JIRFFile::JIRFFile(const JIRFFile& o) : File(o), slaveFile(o.slaveFile), resourc
 
 JIRFFile& JIRFFile::operator=(const JIRFFile& o)
 {
-    const unsigned char flags = opaque[0x28];
-    std::memcpy(opaque, o.opaque, 0x38);
-    opaque[0x28] = static_cast<unsigned char>((flags & ~3) | (o.opaque[0x28] & 3));
+    unsigned char* const self = reinterpret_cast<unsigned char*>(static_cast<File*>(this));
+    const unsigned char* const other = reinterpret_cast<const unsigned char*>(static_cast<const File*>(&o));
+    const unsigned char flags = self[0x28];
+    std::memcpy(self, other, 0x38);
+    self[0x28] = static_cast<unsigned char>((flags & ~3) | (other[0x28] & 3));
     PathOf(*this) = PathOf(o);
     slaveFile = o.slaveFile;
     resource = o.resource;

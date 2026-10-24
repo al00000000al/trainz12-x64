@@ -301,23 +301,37 @@ private:
 };
 JET_LAYOUT32(sizeof(ConfigParser) == 0x18);
 
+// {vptr, reason[0x1000] +4, description[0x100] +0x1004, hardware +0x1104, line +0x1108, file +0x110c}, 0x1110
+// bytes (the original's, U12). vftable: deleting destructor, Class, IsHardwareException, Description, Reason.
 class Exception {
 public:
+    Exception();
+    Exception(const char* file, int line);
     Exception(const char* file, int line, const char* message);
     Exception(const Exception& o);
     virtual ~Exception();
+    virtual const char* __cdecl Class() const;
+    virtual bool __cdecl IsHardwareException() const;
+    virtual const char* __cdecl Description() const;
+    virtual const char* __cdecl Reason() const;
+    Exception& operator=(const Exception& o);
+    void __cdecl SetReasonf(const char* fmt, ...);
+    JET_HEAP_OBJECT  // the deleting destructor frees with Alloc::Delete
 
 private:
-    unsigned char data[0x1108];
+    unsigned char data[0x110c];
 };
-JET_LAYOUT32(sizeof(Exception) == 0x110c);
+JET_LAYOUT32(sizeof(Exception) == 0x1110);
 
-// what Jet's file code throws on an I/O error (the original's; StringTables throws and catches it by reference)
+// what Jet's file code throws on an I/O error; ours since U10a (File.cpp), Class() is "File"
 class FileEx : public Exception {
 public:
+    FileEx(const char* file, int line);
     FileEx(const char* file, int line, const char* message);
     FileEx(const FileEx& o);
+    FileEx& operator=(const FileEx& o);
     virtual ~FileEx();
+    const char* __cdecl Class() const override;
 };
 
 }  // namespace Jet

@@ -497,35 +497,100 @@ public:
 // ---- files
 enum FileSeek { FILE_SEEK_SET = 0, FILE_SEEK_CUR = 1, FILE_SEEK_END = 2 };
 
+class FileSubstitute;
+class FileSub;
+
 class File {
 public:
-    // one directory entry (0x120 bytes)
+    // a file time: seconds since 1970 (st_mtime), compared signed
+    union Time {
+        Time& operator=(const Time& o);
+        bool __cdecl operator==(const Time& o) const;
+        bool __cdecl operator<(const Time& o) const;
+        bool __cdecl operator>(const Time& o) const;
+        bool __cdecl operator<=(const Time& o) const;
+        bool __cdecl operator>=(const Time& o) const;
+        void __cdecl SetSeconds(long s);
+        long seconds;
+    };
+    // one directory entry (0x120 bytes): a find result or an archive directory record
     struct Entry {
         Entry();
         Entry(const Entry& o);
         Entry& __cdecl operator=(const Entry& o);
-        unsigned char opaque[0x120];
+        bool __cdecl IsDir();         // attrib bit 0x10
+        bool __cdecl IsCompressed();  // attrib bit 0x80
+        bool __cdecl IsHidden();      // attrib bit 0x02
+        void __cdecl LittleEndian();  // does nothing
+        char name[0x104];        // +0x000
+        unsigned long size;      // +0x104 (an archive's stored size)
+        unsigned long length;    // +0x108 (an archive's data length)
+        unsigned long crc;       // +0x10c
+        unsigned long u110;      // +0x110
+        unsigned long u114;      // +0x114
+        unsigned long time;      // +0x118
+        unsigned short attrib;   // +0x11c _finddata attributes (0x80: compressed)
+        unsigned short u11e;     // +0x11e
     };
-    // a fixed MAX_PATH buffer with path helpers
+    // a fixed MAX_PATH buffer with path helpers. Text past 0x102 characters leaves it empty and sets a
+    // write-only error byte (0x100adb92 in the original).
     struct Path {
-        Path() { text[0] = 0; }  // what the original inlines for an empty path
+        Path();  // empty
         Path(const char* path);
+        Path(const Path& o);
         void __cdecl operator=(const char* path);
         void __cdecl operator=(const Path& o);
+        bool operator==(const Path& o) const;  // case-sensitive
+        bool operator==(const char* o) const;
+        bool operator!=(const Path& o) const;
+        bool operator!=(const char* o) const;
+        bool operator<(const Path& o) const;
+        __cdecl operator const char*() const;
         void __cdecl Normalize();
         void __cdecl DelPath();
         void __cdecl DelFileName();
         void __cdecl Del(unsigned int pos, unsigned int count);
+        void __cdecl DelDrive();
+        void __cdecl DelSlash();
+        void __cdecl AddSlash();
         void __cdecl ToLower();
+        void __cdecl ToUpper();
         unsigned int __cdecl Length() const;
-        void __cdecl DelName(bool keepSlash);
+        unsigned int __cdecl Last() const;  // the last character
+        unsigned int __cdecl GetFilePathHash() const;
+        bool __cdecl HasValidData() const;  // NUL inside the buffer
+        void __cdecl DelName(bool delSlash);  // true: the separator goes too
         void __cdecl AddPath(const char* path);
+        void __cdecl AddPath(const char* path, int count);
         void __cdecl Add(const char* text);
+        void __cdecl Add(const char* text, int count);
         bool __cdecl IsMatch(const char* other, const char** rest) const;
+        static bool __cdecl IsMatch(const char* path, const char* pattern, const char** rest);
+        static bool __cdecl IsEqual(const char* a, const char* b);
         bool __cdecl IsExt(const char* ext) const;
         void __cdecl SetExt(const char* ext);
         const char* __cdecl GetFileName() const;
+        static const char* __cdecl GetFileName(const char* path);
+        const char* __cdecl GetPath() const;  // past the drive colon
+        static const char* __cdecl GetPath(const char* path);
+        const char* __cdecl GetExt() const;
+        static const char* __cdecl GetExt(const char* path);
+        void __cdecl GetCwd();
+        void __cdecl Make(const char* dir, const char* name);
+        void __cdecl PrevDir();
+        void __cdecl RootDir();
+        void __cdecl ReplaceBackSlashes();
+        void __cdecl ReplaceForwardSlashes();
+        void __cdecl SplitPath(char* drive, char* dir, char* name, char* ext) const;
+        bool __cdecl MakeRelativeTo(const char* base);
+        Path __cdecl ExtractFirstPath();  // cuts and returns the first component
+        FileSubstitute* __cdecl GetSubst() const;  // (still the original's: U10b)
+        static FileSubstitute* __cdecl GetSubst(const char* path);
         char text[0x104];
+
+    private:
+        operator bool() const;  // exported, private: true
+        bool operator!() const;  // exported, private: false
     };
     class Find {
     public:
@@ -546,66 +611,174 @@ public:
     static void __cdecl Subst(const PString& drive, const char* path, bool add);
     static bool __cdecl Prune(const char* path);  // deletes the directory tree; the path must not be null
 
-    // a buffered file over the CRT's low-level I/O: {fd, 16 KB buffer, ..., position +0x1c, ...}, 0x3c bytes
+    // A buffered file over the CRT's low-level I/O (msvcr80's file descriptors: the original's FileSub code
+    // opens files into these objects). Mode bits: 0x0f write (2: BPE-compressed "CFIL" output), 0xf0 read
+    // (0x10 plain or compressed, 0x20 plain, 0x30 compressed), 0xf00 create (0x100 truncate, 0x200 append,
+    // 0x300 new only), 0x1000 rejected. Unit U10a (File.cpp).
     enum Results {};
     static const ResultTable* const results;
     using Result = ResultClass<&results, Results>;
     enum Mode { READ = 0x10, CREATE_WRITE = 0x101 };  // the modes InputSystem uses
     File();
     ~File();
-    Result __cdecl Open(const char* path, unsigned long mode, int share);
-    Result __cdecl Open(const PString& base, const char* path, unsigned long mode, int share);
+    Result __cdecl Open(const char* path, unsigned long mode, int encoding);  // "x:rest": x is a subst name
+    Result __cdecl Open(const PString& base, const char* path, unsigned long mode, int encoding);
     unsigned long __cdecl Read(void* data, unsigned long size, unsigned long count);  // items read
-    bool __cdecl Read(PString& s);
+    bool __cdecl Read(signed char& v);
+    bool __cdecl Read(unsigned char& v);
+    bool __cdecl Read(short& v);
+    bool __cdecl Read(unsigned short& v);
     bool __cdecl Read(long& v);
+    bool __cdecl Read(unsigned long& v);
+    bool __cdecl Read(float& v);
+    bool __cdecl Read(__int64& v);
+    bool __cdecl Read(unsigned __int64& v);
+    bool __cdecl Read32(int& v);
+    bool __cdecl Read32(unsigned int& v);
+    bool __cdecl Read(PString& s);
+    bool __cdecl Read(AnsiString& s);
+    bool __cdecl Read(String& s);
+    bool __cdecl Read(UnicodeString& s);
     unsigned long __cdecl Write(const void* data, unsigned long size, unsigned long count);
+    bool __cdecl Write(signed char v);
+    bool __cdecl Write(unsigned char v);
+    bool __cdecl Write(short v);
+    bool __cdecl Write(unsigned short v);
+    bool __cdecl Write(long v);
     bool __cdecl Write(unsigned long value);
-    unsigned long __cdecl WriteLine(const char* text, int flags);
-    unsigned long __cdecl ReadLine(void* buffer, unsigned long size, int flags);  // 0 at the end
+    bool __cdecl Write(float v);
+    bool __cdecl Write(__int64 v);
+    bool __cdecl Write(unsigned __int64 v);
+    bool __cdecl Write32(int v);
+    bool __cdecl Write32(unsigned int v);
+    bool __cdecl Write(const PString& s);
+    bool __cdecl Write(const AnsiString& s);
+    bool __cdecl Write(const String& s);
+    bool __cdecl Write(const UnicodeString& s);
+    void __cdecl SafeRead(void* data, unsigned long size, unsigned long count);         // throws FileEx short
+    void __cdecl SafeWrite(const void* data, unsigned long size, unsigned long count);  // throws FileEx short
+    unsigned long __cdecl WriteLine(const char* text, int encoding);
+    unsigned long __cdecl ReadLine(void* buffer, unsigned long size, int encoding);  // 0 at the end
+    unsigned long __cdecl ReadBlock(const char* id, void* data, unsigned long size);
+    unsigned long __cdecl WriteBlock(const char* id, const void* data, unsigned long size);
     unsigned long __cdecl Seek(long offset, FileSeek whence);
-    unsigned long __cdecl SeekSet(long offset);  // -1 on failure
+    unsigned long __cdecl SeekSet(long offset);
     unsigned long __cdecl SeekCur(long offset);
+    unsigned long __cdecl SeekEnd(long offset);
+    unsigned long __cdecl Tell() const;
+    bool __cdecl Eof();
     unsigned long __cdecl Close();
+    void __cdecl Commit();
     unsigned long __cdecl Size();
+    void __cdecl SetBuffer(void* buffer);  // a 16 KB buffer the file does not own
+    bool __cdecl IsOpen();
+    bool __cdecl IsCompressed();
+    const char* __cdecl Name() const;
+    bool __cdecl GetStamp(Time& t);
+    bool __cdecl SetStamp(Time& t);
     void __cdecl DetectEncoding();
-    int __cdecl GetEncoding() const;  // 1 ANSI
+    int __cdecl GetEncoding() const;  // 1 ANSI, 2 UTF-16
+    void __cdecl SetEncoding(int encoding);
+    static int __cdecl GetDefaultEncoding();  // 1
+    static void __cdecl SetCallBack(bool(__cdecl* progress)(unsigned long done, unsigned long written));
+    static void __cdecl SetLog(bool on);  // does nothing
+    static bool __cdecl Cd(const char* path);
+    static bool __cdecl GetCwd(Path& path);
+    static bool __cdecl Rd(const char* path);
+    static void __cdecl SetStamp(Time& t, const char* path);  // throws FileEx
     static bool __cdecl Remove(const char* path);
     static bool __cdecl Remove(const PString& base, const char* path);
     // the current position, read inline by the original's callers (+0x1c; x64 offset provisional)
-    long Position() const { return *reinterpret_cast<const long*>(opaque + 0x1c); }
-    int Handle() const { return *reinterpret_cast<const int*>(opaque); }  // -1 when closed
+    long Position() const { return static_cast<long>(position); }
+    int Handle() const { return fd; }  // -1 when closed
+    // the text encoding field (+0x34: 1 ANSI, 2 UTF-16), read inline by ConfigData's file writer
+    int EncodingField() const { return encoding; }
+
+    static const PString Sep;
 
 private:
     friend class JIRFFile;
+    friend class FileImpl;
+    static bool(__cdecl* callback)(unsigned long, unsigned long);
 
-public:
-    // the text encoding field (+0x34: 1 ANSI, 2 UTF-16), read inline by ConfigData's file writer
-    int EncodingField() const { return *reinterpret_cast<const int*>(opaque + 0x34); }
-
-private:
-    unsigned char opaque[JET_OPAQUE_SIZE(0x13c, 0x160)];  // +0x38 the path (MAX_PATH chars)
+    int fd;                    // +0x00 msvcr80 descriptor, -1 when closed
+    char* cur;                 // +0x04 the next byte in the buffer
+    char* buffer;              // +0x08 16 KB
+    unsigned long count;       // +0x0c valid (read) or pending (write) bytes in the buffer
+    unsigned long mode;        // +0x10
+    unsigned long size;        // +0x14 the data size, -1 until known (0 after a failed read)
+    unsigned long dataStart;   // +0x18 the "CFIL" header's length
+    unsigned long position;    // +0x1c in the data
+    unsigned long rawPos;      // +0x20 the next raw file offset
+    unsigned long dirty;       // +0x24 written since the last flush
+    unsigned char flags;       // +0x28 bit 0 owns the buffer, bit 1 the descriptor belongs to a FileSub
+    FileSubstitute* subst;     // +0x2c the substitute it was opened through
+    FileSub* sub;              // +0x30 the FileSub object holding it
+    int encoding;              // +0x34
+    Path path;                 // +0x38
 };
-JET_LAYOUT32(sizeof(File) == 0x13c);
+JET_LAYOUT32(sizeof(File) == 0x13c);  // (the offsets are checked in File.cpp)
 
-// A file's contents in memory: {current, start, size, ?, AnsiString name}; still the original's (U10)
+// A file's contents in memory: {current, start, size, owned, AnsiString name}. Unit U10a (MemoryFile.cpp).
 class MemoryFile {
 public:
     MemoryFile();
-    MemoryFile(const void* data, unsigned int size, bool copy, int mode);
-    MemoryFile(File& file, bool flag, int mode);  // the whole file read in
+    MemoryFile(const char* name, unsigned int size);  // an owned empty block of size bytes
+    MemoryFile(const void* data, unsigned int size, bool unicode, int encoding);
+    MemoryFile(File& file, unsigned int size, bool unicode, int encoding);
+    MemoryFile(File& file, bool unicode, int encoding);  // the rest of the file
+    MemoryFile(File& file, const String& key);
+    MemoryFile(const MemoryFile& o);  // shallow
+    MemoryFile& operator=(const MemoryFile& o);
     ~MemoryFile();
+    File::Result Open(const char* path, unsigned long mode, bool unicode, int encoding);
+    File::Result Open(const PString& base, const char* path, unsigned long mode, bool unicode, int encoding);
+    bool Open(File& file, unsigned int size, bool unicode, int encoding);
+    bool Open(File& file, bool unicode, int encoding);
     bool Open(File& file, const String& key);
-    File::Result Open(const char* path, unsigned long mode, bool flag, int share);
-    void Close();                                                     // frees owned data, empties
+    bool Open(const void* data, unsigned int size, bool unicode, int encoding);
+    void Open(unsigned int size);
+    void Close();  // frees owned data, empties
     unsigned int Read(void* dst, unsigned int size, unsigned int count) const;  // short reads read nothing
+    void Read(signed char& v) const;
+    void Read(unsigned char& v) const;
+    void Read(short& v) const;
+    void Read(unsigned short& v) const;
+    void Read(long& v) const;
+    void Read(unsigned long& v) const;
+    void Read(float& v) const;
+    void Read(PString& s, bool unused) const;  // u32 length (bit 30: UTF-16), then the text
     signed char Readsbyte() const;
+    unsigned char Readubyte() const;
+    short Readsword() const;
+    unsigned short Readuword() const;
+    long Readsdword() const;
+    unsigned long Readudword() const;
+    float Readfloat() const;
+    unsigned char Peek() const;
+    void Write(const void* src, unsigned int size);
+    unsigned int Seek(int offset, FileSeek whence) const;
     unsigned int SeekSet(int offset) const;
+    unsigned int SeekCur(int offset) const;
+    unsigned int SeekEnd(int offset) const;
+    unsigned int Tell() const;
+    unsigned int Size() const;
+    bool Eof() const;
+    const void* Data() const;
+    const void* CurrentPosition() const;
+    const char* Name() const;
+    void SetName(const char* name);
+    void SetName(const String& name);
 
-    const char* cur;     // +0x00
-    const char* start;   // +0x04
-    unsigned int size;   // +0x08
-    int unknown0c;       // +0x0c
-    AnsiString name;     // +0x10
+    mutable const char* cur;  // +0x00
+    const char* start;        // +0x04
+    unsigned int size;        // +0x08
+    bool owned;               // +0x0c
+    AnsiString name;          // +0x10
+
+protected:
+    bool __cdecl ReadData(File& file, unsigned int size, bool unicode, int encoding);
+    bool __cdecl ReadData(File& file, const String& key);
 };
 JET_LAYOUT32(sizeof(MemoryFile) == 0x14);
 
