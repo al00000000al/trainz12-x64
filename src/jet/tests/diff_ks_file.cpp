@@ -6,8 +6,8 @@
 //  * File: open modes (read, plain / compressed read, create, append, new-only, compressed write, rejected),
 //    reads and writes around the 16 KB buffer, seeks (also inside BPE-compressed files), ReadLine / WriteLine in
 //    ANSI and UTF-16, blocks, DetectEncoding, Commit, stamps, the errors thrown, the file bytes left on disk;
-//  * File through substitutes (the original's FileSub objects, called by our File::Open): a directory and a new
-//    .ja archive written and read back;
+//  * File through substitutes (each side's own list, U10b): a directory and a new .ja archive written and read
+//    back;
 //  * MemoryFile: every Open, the typed reads, seeks, Write, Read(PString&).
 //
 // usage: diff_ks_file.exe <dir with our KernelStandard_7c.dll and KernelStandard_7c_orig.dll> [scenarios]
@@ -338,11 +338,12 @@ static void Load(Api& a, HMODULE m)
 #undef G
 }
 
-// the original's PString cache and the File::Subst used to set up substitutes (both sides share them)
+// the original's PString cache (both sides share it) and each side's File::Subst (since U10b the substitute lists
+// are separate)
 static void** pstringCache;
 static Node*(__cdecl* pstringCreate)(void*, const unsigned char*);
 static void(__cdecl* pstringDestroy)(void*, Node*);
-static void(__cdecl* fileSubst)(const Node**, const char*, bool);
+static void(__cdecl* fileSubsts[2])(const Node**, const char*, bool);
 static std::string tmpDir;
 
 static std::mt19937 rng;
@@ -794,11 +795,12 @@ static void RunCompressed(unsigned seed)
     DeleteFileA(path.c_str());
 }
 
-// substitutes: the original's FileSubPath (a directory) and FileSubArchive (a new .ja archive), shared by both
-// sides; each side uses its own names
+// substitutes: a FileSubPath (a directory) and a FileSubArchive (a new .ja archive), each side its own (its module's
+// File::Subst) under its own names
 static void RunSubst(unsigned seed)
 {
     const Api& a = apis[side];
+    auto const fileSubst = fileSubsts[side];
     std::mt19937 r(seed);
     const std::string dirName = "kfdsub" + Num(side);
     const std::string arcName = "kfdarc" + Num(side);
@@ -1011,7 +1013,8 @@ int main(int argc, char** argv)
     pstringCache = Get<void**>(orig, "?cache@PString@Jet@@0PAVPStringCache@2@A");
     pstringCreate = Get<decltype(pstringCreate)>(orig, "?Create@PStringCache@Jet@@QAAPAUNode@12@PBE@Z");
     pstringDestroy = Get<decltype(pstringDestroy)>(orig, "?Destroy@PStringCache@Jet@@QAAXPAUNode@12@@Z");
-    fileSubst = Get<decltype(fileSubst)>(orig, "?Subst@File@Jet@@SAXABVPString@2@PBD_N@Z");
+    fileSubsts[0] = Get<void(__cdecl*)(const Node**, const char*, bool)>(swap ? orig : ours, "?Subst@File@Jet@@SAXABVPString@2@PBD_N@Z");
+    fileSubsts[1] = Get<void(__cdecl*)(const Node**, const char*, bool)>(swap ? ours : orig, "?Subst@File@Jet@@SAXABVPString@2@PBD_N@Z");
     {
         char t[MAX_PATH];
         GetTempPathA(MAX_PATH, t);

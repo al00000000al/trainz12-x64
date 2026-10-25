@@ -76,7 +76,15 @@ JET_CRT80(int, _fstat64i32, (int fd, void* st), (fd, st))
 JET_CRT80(int, _stat64i32, (const char* path, void* st), (path, st))
 JET_CRT80(int, _futime64, (int fd, void* times), (fd, times))
 JET_CRT80(int, _utime64, (const char* path, void* times), (path, times))
-JET_CRT80(void, _splitpath, (const char* path, char* drive, char* dir, char* name, char* ext),
+// the substitute statics and File::Find (unit U10b)
+JET_CRT80(int, _access, (const char* path, int mode), (path, mode))
+JET_CRT80(int*, _errno, (), ())
+JET_CRT80(int, _mkdir, (const char* path), (path))
+JET_CRT80(int, _chmod, (const char* path, int mode), (path, mode))
+JET_CRT80(intptr_t, _findfirst64i32, (const char* pattern, void* data), (pattern, data))
+JET_CRT80(int, _findnext64i32, (intptr_t handle, void* data), (handle, data))
+JET_CRT80(int, _findclose, (intptr_t handle), (handle))
+JET_CRT80(void, _splitpath,(const char* path, char* drive, char* dir, char* name, char* ext),
           (path, drive, dir, name, ext))
 #undef JET_CRT80
 

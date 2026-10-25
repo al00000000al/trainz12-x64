@@ -585,7 +585,9 @@ int main(int argc, char** argv)
         GetTempPathA(MAX_PATH, t);
         tmpDir = t;
         Node* drive = Make("ksp");
-        Get<void(__cdecl*)(Node* const*, const char*, bool)>(orig, "?Subst@File@Jet@@SAXABVPString@2@PBD_N@Z")(&drive, tmpDir.c_str(), true);
+        // each module keeps its own substitute list (U10b)
+        for (HMODULE m : {orig, ours})
+            Get<void(__cdecl*)(Node* const*, const char*, bool)>(m, "?Subst@File@Jet@@SAXABVPString@2@PBD_N@Z")(&drive, tmpDir.c_str(), true);
         Release(drive);
     }
     if (const char* one = getenv("KSP_FILE")) {  // one file, each side

@@ -1227,6 +1227,44 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
   - The Launcher shows no "faulty" box.
 - Next: U10b, the substitutes and the .ja archive.
 
+### KernelStandard_7c U10b, substitutes and .ja archives (2026-10-25): 1096/1762 exports ours
+- 48 exports in four files (details in `notes\KernelStandard.md`, "U10b part 1 done" and "U10b part 2 done"):
+  - `FileSub.cpp`: the substitute list ("data:path" names standing for directories, archives and links) and every
+    static that consults it (Subst, SubstLink, Exists, IsDirectory, Unlink, Rename, Md, Prune, GetStamp, SetReadonly,
+    CheckWriteMode, TrueName, Path::GetSubst, GetSubstBuildVersion / ProductCode); FileSubPath and FileSubLink.
+  - `FileFind.cpp`: File::Find over plain directories and a substitute's directories and archives.
+  - `FileSubArchive.cpp`: the archive reader and writer (records in file order, a name hash, a directory set, read
+    cursors, the "IDX " directory rewritten at exit), SetDefaultBuildVersion / ProductCode, the temp-name counter.
+  - `File.cpp`: File::Sep, File::callback and SetCallBack.
+- Nothing in KernelStandard calls the original by address any more; what is left of the original is reached only
+  through its exports (the foundations: Alloc, PString, Log...).
+- Archive facts: by name, a lookup normalizes the key ('\' to '/') but not the stored name, so a file stored with
+  '\' is found only by a scan or a search, never by name, in an archive with a directory (the game's files use '/').
+  Records do not keep times: GetStamp of an indexed file is 0. A written file is appended as a "FIL " record (an old
+  one of that name becomes "FIL!"); the directory is rewritten in place at exit and the file is never truncated.
+- Bugs kept: FileSubPath packs a compressed write under a temp name that overflows into its read buffer, so the file
+  is lost and a hidden temp file stays; the original writes stack and heap leftovers after the names in "FIL " and
+  "IDX " entries (ours: zeros).
+- The original crashes on some inputs, and so do we: writing to a writable archive whose file was turned away (no
+  INFO, a foreign magic or version: the writes go to fd -1); reading back a compressed file written to a version
+  0x101 archive (12-byte "CFIL" header written, 4-byte one read); Unlink through a record with a garbage offset
+  writes "FIL!" hundreds of MB out (scanning that file then takes hours). The test avoids the first two and ends a
+  scenario at the third.
+- Unlinking a path with '\' drops the record but leaves its name in the hash (the erased key is not normalized); a
+  later lookup reads the freed record, so the original's answer depends on its heap (once in 1000 scenarios it
+  differed from ours). The test writes and unlinks with '/' only, as the game does.
+- Diff test `diff_ks_filesub` (each side its own substitutes, temp files and current directory):
+  - Real archives: Base.ja and Data.ja listed by Find and every file read on both sides (2964 files, 107 MB).
+  - Read, write and archive scenarios: directories, links, an archive written by the original, and each side's own
+    .ja (new or built by the test: versions, magics, right / missing / wrong directories, deleted and foreign chunks)
+    written plain and compressed, read, searched, unlinked and remounted; the archive file compared chunk by chunk.
+  - 1000 scenarios: 347 983 checks, 0 mismatches; with the real archives first, 300 scenarios. With the sides
+    swapped: 150 scenarios, 0 mismatches. `diff_ks_file` is
+    clean (110 087 checks).
+- In game (the U10b part 1 build kept as `KernelStandard_7c_u10b1.dll`): the menu log matches the baseline (0 lines
+  differ) and the Launcher shows no "faulty" box.
+- Next: U11 (PORT_PLAN 7b).
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's

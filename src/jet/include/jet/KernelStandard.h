@@ -584,7 +584,7 @@ public:
         void __cdecl SplitPath(char* drive, char* dir, char* name, char* ext) const;
         bool __cdecl MakeRelativeTo(const char* base);
         Path __cdecl ExtractFirstPath();  // cuts and returns the first component
-        FileSubstitute* __cdecl GetSubst() const;  // (still the original's: U10b)
+        FileSubstitute* __cdecl GetSubst() const;  // the substitute named before a ':' (not a drive letter)
         static FileSubstitute* __cdecl GetSubst(const char* path);
         char text[0x104];
 
@@ -592,23 +592,48 @@ public:
         operator bool() const;  // exported, private: true
         bool operator!() const;  // exported, private: false
     };
-    class Find {
+    // A directory search (0x440 bytes): the entry found, then plain directories through _findfirst and a
+    // substitute's directories and archives one after the other, each name given once (case-insensitive).
+    // Unit U10b (FileFind.cpp).
+    class Find : public Entry {
     public:
         Find();
+        Find(const Find& o);
         ~Find();
+        Find& operator=(const Find& o);
         bool __cdecl Open(const char* pattern);
         bool __cdecl Open(const char* pattern, const PString& base);
         bool __cdecl Next();
         void __cdecl Close();
+        void __cdecl Dump();
         Path __cdecl GetNameAndPath() const;
 
     private:
-        unsigned char opaque[JET_OPAQUE_SIZE(0x440, 0x460)];
+        friend class FindImpl;
+        bool __cdecl CheckFiles();
+        bool __cdecl FirstDirect(const char* pattern);
+        bool __cdecl NextDirect();
+        bool __cdecl NextFile();
+        bool __cdecl NextSearch();
+        void __cdecl ReduceWildcard(const char* pattern);
+        static const long ClosedHandle;  // -1 (exported, unused)
+
+        long handle;             // +0x120 _findfirst handle, or an archive's read cursor; -1 none
+        Path dir;                 // +0x124 the pattern's directory (a substitute's name taken off)
+        Path current;             // +0x228 the directory of the entry found
+        Path wildcard;            // +0x32c the pattern's name part
+        struct SubChunk* subs;    // +0x430 the FileSubs still to search, taken from the end
+        struct NameNode* names;   // +0x434 the names given so far (lower case, sorted): a ring through this field
+        unsigned long nameCount;  // +0x438
+        FileSub* archive;         // +0x43c the archive being searched, or null
     };
-    // File::Exists returns a ResultClass by value; bound at run time (see KernelStandardRuntime.cpp)
+    // File::Exists returns a ResultClass by value; outside KernelStandard it is bound at run time (see
+    // Kernel_7c/KernelStandardRuntime.cpp)
+#if !defined(JET_KS_IMPLEMENTATION)
     static bool Exists(const char* path);
+#endif
     static bool __cdecl Md(const char* path);     // makes the directory (and its parents)
-    static void __cdecl Subst(const PString& drive, const char* path, bool add);
+    static void __cdecl Subst(const PString& drive, const char* path, bool add);  // null path: removes it
     static bool __cdecl Prune(const char* path);  // deletes the directory tree; the path must not be null
 
     // A buffered file over the CRT's low-level I/O (msvcr80's file descriptors: the original's FileSub code
@@ -688,6 +713,28 @@ public:
     static void __cdecl SetStamp(Time& t, const char* path);  // throws FileEx
     static bool __cdecl Remove(const char* path);
     static bool __cdecl Remove(const PString& base, const char* path);
+#if defined(JET_KS_IMPLEMENTATION)
+    // the substitute statics (unit U10b, FileSub.cpp): "name:rest" paths go to the substitute's FileSubs
+    static Result __cdecl Exists(const char* path);  // 0 there, 2 not, 7 no such substitute
+    static Result __cdecl Exists(PString& base, const char* path);  // base: the substitute it was found in
+    static Result __cdecl ExistsIgnoreCase(const char* path, Path& found);
+    static Result __cdecl ExistsIgnoreCase(PString& base, const char* path, Path& found);
+    static Result __cdecl CheckWriteMode(const char* path);  // 0 writable, 2 missing, 9 read-only
+    static Result __cdecl SubstExists(const PString& name);
+    static void __cdecl SubstLink(const PString& name, const PString& other);
+    static unsigned long __cdecl GetSubstBuildVersion(const PString& name);
+    static unsigned long __cdecl GetSubstProductCode(const PString& name);
+    static bool __cdecl IsDirectory(const char* path);
+    static bool __cdecl IsDirectory(const PString& base, const char* path);
+    static bool __cdecl Unlink(const char* path);
+    static bool __cdecl Unlink(const PString& base, const char* path);
+    static bool __cdecl Rename(const char* from, const char* to);
+    static bool __cdecl Rename(const PString& base, const char* from, const char* to);
+    static bool __cdecl GetStamp(Time& t, const char* path);
+    static void __cdecl SetReadonly(const char* path, bool on);
+    static void __cdecl SetReadonly(const PString& base, const char* path, bool on);
+    static bool __cdecl TrueName(char* path);  // a substitute's path becomes the real one
+#endif
     // the current position, read inline by the original's callers (+0x1c; x64 offset provisional)
     long Position() const { return static_cast<long>(position); }
     int Handle() const { return fd; }  // -1 when closed
@@ -699,7 +746,9 @@ public:
 private:
     friend class JIRFFile;
     friend class FileImpl;
-    static bool(__cdecl* callback)(unsigned long, unsigned long);
+    friend class FileSubPath;
+    friend class FileSubArchive;
+    static bool(__cdecl* callback)(unsigned long, unsigned long);  // progress of an archive write (FileSubArchive)
 
     int fd;                    // +0x00 msvcr80 descriptor, -1 when closed
     char* cur;                 // +0x04 the next byte in the buffer

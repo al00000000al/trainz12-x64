@@ -963,3 +963,102 @@ Internal functions of orig can be reached by RVA (`diff_blowfish.cpp`).
   hidden temp file and Close (vf8) appends a "FIL " record (BPE chunks for mode 2, the CRC of the plain data,
   File::callback progress), the directory being rewritten at destruction (0x10027330). Per-thread read cursors
   (vf7, 0x100268c0) share the archive's descriptor under two CriticalSections.
+
+## U10b part 1 done (2026-10-25): FileSub.cpp, FileFind.cpp, 42 exports (1090/1762 ours)
+- The substitute list is ours: substitutes {next, FileSubs, count, PString name} sorted by the name's node pointer,
+  one lock. Subst(name, path) puts a FileSubPath (path ends in '\' or '/') or an archive first; SubstLink puts a
+  FileSubLink last; Subst(name, null) clears every link to it (FileSub slot 1 in every substitute) and deletes the
+  substitute with its FileSubs. At exit everything is deleted (an archive written to rewrites its directory).
+  Subst with "" reads path[-1] in the original (crash): not tested.
+- The archives are still the original's objects: made with its constructor 0x100252f0 (__thiscall on the path,
+  object and flag on the stack, ret 8; called as __fastcall), used through their vftable, and File::Find calls
+  their read cursors directly: 0x100268c0 (archive in esi, returns the cursor), 0x100269f0 (archive edi, cursor
+  edx), 0x10025b10 (pattern ecx, archive edx, then cursor, Entry*, 1, 0 on the stack, cdecl). Those, File::Sep,
+  File::callback, SetCallBack, SetDefaultBuildVersion / ProductCode, Find::ClosedHandle and the temp-name counter
+  0x100adbc4 stay the original's until FileSubArchive is ported (U10b part 2).
+- FileSub vftable (slot: base / directory / link / archive): 0 deleting dtor (thiscall), then __cdecl with the object
+  first: 1 Forget(name) (link: drop a target of that name), 2 IsReadOnly (true / bit 0 / false / bit 0 of +0x25c),
+  3 IsReadable (false / bit 1 "exists" / target set / fd != -1), 4 Version (0 / 0x102 / 0 / +0x238), 5 IsType(t)
+  (archive 0, directory 1, link 2), 6 OpenWrite, 7 OpenRead, 8 Close (base throws "CloseFile() Logic Error"),
+  9 Exists(PString* base, path), 10 IsDirectory, 11 ExistsAs (base: *found = path, then slot 9), 12 Unlink,
+  13 Rename, 14 Md (base true), 15 TrueName, 16 GetStamp, 17 SetReadonly, 18 Collect (directory and archive add
+  themselves, a link its target's FileSubs), 19/20 Lock/Unlock, 21 IsPath (strcmp with the directory / archive path).
+- The list walks: write = first FileSub not read-only that opens it; read = first readable one; Exists = first
+  readable that has it, the base PString set to the substitute's name on the way; IsDirectory asks only while the
+  base equals the substitute's own name, so File::IsDirectory("name:x") (null base) is always false, and through a
+  link too (kept); Unlink = every writable one; Rename / Md = first writable; TrueName = any (readable or not);
+  GetStamp = first readable; SetReadonly = every readable, and SetReadonly(base, path) then chmods the path as a
+  plain one as well. GetSubstBuildVersion / ProductCode: the first collected archive with +0x244 / +0x248 set.
+- File::Find (0x440): Entry, handle +0x120, dir +0x124, current +0x228, wildcard +0x32c, collected FileSubs +0x430
+  (chunks of 13, Jet::Alloc), names given +0x434 (a sorted ring of {next, lower-case name}, 0x108 each) and their
+  count, archive +0x43c. Open on "name:" collects the FileSubs, takes the name and any separators off `dir`, and
+  NextSearch takes the FileSubs from the end (last collected first) after setting `dir` back from `current` (so the
+  name is there again: GetNameAndPath gives "name:/file"). Plain Open gives the first entry without the name check.
+  Next strips directories from names and skips names already given (case-insensitive). The copy constructor and
+  operator= share the names ring (a copy of a search with names given double-frees); Close leaves the archive set.
+- Original bug kept: FileSubPath::Close packs a compressed write into a temp file named in a 16-byte buffer that the
+  19-byte "%08X.T%08X" overflows into the read buffer; the first chunk read garbles the name, the rename fails, the
+  file is deleted and its packed copy stays as a hidden temp file in the current directory. So a compressed file
+  written through a directory substitute is lost (an empty one survives). File::Close's own packing is not affected.
+- Prune works on plain paths only (no substitute), stops at a name too long for MAX_PATH, and after a failure goes
+  on making files writable but deletes nothing more. Md walks the components with ExtractFirstPath from RootDir.
+- Test: diff_ks_filesub (each side its own substitutes over the same files: a directory, an archive written through
+  the original, a link; every static, File::Find over drawn patterns with the whole Entry; writes, renames, deletes,
+  read-only bits through writable substitutes and links, plain Md / Prune, then the whole tree; first the real
+  Base.ja and Data.ja listed and read completely, KFS_BUILTIN=1 for the 8 builtin archives). diff_ks_file now gives
+  each side its own File::Subst.
+
+## U10b part 2 done (2026-10-25): FileSubArchive.cpp, 6 exports (1096/1762 ours)
+- The archives are ours (FileSubArchive deriving our FileSub; the original's 0x278-byte layout is not kept, only
+  our code touches them now), with SetDefaultBuildVersion / ProductCode (0x100adbd0 / d4), File::Sep (PString "/"
+  made at load), File::callback / SetCallBack, Find::ClosedHandle (-1, unused) and the temp-name counter
+  (0x100adbc4). Nothing in KernelStandard calls the original by address any more.
+- Original fields: +0xc record ring (chunks of 61 record pointers, 0x100 bytes), +0x10 name hash (401 buckets of
+  rings; first record of the exact name wins), +0x1c directory set (PStrings by text), +0x28 the last directory
+  found, +0x12c cursor pool (chunks of 4 cursors {pos, item, ring head, chunk}, never shrunk), +0x130 path, +0x234
+  INFO {'ARC0', version, count, directory offset, build, product, 0, 0}, +0x254 bit 0 directory known, bit 1 changed,
+  +0x258 fd, +0x25c read-only, +0x260 descriptor lock (FileSub Lock / Unlock), +0x26c list lock. Records (PackedHeapMP)
+  {data offset, stored size, Entry size, length, crc, attrib, lower-case name}: times are not kept, so an entry made
+  from a record has time 0 (GetStamp of an indexed file is 0; a file met while scanning keeps its header's time).
+- Open: read-only 0x8000 / writable 0x8002, SH_DENYNO. Missing and writable: created (0x8102) with "ARCH" + INFO
+  (0x102, the defaults), bits 0 and 1 set (so an unused new archive still gets an empty "IDX " at exit). Existing:
+  fewer than 4 bytes read: kept open with nothing in it; "ARCH" and an "INFO" chunk (0x100218b0: the first chunk of
+  that id; a different id makes it read the next 8 bytes as a header, without skipping) up to 0x20 bytes: the
+  directory is read even when the magic or version (0x101..0x102) is wrong, and then the file is closed (fd -1,
+  version 0). A directory read fails without count or offset, without "IDX " there, or on a short block (blocks of up
+  to 0x1000 entries {offset, size, Entry}); a name without a NUL ends it as a success. Each entry: a record (none
+  for an empty name) and its directories (normalized: '\' to '/', A-Z lowered, one trailing '/' cut).
+- Next (0x10025b10, cursor, entry, advance, by name): by name (when there are records) the key is the path lower-cased
+  AND Path::Normalize'd ('\' becomes '/'), the records only lower-cased: a file stored with '\' in its name is never
+  found by name in an archive with a directory (kept; the game's files use '/'). A miss puts the cursor after the
+  last record. Otherwise the records from the cursor's place, wildcard-matched (a directory match: attrib |= 0x11,
+  the name cut after it). Not found and not (read-only with a directory): the file is scanned from the cursor's
+  offset; every "FIL " met becomes a record (the first one also moves every other cursor that was at the ring's end
+  onto it) and is matched; other chunks are skipped by their size. The entry buffer holds the last header read.
+- OpenWrite: the path, then the temp name "%08X.T%08X" right after its NUL in the File's path buffer (a long path
+  writes past the File), opened 0x8301 SH_DENYRW, hidden. Close (modes 1 / 2): an old file of that name is unlinked
+  first, then "FIL " {size, Entry} at the directory's offset when there is one (overwriting it; it is rewritten at
+  exit) or at the end; data plain, or for mode 2 "CFIL" 0x101 size + BPE chunks (u16 0x8000|n when stored raw);
+  CRC (Crc::Calc) of the plain data; File::callback(done, stored) per chunk (stored 0 for plain), its result ignored;
+  with a directory the record is added and the directory's offset moves to the end. The Entry written has stack
+  leftovers after the name in the original (ours: zeros).
+- OpenRead shares the archive's descriptor: size = Entry length for mode 0x20, else Entry size; data start and raw
+  position = the cursor's offset; the cursor is freed. Exists: by name, else a name without '.', '*', '?' in its last
+  part that is a directory. IsDirectory compares with the last directory found first (initially "": IsDirectory("")
+  is true). Unlink (writable only): the chunk becomes "FIL!", the name (lower-cased as given, not normalized) leaves
+  the hash and the first record wildcard-matching the path leaves the ring (a hash entry left behind keeps pointing
+  at the freed record in the original; ours keeps such records until the archive goes). That happens whenever a
+  path with '\' is unlinked (Close unlinks an old file of the same name too): a later lookup of the name reads
+  freed PackedHeapMP memory, so the original's answer depends on whether it was reused (seen once in 1000 test
+  scenarios: the original 0, ours 1). The test writes and unlinks with '/' only, as the game does.
+- Directory rewrite (0x10027330, at destruction when writable with bits 0 and 1): "IDX " at the old offset or the end
+  (a shorter one leaves the old tail after it; the file is never truncated), the entries from Alloc memory (heap
+  leftovers after names in the original), then "ARCH" + INFO again at 0.
+- Kept original crashes (the test avoids them): a writable archive whose file was turned away (no INFO, a foreign
+  magic or version) still takes writes, which go to fd -1 (msvcr80 ends the process); a compressed file written to
+  a version 0x101 archive gets the 12-byte "CFIL" header but is read with the 4-byte one (BPE::Decomp runs off);
+  a record with a garbage offset (from a directory over stale data) makes Unlink write "FIL!" hundreds of MB out.
+- Test: diff_ks_filesub now also runs "archive" scenarios (each side its own .ja, built or new, written / read /
+  searched / unlinked / remounted, the file compared chunk by chunk with names masked after their NUL; each side its
+  own current directory, because the modules now count temp names separately and FileSubPath's lost temp files of
+  one side would collide with the other's). KFS_APROBE shows the '\' name and "name:pattern" search behaviour.

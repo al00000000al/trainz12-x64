@@ -1206,7 +1206,9 @@ int main(int argc, char** argv)
     }
     {  // "ksc" names the temp directory for Open(base, path)
         Node* drive = pstringCreate(*pstringCache, reinterpret_cast<const unsigned char*>("ksc"));
-        Get<void(__cdecl*)(Node* const*, const char*, bool)>(orig, "?Subst@File@Jet@@SAXABVPString@2@PBD_N@Z")(&drive, tmpDir.c_str(), true);
+        // each module keeps its own substitute list (U10b)
+        for (HMODULE m : {orig, ours})
+            Get<void(__cdecl*)(Node* const*, const char*, bool)>(m, "?Subst@File@Jet@@SAXABVPString@2@PBD_N@Z")(&drive, tmpDir.c_str(), true);
     }
     for (int i = 0; i < kTextCount; ++i)
         pool[i + 1] = pstringCreate(*pstringCache, reinterpret_cast<const unsigned char*>(kTexts[i]));

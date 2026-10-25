@@ -1,12 +1,13 @@
 // Unit U10a of KernelStandard_7c: File (a buffered file over msvcr80's low-level I/O, with the BPE-compressed
 // "CFIL" format) and FileEx (0x10008460..0x10008600, 0x10013f40..0x10015560, 0x1001fbb0..0x10021ef0). The
-// substitutes ("name:path" through FileSub objects: archives, directories, links) are still the original's
-// (U10b): Open looks the name up in the original's list and lets its FileSub open the file into this object.
+// substitutes ("name:path" through FileSub objects: archives, directories, links) are unit U10b (FileSub.cpp):
+// Open looks the name up in that list and lets a FileSub open the file into this object.
 // Notes: D:/trainz12-decomp/notes/KernelStandard.md ("U10a").
 #include <jet/Config.h>
 #include <jet/KernelStandard.h>
 
 #include "Crt80.h"
+#include "FileSub.h"
 
 #include <windows.h>
 
@@ -26,60 +27,8 @@ constexpr unsigned long kChunk = 0x4000;  // the buffer and the compressed chunk
 constexpr int O_RDONLY_ = 0, O_RDWR_ = 2, O_CREAT_ = 0x100, O_TRUNC_ = 0x200, O_EXCL_ = 0x400, O_BINARY_ = 0x8000;
 constexpr int SH_DENYRW_ = 0x10, SH_DENYWR_ = 0x20;
 
-// ---- what is still the original's (U10b): reached by address in KernelStandard_7c_orig.dll
-
-unsigned char* OrigBase()
-{
-    static unsigned char* const base = reinterpret_cast<unsigned char*>(GetModuleHandleA("KernelStandard_7c_orig.dll"));
-    return base;
-}
-template <class T>
-T* Orig(unsigned long rva) { return reinterpret_cast<T*>(OrigBase() + rva); }
-
-// the temp-name counter (0x100adbc4), shared with the original's FileSub temp files so names never collide
-unsigned long& TempCounter() { return *Orig<unsigned long>(0xadbc4); }
-
-// FileSubstitute: {vptr?, FileSub list (link at +4 of each FileSub), count +8, PString name +0xc}, kept in the
-// original in a sorted list (head 0x100741c8, node {next, prev, ?, FileSubstitute* +0xc?}) under the lock 0x100741d8.
-// The lookup (0x1002a5f0, PString in esi) compares the name nodes.
-FileSubstitute* FindSubst(const PString& name)
-{
-    if (!name.node || !name.node->length) return nullptr;
-    CRITICAL_SECTION* const lock = *Orig<CRITICAL_SECTION*>(0x741d8);
-    unsigned char* const head = Orig<unsigned char>(0x741c8);
-    FileSubstitute* found = nullptr;
-    if (lock) EnterCriticalSection(lock);
-    unsigned char* e = *reinterpret_cast<unsigned char**>(head);
-    const auto key = reinterpret_cast<uintptr_t>(name.node);
-    while (e != head && *reinterpret_cast<uintptr_t*>(e + 0xc) < key) e = *reinterpret_cast<unsigned char**>(e);
-    if (e != head && *reinterpret_cast<uintptr_t*>(e + 0xc) == key) found = reinterpret_cast<FileSubstitute*>(e);
-    if (lock) LeaveCriticalSection(lock);
-    return found;
-}
-
-// the substitute's FileSubs open the file into the File object (0x10029b60: write, 0x10029c00: read; __stdcall,
-// they end in ret 14h)
-using SubstOpen = char(__stdcall*)(FileSubstitute*, File*, const char*, int, int);
-char SubstOpenWrite(FileSubstitute* s, File* f, const char* path, int oflag, int pmode)
-{
-    return reinterpret_cast<SubstOpen>(OrigBase() + 0x29b60)(s, f, path, oflag, pmode);
-}
-char SubstOpenRead(FileSubstitute* s, File* f, const char* path, int oflag, int pmode)
-{
-    return reinterpret_cast<SubstOpen>(OrigBase() + 0x29c00)(s, f, path, oflag, pmode);
-}
-
 // the open-files count (0x100adbc8): never read
 unsigned long openFiles = 0;
-
-// FileSub virtuals (__cdecl, the object first): +0x10 the archive version, +0x20 close a file, +0x4c / +0x50 lock
-// and unlock the shared descriptor
-template <class R, class... A>
-R SubCall(FileSub* sub, unsigned int slot, A... a)
-{
-    auto const f = (*reinterpret_cast<R(__cdecl***)(FileSub*, A...)>(sub))[slot / 4];
-    return f(sub, a...);
-}
 
 }  // namespace
 
@@ -106,14 +55,14 @@ public:
     // 0x10021a90: reads n bytes at a raw offset (no further than the compressed size allows), -1 on failure
     static int RawRead(File& f, void* dst, unsigned long n, long offset)
     {
-        if (f.sub) SubCall<void>(f.sub, 0x4c);
+        if (f.sub) f.sub->Lock();
         int r;
         const long at = Crt80::_lseek(f.fd, offset, 0);
         if (at == -1 || static_cast<unsigned long>(at - f.dataStart) > f.size + (f.size >> 14) * 2)
             r = -1;
         else
             r = Crt80::_read(f.fd, dst, n);
-        if (f.sub) SubCall<void>(f.sub, 0x50);
+        if (f.sub) f.sub->Unlock();
         return r;
     }
     // 0x10021b10: the same at rawPos, which moves on
@@ -344,8 +293,10 @@ public:
 
 // ---- File
 
-// (File::Sep, File::callback and SetCallBack stay the original's until U10b: only its FileSubArchive reads the
-// callback, and Sep is data other modules import)
+const PString File::Sep("/");  // (0x100ae17c, made at load)
+bool(__cdecl* File::callback)(unsigned long, unsigned long) = nullptr;  // 0x100adbcc
+
+void File::SetCallBack(bool(__cdecl* progress)(unsigned long, unsigned long)) { callback = progress; }  // 0x100154c0
 
 File::File()
 {
@@ -423,12 +374,12 @@ File::Result File::Open(const PString& base, const char* p, unsigned long m, int
     const int pmode = (oflag & O_CREAT_) ? 0x180 : 0;
     if (create == 0x100 || create == 0x300) size = 0;
 
-    subst = base.node && base.node->text ? FindSubst(base) : nullptr;
+    subst = base.node && base.node->text ? Subst::Find(base) : nullptr;
     if (subst) {
         if ((mode & 0xf0) == 0) {
-            SubstOpenWrite(subst, this, p, oflag, pmode);
+            Subst::OpenWrite(subst, this, p, oflag, pmode);
         } else {
-            SubstOpenRead(subst, this, p, oflag, pmode);
+            Subst::OpenRead(subst, this, p, oflag, pmode);
             if (fd == -1) return Result(2);
         }
     } else {
@@ -445,7 +396,7 @@ File::Result File::Open(const PString& base, const char* p, unsigned long m, int
         unsigned long version = 0x102;
         unsigned long headerLen = 0xc;
         if (sub) {
-            version = SubCall<unsigned long>(sub, 0x10);
+            version = sub->Version();
             headerLen = version == 0x101 ? 4 : 0xc;
         }
         const int n = FileImpl::RawReadOn(*this, buffer, headerLen);
@@ -489,14 +440,14 @@ unsigned long File::Close()
     if (fd == -1) return 0;
     FileImpl::Flush(*this);
     if (sub) {
-        SubCall<void>(sub, 0x20, this);
+        sub->Close(this);
     } else if ((mode & 0xf) == 2) {
         // written plain to the file: packed now into a hidden temp file in BPE chunks, which replaces it
         unsigned long left = static_cast<unsigned long>(Crt80::_tell(fd));
         unsigned long total = left;
         Crt80::_close(fd);
         const int in = Crt80::open(path.text, O_BINARY_, 0);
-        const unsigned long n = TempCounter()++;
+        const unsigned long n = Subst::TempCounter()++;
         char temp[20];
         std::sprintf(temp, "%08X.T%08X", GetCurrentProcessId(), n);
         const int out = Crt80::sopen(temp, O_BINARY_ | O_CREAT_ | O_TRUNC_ | 1, SH_DENYRW_, 0x180);
@@ -854,7 +805,7 @@ unsigned long File::SeekEnd(long offset) { return Seek(offset, FILE_SEEK_END); }
 unsigned long File::ReadBlock(const char* id, void* data, unsigned long max)
 {
     if ((flags & 2) && sub) {
-        SubCall<void>(sub, 0x4c);
+        sub->Lock();
         Crt80::_lseek(fd, static_cast<long>(rawPos), 0);
     }
     struct {
@@ -882,7 +833,7 @@ unsigned long File::ReadBlock(const char* id, void* data, unsigned long max)
     }
     if ((flags & 2) && sub) {
         rawPos = static_cast<unsigned long>(Crt80::_tell(fd));
-        SubCall<void>(sub, 0x50);
+        sub->Unlock();
     }
     return found ? block.size : 0;
 }
