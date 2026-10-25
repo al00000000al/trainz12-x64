@@ -81,10 +81,10 @@ at every step and catches mistakes while they are small.
 7b. KernelStandard_7c units U6-U14 (needed before x64). U6 small platform, U7 Options / ConfigData / ConfigParser / StringTables (2026-10-21) and U9 DynamicBuffer / IOSlave / BlockReader / BPE / JIRF (2026-10-22) and U8 Bitmap (2026-10-22) and U10a File / Path / MemoryFile (2026-10-25) and U10b part 1 (substitute list,
     directory / link FileSubs, File::Find, the path statics; 2026-10-25) and U10b part 2 (FileSubArchive, the .ja
     reader and writer, File::Sep / callback, SetDefault*; 2026-10-25) and U11 (OS, Window, WindowPlacement;
-    2026-10-25) and U13 (Thread, ThreadLocalStorage, Time; 2026-10-26, their statics still the original's)
-    done: 1216/1762 ours.
-    Next: U12 -> U14 (diagnostics, then the Alloc/string foundation), as one cut-over if the cycle between them
-    forces it.
+    2026-10-25) and U13 (Thread, ThreadLocalStorage, Time; 2026-10-26, their statics still the original's) and
+    U12a (Exception, Debugger, Log, LogClient; 2026-10-26) done: 1257/1762 ours.
+    Next: U12b (Profile, QuickTimer, Console), U12c (ExceptionHandler, HardwareException), then U14 (the
+    Alloc/string foundation), as one cut-over if the cycle between them forces it.
 8. Render stack (RenderSystem, Render3D*, RenderOpenGL), then InterfaceSystem, WaterSystem.
 9. trainz.exe subsystems through the loader DLL: asset DB, GS compiler/VM, physics, world.
 

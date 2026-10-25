@@ -1158,3 +1158,22 @@ Internal functions of orig can be reached by RVA (`diff_blowfish.cpp`).
 - Test: diff_ks_thread (2731 results per side, 0 mismatches, 4 runs; 12 of 12 mutations caught). Both sides share
   the original's statics, so the scenario saves and restores them. TLS growth runs on a fresh instance of each
   side, and each side uses its own names.
+
+## U12a done (2026-10-26): Exception.cpp + Log.cpp, 41 exports (1257/1762 ours)
+- U12 is split: U12a Exception / Debugger / Log / LogClient, U12b Profile / QuickTimer / Console, U12c
+  ExceptionHandler / HardwareException (x86 stack walking, done last).
+- Exception 0x1110: `{vptr, description[0x1000] @4 (call stack text), reason[0x100] @0x1004, hardware @0x1104,
+  line @0x1108, file @0x110c}`. Class "Unknown". The file/line constructors put "No call stack available\r\n" in
+  description. Copies take every byte. Formatters use msvcr80 vsprintf. AddReasonf = strcat "  -  " + vsprintf at
+  the end. The vftable is `{deleting dtor, Class, IsHardwareException, Description, Reason}`. Exception::Log,
+  Debugger::Break and Debugger::LogCallStack are the shared empty function 0x1002abe0.
+- Debugger: Output = OutputDebugStringA, IsReadValid = !IsBadReadPtr, IsDebuggerAttached = (IsDebuggerPresent() == 1).
+- LogClient 0x24 `{next, prev, AnsiString name, AnsiString unused, level, kind, busy, outputs, format}` (offsets in
+  MODLOG). Log statics are imported. The private LogFlush byte (0x1007287b) is used in the original module by
+  address (base + 0x7287b).
+- GetClient: `_stricmp` over the ring (it creates the ring on first use). SearchClientList: the same length, then
+  `_strnicmp`. CreateClient appends at the tail. Process tokenises the option line by ':'. A non-level token is
+  split into key = Token('=') and value = Token(':'); value "=off" clears the switch.
+- Init / Done / Shutdown: see MODLOG "U12a". The File objects are freed the original's inline way (~File, then
+  Alloc::Delete).
+- Test: diff_ks_log (1245 results per side, 0 mismatches; 14 of 14 mutations caught).

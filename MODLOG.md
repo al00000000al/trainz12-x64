@@ -1325,6 +1325,44 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
   is kept as `KernelStandard_7c_u13.dll`.
 - Next: U12 (diagnostics), then U14 (PORT_PLAN 7b).
 
+### KernelStandard_7c U12a, Exception / Debugger / Log / LogClient (2026-10-26): 1257/1762 exports ours
+- U12 is split like U10: U12a (Exception, Debugger, Log, LogClient), U12b (Profile, QuickTimer, Console), U12c
+  (ExceptionHandler, HardwareException, the x86 crash code).
+- 41 exports in `Exception.cpp` and `Log.cpp`.
+- Exception is 0x1110 bytes: `{vptr, description[0x1000] @4, reason[0x100] @0x1004, hardware @0x1104,
+  line @0x1108, file @0x110c}`. The earlier header comment had the two texts swapped. Description holds the call
+  stack text ("No call stack available\r\n" from the file/line constructors). Reason holds the message.
+  - The texts are formatted with msvcr80's vsprintf, as in the original.
+  - AddReasonf appends "  -  " and then the text.
+  - Copies take every byte of both buffers.
+- Log state stays the original's. The exported statics are imported. The one private flag, `LogFlush`
+  (0x1007287b), is read and written in the original module by address. Its Alloc and strings (U14) still log
+  through the same clients and file.
+- LogClient is 0x24 bytes: `{next, prev, AnsiString name @8, AnsiString @0xc (unused), level @0x10 (None 0, Err 1,
+  Warn 2, Diag 3, Prog 4), kind @0x14 (an index into " !?+-", set by the callers; the constructor leaves it
+  unset), busy @0x18, outputs @0x1c (1 file, 2 debugger, 8 window), format @0x20 (1 CRLF, 2 time prefix)}`.
+  - The constructor keeps the heap garbage in the other bits of outputs and format.
+  - The time prefix is `"%c %3.0f:%04.1f : "`. Minutes come from a fistp of `elapsed/60 - 0.5` (float math);
+    seconds are `elapsed - minutes*60`.
+  - The stream copy uses msvcr80's vfprintf.
+- Log::Init reads LogFlush, LogDisplayModuleName and LogAnsi (the File::Open encoding argument). It reads LogFile
+  (default "JetLog.txt", mode 0x101). It writes a 0xFEFF BOM when the encoding is 2, and "Begin:\r\n" with a
+  commit. With NoLog it writes "Log Disabled.\r\n" and closes. An empty name, a failed Open or NoLog drops the
+  file. A failed Open or NoLog also sets LogClient::disabled. LogStdOut and LogStdErr pick msvcr80's stdout
+  (`__iob_func()+0x20`) or stderr (+0x40).
+  - It then resets the "Log" option entry's separators to "," and its cursor, and parses every
+    "client:setting:..." run (Process: Err/Warn/Diag/Prog/None; mono, window, newlines, displaymodulename, file
+    with an optional "=on"/"=off").
+  - It walks the client ring without a null check, as the original does.
+- Diff test `diff_ks_log`: Exception constructors, copies and every formatter, with the whole 0x110c bytes
+  hashed. Log runs 7 option sets through Init, two clients per case (5 kinds, time prefix and line-break
+  combinations, a busy client), 12 option lines through Process, and Shutdown/Done. The log files' bytes are
+  compared. 1245 results per side, 0 mismatches. 14 of 14 mutations were caught. The other KernelStandard tests
+  (file, filesub, config, ioslave, jirf...) still pass.
+- In game: the menu log matches the baseline (0 lines differ; JetLog.txt is now written by our Log), and the
+  Launcher shows no "faulty" box. The build is kept as `KernelStandard_7c_u12a.dll`.
+- Next: U12b, then U12c, then U14.
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's

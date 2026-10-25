@@ -8,6 +8,7 @@
 #include <cstddef>
 
 struct HWND__;
+struct _iobuf;  // the CRT's FILE
 
 namespace Jet {
 
@@ -254,6 +255,7 @@ public:
     AnsiString& __cdecl operator+=(const char* s);
     AnsiString& __cdecl operator+=(const PString& s);
     int __cdecl Addf(const char* fmt, ...);
+    int __cdecl Add(const char* fmt, char* args);  // vsprintf appended
     void __cdecl Setf(const char* fmt, ...);
     unsigned int __cdecl Size() const;
     bool __cdecl EqualsIgnoreCase(const char* s) const;
@@ -273,6 +275,7 @@ private:
     friend class ConfigData;
     friend class StringTablesBase;
     friend class IOSlaveResource;
+    friend struct LogWork;
     void MakeBufferUnique(unsigned int size, bool keep);
 
 protected:
@@ -406,6 +409,7 @@ private:
         String separators;   // +0x10 for GetNext
         const char* cursor;  // +0x14 into value, where GetNext goes on
     };
+    friend struct LogWork;  // Log::Init resets the "Log" entry's separators and cursor
     Node* Find(const char* key) const;
     Node* head;
     Node* tail;
@@ -523,9 +527,79 @@ private:
 };
 JET_LAYOUT32(sizeof(Events) == 0x2c && sizeof(Events::Event) == 0x18);
 
+template <class T>
+class IList;
+class CriticalSection;
+class File;
+
+// A named log channel (0x24 bytes from Jet::Alloc, unit U12a, Log.cpp): {next, prev (a ring through
+// Log::clientList), AnsiString name +8, AnsiString +0xc (unused), level +0x10 (0 None, 1 Err, 2 Warn, 3 Diag,
+// 4 Prog), message kind +0x14 (an index into " !?+-", set by the callers), busy +0x18, outputs +0x1c (1 file,
+// 2 debugger, 8 window), format +0x20 (1 line break, 2 time prefix)}.
+class LogClient {
+public:
+    void __cdecl OutputString(const char* fmt, ...);
+    void __cdecl OutputStringV(const char* fmt, char* args);
+
+private:
+    friend class Log;
+    friend struct LogWork;
+    LogClient(const char* name);
+#if defined(JET_KS_BUILD)
+    LogClient* next;
+    LogClient* prev;
+    AnsiString name;
+    AnsiString unused;
+    int level;
+    int kind;
+    bool busy, pad19[3];
+    unsigned char outputs, pad1d[3];
+    unsigned char format, pad21[3];
+#endif
+    static JET_KS_FORWARDED bool disabled;  // ?disabled@LogClient@Jet@@0_NA
+};
+#if defined(JET_KS_BUILD)
+JET_LAYOUT32(sizeof(LogClient) == 0x24);
+#endif
+
+// JetLog.txt and the log channels (unit U12a, Log.cpp). The state stays the original's (forwarded data) until
+// U14: its allocator and strings still log through it.
 class Log {
 public:
     static void __cdecl Init(Options* options);
+    static void __cdecl Done();
+    static void __cdecl Shutdown(bool quiet);  // quiet: no "Shutdown." line
+    static LogClient* __cdecl GetClient(const char* name);
+    static void __cdecl SetLogToFile(::_iobuf* file);
+    static ::_iobuf* __cdecl GetLogToFile();
+    Log& operator=(const Log&);
+
+private:
+    friend class LogClient;
+    friend struct LogWork;
+    static LogClient* __cdecl CreateClient(const char* name);
+    static LogClient* __cdecl SearchClientList(const char* name);
+    static void __cdecl Process(String& line);
+
+    static JET_KS_FORWARDED IList<LogClient>* clientList;
+    static JET_KS_FORWARDED File* logFile;
+    static JET_KS_FORWARDED ::_iobuf* stderrFile;
+    static JET_KS_FORWARDED double startTime;
+    static JET_KS_FORWARDED CriticalSection* writeLock;
+    static JET_KS_FORWARDED bool initialized;
+    static JET_KS_FORWARDED bool displayModuleName;
+};
+
+// Debugger helpers (unit U12a, Exception.cpp)
+class Debugger {
+public:
+    enum Level {};
+    static void __cdecl Output(Level level, const char* text);  // OutputDebugStringA
+    static bool __cdecl IsReadValid(void* p, unsigned int size);
+    static bool __cdecl IsDebuggerAttached();
+    static void __cdecl Break();         // does nothing
+    static void __cdecl LogCallStack();  // does nothing
+    Debugger& operator=(const Debugger&);
 };
 
 // ---- files

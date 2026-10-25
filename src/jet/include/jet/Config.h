@@ -301,25 +301,44 @@ private:
 };
 JET_LAYOUT32(sizeof(ConfigParser) == 0x18);
 
-// {vptr, reason[0x1000] +4, description[0x100] +0x1004, hardware +0x1104, line +0x1108, file +0x110c}, 0x1110
-// bytes (the original's, U12). vftable: deleting destructor, Class, IsHardwareException, Description, Reason.
+// {vptr, description[0x1000] +4 (the call stack text), reason[0x100] +0x1004, hardware +0x1104, line +0x1108,
+// file +0x110c}, 0x1110 bytes (unit U12a, Exception.cpp). vftable: deleting destructor, Class,
+// IsHardwareException, Description, Reason.
 class Exception {
 public:
     Exception();
-    Exception(const char* file, int line);
-    Exception(const char* file, int line, const char* message);
+    Exception(const char* file, int line);  // description "No call stack available\r\n"
+    Exception(const char* file, int line, const char* message);  // message: the reason
     Exception(const Exception& o);
     virtual ~Exception();
-    virtual const char* __cdecl Class() const;
+    virtual const char* __cdecl Class() const;  // "Unknown"
     virtual bool __cdecl IsHardwareException() const;
     virtual const char* __cdecl Description() const;
     virtual const char* __cdecl Reason() const;
     Exception& operator=(const Exception& o);
     void __cdecl SetReasonf(const char* fmt, ...);
+    void __cdecl VSetReasonf(const char* fmt, char* args);
+    void __cdecl AddReasonf(const char* fmt, ...);  // "  -  " and the text appended
+    void __cdecl SetDescriptionf(const char* fmt, ...);
+    void __cdecl VSetDescriptionf(const char* fmt, char* args);
+    void __cdecl InitMembers();
+    int __cdecl Line() const;
+    const char* __cdecl File() const;
+    bool __cdecl HardwareException() const;
+    void __cdecl SetHardwareException(bool on);
+    void __cdecl Log(int level);  // does nothing
     JET_HEAP_OBJECT  // the deleting destructor frees with Alloc::Delete
 
 private:
+#if defined(JET_KS_BUILD)
+    char description[0x1000];  // +0x0004
+    char reason[0x100];        // +0x1004
+    bool hardware;             // +0x1104
+    int line;                  // +0x1108
+    const char* file;          // +0x110c
+#else
     unsigned char data[0x110c];
+#endif
 };
 JET_LAYOUT32(sizeof(Exception) == 0x1110);
 
