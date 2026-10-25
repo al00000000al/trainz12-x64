@@ -331,6 +331,7 @@ public:
 
 private:
 #if defined(JET_KS_BUILD)
+    friend class HardwareException;
     char description[0x1000];  // +0x0004
     char reason[0x100];        // +0x1004
     bool hardware;             // +0x1104
@@ -352,5 +353,27 @@ public:
     virtual ~FileEx();
     const char* __cdecl Class() const override;
 };
+
+// a hardware fault as an Exception (0x1114 bytes, unit U12c, ExceptionHandler.cpp): the reason is the fault's
+// name from exceptionTypes, the description the register dump and call stack written by GetCallStack (still the
+// original's: an x86 EBP walk)
+class HardwareException : public Exception {
+public:
+    struct Type {
+        unsigned long code;
+        const char* name;
+    };
+    HardwareException(void* pointers);  // EXCEPTION_POINTERS*
+    HardwareException(const HardwareException& o);
+    HardwareException& operator=(const HardwareException& o);
+    virtual ~HardwareException();
+    const char* __cdecl Class() const override;  // "Hardware"
+
+private:
+    void __cdecl GetCallStack(void* pointers);
+    void* pointers;  // +0x1110
+    static JET_KS_FORWARDED Type exceptionTypes[];  // 21 entries
+};
+JET_LAYOUT32(sizeof(HardwareException) == 0x1114);
 
 }  // namespace Jet

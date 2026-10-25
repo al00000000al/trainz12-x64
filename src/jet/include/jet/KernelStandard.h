@@ -363,6 +363,7 @@ public:
     AnsiString& __cdecl operator+=(const PString& s);
     int __cdecl Addf(const char* fmt, ...);
     int __cdecl Add(const char* fmt, char* args);  // vsprintf appended
+    void __cdecl Set(const char* fmt, char* args);  // vsprintf
     void __cdecl Del(unsigned int pos, unsigned int count);
     int __cdecl Compare(const char* s) const;
     void __cdecl Setf(const char* fmt, ...);
@@ -386,6 +387,7 @@ private:
     friend class IOSlaveResource;
     friend struct LogWork;
     friend struct ConsoleWork;
+    friend struct HandlerWork;
     void MakeBufferUnique(unsigned int size, bool keep);
 
 protected:
@@ -562,15 +564,49 @@ private:
 
 class Thread;  // (declared with the synchronisation objects)
 
-// Runs a callback under Jet's crash handler; critical-shutdown callbacks run when it catches a crash.
+class Exception;
+
+// Runs a callback under Jet's crash handler (unit U12c, ExceptionHandler.cpp): an assertion or a Jet::Exception is
+// reported and ends the callback with 0; a hardware fault goes to the crash report (ERRORLOG.TXT, CRASH.DMP,
+// XCrashReport.exe); critical-shutdown callbacks run when it catches one. The report writers and the x86 stack walk
+// are still the original's, called by address; the statics are the original's.
 class ExceptionHandler {
 public:
     using CallBack = int(__cdecl*)(void*);
+    class Shutdown;  // {arg, fn, next}, 12 bytes from Jet::Alloc
     static int __cdecl Main(CallBack fn, void* arg, Thread* thread);
     static void* __cdecl AddCriticalShutdown(CallBack fn, void* arg);
     static void __cdecl RemoveCriticalShutdown(void* handle);
     static void* __cdecl AddCriticalStartup(CallBack fn, void* arg);
     static void __cdecl RemoveCriticalStartup(void* handle);
+    static void __cdecl CriticalShutdown();
+    static void __cdecl CriticalStartup();
+    static bool __cdecl Assert(const char* fmt, ...);
+    static void __cdecl AssertInit(const char* file, int line, const char* reason);
+    static void __cdecl SetAssertions(bool prompt);
+    static void __cdecl Init(const Options* options);
+    static void __cdecl InitExceptionDialog(void* dialog, Exception& e);
+    static void __cdecl LogLine(void* dialog, void* dc, const char* fmt, ...);
+    static void __cdecl Break();  // does nothing
+    ExceptionHandler& operator=(const ExceptionHandler&);
+
+private:
+    friend struct HandlerWork;
+    static int __cdecl MainTryCatch(CallBack fn, void* arg);
+    static int __cdecl ProcessException(Exception& e);
+    static int __cdecl DoFilterException(void* pointers);
+    static int __cdecl FilterException(void* pointers);
+
+    static JET_KS_FORWARDED char corePrefix[];
+    static JET_KS_FORWARDED Shutdown* criticalShutdown;
+    static JET_KS_FORWARDED Shutdown* criticalStartup;
+    static JET_KS_FORWARDED bool doCoreDump;
+    static JET_KS_FORWARDED int dumpOptions;
+    static JET_KS_FORWARDED char hardwareExceptionBlock[];
+    static JET_KS_FORWARDED bool ignore;
+    static JET_KS_FORWARDED bool isPromptAssertions;
+    static JET_KS_FORWARDED int line;
+    // file and reason (`char const * const`, which VS2005 mangled 0PBDB) are found by name at run time
 };
 
 // An intrusive list of T linked through T's ListLink at +4 (Events::Event, Job): {head, tail, count}. The links
@@ -654,6 +690,7 @@ public:
 private:
     friend class Log;
     friend struct LogWork;
+    friend struct HandlerWork;
     LogClient(const char* name);
 #if defined(JET_KS_BUILD)
     LogClient* next;
@@ -687,6 +724,7 @@ public:
 private:
     friend class LogClient;
     friend struct LogWork;
+    friend struct HandlerWork;
     static LogClient* __cdecl CreateClient(const char* name);
     static LogClient* __cdecl SearchClientList(const char* name);
     static void __cdecl Process(String& line);

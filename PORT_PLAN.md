@@ -83,9 +83,10 @@ at every step and catches mistakes while they are small.
     reader and writer, File::Sep / callback, SetDefault*; 2026-10-25) and U11 (OS, Window, WindowPlacement;
     2026-10-25) and U13 (Thread, ThreadLocalStorage, Time; 2026-10-26, their statics still the original's) and
     U12a (Exception, Debugger, Log, LogClient; 2026-10-26) and U12b (Profile, QuickTimer, Console; 2026-10-26)
-    done: 1312/1762 ours.
-    Next: U12c (ExceptionHandler, HardwareException), then U14 (the Alloc/string foundation), as one cut-over if
-    the cycle between them forces it.
+    and U12c (ExceptionHandler, HardwareException; 2026-10-26) done: 1337/1762 ours. The crash report writers
+    and HardwareException::GetCallStack (an x86 stack walk) are still the original's, called by address; they
+    move with the x64 rewrite.
+    Next: U14 (the Alloc/string foundation), as one cut-over if the cycle forces it.
 8. Render stack (RenderSystem, Render3D*, RenderOpenGL), then InterfaceSystem, WaterSystem.
 9. trainz.exe subsystems through the loader DLL: asset DB, GS compiler/VM, physics, world.
 

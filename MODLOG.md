@@ -1400,6 +1400,37 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
   harness shows 0 differences. The build is kept as `KernelStandard_7c_u12b.dll`.
 - Next: U12c (ExceptionHandler, HardwareException), then U14.
 
+### KernelStandard_7c U12c, ExceptionHandler / HardwareException (2026-10-26): 1337/1762 exports ours
+- 25 exports in `ExceptionHandler.cpp`:
+  - Main, MainTryCatch, Process / DoFilter / FilterException;
+  - Assert, AssertInit, SetAssertions;
+  - the critical shutdown and startup lists, Init, InitExceptionDialog, LogLine;
+  - HardwareException's constructors, assignment and class name;
+  - an `AssertEx` class (global namespace, class name "Assertion"), which catchers in other modules match by
+    name.
+- Still the original's, called by address: the crash report writers (the hardware-fault filter of Main and the
+  assertion report) and `HardwareException::GetCallStack` (through its export). They are x86-specific and move
+  with the x64 rewrite. The private statics are used in the original by address: the report lock, Main's nesting
+  count, the re-entry flags of the two lists and the "Exception" log channel. `file` and `reason` are
+  `char const * const`, which VS2026 mangles differently, so they are looked up by name at run time.
+- The original's behaviour is kept:
+  - Main returns 0 without running the function when `ignore` is set.
+  - With `ignore` set, FilterException and ProcessException return 1 while still holding the report lock.
+  - InitExceptionDialog releases the list box's DC through the dialog's window.
+  - Init copies an empty CorePrefix from a null pointer.
+- Our module is built with /EHsc, so the `catch (...)` around the critical-list callbacks does not catch hardware
+  faults. The original may have been built with /EHa.
+- Diff test `diff_ks_eh` covers the ordinary paths only. Prompting is off, so no report is written or shown.
+  - Main with returns, a Jet::Exception and an AssertEx (stand-in classes with the same names).
+  - The lists: order, removal, re-entry, a throwing callback.
+  - Assert, Init, HardwareException copies, and the dialog's list box on a hidden window (texts and horizontal
+    extent).
+  - 131 results per side, 0 mismatches. 11 of 13 mutations were caught: one is equivalent, and one is in the
+    unreachable branch for a failing log write.
+- All KernelStandard diff tests pass (16), and the x64 harness shows 0 differences. In game: the menu log matches
+  the baseline and the Launcher is clean. The build is kept as `KernelStandard_7c_u12c.dll`.
+- Next: U14 (Alloc, PackedHeap, PString/PStringCache, the strings, KernelStandardInit) and the cut-over.
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's

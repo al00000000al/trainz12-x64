@@ -1196,3 +1196,15 @@ Internal functions of orig can be reached by RVA (`diff_blowfish.cpp`).
 - Console: see MODLOG "U12b". The span ring is `Chunk{next, prev, count, Span[13]}` with Span
   `{u8 type, int pos, u32 rgb}`. The copy appends chunk by chunk (count and spans memcpy'd).
 - Test: diff_ks_profile (127 728 results per side, 0 mismatches; 20 of 20 mutations caught).
+
+## U12c done (2026-10-26): ExceptionHandler.cpp, 25 exports (1337/1762 ours)
+- Ours: the exported ExceptionHandler and HardwareException members and an AssertEx class. Still the original's,
+  called by address: the crash report writers (base + 0x1e920 for Main's fault filter, cdecl; base + 0x1ee20 for the
+  assertion report, fastcall with the Exception in ecx) and HardwareException::GetCallStack (its export).
+- Private statics are used in the original by address: report lock (base + 0x7663c), Main nesting (0xae208), list
+  re-entry flags (0xae20c / 0xae20d), the "Exception" log channel (0xae178). `file` / `reason` are looked up with
+  GetProcAddress (VS2005 mangled them 0PBDB).
+- MainTryCatch catches `AssertEx&` (critical shutdown only) before `Exception&` (report, then critical shutdown).
+- The lists are `{arg, fn, next}` nodes, newest first, run front to back. A run is allowed again while the list is
+  not empty. A failing log message closes the log (Log::Shutdown(true)), and a failing callback logs "... failure!".
+- Test: diff_ks_eh (ordinary paths only; 131 results per side, 0 mismatches).

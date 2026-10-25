@@ -1,0 +1,383 @@
+// Unit U12c of KernelStandard_7c: ExceptionHandler (0x1001cff0..0x1001dcae, 0x1001cc40, 0x1001cc70), AssertEx
+// (0x1001cc90..0x1001ccbf, 0x1001d4e0) and HardwareException (0x10014380..0x10014445, 0x1001ccc0).
+// Still the original's and called there by address: the crash report writers (the hardware-fault filter 0x1001e920
+// with ERRORLOG.TXT / CRASH.DMP / XCrashReport.exe, and the assertion report 0x1001ee20) and
+// HardwareException::GetCallStack (an x86 EBP walk, through its export). They move with the x64 rewrite.
+// The statics are the original's: the exported ones imported, the private ones (the report lock, the nesting count
+// of Main, the re-entry flags of the critical lists, the "Exception" log client) by address.
+#include <jet/Config.h>
+#include <jet/KernelStandard.h>
+
+#include "Crt80.h"
+
+#include <windows.h>
+
+#include <cstdarg>
+#include <cstring>
+#include <new>
+
+// thrown by ExceptionHandler::Assert; the class name is what the catchers in other modules match
+class AssertEx : public Jet::Exception {
+public:
+    AssertEx(const char* file, int line, const char* reason) : Exception(file, line, reason) {}
+    AssertEx(const AssertEx& o) : Exception(o) {}
+    const char* __cdecl Class() const override { return "Assertion"; }
+};
+
+namespace Jet {
+
+class ExceptionHandler::Shutdown {
+public:
+    void* arg;
+    CallBack fn;
+    Shutdown* next;
+};
+
+struct HandlerWork {
+    static char* Base()
+    {
+        static char* const base = reinterpret_cast<char*>(GetModuleHandleA("KernelStandard_7c_orig.dll"));
+        return base;
+    }
+    template <class T>
+    static T& At(unsigned int rva) { return *reinterpret_cast<T*>(Base() + rva); }
+
+    static CRITICAL_SECTION* Lock() { return &At<CRITICAL_SECTION>(0x7663c); }
+    static int& Nesting() { return At<int>(0xae208); }
+    static bool& InShutdown() { return At<bool>(0xae20c); }
+    static bool& InStartup() { return At<bool>(0xae20d); }
+    static LogClient* Client() { return At<LogClient*>(0xae178); }  // the "Exception" log channel
+
+    // the original's crash report for a hardware fault (the filter of Main; 1: handled, 0: continue the search)
+    static int CrashFilter(void* pointers)
+    {
+        return reinterpret_cast<int(__cdecl*)(void*)>(Base() + 0x1e920)(pointers);
+    }
+    // the original's report of an Exception (ERRORLOG.TXT and XCrashReport.exe -assert); 1: ignore from now on
+    static int Report(Exception& e) { return reinterpret_cast<int(__fastcall*)(Exception*)>(Base() + 0x1ee20)(&e); }
+
+    static const char*& File() { return *reinterpret_cast<const char**>(GetProcAddress(
+                                     reinterpret_cast<HMODULE>(Base()), "?file@ExceptionHandler@Jet@@0PBDB")); }
+    static const char*& Reason() { return *reinterpret_cast<const char**>(GetProcAddress(
+                                       reinterpret_cast<HMODULE>(Base()), "?reason@ExceptionHandler@Jet@@0PBDB")); }
+
+    // 0x1001cc40: the channel takes a message
+    static bool Open(LogClient* c)
+    {
+        return Log::initialized && c->level > 0 && *reinterpret_cast<const int*>(&c->outputs) != 0 &&
+               !LogClient::disabled;
+    }
+    static void Say(LogClient* c, const char* fmt, const char* arg = nullptr)
+    {
+        c->kind = 1;
+        c->OutputString(fmt, arg);
+    }
+    static void SayText(LogClient* c, const char* text)  // the text is the format, as in the original
+    {
+        c->kind = 1;
+        c->OutputString(text);
+    }
+    // CorePrefix: at most 10 characters
+    static const char* Clip(AnsiString& s)
+    {
+        int* d = static_cast<int*>(s.data);
+        if (static_cast<unsigned int>(d[1]) > 10) {
+            s.MakeBufferUnique(0, true);
+            d = static_cast<int*>(s.data);
+            d[1] = 10;
+            reinterpret_cast<char*>(d + 2)[10] = 0;
+        }
+        return d[0] ? reinterpret_cast<const char*>(d + 2) : nullptr;
+    }
+
+    // 0x1001cc70: the rest of a critical list, front to back
+    static void CallAll(ExceptionHandler::Shutdown* s)
+    {
+        s->fn(s->arg);
+        if (s->next) CallAll(s->next);
+    }
+
+    // CriticalShutdown / CriticalStartup: once at a time unless the list is not empty; a failing log message
+    // closes the log file, a failing callback is reported
+    static void RunList(ExceptionHandler::Shutdown*& list, bool& running, const char* title, const char* failure)
+    {
+        if (running && !list) return;
+        running = true;
+        try {
+            LogClient* c = Client();
+            if (c && Log::initialized && c->level >= 1 && *reinterpret_cast<const int*>(&c->outputs) != 0 &&
+                !LogClient::disabled)
+                Say(c, title);
+        } catch (...) {
+            Log::Shutdown(true);
+        }
+        try {
+            if (ExceptionHandler::Shutdown* s = list) {
+                s->fn(s->arg);
+                if (s->next) CallAll(s->next);
+            }
+        } catch (...) {
+            LogClient* c = Client();
+            if (c && Open(c)) Say(c, failure);
+        }
+        running = false;
+    }
+
+    static void* Add(ExceptionHandler::Shutdown*& list, ExceptionHandler::CallBack fn, void* arg)
+    {
+        auto* s = static_cast<ExceptionHandler::Shutdown*>(Alloc::New(sizeof(ExceptionHandler::Shutdown)));
+        if (!s) {
+            list = nullptr;
+            return nullptr;
+        }
+        s->arg = arg;
+        s->fn = fn;
+        s->next = list;
+        list = s;
+        return s;
+    }
+
+    static void Remove(ExceptionHandler::Shutdown*& list, void* handle)
+    {
+        for (ExceptionHandler::Shutdown** at = &list; *at; at = &(*at)->next) {
+            if (*at == handle) {
+                ExceptionHandler::Shutdown* s = *at;
+                *at = s->next;
+                Alloc::Delete(s);
+                return;
+            }
+        }
+    }
+
+    static int CallFilter(void* pointers) { return CrashFilter(pointers); }
+};
+
+ExceptionHandler& ExceptionHandler::operator=(const ExceptionHandler&) { return *this; }
+void __cdecl ExceptionHandler::Break() {}
+
+// ---- running a function
+
+int __cdecl ExceptionHandler::Main(CallBack fn, void* arg, Thread*)
+{
+    if (ignore) return 0;
+    int r = 0;
+    if (HandlerWork::Nesting() == 0) InitializeCriticalSection(HandlerWork::Lock());
+    ++HandlerWork::Nesting();
+    __try {
+        r = MainTryCatch(fn, arg);
+    } __except (HandlerWork::CallFilter(GetExceptionInformation())) {
+    }
+    if (--HandlerWork::Nesting() == 0) DeleteCriticalSection(HandlerWork::Lock());
+    return r;
+}
+
+int __cdecl ExceptionHandler::MainTryCatch(CallBack fn, void* arg)
+{
+    int r = 0;
+    try {
+        r = fn(arg);
+    } catch (AssertEx&) {
+        CriticalShutdown();
+    } catch (Exception& e) {
+        ProcessException(e);
+        CriticalShutdown();
+    }
+    return r;
+}
+
+// The report of an exception, once at a time (prompting is off while it runs). 1 when not prompting or when the
+// report asks to ignore every later one. With `ignore` already set it returns 1 holding the lock (as the original).
+int __cdecl ExceptionHandler::ProcessException(Exception& e)
+{
+    if (!isPromptAssertions) return 1;
+    isPromptAssertions = false;
+    EnterCriticalSection(HandlerWork::Lock());
+    if (ignore) return 1;
+    int r = 1;
+    __try {
+        LogClient* c = HandlerWork::Client();
+        if (c && HandlerWork::Open(c)) HandlerWork::Say(c, "** EXCEPTION **\n   %s\n", e.Description());
+        r = HandlerWork::Report(e);
+        if (r == 1) ignore = true;
+    } __except (1) {
+        MessageBoxA(nullptr, "An error occurred trying to display the fatal error window! (0)", "Fatal Error",
+                    MB_ICONHAND);
+        ignore = true;
+    }
+    if (!ignore) isPromptAssertions = true;
+    LeaveCriticalSection(HandlerWork::Lock());
+    if (!ignore) isPromptAssertions = true;
+    return r;
+}
+
+int __cdecl ExceptionHandler::DoFilterException(void* pointers)
+{
+    int r = 1;
+    __try {
+        CriticalShutdown();
+        HardwareException* h = ::new (hardwareExceptionBlock) HardwareException(pointers);
+        r = ProcessException(*h);
+    } __except (1) {
+        MessageBoxA(nullptr, "An error occurred trying to display the fatal error window! (1)", "Fatal Error",
+                    MB_ICONHAND);
+    }
+    return r;
+}
+
+// With `ignore` set it returns 1 holding the lock (as the original).
+int __cdecl ExceptionHandler::FilterException(void* pointers)
+{
+    EnterCriticalSection(HandlerWork::Lock());
+    if (ignore) return 1;
+    const int r = DoFilterException(pointers);
+    if (r == -1) CriticalStartup();
+    LeaveCriticalSection(HandlerWork::Lock());
+    return r;
+}
+
+// ---- assertions
+
+bool __cdecl ExceptionHandler::Assert(const char* fmt, ...)
+{
+    if (!isPromptAssertions) {
+        AssertEx e(HandlerWork::File(), line, HandlerWork::Reason());
+        throw AssertEx(e);
+    }
+    AssertEx e(HandlerWork::File(), line, HandlerWork::Reason());
+    va_list ap;
+    va_start(ap, fmt);
+    e.VSetDescriptionf(fmt, ap);
+    va_end(ap);
+    if (ProcessException(e)) throw AssertEx(e);
+    return true;
+}
+
+void __cdecl ExceptionHandler::AssertInit(const char* file_, int line_, const char* reason_)
+{
+    HandlerWork::File() = file_;
+    line = line_;
+    HandlerWork::Reason() = reason_;
+}
+
+void __cdecl ExceptionHandler::SetAssertions(bool prompt) { isPromptAssertions = prompt; }
+
+// ---- the critical lists
+
+void __cdecl ExceptionHandler::CriticalShutdown()
+{
+    HandlerWork::RunList(criticalShutdown, HandlerWork::InShutdown(), "Critical Shutdown ...",
+                         "Critical Shutdown failure!");
+}
+
+void __cdecl ExceptionHandler::CriticalStartup()
+{
+    HandlerWork::RunList(criticalStartup, HandlerWork::InStartup(), "Critical Startup ...", "Critical Startup failure!");
+}
+
+void* __cdecl ExceptionHandler::AddCriticalShutdown(CallBack fn, void* arg) { return HandlerWork::Add(criticalShutdown, fn, arg); }
+void* __cdecl ExceptionHandler::AddCriticalStartup(CallBack fn, void* arg) { return HandlerWork::Add(criticalStartup, fn, arg); }
+void __cdecl ExceptionHandler::RemoveCriticalShutdown(void* handle) { HandlerWork::Remove(criticalShutdown, handle); }
+void __cdecl ExceptionHandler::RemoveCriticalStartup(void* handle) { HandlerWork::Remove(criticalStartup, handle); }
+
+// CoreDumps (default on), CorePrefix (at most 10 characters), CoreOptions
+void __cdecl ExceptionHandler::Init(const Options* options)
+{
+    AnsiString prefix(corePrefix);
+    options->Get("CoreDumps", doCoreDump, true);
+    options->Get("CorePrefix", static_cast<String&>(prefix), static_cast<const String&>(prefix));
+    options->Get("CoreOptions", dumpOptions, dumpOptions);
+    std::strcpy(corePrefix, HandlerWork::Clip(prefix));
+}
+
+// ---- the report dialog's list box (item 0x3ea)
+
+void __cdecl ExceptionHandler::InitExceptionDialog(void* dialog, Exception& e)
+{
+    HWND d = static_cast<HWND>(dialog);
+    HDC dc = GetDC(GetDlgItem(d, 0x3ea));
+    if (!dc) {
+        SetDlgItemTextA(d, 0x3ea, "Problem creating exception report");
+        return;
+    }
+    if (e.File() && *e.File()) LogLine(d, dc, "File: %hs\r\n", e.File());
+    if (e.Line() > 0) LogLine(d, dc, "Line: %d\r\n", e.Line());
+    LogLine(d, dc, "Class: %s\r\n", e.Class());
+    LogLine(d, dc, "Reason: %s\r\n", e.Reason());
+    const char* stack = e.Description();
+    if (stack && *stack) LogLine(d, dc, stack);
+    Log::Shutdown(false);
+    ReleaseDC(d, dc);  // the dialog's, as in the original (the DC is the list box's)
+}
+
+// The formatted text line by line into the list box (and the log), widening its horizontal extent to the widest
+void __cdecl ExceptionHandler::LogLine(void* dialog, void* dc, const char* fmt, ...)
+{
+    struct Text : AnsiString {
+        const int* Data() const { return static_cast<const int*>(data); }
+        const char* Chars() const { return Data()[0] ? reinterpret_cast<const char*>(Data() + 2) : nullptr; }
+        unsigned int Length() const { return static_cast<unsigned int>(Data()[1]); }
+    };
+    AnsiString all;
+    va_list ap;
+    va_start(ap, fmt);
+    all.Set(fmt, ap);
+    va_end(ap);
+    HWND list = GetDlgItem(static_cast<HWND>(dialog), 0x3ea);
+    HGDIOBJ font = reinterpret_cast<HGDIOBJ>(SendMessageA(list, WM_GETFONT, 0, 0));
+    if (!font) {
+        font = reinterpret_cast<HGDIOBJ>(SendMessageA(static_cast<HWND>(dialog), WM_GETFONT, 0, 0));
+        if (!font) font = GetStockObject(DEFAULT_GUI_FONT);
+    }
+    LONG widest = 0;
+    AnsiString part = all.Token("\r\n");
+    while (static_cast<const Text&>(part).Length()) {
+        const Text& t = static_cast<const Text&>(part);
+        LogClient* c = HandlerWork::Client();
+        if (c && HandlerWork::Open(c)) HandlerWork::SayText(c, t.Chars());
+        SendMessageA(list, LB_ADDSTRING, 0, reinterpret_cast<LPARAM>(t.Chars()));
+        if (font) {
+            HDC hdc = static_cast<HDC>(dc);
+            if (HGDIOBJ old = SelectObject(hdc, font)) {
+                SIZE size;
+                if (GetTextExtentPoint32A(hdc, t.Chars(), static_cast<int>(t.Length()), &size) && size.cx > widest) {
+                    if (const int border = GetSystemMetrics(SM_CXBORDER)) {
+                        SendMessageA(list, LB_SETHORIZONTALEXTENT, size.cx + border * 3, 0);
+                        widest = size.cx;
+                    }
+                }
+                SelectObject(hdc, old);
+            }
+        }
+        part = all.Token("\r\n");
+    }
+}
+
+// ---- HardwareException
+
+HardwareException::HardwareException(void* p) : Exception(), pointers(p)
+{
+    const unsigned long code = static_cast<EXCEPTION_POINTERS*>(p)->ExceptionRecord->ExceptionCode;
+    int i = 0;
+    for (; i < 21; ++i) {
+        if (exceptionTypes[i].code == code) {
+            std::strcpy(reason, exceptionTypes[i].name);
+            break;
+        }
+    }
+    if (i == 21) SetReasonf("Unknown Exception - %08xh", code);
+    GetCallStack(p);
+}
+
+HardwareException::HardwareException(const HardwareException& o) : Exception(o), pointers(o.pointers) {}
+
+HardwareException& HardwareException::operator=(const HardwareException& o)
+{
+    Exception::operator=(o);
+    pointers = o.pointers;
+    return *this;
+}
+
+HardwareException::~HardwareException() {}
+const char* __cdecl HardwareException::Class() const { return "Hardware"; }
+
+}  // namespace Jet
