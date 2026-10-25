@@ -373,6 +373,8 @@ static std::string MakeTextOnce()
 
 // ---- one side
 static std::string tmpDir;
+// each side its own current directory (as diff_ks_configdata: temp-name collisions between the modules)
+static void SideCwd(int s) { SetCurrentDirectoryA((tmpDir + "c" + std::to_string(s)).c_str()); }
 static std::string FileBytes(const std::string& path)
 {
     std::string b;
@@ -584,6 +586,8 @@ int main(int argc, char** argv)
         char t[MAX_PATH];
         GetTempPathA(MAX_PATH, t);
         tmpDir = t;
+        CreateDirectoryA((tmpDir + "c0").c_str(), nullptr);
+        CreateDirectoryA((tmpDir + "c1").c_str(), nullptr);
         Node* drive = Make("ksp");
         // each module keeps its own substitute list (U10b)
         for (HMODULE m : {orig, ours})
@@ -610,7 +614,10 @@ int main(int argc, char** argv)
         InterlockedIncrement(&beat);
         const uint32_t enc = R(3), flags = R(16);
         if (trace) std::printf("scenario %d [%s]\n", sc, Hex(text.substr(0, 200)).c_str());
-        for (side = 0; side < 2; ++side) Run(text, enc, flags);
+        for (side = 0; side < 2; ++side) {
+            SideCwd(side);
+            Run(text, enc, flags);
+        }
         const size_t n = logs[0].size() > logs[1].size() ? logs[0].size() : logs[1].size();
         for (size_t i = 0; i < n; ++i) {
             ++checks;

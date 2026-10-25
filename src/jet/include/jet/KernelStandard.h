@@ -397,18 +397,34 @@ private:
 class DynamicLibrary;
 class Window;
 
-// The platform layer: options, window, application name. 0x18 bytes, built by App::Init in Jet's heap.
+// The platform layer: options, window, application name. 0x18 bytes, built by App::Init in Jet's heap. Layout
+// (unit U11, Window.cpp): {instance, Window*, commandLine, Options*, parent HWND, AnsiString appName}; the x64
+// stand-in keeps its own state in the block.
 class OS {
 public:
     OS(const char* appName, const char* commandLine, void* instance, HWND__* window);
+    OS(const OS& o);
+    OS& operator=(const OS& o);
     ~OS();
     bool Init();
     Options* __cdecl GetOptions() const;
     const char* __cdecl GetAppName() const;
     DynamicLibrary* __cdecl CreateDynamicLibrary() const;
     Window* __cdecl GetWindow() const;
+    void __cdecl SetWindow(Window* window);
+    Window* __cdecl CreateNewWindow() const;
+    const char* __cdecl GetName() const;
+    const char* __cdecl GetCmdLine() const;
+    void* __cdecl GetInstance() const;
+    HWND__* __cdecl GetParent() const;
+    void __cdecl SetParent(HWND__* parent);
+    static const char* __cdecl GetDefaultOptions();
 
 private:
+    static int __cdecl InitCallBack(void* self);
+#if defined(JET_KS_BUILD)
+    static const char* const defaultOptions;
+#endif
     unsigned char opaque[JET_OPAQUE_SIZE(0x18, 0x30)];
 };
 

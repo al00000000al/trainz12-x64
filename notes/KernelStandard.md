@@ -1062,3 +1062,64 @@ Internal functions of orig can be reached by RVA (`diff_blowfish.cpp`).
   searched / unlinked / remounted, the file compared chunk by chunk with names masked after their NUL; each side its
   own current directory, because the modules now count temp names separately and FileSubPath's lost temp files of
   one side would collide with the other's). KFS_APROBE shows the '\' name and "name:pattern" search behaviour.
+
+## U11 done (2026-10-25): Window.cpp, 71 exports (1167/1762 ours)
+- OS 0x18 {instance, Window*, commandLine (the caller's pointer, not copied), Options* (new 0xc), parent HWND,
+  AnsiString appName}. The header keeps OS opaque (the x64 stand-in has its own state); Window.cpp overlays it.
+  The constructor takes (appName, commandLine, instance, window); GetAppName is null for an empty name. Init runs
+  InitCallBack under ExceptionHandler::Main: Options::ProcessRaw(defaultOptions) then Options::Init(appName,
+  commandLine). The copy constructor and operator= share the Options pointer (both destructors free it). GetName
+  "Windows"; CreateNewWindow = Window(parent) in Alloc memory; CreateDynamicLibrary = our U6 DynamicLibrary.
+  `defaultOptions` is `char const * const`, which VS2005 mangled `0PBDB` and VS2026 mangles `0QBDB`: exported
+  through an alias in implemented.txt. Five getters are folded into other functions in the original (GetInstance =
+  Window::GetHandle 0x1870, GetOptions, GetCmdLine, GetWindow, Window::GetTitle, Window::SetHandle): ours are
+  separate functions.
+- Window 0x134 {HWND, title[0x101], active +0x105 (bit 0 WM_ACTIVATEAPP, bit 1 WM_ACTIVATE), hooks ring +0x108,
+  dispatchers ring +0x110 (rings {head, count}, singly linked, the ring itself is the sentinel, appended at the
+  end, cleared by context: the first match), parent +0x118, flags +0x11c (1 ShowFPS, 2 visible, 4 full-screen
+  host, 8 handles messages, 0x10 context only, 0x20 class registered), FPS frames / float / time +0x120..0x128,
+  desktop bpp +0x12c (read once), critical-shutdown entry +0x130}. The constructor leaves bits 6-7 of the flags
+  and bits 2-7 of `active` as the memory held; operator= copies the 0x134 bytes (the rings still point at the
+  source). mainWindow = the first one constructed, cleared by its destructor.
+- Open: ExceptionHandler::AddCriticalShutdown(CriticalShutdown, this) (the original builds the same node inline
+  on the private list head; the exports do exactly that), RegisterClassExA "JET" (CS_OWNDC, 4 extra bytes for
+  the object, IDI_WINLOGO, black brush; failure: false, the entry stays), SetTitle, then the options HideWindow
+  (present at all: not visible) and ShowFPS. Close: RemoveCriticalShutdown, DestroyWindow, UnregisterClass when
+  flag 0x20 (never cleared: a second Close fails to unregister, debug output only).
+- Styles: windowed 0x00c80000 (child of a parent: 0x44000000), full screen 0x81000000 (0xc1000000) with
+  WS_EX_TOPMOST; WS_VISIBLE with flag 2. CreateWindowedHost sizes the window from the client size (or covers the
+  parent's client area); CreateDefault = CreateWindowedHost(CW_USEDEFAULT x4, param = parent); Create2DWindow is a
+  jmp to CreateWindowedHost. Each create sets the "creating" static (WindowProc's object until the window's extra
+  bytes hold it, never cleared) and ends with HandleMessages. SetHostState restyles (no SWP_FRAMECHANGED: the frame
+  follows on the next frame change) and sends WM_MODE_CHANGED (0x402, wParam 1 = windowed).
+- HandleMessages (false only on WM_QUIT): FPS title "%s  (%0.1f)" every > 250 ms (fps = (frames * 1000 / ms +
+  fps) / 2, in float); PeekMessage loop over the whole thread, dispatchers (fastcall (context, MSG*)) until one
+  takes it, else Translate / Dispatch; then posts WM_END_OF_MESSAGES (0x401) to the window and dispatches one more
+  message (no Translate). A dispatcher that clears itself or the next one makes the walk read a freed node (both).
+- WindowProc: hooks (fastcall (context, {hwnd, msg, wParam, lParam}*, int& result), result starts 0; a hook that
+  returns true returns its result); a hook added or cleared (a module-wide counter) ends the walk. Then WM_PAINT
+  ValidateRect, WM_DESTROY PostQuitMessage unless a parent or context only, WM_SIZE with a parent: SetWindowPos to
+  the size, WM_ACTIVATE / WM_ACTIVATEAPP bits; WM_SYSCOMMAND without a parent: SC_SCREENSAVE / SC_KEYMENU /
+  SC_MONITORPOWER (exact values) dropped, SC_CLOSE sends WM_CLOSE; with a parent, keyboard (0x100..0x109) and mouse
+  (0x200..0x20d) messages are posted to the parent. The rest: DefWindowProcA. The x64 build uses
+  Get/SetWindowLongPtr and 8 extra bytes.
+- Smaller things: Error ignores its text and sends "GetLastError(%d) returned: %s" to the debugger; Move takes the
+  client rectangle; Resize keeps the window's top-left (GetWindowRect unchecked); CalculateWindowArea uses the
+  current style or the windowed one; GetClientArea is all -1 and GetParentArea all 0 on failure; SetTitle refuses
+  more than 0x100 characters; Message / MessageConfirm are MessageBoxA(0, text, "JET", MB_SETFOREGROUND |
+  MB_TOPMOST [| MB_YESNO]).
+- WindowPlacement: SaveWindowPositions appends {HWND, rect, WINDOWPLACEMENT} of every visible top-level window to a
+  module ring (never emptied before exit, so a second save adds duplicates); Restore applies them all in order.
+- Test: diff_ks_window, on a private desktop (CreateDesktop + SetThreadDesktop: nothing shows on the user's screen,
+  and WindowPlacement only sees the test's windows). MessageBoxA is patched in both modules' import tables. Only the
+  messages the test sends (lParam 0x5aNN) and a few the window makes from them are logged with parameters: system
+  activation / paint / input traffic depends on the desktop's history, and so does WM_END_OF_MESSAGES (HandleMessages
+  dispatches one message after posting it: which one depends on the queue), so it is not logged. After SetHostState the test forces
+  SWP_FRAMECHANGED, otherwise the client area depends on when the system recomputes the frame. No SC_SIZE / SC_MOVE
+  (modal loops) and no SC_SCREENSAVE / SC_MONITORPOWER / SC_KEYMENU to a child (DefWindowProc would act on them).
+  It is slow (about 3 s a scenario, waiting in window calls, not CPU). KSW_ONLY=n replays one scenario,
+  KSW_LIVE / KSW_ALL print the log / every hooked message as they come. 300 scenarios: 77 173 checks, 0
+  mismatches; swapped (KSW_SWAP) 100 scenarios: 25 636 checks, 0 mismatches.
+- diff_ks_configdata / diff_ks_configparser had been crashing (0xC000000D in the original) since U10b part 2: the
+  modules now count temp names separately and FileSubPath's lost temp file of one side collided with the other's
+  next name. They now give each side its own current directory, like diff_ks_filesub, and pass again.

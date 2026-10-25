@@ -803,6 +803,10 @@ static void PutFile(const std::string& path, const std::string& b)
 }
 
 static std::string tmpDir;  // with the trailing backslash
+// each side its own current directory: since U10b part 2 the modules count temp names separately, and a directory
+// substitute's compressed write leaves its hidden temp file behind (original bug), so one side's leftovers would
+// collide with the other side's next names (the original then writes to fd -1 and msvcr80 ends the process)
+static void SideCwd(int s) { SetCurrentDirectoryA((tmpDir + "c" + std::to_string(s)).c_str()); }
 static void* (__fastcall* fileCtor)(void*, void*);
 static void(__fastcall* fileDtor)(void*, void*);
 static void* (__cdecl* fileOpen)(void*, int*, const char*, unsigned long, int);
@@ -1199,6 +1203,8 @@ int main(int argc, char** argv)
         char t[MAX_PATH];
         GetTempPathA(MAX_PATH, t);
         tmpDir = t;
+        CreateDirectoryA((tmpDir + "c0").c_str(), nullptr);
+        CreateDirectoryA((tmpDir + "c1").c_str(), nullptr);
     }
     if (!*pstringCache) {
         std::printf("no PString cache\n");
@@ -1238,7 +1244,10 @@ int main(int argc, char** argv)
             if (op.kind == 1 && op.sub >= 12 && op.sub <= 21)
                 while (op.v.size() < 4) op.v.push_back(op.sub <= 17 ? FloatBits() : IntBits());
         }
-        for (side = 0; side < 2; ++side) Run(ops);
+        for (side = 0; side < 2; ++side) {
+            SideCwd(side);
+            Run(ops);
+        }
         const size_t n = logs[0].size() > logs[1].size() ? logs[0].size() : logs[1].size();
         for (size_t i = 0; i < n; ++i) {
             ++checks;

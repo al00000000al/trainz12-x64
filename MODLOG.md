@@ -1265,6 +1265,32 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
   differ) and the Launcher shows no "faulty" box.
 - Next: U11 (PORT_PLAN 7b).
 
+### KernelStandard_7c U11, OS / Window / WindowPlacement (2026-10-25): 1167/1762 exports ours
+- 71 exports in `Window.cpp` (details in `notes\KernelStandard.md`, "U11 done"):
+  - OS: the platform object (instance, window, command line, options, parent, application name); Init processes
+    the default options and the command line under ExceptionHandler::Main.
+  - Window: the "JET" window class, the four create calls (windowed, 2D, default, full screen), host-state
+    switching, the message pump (HandleMessages, dispatchers), WindowProc (hooks, activation bits, system commands,
+    input forwarded to a parent), the FPS title.
+  - WindowPlacement: save and restore every visible top-level window.
+- The critical-shutdown entry goes through the exported ExceptionHandler::Add / RemoveCriticalShutdown (the
+  original builds the same node inline on the private list).
+- `OS::defaultOptions` is `char const * const`: VS2005 mangled it `0PBDB`, VS2026 mangles `0QBDB`, so it is exported
+  through an alias in implemented.txt.
+- `Window::Message` is both a method and (in our header) a hook-message struct name: the struct is now
+  `Window::HookMessage` (InputWin32 updated).
+- Diff test `diff_ks_window` on a private desktop (nothing shows on screen; WindowPlacement sees only the test's
+  windows), MessageBoxA patched in both modules' import tables: 300 scenarios, 77 173 checks, 0 mismatches; swapped
+  100 scenarios, 0 mismatches. Only messages the test sends are logged with parameters: activation, paint, input and
+  WM_END_OF_MESSAGES traffic depends on the desktop's history; after SetHostState the test forces a frame recompute.
+- Found while re-running the other KernelStandard tests: `diff_ks_configdata` and `diff_ks_configparser` had crashed
+  since U10b part 2 (temp-name collisions between the two modules' lost FileSubPath temp files). Fixed in the tests
+  (each side its own current directory); every KernelStandard diff test passes again.
+- In game: the menu log matches the baseline (0 lines differ); real clicks and keys work (SELECT ROUTE, Esc back,
+  the Main menu dropdown); the Launcher shows no "faulty" box. The U10b build is kept as
+  `KernelStandard_7c_u10b2.dll`.
+- Next: U13 -> U12 -> U14 (PORT_PLAN 7b).
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's

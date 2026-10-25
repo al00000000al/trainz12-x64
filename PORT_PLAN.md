@@ -80,8 +80,10 @@ at every step and catches mistakes while they are small.
    524 .srt trees in the user's content). Keep it 32-bit in a helper process behind a TNI bridge.
 7b. KernelStandard_7c units U6-U14 (needed before x64). U6 small platform, U7 Options / ConfigData / ConfigParser / StringTables (2026-10-21) and U9 DynamicBuffer / IOSlave / BlockReader / BPE / JIRF (2026-10-22) and U8 Bitmap (2026-10-22) and U10a File / Path / MemoryFile (2026-10-25) and U10b part 1 (substitute list,
     directory / link FileSubs, File::Find, the path statics; 2026-10-25) and U10b part 2 (FileSubArchive, the .ja
-    reader and writer, File::Sep / callback, SetDefault*; 2026-10-25) done: 1096/1762 ours.
-    Next: U11, the platform core (OS, Window, WindowPlacement).
+    reader and writer, File::Sep / callback, SetDefault*; 2026-10-25) and U11 (OS, Window, WindowPlacement;
+    2026-10-25) done: 1167/1762 ours.
+    Next: U13 -> U12 -> U14 (Thread/TLS/Time, diagnostics, the Alloc/string foundation), as one cut-over if the
+    cycle between them forces it.
 8. Render stack (RenderSystem, Render3D*, RenderOpenGL), then InterfaceSystem, WaterSystem.
 9. trainz.exe subsystems through the loader DLL: asset DB, GS compiler/VM, physics, world.
 

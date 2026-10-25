@@ -292,7 +292,7 @@ void Win32Keyboard::Key(uintptr_t vk, int flags)  // 0x10002d40
 bool __fastcall Win32Keyboard::Hook(void* self, void* message, int&)  // 0x10002910
 {
     Win32Keyboard* const k = static_cast<Win32Keyboard*>(self);
-    const Window::Message* const m = static_cast<const Window::Message*>(message);
+    const Window::HookMessage* const m = static_cast<const Window::HookMessage*>(message);
     const unsigned int lParam = static_cast<unsigned int>(m->lParam);
     switch (m->id) {
     case WM_ACTIVATEAPP:
@@ -571,7 +571,7 @@ void Win32Mouse::Update(float)  // 0x10003bb0
 bool __fastcall Win32Mouse::Hook(void* self, void* message, int&)  // 0x10003c40
 {
     Win32Mouse* const ms = static_cast<Win32Mouse*>(self);
-    const Window::Message* const m = static_cast<const Window::Message*>(message);
+    const Window::HookMessage* const m = static_cast<const Window::HookMessage*>(message);
     const unsigned int id = m->id;
     if (id == static_cast<unsigned int>(Window::WM_END_OF_MESSAGES)) {
         // exclusive: put the cursor back at the window centre
