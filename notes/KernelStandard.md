@@ -1123,3 +1123,38 @@ Internal functions of orig can be reached by RVA (`diff_blowfish.cpp`).
 - diff_ks_configdata / diff_ks_configparser had been crashing (0xC000000D in the original) since U10b part 2: the
   modules now count temp names separately and FileSubPath's lost temp file of one side collided with the other's
   next name. They now give each side its own current directory, like diff_ks_filesub, and pass again.
+
+## U13 done (2026-10-26): Thread.cpp + Time.cpp, 49 exports (1216/1762 ours)
+- The state stays the original's: `Time::freq` / `frameLock*`, `Thread::mainThreadId`, `ThreadLocalStorage::singleton`
+  and `ThreadTlsIndex` / `ProfilePt|Trace|RenderTlsIndex` are imported (JET_KS_FORWARDED). The original's
+  KernelStandardInit (U12) sets mainThreadId and creates the singleton, its shutdown routine 0x1002ec50 destroys
+  it with the PString cache, its Profile reads the indices and its Log reads the clock. The data moves at U14.
+- Time: GetSeconds = counter / freq, both as unsigned 64-bit doubles. FrameLockMs = low half of
+  `(long long)(frameLockTime * 0.001)` (fistp with RC = chop, so out of range gives 0). IncFrame: `time = count *
+  delta; ++count` (old count; count read as unsigned). SetFrameLockTime only sets the flag and delta. HHMM picks
+  characters 0, 1, 3, 4 of `_strtime`. Us is the counter's low half. Usq and GetCounter are QPC, TimeStamp is
+  `_time64`, Str is `_strtime`.
+- Thread 0x20: `{vptr, handle @4, WEvent done @8 (auto reset), alive @0x10 (1 from the ctor, 0 when Start returns),
+  fn @0x14 (__stdcall), arg @0x18, id @0x1c}`.
+  - The vftable is SyncObject's, except slot 1 (`operator void*` = done's handle).
+  - CreateThread uses `start ? 0 : CREATE_SUSPENDED`.
+  - The destructor (and Terminate): SetEvent(done), ResumeThread, Lock(INFINITE), GetExitCodeThread. The destructor
+    then sets the handle to 0 without closing it. Terminate returns the exit code, or -1 when there is no handle.
+  - IsDone = done.Lock(0) then done.Unlock() (slot 4, WEvent's no-op).
+  - GetThreadID shares its code with File::Tell (+0x1c).
+  - IsProcessAlive: OpenProcess(QUERY_INFORMATION), exit code == STILL_ACTIVE. TerminateProcess(0) does nothing.
+  - GetProcessName: GetModuleFileNameA(0, out, 0x100).
+- ThreadLocalStorage 0x10: `{Mutex*, count, capacity, entries}`, each entry `{PStringCache::Node*, index}`.
+  - The ctor makes a Mutex and registers "ThreadIndex", "ProfilePtIndex", "ProfileTraceIndex" and
+    "ProfileRenderIndex" (Create(text, length)), storing the four statics.
+  - GetIndex: Lock(INFINITE); a linear search by node pointer; else TlsAlloc and an append. Growth gives
+    `((count + 0x80) >> 7) * 128` entries. The name is AddRef'd twice and released once, the original's
+    temporary copy. Unlock only when the lock succeeded.
+  - The dtor: Lock, TlsFree every index, Unlock, delete the mutex, release the names, free the array.
+  - The copy ctor and operator= share the mutex. Copying (0x1002ecf0) clears the target and returns at once if the
+    source has no array. It reallocates only when its capacity is smaller, then copies count and entries with an
+    AddRef each.
+  - Releases are the inlined form (`refs == 1` decrements cache word 0, then liveRefs and refs; never Destroy).
+- Test: diff_ks_thread (2731 results per side, 0 mismatches, 4 runs; 12 of 12 mutations caught). Both sides share
+  the original's statics, so the scenario saves and restores them. TLS growth runs on a fresh instance of each
+  side, and each side uses its own names.

@@ -555,17 +555,25 @@ struct FindState {
 };
 }  // namespace
 
-File::Find::Find()
+File::Entry::Entry() { std::memset(this, 0, sizeof *this); }
+File::Path::Path() { text[0] = 0; }
+
+// the stand-in's search state hangs off the subs field (Find has its real members since U10b)
+File::Find::Find() : handle(-1), subs(nullptr), names(nullptr), nameCount(0), archive(nullptr)
 {
-    static_assert(sizeof(FindState) <= sizeof opaque);
-    std::memset(opaque, 0, sizeof opaque);
-    reinterpret_cast<FindState*>(opaque)->handle = INVALID_HANDLE_VALUE;
+    auto* s = new FindState{};
+    s->handle = INVALID_HANDLE_VALUE;
+    subs = reinterpret_cast<SubChunk*>(s);
 }
-File::Find::~Find() { Close(); }
+File::Find::~Find()
+{
+    Close();
+    delete reinterpret_cast<FindState*>(subs);
+}
 bool __cdecl File::Find::Open(const char* pattern)
 {
     Close();
-    auto* s = reinterpret_cast<FindState*>(opaque);
+    auto* s = reinterpret_cast<FindState*>(subs);
     Path dir(pattern);
     dir.DelName(true);
     strncpy_s(s->dir, dir.text, _TRUNCATE);
@@ -574,24 +582,28 @@ bool __cdecl File::Find::Open(const char* pattern)
 }
 bool __cdecl File::Find::Next()
 {
-    auto* s = reinterpret_cast<FindState*>(opaque);
+    auto* s = reinterpret_cast<FindState*>(subs);
     return s->handle != INVALID_HANDLE_VALUE && FindNextFileA(s->handle, &s->data);
 }
 void __cdecl File::Find::Close()
 {
-    auto* s = reinterpret_cast<FindState*>(opaque);
+    auto* s = reinterpret_cast<FindState*>(subs);
     if (s->handle != INVALID_HANDLE_VALUE) FindClose(s->handle);
     s->handle = INVALID_HANDLE_VALUE;
 }
 File::Path __cdecl File::Find::GetNameAndPath() const
 {
-    const auto* s = reinterpret_cast<const FindState*>(opaque);
+    const auto* s = reinterpret_cast<const FindState*>(subs);
     Path p(s->dir);
     p.Add(s->data.cFileName);
     return p;
 }
 
-bool File::Exists(const char* path) { return path && GetFileAttributesA(path) != INVALID_FILE_ATTRIBUTES; }
+// Kernel_7c sees `bool File::Exists(const char*)` (KernelStandardRuntime.cpp); this header build declares the
+// Result-returning one, so the bool symbol is supplied under its mangled name
+static bool StubFileExists(const char* path) { return path && GetFileAttributesA(path) != INVALID_FILE_ATTRIBUTES; }
+extern "C" bool StubFileExistsC(const char* path) { return StubFileExists(path); }
+#pragma comment(linker, "/alternatename:?Exists@File@Jet@@SA_NPEBD@Z=StubFileExistsC")
 
 bool __cdecl File::Md(const char* path)
 {

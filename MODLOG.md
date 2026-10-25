@@ -1291,6 +1291,40 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
   `KernelStandard_7c_u10b2.dll`.
 - Next: U13 -> U12 -> U14 (PORT_PLAN 7b).
 
+### KernelStandard_7c U13, Thread / ThreadLocalStorage / Time (2026-10-26): 1216/1762 exports ours
+- 49 exports in `Thread.cpp` and `Time.cpp`. All U13 data stays the original's and is imported by our code
+  (`JET_KS_FORWARDED`): `Time::freq` (filled by the original's CRT initialiser), the frame-lock state,
+  `Thread::mainThreadId`, `ThreadLocalStorage::singleton` and its four index statics. The original's
+  KernelStandardInit (still the original's, U12) creates the singleton through the original's PStringCache, its
+  Profile reads the indices and its Log reads the clock, so one copy of the state is kept until the U14 cut-over.
+- Thread is 0x20 bytes: `{vptr, thread handle, WEvent done @8, alive @0x10, fn @0x14, arg @0x18, id @0x1c}`.
+  The destructor and Terminate set `done`, resume the thread and wait for it. The destructor sets the thread handle
+  to null without closing it (the original leaks it). `IsDone` consumes the auto-reset event. `Start` runs the body
+  under the exported `ExceptionHandler::Main` and clears `alive` afterwards.
+- ThreadLocalStorage is `{Mutex*, count, capacity, {PStringCache::Node*, TlsAlloc index}*}`. The array grows in
+  blocks of 128 entries. Copies share the mutex. PString copies and releases are the original's inlined forms (a
+  release never destroys the node).
+- `FrameLockMs` truncates `frameLockTime * 0.001` through a 64-bit `fistp` (RC = chop) and returns the low half.
+  `IncFrame` stores the time of the count before the increment. The x87 code runs at the CRT's 53-bit precision,
+  so SSE doubles give the same bits. A game that switches the FPU to 24 bits (D3D without FPU_PRESERVE) could
+  differ there, but such a mode has not been seen.
+- Diff test `diff_ks_thread`: frame-lock arithmetic over 12 deltas x 6 counts (wrap at 2^32, NaN, overflowing
+  products), the live clocks as relations, Str/HHMM, Thread (suspended start, every state word, priorities,
+  done event, Terminate, destructor of a running and of a finished thread, GlobalInit from another thread, process
+  helpers with a child process), TLS (the original's names, 140 new names past the 128 growth step on a fresh
+  instance, repeats, null name, per-thread data on 4 threads, copy constructor / operator=, a private instance and
+  its destructor, CreateTLS/DestroyTLS). 2731 results per side, 0 mismatches over 4 runs. 12 of 12 mutations were
+  caught.
+- `tools/check_thunks.py` now skips one-instruction wrappers that jump into a system DLL's import slot
+  (GetCurrentThreadId, timeGetTime). Only slots of the original's modules count as thunks.
+- The x64 harness had not built since U10b (the stand-in still used File::Find's old opaque buffer and the bool
+  `File::Exists`). It is fixed in `tests/x64/KernelStandardStub.cpp`. `probe/run_x64.ps1`: task, EditItem and golden
+  all 0 differences.
+- Earlier KernelStandard tests still pass, except the known NaN-only LCRand difference (U5).
+- In game: the menu log matches the baseline (0 lines differ), and the Launcher shows no "faulty" box. The U13 build
+  is kept as `KernelStandard_7c_u13.dll`.
+- Next: U12 (diagnostics), then U14 (PORT_PLAN 7b).
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's

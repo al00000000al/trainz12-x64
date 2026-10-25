@@ -175,18 +175,36 @@ private:
     unsigned int state;
 };
 
+// The clock (unit U13, Time.cpp). The state stays the original's (forwarded data) until the U14 cut-over: its
+// CRT initialiser fills freq and its Log reads it.
 class Time {
 public:
-    static unsigned long __cdecl Ms();
+    static unsigned long __cdecl Ms();  // timeGetTime
     static double __cdecl GetSeconds();
-    static void __cdecl SetFrameLockTime(double seconds);
+    static void __cdecl SetFrameLockTime(double seconds);  // turns the frame lock on; the time moves on IncFrame
     static void __cdecl IncFrame();
     static void __cdecl Delay(unsigned long ms);
+    static unsigned long __cdecl Us();  // the low half of the performance counter
+    static unsigned __int64 __cdecl Usq();
+    static unsigned __int64 __cdecl GetCounter();
+    static unsigned __int64 __cdecl GetCounterFrequency();
+    static double __cdecl FrameLockSeconds();
+    static unsigned long __cdecl FrameLockMs();
+    static unsigned __int64 __cdecl TimeStamp();  // _time64
+    static void __cdecl Str(char* out);           // _strtime
+    static void __cdecl HHMM(char* out);
+    Time& operator=(const Time&);
 
 private:
+    static unsigned __int64 __cdecl QueryCounterFrequency();
+
     friend struct RandWork;
-    static JET_KS_FORWARDED bool frameLock;       // ?frameLock@Time@Jet@@0_NA
-    static JET_KS_FORWARDED double frameLockTime;  // ?frameLockTime@Time@Jet@@0NA
+    friend struct TimeTest;
+    static JET_KS_FORWARDED bool frameLock;               // ?frameLock@Time@Jet@@0_NA
+    static JET_KS_FORWARDED unsigned int frameLockCount;  // ?frameLockCount@Time@Jet@@0IA
+    static JET_KS_FORWARDED double frameLockTime;         // ?frameLockTime@Time@Jet@@0NA
+    static JET_KS_FORWARDED double frameLockDelta;        // ?frameLockDelta@Time@Jet@@0NA
+    static JET_KS_FORWARDED unsigned __int64 freq;        // ?freq@Time@Jet@@0_KA
 };
 
 // a scope timer on a function's static Info: while that Info's group (`mask`) is enabled, the time spent in the
@@ -978,26 +996,87 @@ private:
 };
 JET_LAYOUT32(sizeof(SWMRGuard) == 0x20);
 
-// a Win32 thread (a SyncObject: waiting on it waits for the thread to end)
+// a Win32 thread (a SyncObject: waiting on it waits for the thread to end); unit U13, Thread.cpp.
+// {vptr, thread handle, WEvent done @8, alive @0x10, fn @0x14, arg @0x18, thread id @0x1c}
 class Thread : public SyncObject {
 public:
     enum Priority { PRIORITY_NORMAL = 0, PRIORITY_1 = 1, PRIORITY_2 = 2 };  // only the values used are named
     using Function = unsigned int(__stdcall*)(void*);
-    JET_KS_IMPORT Thread(Function fn, void* arg, bool start);
+    JET_KS_IMPORT Thread(Function fn, void* arg, bool start);  // start false: created suspended
     JET_KS_IMPORT virtual ~Thread();
-    JET_KS_IMPORT virtual __cdecl operator void*();
+    JET_KS_IMPORT virtual __cdecl operator void*();  // the done event's handle
     JET_KS_IMPORT bool __cdecl Resume();
+    JET_KS_IMPORT bool __cdecl Suspend();
     JET_KS_IMPORT void __cdecl SetPriority(Priority p);
-    JET_KS_IMPORT bool __cdecl IsDone();
+    JET_KS_IMPORT Priority __cdecl GetPriority() const;
+    JET_KS_IMPORT bool __cdecl StartedOk() const;
+    JET_KS_IMPORT bool __cdecl IsAlive() const;
+    JET_KS_IMPORT bool __cdecl IsDone();  // the done event was set (an auto-reset event: it is consumed)
+    JET_KS_IMPORT void __cdecl SetDone();
+    JET_KS_IMPORT unsigned long __cdecl Terminate();  // sets done, waits for the end, returns the exit code
+    JET_KS_IMPORT unsigned long __cdecl GetThreadID();
     JET_KS_IMPORT static unsigned long __cdecl GetCurrentId();
     JET_KS_IMPORT static unsigned long __cdecl GetProcessId();
+    JET_KS_IMPORT static unsigned long __cdecl GetMainThreadId();
     static void __cdecl GetProcessName(char* out);
+    JET_KS_IMPORT static bool __cdecl IsProcessAlive(unsigned long processId);
+    JET_KS_IMPORT static void __cdecl TerminateProcess(unsigned long processId);
+    JET_KS_IMPORT static void __cdecl GlobalInit();
 
 private:
+    static unsigned long __stdcall Start(void* thread);
+    static int __cdecl SafeStart(void* thread);
+
     friend class ResourceSystem;  // compares the caller with the main thread
-    static JET_KS_IMPORT unsigned int mainThreadId;
+    static JET_KS_FORWARDED unsigned int mainThreadId;  // the original's until U14
+#if defined(JET_KS_BUILD)
+    WEvent done;        // +0x08
+    bool alive;         // +0x10
+    Function fn;        // +0x14
+    void* arg;          // +0x18
+    unsigned long id;   // +0x1c
+#else
     unsigned char opaque[JET_OPAQUE_SIZE(0x18, 0x28)];
+#endif
 };
+JET_LAYOUT32(sizeof(Thread) == 0x20);
+
+// Named TLS slots (unit U13, Thread.cpp): {Mutex*, count, capacity, entries {PString name, TlsAlloc index}}.
+// The singleton and the index statics stay the original's until U14 (its KernelStandardInit creates the
+// singleton, its Profile reads the indices).
+class ThreadLocalStorage {
+public:
+    JET_KS_IMPORT ThreadLocalStorage(const ThreadLocalStorage& o);  // shares the mutex, copies the entries
+    JET_KS_IMPORT ThreadLocalStorage& operator=(const ThreadLocalStorage& o);
+    JET_KS_IMPORT int __cdecl GetIndex(const PString& name);  // a new TlsAlloc slot for a name not seen yet
+    JET_KS_IMPORT static bool __cdecl CreateTLS();
+    JET_KS_IMPORT static void __cdecl DestroyTLS();
+    JET_KS_IMPORT static void* __cdecl GetThreadData(int index);
+    JET_KS_IMPORT static void __cdecl SetThreadData(int index, void* data);
+
+    static JET_KS_FORWARDED int ThreadTlsIndex;
+    static JET_KS_FORWARDED int ProfilePtTlsIndex;
+    static JET_KS_FORWARDED int ProfileTraceTlsIndex;
+    static JET_KS_FORWARDED int ProfileRenderTlsIndex;
+
+private:
+    JET_KS_IMPORT ThreadLocalStorage();
+    JET_KS_IMPORT ~ThreadLocalStorage();
+    friend JET_KS_IMPORT ThreadLocalStorage& GetTLS();
+    friend struct TlsWork;
+
+    struct Entry {
+        PStringCache::Node* name;
+        int index;
+    };
+    Mutex* lock;
+    unsigned int count, capacity;
+    Entry* entries;
+
+    static JET_KS_FORWARDED ThreadLocalStorage* singleton;
+};
+JET_LAYOUT32(sizeof(ThreadLocalStorage) == 0x10);
+JET_KS_IMPORT ThreadLocalStorage& GetTLS();
 
 // A dynamically loaded module: {vptr, handle}. Users construct and destroy it inline (Kernel_7c 0x1000afd0:
 // handle = 0; at the end "if (handle) Close()"), so only the virtual members are imported; we call them by
