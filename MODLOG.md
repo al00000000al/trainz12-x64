@@ -1363,6 +1363,43 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
   Launcher shows no "faulty" box. The build is kept as `KernelStandard_7c_u12a.dll`.
 - Next: U12b, then U12c, then U14.
 
+### KernelStandard_7c U12b, Profile / QuickTimer / Console (2026-10-26): 1312/1762 exports ours
+- 55 exports in `Profile.cpp` and `Console.cpp`. The statics stay the original's, imported. The three private
+  accumulators of `Profile::Display(float, ...)` (0x100ae210/214/218) are used in the original module by address.
+  Sorting uses msvcr80's qsort, so equal keys keep the original's order.
+- `Profile::GetDisplayFrequency` returns `fld1 / fdiv` unrounded in st(0). It is exported as a worker that
+  returns a double, like Rand's float members.
+- Profile::Display(console, max) works on the first functions with at least 64 ticks (`time & ~63`). It prints
+  calls, total ms and average ms (32-bit arithmetic, ms = ticks*1000/(freq_low/1000)) and the peak average. It
+  draws a bar of `time*36/sum >> 6` half-steps when that is 1..35, and then clears the counters. QuickTimer keeps
+  {count, min, max, total} per frame in a ring of 4.
+  - The QuickTimer destructor never updates min once a call is not shorter than it ("min" was the "last" slot).
+  - `Update` empties the slot two frames ahead. Its report every `logEvery` frames formats into the empty logging
+    function, so only the `numFrames % logEvery` (a trap when logEvery is 0) is kept.
+- Console (0x1c): `{width, height, buffer, top, spans, cursor, lineEnd}`.
+  - Print takes `<color:RRGGBB>` (the last 8 characters of the tag; the hex value with red and blue swapped) and
+    `</color>` tags out into a ring of 13-span chunks (0xa8 bytes). Any other tag is printed as text: the '<' is
+    printed, read again and skipped.
+  - NewLine scrolls `top` when the cursor enters it.
+  - `Print(int, width)` writes right-aligned digits after the cursor without moving it, and prints no digit for 0.
+  - Copies share the character buffer.
+- Diff test `diff_ks_profile`: Console runs 20 random scripts over 6 sizes, with the buffer, cursor, top and every
+  span compared, plus both blits and StringToHex. Profile and QuickTimer use fixed clock values: scopes, sorting
+  by all options, the table, Display(float), trace points and Update. 127 728 results per side, 0 mismatches.
+  20 of 20 mutations were caught.
+  - Bar with a width below its length makes a negative count, a 4-billion-step loop in the original too. Goto
+    wraps only once. The test stays inside both limits.
+- **Lesson (mutation runs):** the scripts restored each source from a `.bak` copy that was older than the
+  mutated .obj, so MSBuild kept the mutated objects. The "restored" DLL contained the last mutation of each file.
+  - The U13 and U12a builds deployed to the game were made right after such runs. Their committed sources are
+    right, and later header changes recompiled everything.
+  - All sources were touched, rebuilt and every KernelStandard diff test rerun (15 tests, 0 mismatches). The
+    suspect game backups `_u13`/`_u12a` were deleted.
+  - The scripts now touch the restored file.
+- In game (clean build): the menu log matches the baseline (0 lines differ) and the Launcher is clean. The x64
+  harness shows 0 differences. The build is kept as `KernelStandard_7c_u12b.dll`.
+- Next: U12c (ExceptionHandler, HardwareException), then U14.
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's

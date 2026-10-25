@@ -201,6 +201,7 @@ private:
 
     friend struct RandWork;
     friend struct TimeTest;
+    friend class Profile;  // Display reads the counter frequency
     static JET_KS_FORWARDED bool frameLock;               // ?frameLock@Time@Jet@@0_NA
     static JET_KS_FORWARDED unsigned int frameLockCount;  // ?frameLockCount@Time@Jet@@0IA
     static JET_KS_FORWARDED double frameLockTime;         // ?frameLockTime@Time@Jet@@0NA
@@ -208,28 +209,134 @@ private:
     static JET_KS_FORWARDED unsigned __int64 freq;        // ?freq@Time@Jet@@0_KA
 };
 
+class Console;
+
 // a scope timer on a function's static Info: while that Info's group (`mask`) is enabled, the time spent in the
-// scope is added to it
+// scope is added to it (unit U12b, Profile.cpp; the statics stay the original's, the Display timers by address)
 class Profile {
 public:
     struct Info {
         const char* name;  // "Input::Update"
         const char* file;
-        unsigned long unknown08, time;
-        int unknown10;       // -1 in the static initialisers
-        unsigned long mask;  // 0x80000000 by default
-        unsigned long unknown18, unknown1c;
+        unsigned long count, time;  // +0x08 calls, +0x0c counter ticks (low halves)
+        int id;                     // -1 in the static initialisers, then the index in funcs
+        unsigned long mask;         // 0x80000000 by default
+        unsigned long peek, unknown1c;  // +0x18 the highest average shown
     };
+    struct TraceInfo {
+        const char* name;
+    };
+    struct FrameTrace {  // 0x404 bytes
+        unsigned int count;
+        struct {
+            int id;
+            unsigned long time;
+        } points[0x80];
+    };
+    enum SortOption { SORT_TOTAL = 0, SORT_AVG = 1, SORT_COUNT = 2 };
     Profile(Info* info);
     ~Profile();
+    Profile& operator=(const Profile& o);
     static int __cdecl RegisterTracePoint(const char* name);
     static void __cdecl TracePoint(int id);
+    static void __cdecl Enable(unsigned int mask);
+    static void __cdecl Disable();
+    static void __cdecl ChildTime(bool on);
+    static bool __cdecl GetChildTime();
+    static void __cdecl SetSortFrequency(float f);
+    static float __cdecl GetSortFrequency();
+    static void __cdecl SetDisplayFrequency(float f);
+    static float __cdecl GetDisplayFrequency();  // exported as a double worker (st(0) unrounded)
+    static float __cdecl GetDisplayPeriod();
+    static void __cdecl SetPeekResetFrequency(float f);
+    static int __cdecl GetFuncsCount();
+    static Info** __cdecl GetFuncs();
+    static const TraceInfo* __cdecl GetTraceInfo();
+    static const FrameTrace* __cdecl GetFrameTraceData();
+    static unsigned int __cdecl GetNumTracePoints();
+    static unsigned int __cdecl GetTraceFrame();
+    static void __cdecl Display(Console& console, int max);
+    static void __cdecl Display(float elapsed, Console& console, int max);
+    static void __cdecl LogDisplay();
+    static void __cdecl Reset();
+    static void __cdecl ResetPeeks();
+    static void __cdecl Sort();
+    static void __cdecl SortBy(SortOption option);
 
 private:
+    friend struct ProfileWork;
+    friend double __cdecl Profile_GetDisplayFrequency();
+    void __cdecl Entry(Info* info);
+    void __cdecl Exit(Info* info);
+    static int __cdecl SortTotal(const void* a, const void* b);
+    static int __cdecl SortAvg(const void* a, const void* b);
+    static int __cdecl SortCount(const void* a, const void* b);
+
     Info* info;
     Profile* parent;
     unsigned long childTime, start;
+
+    static JET_KS_FORWARDED Info* funcs[];
+    static JET_KS_FORWARDED int nextid;
+    static JET_KS_FORWARDED unsigned int enabled;
+    static JET_KS_FORWARDED unsigned int depth;
+    static JET_KS_FORWARDED Profile* current;
+    static JET_KS_FORWARDED bool childtime;
+    static JET_KS_FORWARDED float displayPeriod;
+    static JET_KS_FORWARDED float sortFreq;
+    static JET_KS_FORWARDED float peekResetFreq;
+    static JET_KS_FORWARDED int(__cdecl* sort_func)(const void*, const void*);
+    static JET_KS_FORWARDED TraceInfo tracePoint[];
+    static JET_KS_FORWARDED unsigned int numTracePoints;
+    static JET_KS_FORWARDED unsigned int traceFrame;
+    static JET_KS_FORWARDED FrameTrace traceData[];
 };
+
+class ProtectedLong;
+
+// a scope timer with per-frame statistics (4 frames in a ring), unit U12b (Profile.cpp)
+class QuickTimer {
+public:
+    struct Stats {  // per frame
+        int count;
+        unsigned long min, max, total;
+    };
+    struct Info {
+        const char* name;
+        const char* file;
+        int id;  // -1 until registered, -2 past 0x40 timers
+        Stats frames[4];
+    };
+    struct ThreadInfo {
+        QuickTimer* current;
+        int depth;
+    };
+    QuickTimer(Info* info);
+    ~QuickTimer();
+    QuickTimer& operator=(const QuickTimer& o);
+    static int __cdecl GetCurrentWriteFrame();
+    static void __cdecl Update();
+
+private:
+    friend struct ProfileWork;
+    Info* info;
+    QuickTimer* parent;
+    unsigned __int64 childTime;
+    unsigned __int64 start;
+    int frame;
+    int pad;
+
+    static JET_KS_FORWARDED bool childtime;
+    static JET_KS_FORWARDED int currentFrame;
+    static JET_KS_FORWARDED unsigned long frameTimes[];
+    static JET_KS_FORWARDED Info* funcs[];
+    static JET_KS_FORWARDED unsigned __int64 lastFrameStart;
+    static JET_KS_FORWARDED int logEvery;
+    static JET_KS_FORWARDED ProtectedLong nextid;
+    static JET_KS_FORWARDED int numFrames;
+    static JET_KS_FORWARDED ThreadInfo* threadInfo;
+};
+JET_LAYOUT32(sizeof(QuickTimer) == 0x20);
 
 class Alloc {
 public:
@@ -256,6 +363,8 @@ public:
     AnsiString& __cdecl operator+=(const PString& s);
     int __cdecl Addf(const char* fmt, ...);
     int __cdecl Add(const char* fmt, char* args);  // vsprintf appended
+    void __cdecl Del(unsigned int pos, unsigned int count);
+    int __cdecl Compare(const char* s) const;
     void __cdecl Setf(const char* fmt, ...);
     unsigned int __cdecl Size() const;
     bool __cdecl EqualsIgnoreCase(const char* s) const;
@@ -276,6 +385,7 @@ private:
     friend class StringTablesBase;
     friend class IOSlaveResource;
     friend struct LogWork;
+    friend struct ConsoleWork;
     void MakeBufferUnique(unsigned int size, bool keep);
 
 protected:
@@ -1201,20 +1311,53 @@ private:
 };
 JET_LAYOUT32(sizeof(SharedMemory) == 0x10);
 
-// Jet's text console (0x1c bytes); only what Jobs uses.
+struct Size;
+
+// Jet's text console (0x1c bytes, unit U12b, Console.cpp): a width x height character ring scrolled by `top`, a
+// cursor and the end of its line, and the colour spans of the last Print ("<color:RRGGBB>" ... "</color>").
 class Console {
 public:
+    struct Span {  // 12 bytes
+        unsigned char type;  // 1 colour on, 0 off
+        int pos;             // the character index in the printed text
+        unsigned long rgb;   // 0x00BBGGRR (the hex value with red and blue swapped)
+    };
+    struct Chunk {  // 0xa8 bytes from Jet::Alloc, a ring of chunks of 13 spans
+        Chunk* next;
+        Chunk* prev;
+        unsigned int count;
+        Span spans[13];
+    };
+    Console();
+    Console(const Console& o);  // shares the buffer, copies the spans
+    ~Console();
+    Console& operator=(const Console& o);
+    void __cdecl Init(const Size& size);
+    void __cdecl Done();
     void __cdecl Clear();
     void __cdecl Printf(const char* format, ...);
+    void __cdecl Print(const char* text);
+    void __cdecl Print(char ch, int count);
+    void __cdecl Print(int value, int width);  // right-aligned after the cursor; the cursor stays
+    void __cdecl Bar(int halfSteps, int width);
+    void __cdecl Goto(int x, int y);
+    void __cdecl BlitToMono(unsigned char* screen) const;
     void __cdecl BlitToMono44(int x, int y, unsigned char* screen) const;
+    static int __cdecl StringToHex(const char* text, int length);
 
     int width;               // +0x00
     int height;              // +0x04
     unsigned char* buffer;   // +0x08
-    int unknown0c;
-    int unknown10;
-    int unknown14;
-    int unknown18;
+    int top;                 // +0x0c the row shown first
+    Chunk* spans;            // +0x10
+    unsigned char* cursor;   // +0x14
+    unsigned char* lineEnd;  // +0x18
+
+private:
+    friend struct ConsoleWork;
+    friend struct ProfileWork;  // Profile::Display's line breaks
+    void __cdecl NewLine();
+    static JET_KS_FORWARDED unsigned char f50_font[];  // 8 bytes a character
 };
 JET_LAYOUT32(sizeof(Console) == 0x1c);
 

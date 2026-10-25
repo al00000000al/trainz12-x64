@@ -82,9 +82,10 @@ at every step and catches mistakes while they are small.
     directory / link FileSubs, File::Find, the path statics; 2026-10-25) and U10b part 2 (FileSubArchive, the .ja
     reader and writer, File::Sep / callback, SetDefault*; 2026-10-25) and U11 (OS, Window, WindowPlacement;
     2026-10-25) and U13 (Thread, ThreadLocalStorage, Time; 2026-10-26, their statics still the original's) and
-    U12a (Exception, Debugger, Log, LogClient; 2026-10-26) done: 1257/1762 ours.
-    Next: U12b (Profile, QuickTimer, Console), U12c (ExceptionHandler, HardwareException), then U14 (the
-    Alloc/string foundation), as one cut-over if the cycle between them forces it.
+    U12a (Exception, Debugger, Log, LogClient; 2026-10-26) and U12b (Profile, QuickTimer, Console; 2026-10-26)
+    done: 1312/1762 ours.
+    Next: U12c (ExceptionHandler, HardwareException), then U14 (the Alloc/string foundation), as one cut-over if
+    the cycle between them forces it.
 8. Render stack (RenderSystem, Render3D*, RenderOpenGL), then InterfaceSystem, WaterSystem.
 9. trainz.exe subsystems through the loader DLL: asset DB, GS compiler/VM, physics, world.
 

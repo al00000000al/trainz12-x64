@@ -1177,3 +1177,22 @@ Internal functions of orig can be reached by RVA (`diff_blowfish.cpp`).
 - Init / Done / Shutdown: see MODLOG "U12a". The File objects are freed the original's inline way (~File, then
   Alloc::Delete).
 - Test: diff_ks_log (1245 results per side, 0 mismatches; 14 of 14 mutations caught).
+
+## U12b done (2026-10-26): Profile.cpp + Console.cpp, 55 exports (1312/1762 ours)
+- Profile::Info `{name, file, count @8, time @0xc, id @0x10, mask @0x14, peek @0x18}`. The Profile object is
+  `{info, parent, childTime, start}` (QPC low halves). The constructor registers into funcs (at most 0x1000) on the
+  first enabled call. The destructor adds `now - start - childTime`, and adds `now - start` to the parent's
+  childTime when childtime is set.
+- Statics are imported. Display(float)'s accumulators shown/sorted/peeks are used in the original by address (base +
+  0xae210/0xae214/0xae218). GetDisplayFrequency is exported as `?Profile_GetDisplayFrequency@Jet@@YANXZ` (double).
+- The sort functions return differences: SortTotal and SortCount `b - a`, SortAvg `b.time/b.count - a.time/a.count`
+  (0 for no calls). The sort itself is msvcr80 qsort.
+- RegisterTracePoint: "START" takes slot 0 (and makes the count 1 if it was 0). The others go to `count++`, and the
+  first one (count 0) goes to slot 1 with count 2. At 0x80 the result is -0x151. TracePoint(0) starts frame
+  `(f+1)&0x7f`. Each FrameTrace (0x404) holds 128 `{id, QPC low}` points.
+- QuickTimer 0x20: `{info, parent, childTime u64, start u64, frame}`. Info `{name, file, id, Stats[4] @0xc}` with
+  Stats `{count, min, max, total}`. The id comes from InterlockedIncrement(nextid)-1; at 0x40 or more it is -2.
+  threadInfo points to `{current, depth}`.
+- Console: see MODLOG "U12b". The span ring is `Chunk{next, prev, count, Span[13]}` with Span
+  `{u8 type, int pos, u32 rgb}`. The copy appends chunk by chunk (count and spans memcpy'd).
+- Test: diff_ks_profile (127 728 results per side, 0 mismatches; 20 of 20 mutations caught).

@@ -87,6 +87,8 @@ JET_CRT80(int, _findclose, (intptr_t handle), (handle))
 JET_CRT80(void, _splitpath,(const char* path, char* drive, char* dir, char* name, char* ext),
           (path, drive, dir, name, ext))
 JET_CRT80(int, _strnicmp, (const char* a, const char* b, size_t n), (a, b, n))
+JET_CRT80(int, _vsnprintf, (char* dst, size_t n, const char* format, va_list ap), (dst, n, format, ap))
+JET_CRT80(void, qsort, (void* base, size_t n, size_t size, int(__cdecl* cmp)(const void*, const void*)), (base, n, size, cmp))
 JET_CRT80(int, vsprintf, (char* dst, const char* format, va_list ap), (dst, format, ap))
 JET_CRT80(int, vfprintf, (void* file, const char* format, va_list ap), (file, format, ap))
 JET_CRT80(char*, __iob_func, (), ())  // msvcr80's FILE[3] (0x20 bytes each): stdin, stdout, stderr

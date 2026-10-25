@@ -375,11 +375,11 @@ Jobs::Jobs()
       finishedLock(false, nullptr), finishedCount(0, 0x7fffffff, nullptr), pending{}, consoleOn(false), active(false)
 {
     console.buffer = nullptr;
-    console.unknown10 = 0;
+    console.spans = nullptr;
     queueConsole.buffer = nullptr;
-    queueConsole.unknown10 = 0;
+    queueConsole.spans = nullptr;
     finishedConsole.buffer = nullptr;
-    finishedConsole.unknown10 = 0;
+    finishedConsole.spans = nullptr;
 }
 
 void __cdecl Jobs::Init(Options* options)
