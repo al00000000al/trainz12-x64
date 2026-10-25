@@ -521,7 +521,7 @@ Sizes: exports total / imported by others / class-attributed code bytes (named f
 | **U11** platform core | `OS`, `Window`, `WindowPlacement` | 71 / 35 / 4 943 | `mainWindow`, placement statics | yes |
 | **U12** diagnostics | `Exception`, `HardwareException`, `ExceptionHandler`, `Debugger`, `Log`, `LogClient`, `Console`, `Profile`, `QuickTimer`, `KernelStandardInit`, `AssertEx` | 169 / 53 / 13 247 | 40+ globals (Log, handler, profile) | yes (cycle with U13/U14) |
 | **U13** thread/time | `Thread`, `ThreadLocalStorage`, `Time` | 59 / 27 / 2 874 | TLS singleton, `mainThreadId`, QPC freq | with U12 |
-| **U14** foundation | `Alloc`, `PackedHeap(MP)`, `PoolBlockAlloc`, `ReferenceCount`, `PString`, `PStringCache`, `AnsiString`, `UnicodeString`, `MultiByteString`, `String`, DllMain/CRT glue | 352 / 127 / 29 365 | everything in G01-G03 | one cut-over |
+| **U14** foundation | `Alloc`, `PackedHeap(MP)`, `PoolBlockAlloc`, `ReferenceCount`, `PString`, `PStringCache`, `AnsiString`, `UnicodeString`, `MultiByteString`, `String`, DllMain/CRT glue | 352 / 127 / 29 365 | everything in G01-G03 | split (2026-10-26): **U14a** the string classes (269 exports, done; the empty block 0x100ae254 and the string heap 0x100adc18 used by address), **U14b** the rest + all forwarded data, one cut-over |
 
 (Class-attributed bytes of all units: 199 036 of 292 521; the rest: JPEG 32.7 KB, unnamed helpers and CRT.)
 

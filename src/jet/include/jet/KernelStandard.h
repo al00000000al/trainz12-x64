@@ -344,51 +344,134 @@ public:
     static void __cdecl Delete(void* p);
 };
 
+// a heap of small blocks in 1 MB pages, locked (still the original's until U14b)
+class PackedHeapMP {
+public:
+    PackedHeapMP(const char* name);
+    unsigned char* Alloc(unsigned int size);
+    void Free(unsigned char* p);
+
+private:
+    unsigned char opaque[0x2c];
+};
+
 // objects of classes using this live in Jet's heap, so any module can free them
 #define JET_HEAP_OBJECT                                                    \
     static void* operator new(size_t n) { return Alloc::New(static_cast<unsigned int>(n)); } \
     static void operator delete(void* p) { Alloc::Delete(p); }
 
-// ---- strings (KernelStandard). Both are one pointer to shared data; String derives from AnsiString.
+// ---- strings (KernelStandard, unit U14a, AnsiString.cpp). AnsiString is one pointer to a shared, reference-counted
+// block {refs, capacity, length, characters}, pointing at the capacity. Empty strings share one static block
+// (capacity 0, still the original's); a capacity of 0 reads as "null". String derives from AnsiString.
 class AnsiString {
 public:
     AnsiString();  // the shared empty buffer
     AnsiString(const AnsiString& o);
+    AnsiString(const PString& s);
+    AnsiString(const UnicodeString& s);
+    AnsiString(unsigned int ch, unsigned int count);
     AnsiString(const char* s);
+    AnsiString(const char* s, unsigned int n);
+    AnsiString(const __wchar_t* s);
+    AnsiString(const __wchar_t* s, unsigned int n);
     ~AnsiString();
-    AnsiString __cdecl Token(const char* delimiters);  // cuts and returns the first token
-    __cdecl operator const char*() const;
-    AnsiString& __cdecl operator+=(const AnsiString& o);
-    AnsiString& __cdecl operator+=(const char* s);
-    AnsiString& __cdecl operator+=(const PString& s);
-    int __cdecl Addf(const char* fmt, ...);
-    int __cdecl Add(const char* fmt, char* args);  // vsprintf appended
-    void __cdecl Set(const char* fmt, char* args);  // vsprintf
-    void __cdecl Del(unsigned int pos, unsigned int count);
-    int __cdecl Compare(const char* s) const;
-    void __cdecl Setf(const char* fmt, ...);
-    unsigned int __cdecl Size() const;
-    bool __cdecl EqualsIgnoreCase(const char* s) const;
-    void __cdecl ToLower();
-    void __cdecl Setn(const char* s, unsigned int n);    // the first n characters (clipped to s)
-    void __cdecl Ins(const char* s, unsigned int pos);  // s inserted at pos
-    void __cdecl Ins(unsigned int ch, unsigned int pos, unsigned int count);  // count copies of ch at pos
-    int __cdecl GetUnicode(__wchar_t* out, unsigned int size) const;  // characters written
-    bool __cdecl Read(BinReader& r);
-    bool __cdecl Write(BinWriter& w) const;
+
     const AnsiString& __cdecl operator=(const AnsiString& o);
     const AnsiString& __cdecl operator=(const PString& s);
+    const AnsiString& __cdecl operator=(const UnicodeString& s);
     const AnsiString& __cdecl operator=(const char* s);
+    const AnsiString& __cdecl operator=(const __wchar_t* s);
+    bool __cdecl operator==(const AnsiString& o) const;
+    bool __cdecl operator==(const char* s) const;
+    bool __cdecl operator!=(const AnsiString& o) const;
+    bool __cdecl operator!=(const char* s) const;
+    bool __cdecl operator<(const AnsiString& o) const;
+    bool __cdecl operator<(const char* s) const;
+    bool __cdecl operator<=(const AnsiString& o) const;
+    bool __cdecl operator<=(const char* s) const;
+    bool __cdecl operator>(const AnsiString& o) const;
+    bool __cdecl operator>(const char* s) const;
+    bool __cdecl operator>=(const AnsiString& o) const;
+    bool __cdecl operator>=(const char* s) const;
+    char& __cdecl operator[](int i);
+    char& __cdecl operator[](unsigned int i);
+    unsigned int __cdecl operator[](int i) const;
+    unsigned int __cdecl operator[](unsigned int i) const;
+    unsigned int __cdecl operator[](__int64 i) const;
+    unsigned int __cdecl operator[](unsigned __int64 i) const;
+    __cdecl operator const char*() const;
+    AnsiString& __cdecl operator+=(const AnsiString& o);
+    AnsiString& __cdecl operator+=(const PString& s);
+    AnsiString& __cdecl operator+=(const char* s);
+    AnsiString& __cdecl operator+=(const __wchar_t* s);
+
+    int __cdecl Add(const char* fmt, char* args);  // vsprintf appended
+    int __cdecl Addf(const char* fmt, ...);
+    unsigned int __cdecl AllocSize() const;
+    int __cdecl Compare(const AnsiString& o) const;
+    int __cdecl Compare(const char* s) const;
+    int __cdecl CompareIgnoreCase(const AnsiString& o) const;
+    int __cdecl CompareIgnoreCase(const char* s) const;
+    void __cdecl Del(unsigned int pos, unsigned int count);
+    bool __cdecl EqualsIgnoreCase(const AnsiString& o) const;
+    bool __cdecl EqualsIgnoreCase(const char* s) const;
+    int __cdecl Find(unsigned int ch, unsigned int start) const;
+    int __cdecl Find(const char* s, unsigned int start) const;
+    int __cdecl FindIgnoreCase(unsigned int ch, unsigned int start) const;
+    int __cdecl FindIgnoreCase(const char* s, unsigned int start) const;
+    static int __cdecl FindIgnoreCase(const char* text, unsigned int ch, unsigned int start);
+    static int __cdecl FindIgnoreCase(const char* text, unsigned int length, const char* s, unsigned int start);
+    int __cdecl GetANSI(char* out, unsigned int size) const;
+    double __cdecl GetDouble() const;
+    float __cdecl GetFloat() const;
+    int __cdecl GetInt(int base) const;
+    unsigned int __cdecl GetUInt(int base) const;
+    int __cdecl GetUnicode(__wchar_t* out, unsigned int size) const;  // characters written
+    void __cdecl Ins(unsigned int ch, unsigned int pos, unsigned int count);  // count copies of ch at pos
+    void __cdecl Ins(const char* s, unsigned int pos);                      // s inserted at pos
+    void __cdecl Ins(const __wchar_t* s, unsigned int pos);
+    void __cdecl Left(unsigned int n);
+    unsigned int __cdecl Length() const;
+    AnsiString Mid(unsigned int pos, unsigned int n) const;
+    bool __cdecl Read(BinReader& r);
+    void __cdecl Right(unsigned int n);
+    void __cdecl Set(int value, unsigned int radix);
+    void __cdecl Set(const char* fmt, char* args);  // vsprintf
+    bool __cdecl SetANSI(const char* s, int length);
+    void __cdecl SetLength(unsigned int n);
+    bool __cdecl SetUnicode(const __wchar_t* s, int length);
+    void __cdecl Setf(const char* fmt, ...);
+    void __cdecl Setn(const char* s, unsigned int n);  // the first n characters (clipped to s)
+    unsigned int __cdecl Size() const;
+    void __cdecl Strip(const char* chars);
+    void __cdecl ToLower();
+    void __cdecl ToUpper();
+    AnsiString __cdecl Token(const char* delimiters);  // cuts and returns the first token
+    bool __cdecl Write(BinWriter& w) const;
 
 private:
     friend class Options;
     friend class ConfigData;
     friend class StringTablesBase;
     friend class IOSlaveResource;
+    friend class UnicodeString;
+    friend class String;
     friend struct LogWork;
     friend struct ConsoleWork;
     friend struct HandlerWork;
+    friend struct AnsiWork;
+    enum CompareResult { Less, Equal, Greater };
+    CompareResult __cdecl CompareWith(const AnsiString& o) const;
+    CompareResult __cdecl CompareWith(const char* s) const;
+    CompareResult __cdecl CompareWithMatchCase(const AnsiString& o) const;
+    CompareResult __cdecl CompareWithMatchCase(const char* s) const;
+    bool IsBufferNULL() const;
+    bool IsBufferUnique() const;
+    void MakeBufferEmpty();
+    void MakeBufferNULL();
     void MakeBufferUnique(unsigned int size, bool keep);
+    unsigned int __cdecl NewSize(unsigned int length);
+    void __cdecl Set(const unsigned char* s, int length, int fallback);
 
 protected:
     void* data = nullptr;
@@ -397,35 +480,222 @@ protected:
 class String : public AnsiString {
 public:
     String();
+    String(const String& o);
+    String(const String& o, unsigned int pos, int n);
+    String(const AnsiString& o);
+    String(const PString& s);
+    String(const UnicodeString& s);
+    String(unsigned int ch, unsigned int count);
     String(const char* s);
+    String(const char* s, unsigned int n);
     ~String();
     __cdecl operator const char*() const;
-    const String& __cdecl operator=(const char* s);
-    const String& __cdecl operator=(const PString& s);
-    String(const String& o);
     const String& __cdecl operator=(const String& o);
+    const String& __cdecl operator=(const AnsiString& o);
+    const String& __cdecl operator=(const PString& s);
+    const String& __cdecl operator=(const UnicodeString& s);
+    const String& __cdecl operator=(const char* s);
 };
 
-// UTF-16 string {text, capacity, length} (still the original's code)
+// UTF-16 string {text, capacity (bytes), length (characters)}, an owned buffer from Alloc (unit U14a,
+// UnicodeString.cpp). The capacity is (2 length + 0x12) & ~0xf.
 class UnicodeString {
 public:
     UnicodeString();
+    UnicodeString(const UnicodeString& o);
+    UnicodeString(const AnsiString& s);
+    UnicodeString(const String& s);
+    UnicodeString(const PString& s);
+    UnicodeString(unsigned int ch, unsigned int count);
+    UnicodeString(const char* s);
+    UnicodeString(const char* s, unsigned int n);
+    UnicodeString(const __wchar_t* s);
+    UnicodeString(const __wchar_t* s, unsigned int n);
     ~UnicodeString();
+
+    const UnicodeString& __cdecl operator=(const UnicodeString& o);
+    const UnicodeString& __cdecl operator=(const AnsiString& s);
     const UnicodeString& __cdecl operator=(const PString& s);
-    bool __cdecl SetANSI(const char* s, int length);
+    const UnicodeString& __cdecl operator=(const String& s);
+    const UnicodeString& __cdecl operator=(const __wchar_t* s);
+    bool __cdecl operator==(const UnicodeString& o) const;
+    bool __cdecl operator==(const __wchar_t* s) const;
+    bool __cdecl operator!=(const UnicodeString& o) const;
+    bool __cdecl operator!=(const __wchar_t* s) const;
+    bool __cdecl operator<(const UnicodeString& o) const;
+    bool __cdecl operator<(const __wchar_t* s) const;
+    bool __cdecl operator<=(const UnicodeString& o) const;
+    bool __cdecl operator<=(const __wchar_t* s) const;
+    bool __cdecl operator>(const UnicodeString& o) const;
+    bool __cdecl operator>(const __wchar_t* s) const;
+    bool __cdecl operator>=(const UnicodeString& o) const;
+    bool __cdecl operator>=(const __wchar_t* s) const;
+    __wchar_t& __cdecl operator[](int i);
+    __wchar_t& __cdecl operator[](unsigned int i);
+    unsigned int __cdecl operator[](int i) const;
+    unsigned int __cdecl operator[](unsigned int i) const;
+    __cdecl operator const __wchar_t*() const;
+    UnicodeString& __cdecl operator+=(const UnicodeString& o);
+    UnicodeString& __cdecl operator+=(const __wchar_t* s);
+
+    int __cdecl Add(const __wchar_t* fmt, char* args);
+    int __cdecl Addf(const __wchar_t* fmt, ...);
+    unsigned int __cdecl AllocSize() const;
+    int __cdecl Compare(const UnicodeString& o) const;
+    int __cdecl Compare(const __wchar_t* s) const;
+    int __cdecl CompareIgnoreCase(const UnicodeString& o) const;
+    int __cdecl CompareIgnoreCase(const __wchar_t* s) const;
+    void __cdecl Del(unsigned int pos, unsigned int count);
+    bool __cdecl EqualsIgnoreCase(const UnicodeString& o) const;
+    bool __cdecl EqualsIgnoreCase(const __wchar_t* s) const;
+    int __cdecl Find(unsigned int ch, unsigned int start) const;
+    int __cdecl Find(const __wchar_t* s, unsigned int start) const;
+    int __cdecl FindIgnoreCase(unsigned int ch, unsigned int start) const;
+    int __cdecl FindIgnoreCase(const __wchar_t* s, unsigned int start) const;
+    static int __cdecl FindIgnoreCase(const __wchar_t* text, unsigned int ch, unsigned int start);
+    static int __cdecl FindIgnoreCase(const __wchar_t* text, unsigned int length, const __wchar_t* s,
+                                      unsigned int start);
+    int __cdecl GetANSI(char* out, unsigned int size) const;
+    double __cdecl GetDouble() const;
+    float __cdecl GetFloat() const;
+    int __cdecl GetInt(int base) const;
+    unsigned int __cdecl GetUInt(int base) const;
+    int __cdecl GetUnicode(__wchar_t* out, unsigned int size) const;
+    void __cdecl Ins(unsigned int ch, unsigned int pos, unsigned int count);
+    void __cdecl Ins(const __wchar_t* s, unsigned int pos);
+    void __cdecl Left(unsigned int n);
+    unsigned int __cdecl Length() const;
     bool __cdecl Read(BinReader& r);
+    void __cdecl Right(unsigned int n);
+    void __cdecl Set(int value, unsigned int radix);
+    void __cdecl Set(const __wchar_t* fmt, char* args);
+    bool __cdecl SetANSI(const char* s, int length);
+    void __cdecl SetLength(unsigned int n);
+    bool __cdecl SetUnicode(const __wchar_t* s, int length);
+    void __cdecl Setf(const __wchar_t* fmt, ...);
+    void __cdecl Setn(const __wchar_t* s, unsigned int n);
+    unsigned int __cdecl Size() const;
+    void __cdecl Strip(const __wchar_t* chars);
+    void __cdecl ToLower();
+    void __cdecl ToUpper();
+    UnicodeString __cdecl Token(const __wchar_t* delimiters);
     bool __cdecl Write(BinWriter& w) const;
 
 private:
     friend class ConfigData;
     friend class StringTablesBase;
     friend class IOSlaveResource;
-    void __cdecl Set(const __wchar_t* s, int length, int capacity);
+    friend class AnsiString;
+    friend class MultiByteString;
+    enum CompareResult { Less, Equal, Greater };
+    CompareResult __cdecl CompareWith(const UnicodeString& o) const;
+    CompareResult __cdecl CompareWith(const __wchar_t* s) const;
+    CompareResult __cdecl CompareWithMatchCase(const UnicodeString& o) const;
+    CompareResult __cdecl CompareWithMatchCase(const __wchar_t* s) const;
+    __wchar_t* __cdecl Alloc(unsigned int size);
+    unsigned int __cdecl NewSize(unsigned int length);
+    void __cdecl Set(const __wchar_t* s, int length, int fallback);  // length < 0: fallback, < 0: up to the NUL
 
     wchar_t* text = nullptr;
     unsigned int capacity = 0;
     unsigned int length = 0;
 };
+JET_LAYOUT32(sizeof(UnicodeString) == 0xc);
+
+// MBCS string {data, capacity, bytes, characters} (unit U14a, MultiByteString.cpp); no module imports it. Several
+// members count characters as bytes (the copies, Set, SetLength, Ins, Del): kept as in the original.
+class MultiByteString {
+public:
+    MultiByteString();
+    MultiByteString(const MultiByteString& o);
+    MultiByteString(const MultiByteString& o, unsigned int pos, int count);
+    MultiByteString(unsigned int ch, unsigned int count);
+    MultiByteString(const char* s);
+    MultiByteString(const char* s, unsigned int n);
+    ~MultiByteString();
+
+    const MultiByteString& __cdecl operator=(const MultiByteString& o);
+    const MultiByteString& __cdecl operator=(const char* s);
+    bool __cdecl operator==(const MultiByteString& o) const;
+    bool __cdecl operator==(const char* s) const;
+    bool __cdecl operator!=(const MultiByteString& o) const;
+    bool __cdecl operator!=(const char* s) const;
+    bool __cdecl operator<(const MultiByteString& o) const;
+    bool __cdecl operator<(const char* s) const;
+    bool __cdecl operator<=(const MultiByteString& o) const;
+    bool __cdecl operator<=(const char* s) const;
+    bool __cdecl operator>(const MultiByteString& o) const;
+    bool __cdecl operator>(const char* s) const;
+    bool __cdecl operator>=(const MultiByteString& o) const;
+    bool __cdecl operator>=(const char* s) const;
+    char& __cdecl operator[](int i);
+    char& __cdecl operator[](unsigned int i);
+    unsigned int __cdecl operator[](int i) const;
+    unsigned int __cdecl operator[](unsigned int i) const;
+    __cdecl operator const char*() const;
+    MultiByteString& __cdecl operator+=(const MultiByteString& o);
+    MultiByteString& __cdecl operator+=(const char* s);
+
+    int __cdecl Add(const char* fmt, char* args);
+    int __cdecl Addf(const char* fmt, ...);
+    unsigned int __cdecl AllocSize() const;
+    const char* __cdecl CStr() const;
+    int __cdecl Compare(const MultiByteString& o) const;
+    int __cdecl Compare(const char* s) const;
+    int __cdecl CompareIgnoreCase(const MultiByteString& o) const;
+    int __cdecl CompareIgnoreCase(const char* s) const;
+    void __cdecl Del(unsigned int pos, unsigned int count);
+    bool __cdecl EqualsIgnoreCase(const MultiByteString& o) const;
+    bool __cdecl EqualsIgnoreCase(const char* s) const;
+    int __cdecl Find(unsigned int ch, unsigned int start) const;
+    int __cdecl Find(const char* s, unsigned int start) const;
+    int __cdecl FindIgnoreCase(unsigned int ch, unsigned int start) const;
+    int __cdecl FindIgnoreCase(const char* s, unsigned int start) const;
+    static int __cdecl FindIgnoreCase(const char* text, unsigned int ch, unsigned int start);
+    static int __cdecl FindIgnoreCase(const char* text, unsigned int length, const char* s, unsigned int start);
+    int __cdecl GetANSI(char* out, unsigned int size) const;
+    double __cdecl GetDouble() const;
+    float __cdecl GetFloat() const;
+    int __cdecl GetInt(int base) const;
+    unsigned int __cdecl GetUInt(int base) const;
+    int __cdecl GetUnicode(__wchar_t* out, unsigned int size) const;
+    void __cdecl Ins(unsigned int ch, unsigned int pos, unsigned int count);
+    void __cdecl Ins(const char* s, unsigned int pos);
+    void __cdecl Left(unsigned int n);
+    unsigned int __cdecl Length() const;
+    bool __cdecl Read(BinReader& r);
+    void __cdecl Right(unsigned int n);
+    void __cdecl Set(int value, unsigned int radix);
+    void __cdecl Set(const char* fmt, char* args);
+    bool __cdecl SetANSI(const char* s, int length);
+    void __cdecl SetLength(unsigned int n);
+    bool __cdecl SetUnicode(const __wchar_t* s, int length);
+    void __cdecl Setf(const char* fmt, ...);
+    void __cdecl Setn(const char* s, unsigned int n);
+    unsigned int __cdecl Size() const;
+    void __cdecl Strip(const char* chars);
+    void __cdecl ToLower();
+    void __cdecl ToUpper();
+    MultiByteString __cdecl Token(const char* delimiters);
+    bool __cdecl Write(BinWriter& w) const;
+
+private:
+    enum CompareResult { Less, Equal, Greater };
+    CompareResult __cdecl CompareWith(const MultiByteString& o) const;
+    CompareResult __cdecl CompareWith(const char* s) const;
+    CompareResult __cdecl CompareWithMatchCase(const MultiByteString& o) const;
+    CompareResult __cdecl CompareWithMatchCase(const char* s) const;
+    unsigned char* __cdecl Alloc(unsigned int size);
+    unsigned int __cdecl NewSize(unsigned int bytes);
+    static unsigned int __cdecl GetLengthAndSize(const unsigned char* s, unsigned int& size);
+    void __cdecl Set(const unsigned char* s, int length, int fallback);
+
+    unsigned char* data = nullptr;
+    unsigned int capacity = 0;
+    unsigned int bytes = 0;
+    unsigned int chars = 0;
+};
+JET_LAYOUT32(sizeof(MultiByteString) == 0x10);
 
 // ---- options: a list of {key, value, ...} entries read from option files or raw lines
 class Vector2;

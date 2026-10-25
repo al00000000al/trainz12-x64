@@ -1431,6 +1431,50 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
   the baseline and the Launcher is clean. The build is kept as `KernelStandard_7c_u12c.dll`.
 - Next: U14 (Alloc, PackedHeap, PString/PStringCache, the strings, KernelStandardInit) and the cut-over.
 
+### KernelStandard_7c U14a, UnicodeString / MultiByteString / AnsiString / String (2026-10-26): 1606/1762 exports ours
+- U14 is split. The decompile shows that the string classes reach the foundation only through Alloc's exports,
+  the string-heap helper (0x10039780) and the shared empty block. So U14a makes all string code ours and leaves
+  that state with the original, used by address, as U12/U13 did with their statics. U14b moves the state:
+  Alloc, PackedHeap(MP), PoolBlockAlloc, ReferenceCount, PString/PStringCache (its lock, hash and bucket helpers),
+  KernelStandardInit and the 68 data exports still forwarded.
+- 269 exports in `UnicodeString.cpp` (83), `MultiByteString.cpp` (78) and `AnsiString.cpp` (AnsiString 92,
+  String 16). The CRT calls are msvcr80's (`Crt80.h`): case mapping, MBCS and wide conversion and number
+  parsing follow its locale. The float getters return atof's / wcstod's double unrounded in st(0) (aliases of
+  double workers).
+- UnicodeString is `{text, capacity in bytes, length}`. The capacity is `(2n + 0x12) & ~0xf`, and buffers come
+  from Alloc. SetLength only grows the buffer and never the length. `Ins(ch, pos, count)` memsets `count` bytes
+  with the low byte of ch, on a wide buffer. Read takes a 4-byte header: bit 30 set means a UTF-16 byte count,
+  otherwise an ANSI character count, which is converted.
+- MultiByteString is `{data, capacity, bytes, characters}`, with capacity `(n + 0x11) & ~0xf`. Copies, Set,
+  Setn, SetLength, Ins and Del use the character count as a byte count. A double-byte fill or a UTF-16 Read
+  header leaves bytes != characters, and the original's next Ins, Del or Read then writes past the buffer.
+  A failed SetUnicode clears the buffer but keeps the character count, so the next Del reads address 0.
+- AnsiString points at `{capacity, length, chars}` with the reference count at -4.
+  - Blocks of `capacity + 0xc` bytes, rounded to 8, come from the "#StringData" PackedHeapMP up to 0xa0 bytes
+    and from Alloc above that. The heap is made on first use.
+  - A capacity of 0 reads as "null": empty strings share the original's static block (0x100ae254, guard
+    0x100ae264, refs 1, never counted).
+  - MakeBufferUnique reallocates when the block is shared, too small or has capacity 0. With `keep`, the size is
+    at least the old capacity. A null `data` with size 0 gets a 0x10-byte block that claims 4 characters.
+  - Compare and CompareIgnoreCase return 1 / 0 / 2 for the null cases (the CompareWith values) and -1 / 0 / 1
+    otherwise.
+  - `x += x` copies from the block it has just released when the buffer grows.
+- Diff test `diff_ks_string`: one random 20 000-step script per class, made before either side runs. After
+  every step all fields and the text of each touched object are compared, with every return value.
+  - AnsiStrings are made and freed through the other module every fifth step, since both share the heap and
+    the empty block.
+  - Conversions from and to PString (nodes of the live cache), UnicodeString and AnsiString are covered, and
+    so are Read/Write round trips with short writes and crafted headers.
+  - 462 738 results, 0 mismatches. 10 of 16 mutations were caught; the other 6 are equivalent (boundary `<`/`<=`
+    with equal results, a clamp that never applies, the stack-or-heap choice of a temporary buffer).
+  - Inputs that crash or corrupt the original are left out: null text into _mbslen/mbstowcs/wcstombs, the two
+    MultiByteString count mismatches above, and `x += x`.
+- The other KernelStandard tests still pass, except the known NaN-only LCRand difference (U5).
+  `diff_ks_thread` failed once in 3 runs on a Terminate timing race; Thread is unchanged. The x64 harness shows
+  0 differences. In game: the menu log matches the baseline (0 lines differ), and the Launcher shows no
+  "faulty" box. The build is kept as `KernelStandard_7c_u14a.dll`.
+- Next: U14b (the foundation cut-over).
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's

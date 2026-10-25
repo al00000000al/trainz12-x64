@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+﻿cmake_minimum_required(VERSION 3.28)
 project(trainz12_jet CXX)
 
 # Drop-in replacements for the Jet engine modules of Trainz 2012.
@@ -135,6 +135,7 @@ target_link_libraries(diff_ks_thread PRIVATE winmm)
 add_executable(diff_ks_log tests/diff_ks_log.cpp)
 add_executable(diff_ks_profile tests/diff_ks_profile.cpp)
 add_executable(diff_ks_eh tests/diff_ks_eh.cpp)
+add_executable(diff_ks_string tests/diff_ks_string.cpp)
 add_executable(diff_krs tests/diff_krs.cpp)
 add_executable(diff_r2d tests/diff_r2d.cpp)
 add_executable(diff_iw32 tests/diff_iw32.cpp)

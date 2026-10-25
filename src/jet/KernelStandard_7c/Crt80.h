@@ -92,6 +92,31 @@ JET_CRT80(void, qsort, (void* base, size_t n, size_t size, int(__cdecl* cmp)(con
 JET_CRT80(int, vsprintf, (char* dst, const char* format, va_list ap), (dst, format, ap))
 JET_CRT80(int, vfprintf, (void* file, const char* format, va_list ap), (file, format, ap))
 JET_CRT80(char*, __iob_func, (), ())  // msvcr80's FILE[3] (0x20 bytes each): stdin, stdout, stderr
+// the strings (unit U14a): case mapping, MBCS and number parsing follow msvcr80's locale
+JET_CRT80(long, wcstol, (const wchar_t* s, wchar_t** end, int base), (s, end, base))
+JET_CRT80(unsigned long, wcstoul, (const wchar_t* s, wchar_t** end, int base), (s, end, base))
+JET_CRT80(double, wcstod, (const wchar_t* s, wchar_t** end), (s, end))
+JET_CRT80(int, _wcsicmp, (const wchar_t* a, const wchar_t* b), (a, b))
+JET_CRT80(int, _wcsnicmp, (const wchar_t* a, const wchar_t* b, size_t n), (a, b, n))
+JET_CRT80(wchar_t*, _wcslwr, (wchar_t* s), (s))
+JET_CRT80(wchar_t*, _wcsupr, (wchar_t* s), (s))
+JET_CRT80(unsigned short, towlower, (unsigned short c), (c))
+JET_CRT80(unsigned short, towupper, (unsigned short c), (c))
+JET_CRT80(int, toupper, (int c), (c))
+JET_CRT80(size_t, _mbslen, (const unsigned char* s), (s))
+JET_CRT80(int, _vsnwprintf, (wchar_t* dst, size_t n, const wchar_t* format, va_list ap), (dst, n, format, ap))
+JET_CRT80(wchar_t*, _itow, (int value, wchar_t* dst, int radix), (value, dst, radix))
+JET_CRT80(char*, _itoa, (int value, char* dst, int radix), (value, dst, radix))
+JET_CRT80(char*, _strupr, (char* s), (s))
+JET_CRT80(int, _mbscmp, (const unsigned char* a, const unsigned char* b), (a, b))
+JET_CRT80(int, _mbsicmp, (const unsigned char* a, const unsigned char* b), (a, b))
+JET_CRT80(int, _mbsnbicmp, (const unsigned char* a, const unsigned char* b, size_t n), (a, b, n))
+JET_CRT80(unsigned char*, _mbslwr, (unsigned char* s), (s))
+JET_CRT80(unsigned char*, _mbsupr, (unsigned char* s), (s))
+JET_CRT80(int, _ismbblead, (unsigned int c), (c))
+JET_CRT80(unsigned char*, _mbsinc, (const unsigned char* p), (p))
+JET_CRT80(unsigned char*, _mbsninc, (const unsigned char* p, size_t n), (p, n))
+JET_CRT80(unsigned char*, _mbschr, (const unsigned char* s, unsigned int c), (s, c))
 #undef JET_CRT80
 
 // int _open(const char*, int, int) and _sopen(const char*, int, int, int): msvcr80 exports them as C++ overloads
