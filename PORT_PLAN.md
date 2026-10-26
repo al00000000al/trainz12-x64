@@ -28,8 +28,9 @@ at every step and catches mistakes while they are small.
   (screenshot diff), the same GS script behaviour on a test session. Recorded traces act as an oracle.
 
 - Granularity: stateless classes can move one at a time; stateful subsystems move as a whole module
-  (see MODLOG "Replacement granularity"). Modules the game never loads (Lexer, RenderDirectX9, movie players)
-  come last or not at all.
+  (see MODLOG "Replacement granularity"). Modules not seen loaded (Lexer, movie players)
+  come last or not at all. RenderDirectX9 is the second renderer (plugins.ini lists it next to OpenGL;
+  the launcher picks one), so it is ported too.
 
 ## Phase 3: x64
 - Fix 64-bit hazards in the source: pointer-sized fields in on-disk structs, `int`↔pointer casts,
@@ -91,6 +92,10 @@ After each step, refresh the README progress block: `python -I tools/progress.py
    8c. RenderSystem_7c U2 + U3 (shader languages, vertex programs, combiners).
    8d. RenderSystem_7c U5 (geometry), U6 (textures), U7 (materials), U8 (layers), U9 (Display, RenderKernel).
    8e. Render3DCore, Render3DFoundation, RenderOpenGL, then InterfaceSystem, WaterSystem (own inventories).
+   8f. RenderDirectX9_7c, the launcher's other renderer (d3dx9_42; x64 uses d3dx9_43). Checks with DirectX
+       picked in the launcher.
+   8g. InputDirectX_7c, the DirectInput driver (joysticks, wheels, force feedback through InputSystem's
+       ForceEffect). Loaded at the menu but keyboard and mouse come from InputWin32; left out of step 5.
 9. trainz.exe subsystems through the loader DLL: asset DB, GS compiler/VM, physics, world.
 
 ## Honest scale

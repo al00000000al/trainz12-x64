@@ -31,15 +31,15 @@ Measured by code size: a module counts in proportion to the exports that are alr
 ```
 Whole game        ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░   6.2 %   7,240 KB left of 7,719
 
-Jet engine        ███████░░░░░░░░░░░░░░░░░░░░░░░  22.4 %   1,659 KB left of 2,138  7/18 modules
+Jet engine        ██████░░░░░░░░░░░░░░░░░░░░░░░░  21.7 %   1,730 KB left of 2,208  7/19 modules
   Engine core     ██████████████████████████████ 100.0 %       0 KB left of   378  4/4 modules
   Input           ████████████████████████░░░░░░  81.2 %      19 KB left of   103  2/3 modules
-  Graphics        ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   1.3 %   1,268 KB left of 1,284  1/7 modules
+  Graphics        ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   1.2 %   1,338 KB left of 1,355  1/8 modules
   User interface  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %     354 KB left of   354  0/2 modules
   Debug           ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %      18 KB left of    18  0/2 modules
 
 Game              ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %   5,434 KB left of 5,434  0/2 modules
-Not loaded        ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %     147 KB left of   147  0/3 modules
+Not seen loaded   ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %      76 KB left of    76  0/2 modules
 ```
 
 Jet is Auran's general engine, a set of DLLs: core services, input, graphics and UI. The train simulation itself (physics, routes, sessions, Surveyor, TrainzScript, the asset system) is the game, `trainz.exe`, the biggest part, not started yet.
@@ -48,11 +48,11 @@ Jet is Auran's general engine, a set of DLLs: core services, input, graphics and
 |---|---|
 | Engine core | Jet: memory, strings, files, .ja archives, config, threads, logs, resources |
 | Input | Jet: keyboard, mouse, joysticks, key bindings |
-| Graphics | Jet: 2D/3D scene, meshes, materials, OpenGL renderer, water |
+| Graphics | Jet: 2D/3D scene, meshes, materials, water; OpenGL and DirectX 9 renderers (picked in the launcher) |
 | User interface | Jet: windows, buttons, menus, fonts |
 | Debug | Jet: debug console and overlays |
 | Game | trainz.exe: simulation, trains, routes, Surveyor, TrainzScript, assets; TNI plugin API |
-| Not loaded | Jet modules the game never loads: Lexer, DirectX 9 renderer, movie player |
+| Not seen loaded | Jet: Lexer (nothing references it), movie player (not loaded at the menu; re-check in a session) |
 
 Plan steps finished: 9 of 11 (`PORT_PLAN.md`). After the 32-bit replacement come the x64 build and the add-on compatibility tests.
 
@@ -76,6 +76,7 @@ Plan steps finished: 9 of 11 (`PORT_PLAN.md`). After the 32-bit replacement come
 | Render3DFoundation_7c | 194 KB | 1,453 | 0/1084 | not started |
 | Render3DExtension_7c | 38 KB | 326 | 0/186 | not started |
 | RenderOpenGL_7c | 135 KB | 944 | 0/51 | not started |
+| RenderDirectX9_7c | 70 KB | 404 | 0/41 | not started |
 | WaterSystem_7c | 92 KB | 714 | 0/490 | not started |
 | **User interface** | | | | |
 | InterfaceSystem_7c | 319 KB | 3,358 | 0/2022 | not started |
@@ -86,9 +87,8 @@ Plan steps finished: 9 of 11 (`PORT_PLAN.md`). After the 32-bit replacement come
 | **Game** | | | | |
 | trainz.exe | 5,411 KB | 45,438 | - | not started |
 | trainznativeinterface.dll | 23 KB | 369 | - | not started |
-| **Not loaded** | | | | |
+| **Not seen loaded** | | | | |
 | Lexer_7c | 18 KB | 233 | 0/185 | not started |
-| RenderDirectX9_7c | 70 KB | 404 | 0/41 | not started |
 | DSMoviePlayer_7c | 58 KB | 728 | 0/1 | not started |
 
 `done*`: KernelStandard_7c keeps one export, `HardwareException::GetCallStack` (an x86 stack walk), forwarded to the original until the x64 rewrite.

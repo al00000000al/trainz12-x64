@@ -18,23 +18,24 @@ TOTALS = ROOT / "tools" / "progress_exports.tsv"
 README = ROOT / "README.md"
 START, END = "<!-- progress:start -->", "<!-- progress:end -->"
 
-# (label, what it is, map dir, modules); the game never loads the last group (PORT_PLAN)
+# (label, what it is, map dir, modules); the last group was not seen loaded (MODLOG "What actually loads")
 GROUPS = [
     ("Engine core", "Jet: memory, strings, files, .ja archives, config, threads, logs, resources", "jet",
      ["Kernel_7c", "KernelStandard_7c", "KernelResources_7c", "KernelResource_7c"]),
     ("Input", "Jet: keyboard, mouse, joysticks, key bindings", "jet",
      ["InputWin32_7c", "InputSystem_7c", "InputDirectX_7c"]),
-    ("Graphics", "Jet: 2D/3D scene, meshes, materials, OpenGL renderer, water", "jet",
+    ("Graphics", "Jet: 2D/3D scene, meshes, materials, water; OpenGL and DirectX 9 renderers (picked in the launcher)",
+     "jet",
      ["Render2DCore_7c", "RenderSystem_7c", "Render3DCore_7c", "Render3DFoundation_7c", "Render3DExtension_7c",
-      "RenderOpenGL_7c", "WaterSystem_7c"]),
+      "RenderOpenGL_7c", "RenderDirectX9_7c", "WaterSystem_7c"]),
     ("User interface", "Jet: windows, buttons, menus, fonts", "jet",
      ["InterfaceSystem_7c", "InterfaceResources_7c"]),
     ("Debug", "Jet: debug console and overlays", "jet",
      ["DebugSupport_7c", "DebugInterface_7c"]),
     ("Game", "trainz.exe: simulation, trains, routes, Surveyor, TrainzScript, assets; TNI plugin API", "trainz",
      ["trainz.exe", "trainznativeinterface.dll"]),
-    ("Not loaded", "Jet modules the game never loads: Lexer, DirectX 9 renderer, movie player", "jet",
-     ["Lexer_7c", "RenderDirectX9_7c", "DSMoviePlayer_7c"]),
+    ("Not seen loaded", "Jet: Lexer (nothing references it), movie player (not loaded at the menu; re-check in a session)",
+     "jet", ["Lexer_7c", "DSMoviePlayer_7c"]),
 ]
 JET = [n for _, _, g, names in GROUPS if g == "jet" for n in names]
 
@@ -110,7 +111,7 @@ def block():
     def total(sel):
         return [sum(g[i] for g in sel) for i in (3, 4, 5, 6)]
 
-    jet = [g for g in stats if g[2] == "jet" and g[0] != "Not loaded"]
+    jet = [g for g in stats if g[2] == "jet" and g[0] != "Not seen loaded"]
     steps_done, steps = plan_steps()
     today = datetime.date.today().isoformat()
     out = [

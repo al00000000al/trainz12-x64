@@ -90,6 +90,8 @@ Tools: `D:\tools` (Ghidra), scripts: `trainz12-x64/tools/`
 - **The renderer in use is OpenGL** (RenderOpenGL_7c), not DirectX 9.
 - **Not loaded at the menu**: Lexer_7c (nothing references it; not in plugins.ini, so probably dead),
   DebugSupport, DSMoviePlayer, VFWMoviePlayer, Render3DExtension, RenderDirectX9. Re-check inside a driving session.
+  - Correction 2026-10-26: RenderDirectX9 is not dead. plugins.ini registers it in the same renderer group as
+    RenderOpenGL (`RenderDirectX9:DirectX9:052FEC1E-...`); the launcher's renderer choice loads one of them.
 - **Embedded Mozilla XULRunner 1.9pre** (`bin\mozilla\`: xul, xpcom, js3250, nspr4, nss3/ssl3/smime3/softokn3, sqlite3):
   the HTML panels of the menus. No x64 build of that version exists: the x64 port must replace it (e.g. WebView2).
   Also loaded: cg/cgGL, cudart, nvtt, ijl10, OpenAL32 + wrap_oal, LIBEAY32, MSVCR71, UnicoWS.
