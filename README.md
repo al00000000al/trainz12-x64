@@ -29,24 +29,24 @@ https://discord.gg/DmqMJGtCZ
 Measured by code size: a finished module counts whole, a partial one by the code behind the exports that are already ours (`tools/progress.py`, 2026-10-26).
 
 ```
-Whole game        ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░   6.3 %   7,230 KB left of 7,719
+🌍 Whole game         ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░   6.3 %   7,230 KB left of 7,719
 
-Jet engine        ███████░░░░░░░░░░░░░░░░░░░░░░░  22.1 %   1,719 KB left of 2,208  7/19 modules
-  Engine core     ██████████████████████████████ 100.0 %       0 KB left of   378  4/4 modules
-  Input           ████████████████████████░░░░░░  81.2 %      19 KB left of   103  2/3 modules
-  Graphics        █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   2.0 %   1,328 KB left of 1,355  1/8 modules
-  User interface  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %     354 KB left of   354  0/2 modules
-  Debug           ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %      18 KB left of    18  0/2 modules
+🧩 Jet engine         ███████░░░░░░░░░░░░░░░░░░░░░░░  22.1 %   1,719 KB left of 2,208  7/19 modules
+  🔧 Engine core      ██████████████████████████████ 100.0 %       0 KB left of   378  4/4 modules
+  🎮 Input            ████████████████████████░░░░░░  81.2 %      19 KB left of   103  2/3 modules
+  🎨 Graphics         █░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   2.0 %   1,328 KB left of 1,355  1/8 modules
+  🪟 User interface   ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %     354 KB left of   354  0/2 modules
+  🐞 Debug            ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %      18 KB left of    18  0/2 modules
 
-Game              ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %   5,434 KB left of 5,434  0/2 modules
-Not seen loaded   ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %      76 KB left of    76  0/2 modules
+🚂 Game               ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %   5,434 KB left of 5,434  0/2 modules
+💤 Not seen loaded    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %      76 KB left of    76  0/2 modules
 ```
 
 Jet is Auran's general engine, a set of DLLs: core services, input, graphics and UI. The train simulation itself (physics, routes, sessions, Surveyor, TrainzScript, the asset system) is the game, `trainz.exe`, the biggest part, not started yet.
 
 | Group | What it is |
 |---|---|
-| ⚙️ Engine core | Jet: memory, strings, files, .ja archives, config, threads, logs, resources |
+| 🔧 Engine core | Jet: memory, strings, files, .ja archives, config, threads, logs, resources |
 | 🎮 Input | Jet: keyboard, mouse, joysticks, key bindings |
 | 🎨 Graphics | Jet: 2D/3D scene, meshes, materials, water; OpenGL and DirectX 9 renderers (picked in the launcher) |
 | 🪟 User interface | Jet: windows, buttons, menus, fonts |
@@ -60,7 +60,7 @@ Plan steps finished: 9 of 11 (`PORT_PLAN.md`). After the 32-bit replacement come
 
 | Module | Code | Functions | Exports ours | Status |
 |---|---:|---:|---:|---|
-| ⚙️ **Engine core** | | | | |
+| 🔧 **Engine core** | | | | |
 | Kernel_7c | 52 KB | 534 | 256/256 | ✅ done |
 | KernelStandard_7c | 286 KB | 2,250 | 1761/1762 | ✅ done* |
 | KernelResources_7c | 10 KB | 118 | 51/51 | ✅ done |

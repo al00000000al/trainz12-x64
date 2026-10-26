@@ -22,7 +22,8 @@ README = ROOT / "README.md"
 START, END = "<!-- progress:start -->", "<!-- progress:end -->"
 
 # (label, what it is, map dir, modules); the last group was not seen loaded (MODLOG "What actually loads").
-# Jet modules sit in a folder per group under src/jet/ and ghidra_maps/jet/ (FOLDERS); EMOJI marks the README tables.
+# Jet modules sit in a folder per group under src/jet/ and ghidra_maps/jet/ (FOLDERS); EMOJI marks the README block and tables
+# (one emoji per line of the block, so the bars stay aligned; no variation-selector emoji like ⚙️, their width varies).
 GROUPS = [
     ("Engine core", "Jet: memory, strings, files, .ja archives, config, threads, logs, resources", "jet",
      ["Kernel_7c", "KernelStandard_7c", "KernelResources_7c", "KernelResource_7c"]),
@@ -44,7 +45,7 @@ GROUPS = [
 JET = [n for _, _, g, names in GROUPS if g == "jet" for n in names]
 FOLDERS = {"Engine core": "core", "Input": "input", "Graphics": "graphics", "User interface": "ui",
            "Debug": "debug", "Not seen loaded": "not_loaded"}
-EMOJI = {"Engine core": "⚙️", "Input": "🎮", "Graphics": "🎨", "User interface": "🪟", "Debug": "🐞",
+EMOJI = {"Engine core": "🔧", "Input": "🎮", "Graphics": "🎨", "User interface": "🪟", "Debug": "🐞",
          "Game": "🚂", "Not seen loaded": "💤"}
 STATUS_ICON = {"done": "✅", "done*": "✅", "partial": "🟡", "not started": "⬜"}
 FOLDER = {n: FOLDERS[label] for label, _, g, names in GROUPS if g == "jet" for n in names}
@@ -142,7 +143,7 @@ def block():
 
     def line(label, done, size, mods_done=None, mods=None):
         mods_txt = f"  {mods_done}/{mods} modules" if mods else ""
-        return (f"{label:<18}{bar(done / size)} {100 * done / size:5.1f} %  "
+        return (f"{label:<21}{bar(done / size)} {100 * done / size:5.1f} %  "
                 f"{(size - done) / 1024:>6,.0f} KB left of {size / 1024:>5,.0f}{mods_txt}")
 
     def total(sel):
@@ -157,12 +158,12 @@ def block():
         f"that are already ours (`tools/progress.py`, {today}).",
         "",
         "```",
-        line("Whole game", *total(stats)[:2]),
+        line("🌍 Whole game", *total(stats)[:2]),
         "",
-        line("Jet engine", *total(jet)),
-        *(line("  " + g[0], g[3], g[4], g[5], g[6]) for g in jet),
+        line("🧩 Jet engine", *total(jet)),
+        *(line(f"  {EMOJI[g[0]]} {g[0]}", g[3], g[4], g[5], g[6]) for g in jet),
         "",
-        *(line(g[0], g[3], g[4], g[5], g[6]) for g in stats if g not in jet),
+        *(line(f"{EMOJI[g[0]]} {g[0]}", g[3], g[4], g[5], g[6]) for g in stats if g not in jet),
         "```",
         "",
         "Jet is Auran's general engine, a set of DLLs: core services, input, graphics and UI. The train simulation "
