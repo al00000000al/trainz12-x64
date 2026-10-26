@@ -23,6 +23,52 @@ Main goal also is save compatibility with addons
 Here is a discord server, so you can join and talk here!
 https://discord.gg/DmqMJGtCZ
 
+## Progress
+
+<!-- progress:start -->
+Measured by code size: a module counts in proportion to the exports that are already ours (`tools/progress.py`, 2026-10-26).
+
+```
+Whole game   ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░   6.2 %  (0.47 of 7.54 MB)
+Jet engine   ██████░░░░░░░░░░░░░░░░░░░░░░░░  20.9 %
+trainz.exe   ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %
+```
+
+Plan steps finished: 9 of 11 (`PORT_PLAN.md`). After the 32-bit replacement come the x64 build and the add-on compatibility tests.
+
+<details><summary>Per module</summary>
+
+| Module | Code | Functions | Exports ours | Status |
+|---|---:|---:|---:|---|
+| Kernel_7c | 52 KB | 534 | 256/256 | done |
+| KernelStandard_7c | 286 KB | 2,250 | 1761/1762 | done* |
+| KernelResources_7c | 10 KB | 118 | 51/51 | done |
+| KernelResource_7c | 31 KB | 396 | 187/187 | done |
+| Render2DCore_7c | 17 KB | 167 | 85/85 | done |
+| InputWin32_7c | 12 KB | 100 | 1/1 | done |
+| InputSystem_7c | 71 KB | 560 | 327/327 | done |
+| RenderSystem_7c | 351 KB | 3,628 | 0/2687 | not started |
+| Render3DCore_7c | 458 KB | 3,168 | 0/2500 | not started |
+| Render3DFoundation_7c | 194 KB | 1,453 | 0/1084 | not started |
+| Render3DExtension_7c | 38 KB | 326 | 0/186 | not started |
+| RenderOpenGL_7c | 135 KB | 944 | 0/51 | not started |
+| InterfaceSystem_7c | 319 KB | 3,358 | 0/2022 | not started |
+| InterfaceResources_7c | 34 KB | 345 | 0/169 | not started |
+| WaterSystem_7c | 92 KB | 714 | 0/490 | not started |
+| InputDirectX_7c | 19 KB | 122 | 0/1 | not started |
+| RenderDirectX9_7c | 70 KB | 404 | 0/41 | not started |
+| DebugSupport_7c | 16 KB | 201 | 0/119 | not started |
+| DebugInterface_7c | 3 KB | 50 | 0/38 | not started |
+| Lexer_7c | 18 KB | 233 | 0/185 | not started |
+| DSMoviePlayer_7c | 58 KB | 728 | 0/1 | not started |
+| trainz.exe | 5,411 KB | 45,438 | - | not started |
+| trainznativeinterface.dll | 23 KB | 369 | - | not started |
+
+`done*`: KernelStandard_7c keeps one export, `HardwareException::GetCallStack` (an x86 stack walk), forwarded to the original until the x64 rewrite.
+
+</details>
+<!-- progress:end -->
+
 ## What is here
 
 - `PORT_PLAN.md`: the approach and the numbered queue of next steps.
@@ -33,7 +79,8 @@ https://discord.gg/DmqMJGtCZ
   trainz.exe and trainznativeinterface.dll.
 - `src/jet/`: the rewritten Jet modules and their tests (CMake):
   - `Kernel_7c`: all exports ours.
-  - `KernelStandard_7c`: 861 of 1762 exports ours; the rest forward to the renamed original.
+  - `KernelStandard_7c`: 1761 of 1762 exports ours; `HardwareException::GetCallStack` still forwards to the
+    renamed original.
   - `InputSystem_7c`, `InputWin32_7c`, `KernelResource_7c`, `KernelResources_7c`, `Render2DCore_7c`.
   - `include/jet/`: our declarations of the Jet classes with their binary layouts.
   - `tests/diff_*.cpp`: differential tests. Each loads our module and the original in one process and runs the
@@ -69,6 +116,7 @@ Keep a backup of the original files.
 
 Pick the next step in `PORT_PLAN.md`, read the notes for its module, and follow the existing pattern: rewrite a
 unit, add its names to `implemented.txt`, write or extend a differential test until it shows 0 mismatches, then
-check in game. `MODLOG.md` records what has been measured.
+check in game. `MODLOG.md` records what has been measured. Then refresh the progress block above with
+`python -I tools/progress.py --write`.
 
 

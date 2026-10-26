@@ -58,6 +58,7 @@ at every step and catches mistakes while they are small.
   libjpeg-turbo, nvtt); Cg, d3dx9, XULRunner, SpeedTree still open.
 
 ## Next steps (one fresh session each; read MODLOG.md first, work sequentially to save the usage limit)
+After each step, refresh the README progress block: `python -I tools/progress.py --write`.
 1. ~~Kernel_7c: EditItem block + Compress/Encrypt vbtables → 256/256, probe + menu check.~~ Done 2026-10-19.
 2. ~~Kernel_7c x64: build the module as x64 in a standalone test harness (no game yet) to find 64-bit hazards early.~~
    Done 2026-10-19.
