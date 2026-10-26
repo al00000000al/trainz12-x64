@@ -1631,6 +1631,37 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
 - In game: menu reached, JetLog identical to the baseline.
 - U2b (ExtendedGfxLanguage and the four flex scanners with their Lemon parsers) is next.
 
+### RenderSystem_7c U2b1, ExtendedGfxLanguage and the combiner records (2026-10-26): 1136/2687 exports ours
+- U2b is split: U2b1 the class and records (here), U2b2 the four scanners/parsers (internal, reached only from
+  VertexProgram::Load, TextureCombiner::Load and VertexProgramManager::RegisterBuiltInPrograms).
+- `graphics/RenderSystem_7c/ExtendedGfxLanguage.cpp` (44 exports):
+  - ExtendedGfxLanguage : virtual ReferenceCount, 0x3c: +0 vftable, +4 vbtable, +8 Display*, +0xc source
+    (AnsiString), +0x10 filename, +0x14 programName, +0x18 registeredName, +0x1c generation (1.0), +0x20
+    Array<SymbolName, 3> (SymbolName = {PString, GfxSymbolId {bool local, int number, int extra}}), +0x2c user data,
+    +0x30 fallback program (referenced; SetFallbackProgram/SetUserData are const), +0x34 the ReferenceCount.
+  - vftable slots: 0 SupportedByPlatform(float) false, 1 LoadProgram, 2 LoadFromFile, 3 LoadNativeFormat true,
+    4 CompileProgram true, 5 Bind false, 6 End false, 7 (unnamed) false, 8 Load(MemoryFile&, name, file) false,
+    the one the derived classes fill in.
+  - LoadProgram runs the defines over the text and hands it to Load as a memory file named "built-in";
+    LoadFromFile opens `db->GetFileName(file)` (mode 0x10) and passes (name, file) on.
+  - ProcessDefines writes each value straight into the text's block (shared or not), padding with spaces or
+    deleting first, and resumes the search one value length past the end of the replacement: near the end of a
+    text that start lies past the terminator and strstr reads beyond it (tests keep a tail on every text).
+  - SetFilename cuts a trailing ".txt". InitInstance copies everything into the other object without releasing
+    its old fallback. GetLocalConstantNumber returns the number of the first matching symbol that is not local.
+  - TextureCombiner::Instruction {vft, opcode, ParseList<RegisterItem>*, ParseList<ModifierItem>*, address type,
+    bool, four ints +0x18..+0x24, float +0x28}; RegisterItem {type, index, two ParseList<ModifierItem>*, next}.
+    The copies from a pointer are deep and leave +0x18..+0x24 alone; the destructors free both lists.
+- Test `tests/diff_rs_u2b.cpp` (602 scenarios, 0 mismatches): heap hooked as in diff_rs_u2; language objects get
+  a vftable copy whose slot 8 logs what Load is handed, LoadFromFile reads %TEMP% files through a stand-in
+  ResourceDatabase, objects are deleted through their reference count with fallbacks still set.
+  - Mutations caught (14): the search restart, the missing old-fallback release in InitInstance, symbol field
+    order, the local test, the "built-in" name, the Load argument order, the define text length, generation 1.0,
+    the destructor's fallback release, CompileProgram's result, the deep copies' second list and field copies.
+    The rest were equivalent (Close before the destructor, list tail handling, the pad character that is
+    overwritten anyway).
+- In game: menu reached, JetLog identical to the baseline. diff_rs_u1/u2/u4 still 0 mismatches.
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's

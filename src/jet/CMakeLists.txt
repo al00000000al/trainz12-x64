@@ -157,6 +157,8 @@ add_executable(diff_rs_u1 tests/diff_rs_u1.cpp)
 add_executable(diff_rs_u4 tests/diff_rs_u4.cpp)
 # RenderSystem U2a: shader-language data (symbols, registers, instructions, defines), heap hooked on both sides
 add_executable(diff_rs_u2 tests/diff_rs_u2.cpp)
+# RenderSystem U2b: ExtendedGfxLanguage and the texture combiner records (+ the shader-language parsers)
+add_executable(diff_rs_u2b tests/diff_rs_u2b.cpp)
 add_executable(diff_iw32 tests/diff_iw32.cpp)
 add_executable(diff_is_obs tests/diff_is_obs.cpp)
 add_executable(diff_is_dev tests/diff_is_dev.cpp)

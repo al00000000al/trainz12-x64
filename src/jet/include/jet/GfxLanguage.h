@@ -183,4 +183,138 @@ struct PreProcessorArray : Array<PreProcessorDefine, 3> {
     AnsiString __cdecl ConcatenateStrings() const;  // ":name:value" for each define
 };
 
+// ---- U2b (RenderSystem_7c/ExtendedGfxLanguage.cpp)
+
+class Display;
+class ResourceDatabase;
+
+// what a program's symbol name stands for (GetSymbolId); `local` symbols are constants numbered by `number`
+struct GfxSymbolId {
+    bool local;  // +0 (GetLocalConstantNumber wants it false)
+    int number;  // +4
+    int extra;   // +8
+};
+
+// the base of the vertex programs and texture combiners (0x3c bytes with its virtual ReferenceCount at +0x34):
+// the source text, names, a generation, the symbol names it declares, a user value and a fallback program.
+// LoadProgram/LoadFromFile run the defines over the text and hand it to the derived class's Load.
+class ExtendedGfxLanguage : public virtual ReferenceCount {
+public:
+    struct SymbolName {  // 0x10
+        PString name;    // +0
+        GfxSymbolId id;  // +4
+    };
+
+    virtual bool __cdecl SupportedByPlatform(float generation);  // slot 0: false
+    virtual bool __cdecl LoadProgram(const PString& name, const char* source, const PreProcessorArray* defines);
+    virtual bool __cdecl LoadFromFile(const ResourceDatabase* db, const PString& name, const PString& file,
+                                      const PreProcessorArray* defines);
+    virtual bool __cdecl LoadNativeFormat(const PString& name, const char* source);  // true
+    virtual bool __cdecl CompileProgram();                                           // true
+    virtual bool __cdecl Bind() const;                                               // false
+    virtual bool __cdecl End() const;                                                // false
+    virtual bool __cdecl Slot7();  // unnamed, false in every class seen
+
+    Display* __cdecl GetDisplay() const;
+    const AnsiString& __cdecl GetProgramString() const;
+    const PString& __cdecl GetFilename() const;
+    const PString& __cdecl GetProgramName() const;
+    const PString& __cdecl GetRegisteredName() const;
+    void __cdecl SetFilename(const PString& f);  // a trailing ".txt" is cut off
+    void __cdecl SetProgramName(const PString& n);
+    void __cdecl SetRegisteredName(const PString& n);
+    float __cdecl GetGeneration() const;
+    void __cdecl SetGeneration(float g);
+    unsigned long __cdecl GetUserData() const;
+    void __cdecl SetUserData(unsigned long d) const;
+    const ExtendedGfxLanguage* __cdecl GetFallbackProgram() const;
+    void __cdecl SetFallbackProgram(const ExtendedGfxLanguage* p) const;  // referenced
+    bool __cdecl GetSymbolId(const PString& name, GfxSymbolId& id) const;
+    int __cdecl GetLocalConstantNumber(const PString& name) const;  // -1 when not a local symbol
+    const Array<SymbolName, 3>& GetSymbolNameList() const;
+
+    JET_HEAP_OBJECT
+
+protected:
+    explicit ExtendedGfxLanguage(Display* display);
+    virtual ~ExtendedGfxLanguage();
+
+    virtual bool __cdecl Load(MemoryFile& file, const PString& name, const PString& fileName);  // slot 8: false
+
+    void __cdecl InitInstance(ExtendedGfxLanguage& copy) const;  // copies everything into `copy`
+    void __cdecl ProcessDefines(AnsiString& text, const PreProcessorArray* defines) const;
+    void __cdecl AddSymbolName(const PString& name, int number, bool local, int extra);
+
+    Display* display;                             // +8
+    AnsiString source;                            // +0xc
+    PString filename;                             // +0x10
+    PString programName;                          // +0x14
+    PString registeredName;                       // +0x18
+    float generation;                             // +0x1c (1)
+    Array<SymbolName, 3> symbolNames;             // +0x20
+    mutable unsigned long userData;               // +0x2c
+    mutable const ExtendedGfxLanguage* fallback;  // +0x30
+};
+JET_LAYOUT32(sizeof(ExtendedGfxLanguage) == 0x3c);
+
+// a singly linked list of parse records through each item's `next` (0xc)
+template <class T>
+struct ParseList {
+    T* head;
+    T* tail;
+    int count;
+    JET_HEAP_OBJECT
+};
+
+// The texture combiner's parse records (its program parser builds them). TextureCombiner itself is unit U3; only
+// the nested records are declared here.
+class TextureCombiner {
+public:
+    enum TextureOpcode {};
+    enum TextureAddressType {};
+    enum RegType {};
+    enum ModifierType {};
+
+    struct ModifierItem {  // 8
+        explicit ModifierItem(ModifierType t);
+        ModifierItem& operator=(const ModifierItem& o);
+        ModifierType type;
+        ModifierItem* next;
+        JET_HEAP_OBJECT
+    };
+
+    // an operand (0x14): the register and two lists of modifiers it owns
+    struct RegisterItem {
+        RegisterItem(RegType type, int index);
+        explicit RegisterItem(const RegisterItem* o);  // copies both lists, not `next`
+        ~RegisterItem();
+        RegisterItem& operator=(const RegisterItem& o);  // the five fields as they are
+
+        RegType type;                     // +0
+        int index;                        // +4
+        ParseList<ModifierItem>* mods1;   // +8
+        ParseList<ModifierItem>* mods2;   // +0xc
+        RegisterItem* next;               // +0x10
+        JET_HEAP_OBJECT
+    };
+
+    struct Instruction {  // 0x2c
+        Instruction(TextureOpcode op, ParseList<RegisterItem>* operands, ParseList<ModifierItem>* mods,
+                    TextureAddressType address, float value, bool flag);
+        Instruction(const Instruction& o);           // shallow: the same lists
+        explicit Instruction(const Instruction* o);  // deep copy of both lists; +0x18..+0x24 left as they are
+        Instruction& operator=(const Instruction& o);
+        virtual ~Instruction();
+
+        TextureOpcode opcode;                    // +4
+        ParseList<RegisterItem>* operands;       // +8
+        ParseList<ModifierItem>* mods;           // +0xc
+        TextureAddressType address;              // +0x10
+        bool flag;                               // +0x14
+        int field18, field1c, field20, field24;  // +0x18 (only the copy constructor and operator= touch them)
+        float value;                             // +0x28
+        JET_HEAP_OBJECT
+    };
+};
+
 }  // namespace Jet
