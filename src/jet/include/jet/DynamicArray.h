@@ -168,37 +168,165 @@ private:
     }
 };
 
+// The full member set follows RenderSystem's exported Array<PreProcessorDefine, 3> (0x1001cb10..0x1001d180); an
+// iterator is {array, index}, null at the end.
 template <class T, unsigned int SIZ = 13>
 class Array {
 public:
+    class Iterator {
+    public:
+        Iterator(Array* a = nullptr, unsigned int i = 0) : array(a), index(i) {}
+        Array* array;
+        unsigned int index;
+    };
+    class ConstIterator {
+    public:
+        ConstIterator(const Array* a = nullptr, unsigned int i = 0) : array(a), index(i) {}
+        const Array* array;
+        unsigned int index;
+    };
+
     Array() : count(0), capacity(0), data(nullptr) {}
-    Array(const Array&) = delete;
-    Array& operator=(const Array&) = delete;
+    Array(const Array& o) : count(0), capacity(0), data(nullptr) { *this = o; }
     // destroys the items and frees the block (the pointer is left as is, like the original)
     ~Array()
     {
-        for (unsigned long i = 0; i < count; ++i) data[i].~T();
-        count = 0;
-        if (data) Alloc::Delete(data);
+        RemoveAll();
+        if (data) Jet::Alloc::Delete(data);
+    }
+
+    // the items are copied into a block of the other's capacity (kept when ours is large enough); nothing when
+    // the other has no block
+    Array& operator=(const Array& o)
+    {
+        RemoveAll();
+        if (o.data) {
+            if (capacity < o.capacity) {
+                if (data) Jet::Alloc::Delete(data);
+                data = static_cast<T*>(Jet::Alloc::New(static_cast<unsigned int>(o.capacity * sizeof(T))));
+                capacity = o.capacity;
+            }
+            count = o.count;
+            for (unsigned int i = 0; i < count; ++i) new (&data[i]) T(o.data[i]);
+        }
+        return *this;
     }
 
     // room for `needed` items: the block becomes ceil(needed / SIZ) * SIZ items, contents moved bytewise
-    void Reserve(unsigned long needed)
+    void Reserve(unsigned int needed)
     {
         if (needed <= capacity) return;
-        const unsigned long items = (needed + SIZ - 1) / SIZ * SIZ;
-        T* block = static_cast<T*>(Alloc::New(static_cast<unsigned int>(items * sizeof(T))));
+        const unsigned int items = (needed + SIZ - 1) / SIZ * SIZ;
+        T* block = static_cast<T*>(Jet::Alloc::New(static_cast<unsigned int>(items * sizeof(T))));
         if (data) {
             std::memcpy(static_cast<void*>(block), data, count * sizeof(T));
-            if (data) Alloc::Delete(data);
+            if (data) Jet::Alloc::Delete(data);
         }
         capacity = items;
         data = block;
     }
+    void Grow(unsigned int n) { Reserve(count + n); }
+    // gives back `n` items of capacity, destroying the items beyond it (as the original, an empty array with
+    // room left destroys index 0xffffffff)
+    void Shrink(unsigned int n)
+    {
+        if (n >= capacity) {
+            RemoveAll();
+            return;
+        }
+        capacity -= n;
+        unsigned int i = count - 1;
+        while (i >= capacity) {
+            data[i].~T();
+            --i;
+        }
+        count = i + 1;
+        T* block = static_cast<T*>(Jet::Alloc::New(static_cast<unsigned int>(capacity * sizeof(T))));
+        std::memcpy(static_cast<void*>(block), data, count * sizeof(T));
+        if (data) Jet::Alloc::Delete(data);
+        data = block;
+    }
 
-    unsigned long Count() const { return count; }
+    unsigned int Count() const { return count; }
+    unsigned int Size() const { return capacity; }
     unsigned long Capacity() const { return capacity; }
-    const T& operator[](unsigned long i) const { return data[i]; }
+    bool IsEmpty() const { return count == 0; }
+    operator bool() const { return count != 0; }
+    T& operator[](unsigned int i) { return data[i]; }
+    const T& operator[](unsigned int i) const { return data[i]; }
+
+    void SetCount(unsigned int n)
+    {
+        Reserve(n);
+        while (count < n) {
+            new (&data[count]) T();
+            ++count;
+        }
+        while (count != n) {
+            --count;
+            data[count].~T();
+        }
+    }
+    void Add(const T* items, unsigned int n)
+    {
+        Reserve(count + n);
+        for (; n != 0; --n) {
+            new (&data[count]) T(*items);
+            ++count;
+            ++items;
+        }
+    }
+    void Add(const T& item) { Add(&item, 1); }
+    int AddEmpty(unsigned int n)  // the index of the first new item
+    {
+        const unsigned int first = count;
+        SetCount(count + n);
+        return static_cast<int>(first);
+    }
+    T* Alloc(unsigned int n)
+    {
+        const unsigned int first = count;
+        SetCount(count + n);
+        return data + first;
+    }
+    T Remove()  // the last item
+    {
+        --count;
+        T last(data[count]);
+        data[count].~T();
+        return last;
+    }
+    // the item at `it`, the rest moved down; `it` again while it is still inside, else the end
+    Iterator Remove(Iterator& it)
+    {
+        if (it.index < count) {
+            --count;
+            data[it.index].~T();
+            std::memmove(static_cast<void*>(data + it.index), data + it.index + 1, (count - it.index) * sizeof(T));
+        }
+        if (it.index < count) return it;
+        return Iterator();
+    }
+    void RemoveFast(unsigned int i)  // the last item moved into its place
+    {
+        --count;
+        data[i].~T();
+        if (i < count) std::memcpy(static_cast<void*>(data + i), data + count, sizeof(T));
+    }
+    void RemoveAll()
+    {
+        for (unsigned int i = 0; i < count; ++i) data[i].~T();
+        count = 0;
+    }
+
+    Iterator First() { return count ? Iterator(this, 0) : Iterator(); }
+    ConstIterator First() const { return count ? ConstIterator(this, 0) : ConstIterator(); }
+    Iterator Last() { return count ? Iterator(this, count - 1) : Iterator(); }
+    ConstIterator Last() const { return count ? ConstIterator(this, count - 1) : ConstIterator(); }
+    Iterator End() { return Iterator(); }
+    ConstIterator End() const { return ConstIterator(); }
+    Iterator Index(unsigned int i) { return i < count ? Iterator(this, i) : Iterator(); }
+    ConstIterator Index(unsigned int i) const { return i < count ? ConstIterator(this, i) : ConstIterator(); }
 
     unsigned long count;     // +0
     unsigned long capacity;  // +4

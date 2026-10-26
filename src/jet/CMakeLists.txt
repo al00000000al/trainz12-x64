@@ -155,6 +155,8 @@ add_executable(diff_r2d tests/diff_r2d.cpp)
 add_executable(diff_rs_u1 tests/diff_rs_u1.cpp)
 # RenderSystem U4: modifiers and lists, ours vs RenderSystem_7c_orig.dll on the same scripts
 add_executable(diff_rs_u4 tests/diff_rs_u4.cpp)
+# RenderSystem U2a: shader-language data (symbols, registers, instructions, defines), heap hooked on both sides
+add_executable(diff_rs_u2 tests/diff_rs_u2.cpp)
 add_executable(diff_iw32 tests/diff_iw32.cpp)
 add_executable(diff_is_obs tests/diff_is_obs.cpp)
 add_executable(diff_is_dev tests/diff_is_dev.cpp)

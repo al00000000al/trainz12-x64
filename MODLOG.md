@@ -1604,6 +1604,33 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
     the UpdateModifiers result, the result 2 detach, the frame-stamp test.
 - In game: menu reached, JetLog identical to the baseline.
 
+### RenderSystem_7c U2a, shader-language data (2026-10-26): 1092/2687 exports ours
+- `include/jet/GfxLanguage.h` + `graphics/RenderSystem_7c/GfxSymbols.cpp` (99 exports):
+  - SymbolEntry (0x48): +0 alias, +4 type, +8..+0x14 four ints (-1 when new), +0x18 hint, +0x1c 5, +0x20 byte,
+    +0x21 flags (bit 0 anonymous, cleared by SetName; bit 1 compared by LikeType; bit 2 owns the alias), +0x24..+0x30
+    left by the constructors, +0x34, +0x38 name, +0x3c reference count, +0x40 next, +0x44 API data. A symbol deletes
+    its `next` chain, its API data (virtual deleting destructor) and, with bit 2, its alias. AddRef/DecRef walk the
+    alias chain. The exported default constructor closure is SymbolEntry(0, false) (alias in implemented.txt).
+  - Vertex/TextureSymbolEntry add the class at +0x48 (shared bodies). VertexSymbolTable is an owning
+    Array<VertexSymbolEntry*> growing in steps of 128; its copy and assignment copy the pointers only.
+  - RegisterItem (0x18): symbol, OffsetAddress* {index register, offset}, swizzle text, flag, two modifiers. The
+    copy from a pointer gives the swizzle a 6-byte block, shares the offset's register and drops the modifiers.
+    RegisterModifier's assignment copies nothing.
+  - Instruction {vtable, operands}: the destructor deletes the operands and their array, reading the array
+    without a null test. Vertex/TextureInstruction add the opcode (+8).
+  - PreProcessorDefine {name, value}; PreProcessorArray = Array<PreProcessorDefine, 3>; ConcatenateStrings gives
+    ":name:value" for each define. `Jet::Array<T, SIZ>` (DynamicArray.h) now has the full member set of the
+    exported instance, iterators {array, index} (null at the end). Shrink on an empty array with room left destroys
+    index 0xffffffff in the original too.
+- Test `tests/diff_rs_u2.cpp` (1254 scenarios, 0 mismatches): both modules' imports of Alloc::New/Delete are hooked,
+  so every free is logged with the allocation's number and ownership is compared; symbols with chains and aliases,
+  the table past 256 entries, registers and instructions, every Array member.
+  - Mutations caught (8 + 3): LikeType and FindLike fields, the vertex class test, RegisterItem's dropped modifiers,
+    alias ownership, the ":" separator, the Remove iterator, the 128-entry step, the operand array free, SetName's
+    anonymous bit.
+- In game: menu reached, JetLog identical to the baseline.
+- U2b (ExtendedGfxLanguage and the four flex scanners with their Lemon parsers) is next.
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's

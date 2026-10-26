@@ -90,7 +90,10 @@ After each step, refresh the README progress block: `python -I tools/progress.py
        units U1-U9 (`notes/RenderSystem.md`); every other render module and trainz.exe stand on it.
    8b. ~~RenderSystem_7c U1 (value types, vertex formats) and U4 (modifiers).~~ Done 2026-10-26: U1 939 exports,
        U4 54 more (993/2687 ours); `tests/diff_rs_u1.cpp` and `tests/diff_rs_u4.cpp` 0 mismatches, menu check clean.
-   8c. RenderSystem_7c U2 + U3 (shader languages, vertex programs, combiners).
+   8c. RenderSystem_7c U2 + U3 (shader languages, vertex programs, combiners). U2a (symbols, registers,
+       instructions, preprocessor defines; 99 exports, 1092/2687) done 2026-10-26, `tests/diff_rs_u2.cpp`. Next U2b:
+       ExtendedGfxLanguage and four flex scanners + Lemon parsers (pre-parser, quick parser, vertex and texture
+       programs), then U3.
    8d. RenderSystem_7c U5 (geometry), U6 (textures), U7 (materials), U8 (layers), U9 (Display, RenderKernel).
    8e. Render3DCore, Render3DFoundation, RenderOpenGL, then InterfaceSystem, WaterSystem (own inventories).
    8f. RenderDirectX9_7c, the launcher's other renderer (d3dx9_42; x64 uses d3dx9_43). Checks with DirectX
