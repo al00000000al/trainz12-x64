@@ -57,7 +57,7 @@ Tools: `D:\tools` (Ghidra), scripts: `trainz12-x64/tools/`
   N3V news feed, same in the original.
 
 ### First reconstructed code: Jet::Version and Jet::UId (2026-10-18)
-- `src/jet/include/jet/{Version,UId}.h`, `src/jet/Kernel_7c/{Version,UId}.cpp` (private tree). 25 of 256 Kernel_7c
+- `src/jet/include/jet/{Version,UId}.h`, `src/jet/core/Kernel_7c/{Version,UId}.cpp` (private tree). 25 of 256 Kernel_7c
   exports now ours; Version default-ctor closure and UId Read/Write/GetString/SetRnd/UIdNull still forwarded
   (they need DynamicBuffer/PString/Rand from KernelStandard_7c).
 - ABI gotcha: most UId members are **`__cdecl` member functions** (mangled `QBA`/`QAA`, `this` on the stack);
@@ -130,7 +130,7 @@ Tools: `D:\tools` (Ghidra), scripts: `trainz12-x64/tools/`
   the TS12 binaries remain the authority.
 
 ### Jet::BFEncrypt = a modified Blowfish (reconstructed and verified 2026-10-19)
-- `src/jet/Kernel_7c/AuranBlowfish.{h,cpp}`; tables generated from pi by `tools/gen_pi_tables.py` (Machin formula),
+- `src/jet/core/Kernel_7c/AuranBlowfish.{h,cpp}`; tables generated from pi by `tools/gen_pi_tables.py` (Machin formula),
   checked equal to the DLL's tables (P at RVA 0x18478, S at 0x184c0). No data copied from the binary.
 - Differences from standard Blowfish (all confirmed in the disassembly, `ghidra_scripts/DumpAsm.java`):
   key repeated/cut to 56 bytes read as little-endian words; blocks are two LE words (L first);
@@ -146,7 +146,7 @@ Tools: `D:\tools` (Ghidra), scripts: `trainz12-x64/tools/`
   base + RVA with the right calling convention.
 
 ### Jet::LZSSCompress decompression (reconstructed and verified 2026-10-19)
-- `src/jet/Kernel_7c/JetLzss.{h,cpp}`: header, mode 0, token mode (levels 1-6), adaptive Huffman (levels 7-9) with
+- `src/jet/core/Kernel_7c/JetLzss.{h,cpp}`: header, mode 0, token mode (levels 1-6), adaptive Huffman (levels 7-9) with
   the original's model init (0x10005cf0), update (0x100060b0) and in-place rebuild (0x10005e60) carried over.
   Tree 1 has 0x111 symbols rounded to 0x112 leaves (256 literals, 16 length codes, 0x110 = end); tree 2 has
   16/64/64 symbols with 4/6/8 raw low distance bits for modes 0/1/2. Bits are read LSB first.
@@ -417,7 +417,7 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
 - **Our code calls the not-yet-replaced foundation in the original**: `implib\KernelStandard_7c_orig.lib`
   (gen_implib.py with that module name). Our DLL imports only KERNEL32 and KernelStandard_7c_orig.dll.
 - **U1** (34 exports: Crc, StdMath, Vector2/3 conversions, IntLog2/ILog2/CeilPow2/FloorPow2,
-  GetBaryCentricWeights, Eigen3, OptimalRects): `src/jet/KernelStandard_7c/{Math,Eigen3,Barycentric,OptimalRects}.cpp`.
+  GetBaryCentricWeights, Eigen3, OptimalRects): `src/jet/core/KernelStandard_7c/{Math,Eigen3,Barycentric,OptimalRects}.cpp`.
   The 35 in the plan was one too many.
 - `tests/diff_ks_math.cpp` (ours vs `_orig` in one process, raw bits): **all 2^32 inputs** of the five float
   StdMath functions, IntLog2, ILog2(float), ILog2(int), CeilPow2 and FloorPow2; 4 M doubles for Sqrt/InvSqrt(double);
@@ -523,7 +523,7 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
   - All five also import Kernel_7c and KernelStandard_7c.
 - **U0 proxies for all five** (`jet_module` + empty `implemented.txt`): all exports forward to `<module>_orig.dll`.
   In game: menu, clean exit, JetLog identical.
-- **KernelResources_7c: 51/51 exports ours** (`src/jet/KernelResources_7c/BitmapResources.cpp`, headers
+- **KernelResources_7c: 51/51 exports ours** (`src/jet/core/KernelResources_7c/BitmapResources.cpp`, headers
   `jet/{Resource,KernelResources,Bitmap,Config,Result}.h`). It holds:
   - BitmapBaseResource, BitmapFrameBaseResource and BitmapResource, plus their instances.
   - Two internal resources: BitmapFrameResource ("bmframe.txt": `Frame { Image, Area }`, an area of another
@@ -559,7 +559,7 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
   - Limit: in this harness Bitmap::Scale returns null for the 32-bit format, so the scaled loads end with no
     bitmap in both modules.
   - The factories and the two internal resources are only covered in game: menu, clean exit, JetLog identical.
-- **Render2DCore_7c: 85/85 exports ours** (`src/jet/Render2DCore_7c/{Canvas,Sprites}.cpp`, headers
+- **Render2DCore_7c: 85/85 exports ours** (`src/jet/graphics/Render2DCore_7c/{Canvas,Sprites}.cpp`, headers
   `jet/{RenderSystem,Render2DCore,VCall}.h`):
   - Canvas: an off-screen surface drawn as up to 7 x 5 textures, holding at most 16 dirty rectangles per tile;
     more than 16 turn into the whole tile.
@@ -609,7 +609,7 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
   - Kernel_7c, KernelResources_7c and Render2DCore_7c run without their `_orig`.
   - Both input drivers are loaded: InputWin32 and InputDirectX, plus DINPUT8. **The game takes keyboard and
     mouse from InputWin32**: it calls Init and creates exactly the keyboard and the mouse (in-game trace below).
-- **InputWin32_7c: all ours** (`src/jet/InputWin32_7c/InputWin32.cpp`; its only export is
+- **InputWin32_7c: all ours** (`src/jet/input/InputWin32_7c/InputWin32.cpp`; its only export is
   `JetGetPluginsInputWin32`). Header `jet/InputSystem.h` holds InputDevice, InputDriver, InputDeviceCaps,
   InputData, DeviceProperty, ObserverSubject and AutoReference. Header `jet/Window.h` holds the Window members the
   driver calls. Factory "Win32" 445ED0AC-..., group F3117B18-...
@@ -667,7 +667,7 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
     - U8 ForceEffect / ForceResource + the plugin table.
   - Jet SDK Beta2/RC1 `ObserverSubject.h` is the template's source. Its input headers describe an older design and
     do not apply.
-- **U1, ObserverSubject<T>** (`src/jet/InputSystem_7c/Observers.cpp`, explicit instantiations for InputObserver,
+- **U1, ObserverSubject<T>** (`src/jet/input/InputSystem_7c/Observers.cpp`, explicit instantiations for InputObserver,
   InputActionObserver and InputUIExtensionObserver):
   - Layout: `{vptr, FastDynamicArray<UncertainObserver, 4> observers, int observerLock}`. An entry is
     `{bool isValid, T* observer, int priority}`, and a chunk is 0x3c bytes.
@@ -686,7 +686,7 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
   - `tests/diff_is_obs.cpp`: all three instantiations with random add / remove / lock / unlock / iterators /
     copy / assignment. Compared after each step: the return values and the whole chunk ring.
     **1 753 750 checks, 0 mismatches.**
-- **U2, devices** (`src/jet/InputSystem_7c/{Devices,Ids}.cpp`):
+- **U2, devices** (`src/jet/input/InputSystem_7c/{Devices,Ids}.cpp`):
   - InputEvent is 0x14 bytes `{type, code/down | ch | id, value, delta, time}`.
     - The kind sits in bits 4..7: 0x10 lost, 0x20 get, 0x30 key/button, 0x40 char, 0x50 axis, 0x60 pov,
       0x70 property.
@@ -709,7 +709,7 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
     - **583 202 checks, 0 mismatches, 181 159 observer calls.**
   - In game with U1+U2 (plus our InputWin32): the same input scenario gives the same screens; menu check clean,
     JetLog identical to the baseline.
-- **U3, ASCIICode / InputStrings** (`src/jet/InputSystem_7c/Strings.cpp`):
+- **U3, ASCIICode / InputStrings** (`src/jet/input/InputSystem_7c/Strings.cpp`):
   - Both are singletons built on first use.
   - ASCIICode is 256 entries of `{normal, shifted, kind}`. The kinds are control, letter (shift xor caps),
     symbol (shift), keypad operator, and keypad digit (NumLock only).
@@ -721,7 +721,7 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
     the others.
   - `tests/diff_is_str.cpp`: whole tables, every lookup over the code range, copy / assign / destroy.
     **2 711 checks, 0 mismatches.**
-- **U4, EmuDevice** (`src/jet/InputSystem_7c/Emu.cpp`, 0x360 bytes): a mouse or joystick played from the keyboard.
+- **U4, EmuDevice** (`src/jet/input/InputSystem_7c/Emu.cpp`, 0x360 bytes): a mouse or joystick played from the keyboard.
   - Keyboard events go into a 256-event ring and are played in Update:
     - bindings `{key, target, shift/ctrl/alt, kind, direction}` are kept sorted by key;
     - buttons press and release;
@@ -742,7 +742,7 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
     Input (U5).
   - In game EmuDevice is still built by the original Input until U5 is ours.
   - Menu check with U1-U4: clean, JetLog identical.
-- **U5, Input** (`src/jet/InputSystem_7c/Input.cpp`, 0x44 bytes) and the **InputExtension** base (0x10):
+- **U5, Input** (`src/jet/input/InputSystem_7c/Input.cpp`, 0x44 bytes) and the **InputExtension** base (0x10):
   - Init loads one driver per type from the "InputKeyboard" / "InputMouse" / "InputJoystick" options ("Default" is
     Win32, Win32, DirectX; factories looked up in group F3117B18-...). A name with no factory ends that type's search;
     a factory already loaded for another type is shared; the first failing type stops the loading, Init still
@@ -758,7 +758,7 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
     import tables. **305 301 checks, 0 mismatches** (3122 devices, 511 emulated devices, 1520 extension Done calls);
     a deliberate change in Input.cpp gives 621 mismatches.
   - In game: menu check clean (JetLog identical); the input scenario gives the same screens.
-- **U6, InputUIExtension** (`src/jet/InputSystem_7c/UIExtension.cpp`, 0x148 bytes), used by trainz.exe and
+- **U6, InputUIExtension** (`src/jet/input/InputSystem_7c/UIExtension.cpp`, 0x148 bytes), used by trainz.exe and
   InterfaceSystem:
   - Focus byte +0x108: 0x01 keyboard, 0x80 mouse, 0x02 deactivated; observers hear lost / got only when both
     devices have the focus (0x81).
@@ -777,7 +777,7 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
     pixels of the bottom strip differ, as between two runs of the original); menu check clean.
 - Who uses the rest (imports of the game's modules): InputAction / InputActionMapper (U7) by nobody; ForceEffect
   (U8) by InputDirectX only.
-- **U8, force feedback and the null driver** (`src/jet/InputSystem_7c/Force.cpp`):
+- **U8, force feedback and the null driver** (`src/jet/input/InputSystem_7c/Force.cpp`):
   - ForceEffect (0x88) passes every call to its attached child effects; Create(name, db, flags) builds one effect
     per entry of a ForceResource.
   - ForceResource (0x68) loads / saves DirectInput .ffe files: RIFF "FORC", the file GUID, one LIST per effect with
@@ -788,7 +788,7 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
     resource type and the "None" input driver factory.
   - `tests/diff_is_force.cpp`: an in-memory File with a read budget (the original's LIST loop can spin), plugin
     factories through a patched PluginType constructor. **41 067 checks, 0 mismatches.** Menu check clean.
-- **U4b, the binding scanner and EmuDevice::Load** (`src/jet/InputSystem_7c/Lexer.cpp`, `Emu.cpp`):
+- **U4b, the binding scanner and EmuDevice::Load** (`src/jet/input/InputSystem_7c/Lexer.cpp`, `Emu.cpp`):
   - The module's flex 2.5 C++ scanner (36 rules, REJECT-style state buffer, yylineno, 7-bit with bytes > 0x7b
     clamped to class 1) is written out as the flex skeleton. The DFA tables (acclist, accept, ec, meta, base, def,
     nxt, chk) are read from the installed original at build time (`extract_data.py`, never committed).
@@ -808,7 +808,7 @@ Full plan in `D:\trainz12-decomp\notes\KernelStandard.md` (private; reproducible
     modules are patched to stand-ins serving random trees, including parse failures, no root, empty lists and lists
     with no array. **5 000 trees, 0 mismatches** (1080 complete loads). Three mutations are caught; swapping the up
     and down bits of `bound` is equivalent (all four bits are required).
-- **U7, InputAction / InputActionMapper** (`src/jet/InputSystem_7c/ActionMapper.cpp`); nobody in the game imports
+- **U7, InputAction / InputActionMapper** (`src/jet/input/InputSystem_7c/ActionMapper.cpp`); nobody in the game imports
   them:
   - An action (0x20 bytes) is a name, a flush flag and an `Array<StrokeDef, 2>` of strokes `{code, ms}`. The code
     holds the kind in bits 24..31 (key, button, axis, pov) and the code in bits 16..23.

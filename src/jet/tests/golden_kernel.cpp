@@ -10,8 +10,8 @@
 #include <jet/UId.h>
 #include <jet/Version.h>
 
-#include "../Kernel_7c/AuranBlowfish.h"
-#include "../Kernel_7c/JetLzss.h"
+#include "../core/Kernel_7c/AuranBlowfish.h"
+#include "../core/Kernel_7c/JetLzss.h"
 
 #include <cstddef>
 #include <cstdint>

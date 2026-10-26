@@ -69,7 +69,7 @@ void __cdecl ExceptionHandler::RemoveCriticalShutdown(void*) {}
 Events::Events() : ownsEvents(true), lastId(0), removed{}, queue{}, requeue{} {}
 Events::~Events() {}
 
-// Rand/LCRand: the real unit U5 (src/jet/KernelStandard_7c/Rand.cpp) is linked; it reads these Time statics
+// Rand/LCRand: the real unit U5 (src/jet/core/KernelStandard_7c/Rand.cpp) is linked; it reads these Time statics
 bool Time::frameLock = false;
 double Time::frameLockTime = 0.0;
 
@@ -640,7 +640,7 @@ bool __cdecl File::Prune(const char* path)
     return true;
 }
 
-// Sync objects: the real unit U4 (src/jet/KernelStandard_7c/SyncObjects.cpp) is linked instead
+// Sync objects: the real unit U4 (src/jet/core/KernelStandard_7c/SyncObjects.cpp) is linked instead
 
 // ---------------------------------------------------------------------------------------------------------------
 // ReferenceCount (0x1003d3a0..0x1003d3e0)

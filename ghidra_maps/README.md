@@ -5,7 +5,8 @@ They hold addresses, sizes and names only: no decompiled code, no disassembly, n
 To get the decompiled C, import your own copy of the game into Ghidra and run `ghidra_scripts/DecompileAll.java`
 (see `tools/ghidra_analyze.cmd`, `tools/ghidra_all.ps1`).
 
-- `jet/`: the Jet engine modules (`*_7c.dll`, including WaterSystem_7c).
+- `jet/`: the Jet engine modules (`*_7c.dll`, including WaterSystem_7c), one folder per README group: `core/`,
+  `input/`, `graphics/`, `ui/`, `debug/`, `not_loaded/`.
 - `trainz/`: the game itself (`trainz.exe`, `trainznativeinterface.dll`).
 
 - `<module>.functions.tsv` (from `ExportFunctionStats.java`): `entry size namespace name source thunk`.

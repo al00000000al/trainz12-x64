@@ -3,7 +3,7 @@
 // level through real KernelStandard memory streams; our JetLzss::Decompress must give back the input, and on
 // mutated streams it must succeed/fail and produce exactly what the original DecompressBlock (RVA 0x7150) does.
 // usage: diff_lzss.exe <game bin dir holding Kernel_7c_orig.dll>
-#include "../Kernel_7c/JetLzss.h"
+#include "../core/Kernel_7c/JetLzss.h"
 
 #include <windows.h>
 

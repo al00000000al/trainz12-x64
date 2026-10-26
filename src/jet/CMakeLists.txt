@@ -11,16 +11,18 @@ set(TOOLS "D:/universal modder/trainz12-x64/tools")
 set(EXPORTS "D:/trainz12-decomp/exports")
 set(IMPLIB "D:/trainz12-decomp/implib")  # import libs of the original Jet modules (tools/gen_implib.py)
 
+# module sources sit in a folder per README group: core/, input/, graphics/ (later ui/, debug/)
 function(jet_module name)
+    file(GLOB dir LIST_DIRECTORIES true "${CMAKE_CURRENT_SOURCE_DIR}/*/${name}")
     set(def "${CMAKE_CURRENT_BINARY_DIR}/${name}.def")
-    set(impl "${CMAKE_CURRENT_SOURCE_DIR}/${name}/implemented.txt")
+    set(impl "${dir}/implemented.txt")
     set(fwd "${CMAKE_CURRENT_BINARY_DIR}/${name}_forwards.cpp")
     add_custom_command(
         OUTPUT ${def} ${fwd}
         COMMAND ${PY} -I "${TOOLS}/gen_def.py" "${EXPORTS}/${name}.tsv" ${name} "${impl}" ${def}
         DEPENDS "${TOOLS}/gen_def.py" "${EXPORTS}/${name}.tsv" "${impl}"
         VERBATIM)
-    file(GLOB_RECURSE srcs CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${name}/*.cpp")
+    file(GLOB_RECURSE srcs CONFIGURE_DEPENDS "${dir}/*.cpp")
     add_library(${name} SHARED ${srcs} ${def} ${fwd})
     target_include_directories(${name} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
     # same base and layout habits as the original MSVC 2005 build
@@ -113,7 +115,7 @@ endforeach()
 target_sources(InputSystem_7c PRIVATE ${LEX_TABLES})
 target_include_directories(InputSystem_7c PRIVATE "${GEN}")
 # the scanner alone, against the original's (called inside InputSystem_7c_orig.dll by address)
-add_executable(diff_is_lex tests/diff_is_lex.cpp InputSystem_7c/Lexer.cpp ${LEX_TABLES})
+add_executable(diff_is_lex tests/diff_is_lex.cpp input/InputSystem_7c/Lexer.cpp ${LEX_TABLES})
 target_include_directories(diff_is_lex PRIVATE include "${GEN}")
 target_compile_options(diff_is_lex PRIVATE /EHsc /GR /Zc:wchar_t- /Zp8)
 target_compile_definitions(diff_is_lex PRIVATE _CRT_SECURE_NO_WARNINGS)
@@ -165,8 +167,8 @@ add_executable(diff_kr_system tests/diff_kr_system.cpp)
 target_compile_options(diff_kr_system PRIVATE /Zi)
 target_link_options(diff_kr_system PRIVATE /DEBUG /MAP)
 
-add_executable(diff_blowfish tests/diff_blowfish.cpp Kernel_7c/AuranBlowfish.cpp)
-add_executable(diff_lzss tests/diff_lzss.cpp Kernel_7c/JetLzss.cpp)
+add_executable(diff_blowfish tests/diff_blowfish.cpp core/Kernel_7c/AuranBlowfish.cpp)
+add_executable(diff_lzss tests/diff_lzss.cpp core/Kernel_7c/JetLzss.cpp)
 add_executable(diff_fda tests/diff_fda.cpp)
 
 # differential tests: our module vs the original, both loaded in one 32-bit process
@@ -198,11 +200,11 @@ else()  # x64 harness: no game, no original modules (tests/x64)
 
 # KernelStandard_7c has no x64 build yet: a stand-in with just enough behaviour for Kernel_7c and the probes
 add_library(KernelStandardStub STATIC tests/x64/KernelStandardStub.cpp
-            KernelStandard_7c/SyncObjects.cpp KernelStandard_7c/Rand.cpp
-            KernelStandard_7c/Math2.cpp KernelStandard_7c/Bitmap.cpp)  # reconstructed units replace their part of the stand-in
+            core/KernelStandard_7c/SyncObjects.cpp core/KernelStandard_7c/Rand.cpp
+            core/KernelStandard_7c/Math2.cpp core/KernelStandard_7c/Bitmap.cpp)  # reconstructed units replace their part of the stand-in
 target_compile_definitions(KernelStandardStub PRIVATE JET_KS_IMPLEMENTATION)
 # Kernel_7c as an object library, so every unit (and its statics) is in each harness exe, as in the DLL
-file(GLOB kernel_srcs CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Kernel_7c/*.cpp")
+file(GLOB kernel_srcs CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/core/Kernel_7c/*.cpp")
 add_library(Kernel_7c_x64 OBJECT ${kernel_srcs})
 foreach(t KernelStandardStub Kernel_7c_x64)
     target_include_directories(${t} PUBLIC include)
@@ -219,8 +221,8 @@ endif()
 
 # deterministic codec and container results, built for both: the 32-bit output (codecs proven equal to the
 # originals) is the reference for the x64 one
-add_executable(golden_kernel tests/golden_kernel.cpp Kernel_7c/JetLzss.cpp Kernel_7c/AuranBlowfish.cpp
-               Kernel_7c/UId.cpp Kernel_7c/Version.cpp)
+add_executable(golden_kernel tests/golden_kernel.cpp core/Kernel_7c/JetLzss.cpp core/Kernel_7c/AuranBlowfish.cpp
+               core/Kernel_7c/UId.cpp core/Kernel_7c/Version.cpp)
 target_include_directories(golden_kernel PRIVATE include)
 target_compile_options(golden_kernel PRIVATE /EHsc /GR /Zc:wchar_t-)
 target_compile_definitions(golden_kernel PRIVATE _CRT_SECURE_NO_WARNINGS)

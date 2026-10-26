@@ -197,7 +197,7 @@ private:
 
 // a list of observers, highest priority first (the SDK's ObserverSubject plus a priority). While locked (during a
 // notification) removals only clear the entry's flag; the last unlock drops the cleared entries. The members are
-// defined in InputSystem_7c (InputSystem_7c/Observers.cpp) for the three observer types it exports.
+// defined in InputSystem_7c (input/InputSystem_7c/Observers.cpp) for the three observer types it exports.
 template <class O>
 class ObserverSubject {
 public:

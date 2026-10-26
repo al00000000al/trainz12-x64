@@ -2,7 +2,7 @@
 
 Status: 2026-10-26. U0 (proxy) and U1 (value types, vertex records; 939 exports) are ours and verified
 (`tests/diff_rs_u1.cpp`, MODLOG). Next: U4.
-Inputs: `ghidra_maps/jet/RenderSystem_7c.dll.functions.tsv`, the export list (`tools/dump_exports.py`), the import tables
+Inputs: `ghidra_maps/jet/graphics/RenderSystem_7c.dll.functions.tsv`, the export list (`tools/dump_exports.py`), the import tables
 of every module in `bin\` (pefile), the Jet SDK Beta2 headers (`Display.h`, `Material.h`, `Layer.h`, `Modifier.h`,
 `Texture.h`, `RenderKernel.h`...: names and intent only, the TS12 layouts differ) and the private decompile
 `decomp\RenderSystem_7c.dll.c`.

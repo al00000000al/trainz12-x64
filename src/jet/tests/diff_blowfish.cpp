@@ -3,7 +3,7 @@
 // (ECX = this, EDX unused). They only touch P (this+0x0c) and S (this+0x54), so a zeroed 0x1060-byte block
 // stands in for a real BFEncrypt object.
 // usage: diff_blowfish.exe <game bin dir holding Kernel_7c_orig.dll>
-#include "../Kernel_7c/AuranBlowfish.h"
+#include "../core/Kernel_7c/AuranBlowfish.h"
 
 #include <windows.h>
 

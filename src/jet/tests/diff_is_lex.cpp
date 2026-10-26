@@ -7,7 +7,7 @@
 // usage: diff_is_lex.exe <dir with InputSystem_7c_orig.dll and the Jet modules> [texts]
 #include <windows.h>
 
-#include "../InputSystem_7c/Lexer.h"
+#include "../input/InputSystem_7c/Lexer.h"
 
 #include <cstdint>
 #include <cstdio>

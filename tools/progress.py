@@ -1,7 +1,7 @@
 """Port progress: how much of the game's native code is ours, weighted by code size.
 
-Code size and function counts come from ghidra_maps/*/<module>.functions.tsv (non-thunk functions),
-exports we own from src/jet/<module>/implemented.txt, export totals from tools/progress_exports.tsv.
+Code size and function counts come from ghidra_maps/*/[<group>/]<module>.functions.tsv (non-thunk functions),
+exports we own from src/jet/<group>/<module>/implemented.txt, export totals from tools/progress_exports.tsv.
 A module with all exports ours counts whole; a partial one counts the code of the functions behind its exports that
 are ours (cached in tools/progress_exports.tsv, recomputed with --exports from the export dumps, which hold the
 addresses). Modules with no src/ directory count as 0.
@@ -21,7 +21,8 @@ TOTALS = ROOT / "tools" / "progress_exports.tsv"
 README = ROOT / "README.md"
 START, END = "<!-- progress:start -->", "<!-- progress:end -->"
 
-# (label, what it is, map dir, modules); the last group was not seen loaded (MODLOG "What actually loads")
+# (label, what it is, map dir, modules); the last group was not seen loaded (MODLOG "What actually loads").
+# Jet modules sit in a folder per group under src/jet/ and ghidra_maps/jet/ (FOLDERS); EMOJI marks the README tables.
 GROUPS = [
     ("Engine core", "Jet: memory, strings, files, .ja archives, config, threads, logs, resources", "jet",
      ["Kernel_7c", "KernelStandard_7c", "KernelResources_7c", "KernelResource_7c"]),
@@ -41,13 +42,25 @@ GROUPS = [
      "jet", ["Lexer_7c", "DSMoviePlayer_7c"]),
 ]
 JET = [n for _, _, g, names in GROUPS if g == "jet" for n in names]
+FOLDERS = {"Engine core": "core", "Input": "input", "Graphics": "graphics", "User interface": "ui",
+           "Debug": "debug", "Not seen loaded": "not_loaded"}
+EMOJI = {"Engine core": "⚙️", "Input": "🎮", "Graphics": "🎨", "User interface": "🪟", "Debug": "🐞",
+         "Game": "🚂", "Not seen loaded": "💤"}
+STATUS_ICON = {"done": "✅", "done*": "✅", "partial": "🟡", "not started": "⬜"}
+FOLDER = {n: FOLDERS[label] for label, _, g, names in GROUPS if g == "jet" for n in names}
+
+
+def map_path(group, fname):
+    """ghidra_maps/jet/<group folder>/<file> for Jet modules, ghidra_maps/trainz/<file> for the game."""
+    name = fname.split(".dll", 1)[0]
+    return ROOT / "ghidra_maps" / group / FOLDER.get(name, "") / f"{fname}.functions.tsv"
 
 
 def code_size(group, name):
     """(bytes, functions) of non-thunk functions in a Ghidra map."""
     fname = name if name.endswith((".exe", ".dll")) else name + ".dll"
     size = count = 0
-    with open(ROOT / "ghidra_maps" / group / f"{fname}.functions.tsv", encoding="utf-8") as f:
+    with open(map_path(group, fname), encoding="utf-8") as f:
         next(f)
         for line in f:
             col = line.rstrip("\n").split("\t")
@@ -58,7 +71,9 @@ def code_size(group, name):
 
 
 def owned_names(name):
-    impl = ROOT / "src" / "jet" / name / "implemented.txt"
+    if name not in FOLDER:  # the game (src/trainz/) is not started
+        return []
+    impl = ROOT / "src" / "jet" / FOLDER[name] / name / "implemented.txt"
     if not impl.exists():
         return []
     return [line.split("=", 1)[0].strip() for line in impl.read_text(encoding="utf-8").splitlines()
@@ -76,7 +91,7 @@ def refresh_totals(exports_dir):
         lines = [l.split("\t") for l in tsv.read_text(encoding="utf-8").splitlines()[1:] if l.strip()]
         # the functions behind our exports (folded bodies counted once), by the Ghidra map's sizes
         sizes = {}
-        with open(ROOT / "ghidra_maps" / "jet" / f"{name}.dll.functions.tsv", encoding="utf-8") as f:
+        with open(map_path("jet", f"{name}.dll"), encoding="utf-8") as f:
             next(f)
             for line in f:
                 col = line.split("\t")
@@ -107,7 +122,7 @@ def block():
     rows, stats = [], []  # stats: (label, what, map dir, done bytes, bytes, modules done, modules)
     for label, what, group, names in GROUPS:
         g = [label, what, group, 0, 0, 0, len(names)]
-        rows.append(f"| **{label}** | | | | |")
+        rows.append(f"| {EMOJI[label]} **{label}** | | | | |")
         for name in names:
             size, funcs = code_size(group, name)
             total = int(totals.get(name, 0))
@@ -122,7 +137,7 @@ def block():
             status = ("done" if share >= 1 else "done*" if share >= 0.999 else
                       "partial" if share > 0 else "not started")
             exp = f"{mine}/{total}" if group == "jet" else "-"
-            rows.append(f"| {name} | {size / 1024:,.0f} KB | {funcs:,} | {exp} | {status} |")
+            rows.append(f"| {name} | {size / 1024:,.0f} KB | {funcs:,} | {exp} | {STATUS_ICON[status]} {status} |")
         stats.append(g)
 
     def line(label, done, size, mods_done=None, mods=None):
@@ -156,7 +171,7 @@ def block():
         "",
         "| Group | What it is |",
         "|---|---|",
-        *(f"| {g[0]} | {g[1]} |" for g in stats),
+        *(f"| {EMOJI[g[0]]} {g[0]} | {g[1]} |" for g in stats),
         "",
         f"Plan steps finished: {steps_done} of {steps} (`PORT_PLAN.md`). After the 32-bit replacement come the "
         f"x64 build and the add-on compatibility tests.",

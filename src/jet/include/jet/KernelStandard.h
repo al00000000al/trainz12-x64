@@ -877,7 +877,7 @@ private:
 // An intrusive list of T linked through T's ListLink at +4 (Events::Event, Job): {head, tail, count}. The links
 // point at the neighbours' links, not at the objects.
 template <class T>
-struct ListOps;  // (KernelStandard_7c/Platform.cpp)
+struct ListOps;  // (core/KernelStandard_7c/Platform.cpp)
 struct ListLink {
     ListLink* next;
     ListLink* prev;
@@ -1149,7 +1149,7 @@ public:
         FileSub* archive;         // +0x43c the archive being searched, or null
     };
     // File::Exists returns a ResultClass by value; outside KernelStandard it is bound at run time (see
-    // Kernel_7c/KernelStandardRuntime.cpp)
+    // core/Kernel_7c/KernelStandardRuntime.cpp)
 #if !defined(JET_KS_IMPLEMENTATION)
     static bool Exists(const char* path);
 #endif

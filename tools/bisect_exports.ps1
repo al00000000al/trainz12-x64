@@ -7,7 +7,7 @@ param(
     [int]$Count = 1000
 )
 $ErrorActionPreference = 'Stop'
-$impl = 'D:\trainz12-decomp\src\jet\Kernel_7c\implemented.txt'
+$impl = 'D:\trainz12-decomp\src\jet\core\Kernel_7c\implemented.txt'
 $backup = "$impl.full"
 if (-not (Test-Path $backup)) { Copy-Item $impl $backup }
 $all = Get-Content $backup
