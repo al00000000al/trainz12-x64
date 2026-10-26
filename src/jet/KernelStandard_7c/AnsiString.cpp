@@ -1,11 +1,12 @@
 // Unit U14a of KernelStandard_7c: AnsiString and String (0x10001920..0x10003247, 0x100083e0..0x10008451,
-// 0x10014090..0x10014d8d, 0x100331e0). The state they share with the original's foundation stays the original's
-// until U14b and is used by address: the shared empty block (0x100ae254, guard 0x100ae264) and the "#StringData"
-// PackedHeapMP (0x100adc18) that holds every block up to 0xa0 bytes; larger blocks come from Alloc.
+// 0x10014090..0x10014d8d, 0x100331e0). Since U14b the state they share is ours too: the shared empty block
+// (0x100ae254, a function-local static in the original, guard 0x100ae264) and the "#StringData" PackedHeapMP
+// (0x100adc18) that holds every block up to 0xa0 bytes (StringHeap.h); larger blocks come from Alloc.
 #include <jet/KernelStandard.h>
 
 #include "Crt80.h"
 #include "StringFormat.h"
+#include "StringHeap.h"
 
 #include <windows.h>
 
@@ -14,52 +15,39 @@
 
 namespace Jet {
 
+namespace {
+// {refs 1 (never counted), capacity 0, length 0, ""}: what every empty AnsiString points into. The original makes it
+// on first use and registers a destructor that only releases it (a no-op): constant data here.
+long nullBlock[4] = {1, 0, 0, 0};
+PackedHeapMP* stringHeap;  // 0x100adc18
+}  // namespace
+
+void* StringHeap::New(unsigned int size)
+{
+    size = (size + 7) & ~7u;
+    if (!stringHeap) {
+        void* p = Alloc::New(sizeof(PackedHeapMP));
+        stringHeap = p ? new (p) PackedHeapMP("#StringData") : nullptr;
+    }
+    if (size > 0xa0) return Alloc::New(size);
+    return stringHeap->Alloc(size);
+}
+
+PackedHeapMP* StringHeap::Heap() { return stringHeap; }
+
 // a block: {refs, capacity, length, characters}; AnsiString::data points at the capacity
 struct AnsiWork {
-    static char* Orig()
-    {
-        static char* const base = reinterpret_cast<char*>(GetModuleHandleA("KernelStandard_7c_orig.dll"));
-        return base;
-    }
-    static long* NullBlock() { return reinterpret_cast<long*>(Orig() + 0xae254); }
-    static PackedHeapMP*& Heap() { return *reinterpret_cast<PackedHeapMP**>(Orig() + 0xadc18); }
+    static long* NullBlock() { return nullBlock; }
+    static PackedHeapMP* Heap() { return stringHeap; }
+    static void InitNull() {}
+    static void* NullData() { return nullBlock + 1; }
 
-    // the function-local static every member inlines (its atexit destructor only releases the static block)
-    static void InitNull()
-    {
-        unsigned& guard = *reinterpret_cast<unsigned*>(Orig() + 0xae264);
-        if (guard & 1) return;
-        guard |= 1;
-        long* b = NullBlock();
-        b[0] = 1;
-        b[1] = 0;
-        b[2] = 0;
-        *reinterpret_cast<char*>(b + 3) = 0;
-    }
-    static void* NullData()
-    {
-        InitNull();
-        return NullBlock() + 1;
-    }
-
-    // 0x10039780: size rounded to 8; the heap is made on first use
-    static unsigned* NewBlock(unsigned size)
-    {
-        size = (size + 7) & ~7u;
-        PackedHeapMP*& heap = Heap();
-        if (!heap) {
-            void* p = Alloc::New(0x2c);
-            heap = p ? new (p) PackedHeapMP("#StringData") : nullptr;
-        }
-        if (size > 0xa0) return static_cast<unsigned*>(Alloc::New(size));
-        return reinterpret_cast<unsigned*>(heap->Alloc(size));
-    }
+    static unsigned* NewBlock(unsigned size) { return static_cast<unsigned*>(StringHeap::New(size)); }
 
     // 0x100018a0
     static void Release(void* data)
     {
         long* block = static_cast<long*>(data) - 1;
-        InitNull();
         if (block == NullBlock()) return;
         if (InterlockedDecrement(block) != 0) return;
         if (((static_cast<unsigned*>(data)[0] + 0x13) & ~7u) <= 0xa0)

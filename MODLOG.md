@@ -1473,7 +1473,54 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
   `diff_ks_thread` failed once in 3 runs on a Terminate timing race; Thread is unchanged. The x64 harness shows
   0 differences. In game: the menu log matches the baseline (0 lines differ), and the Launcher shows no
   "faulty" box. The build is kept as `KernelStandard_7c_u14a.dll`.
-- Next: U14b (the foundation cut-over).
+- Next: U14b (the foundation cut-over), done below.
+
+### KernelStandard_7c U14b, the foundation cut-over (2026-10-26): 1761/1762 exports ours
+- New: `Memory.cpp` (Alloc, PackedHeap / PackedHeapMP, PoolBlockAlloc, ReferenceCount, ConfigData's pool operators,
+  KernelStandardInit and the shutdown table, g_jetSTLAllocHeap) and `PString.cpp` (PStringCache, PString). Every
+  data export is now defined in the unit that uses it (Log, Profile / QuickTimer, Time, Thread / TLS,
+  ExceptionHandler / HardwareException, Console's font, StringTables, ConfigData::unknownItem, the result tables,
+  ConfigParser's vftable). `JET_KS_FORWARDED` is empty in the KernelStandard build.
+- Still the original's: HardwareException::GetCallStack (the one forwarded export) and the two crash report writers
+  called by address. They keep their own state (report buffer, ERRORLOG.TXT), so the original's other statics
+  are no longer used by anyone. The original module stays loaded for them and for msvcr80.
+- Our statics come first: Memory.cpp and Time.cpp are `#pragma init_seg(lib)`, in the original's order (Alloc,
+  free lists, the shutdown table runner, KernelStandardInit, the counter frequency, ConfigData's pool, the
+  "PackedHeap" log client, g_jetSTLAllocHeap "#jetstd::"). The tokens and File::Sep stay ordinary statics after them.
+- Found on the way (the decompile hid them):
+  - PackedHeap::Alloc bumps in the blocks from the highest address down (a reverse iterator of the set). Blocks come
+    top-down from VirtualAlloc, so the oldest block is tried first.
+  - PackedHeap's copy constructor and operator= copy both trees: the copy shares the blocks and its size chains
+    point into the source's map. Destroying two copies frees the blocks twice in the original too.
+  - PStringCache::CreateUnicode interns the bytes wcstombs wrote, not the character count.
+  - PString::Read frees a node cut short with Alloc::Delete even when it came from the string heap (length below
+    0x87): that corrupts the msvcr80 heap in the original. Tests stay away from it.
+- Tests: new `diff_ks_alloc` (Alloc reuse, free-list capacity and Dump counters, PackedHeap / MP layout and block
+  headers, copies, four PoolBlockAlloc shapes, ConfigData's pool, ReferenceCount slots, a 6-thread stress per side;
+  about 1.6 million results, 0 mismatches) and `diff_ks_pstring` (every PStringCache and PString export over a
+  corpus; 1.5 million results, 0 mismatches). 24 of 27 mutations caught; the other 3 are equivalent (the hash over
+  15 bytes instead of 16: with h * 8 the older bytes leave the 32 bits anyway; Del's `<` / `<=`; a Free bound
+  no pointer can reach).
+- The older diff tests assumed one shared heap, cache and set of statics. They now make every input through the
+  side under test (a UseHelpers(side) per test). Our private LogFlush byte and Display accumulators are found
+  in `KernelStandard_7c.map` copied next to the DLL (`tests/ks_private.h`). `diff_ks_filesub` interns its substitute
+  names on both sides in one address order, because that list is sorted by node address.
+- Also fixed: LCRand::NextDouble(lo, hi) runs on the x87 stack, like the original. With two NaN arguments the x87
+  keeps the larger significand and SSE keeps the first operand, so this was the U5 NaN-only difference.
+- PackedHeap::DebugPrintAll lists heaps by address. Ours now has the original's two static heaps, "FileSubArchive"
+  (the archive records) and "#jetstd::", in a section of their own in the original's order. The game's exit summary
+  then matches the baseline line for line, except #StringData's fill (486k used against 507k): since U10b the
+  archive directories and file searches keep their strings in std containers.
+- Checks: all 25 diff_ks_* tests pass. diff_ks_file showed one mismatch once while the game ran at the same time;
+  it did not come back in 2 reruns. The x64 harness shows 0 differences.
+- In game:
+  - 3 menu checks, JetLog identical to the baseline.
+  - An input run (hover, SELECT ROUTE with Cyrillic route names, Esc, the Main menu dropdown) shows the same
+    screens as the U14a build.
+  - The Launcher shows no "faulty" box.
+  - The build is kept as `KernelStandard_7c_u14b.dll`.
+- KernelStandard_7c is now ours except HardwareException::GetCallStack and the crash report writers, which move
+  with the x64 rewrite.
 
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is

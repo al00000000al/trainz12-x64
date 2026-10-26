@@ -1,6 +1,6 @@
 // Unit U7b1 of KernelStandard_7c: ConfigData, the tree and its values (0x1000e0b0..0x10011830, 0x10013b10..
-// 0x10013f00, 0x10014150..0x10014260). Notes: notes/KernelStandard.md "U7b1". The nodes still come from the
-// original's pool (operator new / delete are its exports), and the missing-key node is its unknownItem.
+// 0x10013f00, 0x10014150..0x10014260). Notes: notes/KernelStandard.md "U7b1". The nodes come from the pool in
+// Memory.cpp (operator new / delete); the missing-key node is unknownItem.
 #include <jet/Config.h>
 #include <jet/KernelStandard.h>
 
@@ -14,6 +14,8 @@
 #include <xmmintrin.h>
 
 namespace Jet {
+
+ConfigData ConfigData::unknownItem;  // 0x100ae168
 
 namespace {
 

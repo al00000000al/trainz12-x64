@@ -108,6 +108,10 @@ JET_CRT80(int, _vsnwprintf, (wchar_t* dst, size_t n, const wchar_t* format, va_l
 JET_CRT80(wchar_t*, _itow, (int value, wchar_t* dst, int radix), (value, dst, radix))
 JET_CRT80(char*, _itoa, (int value, char* dst, int radix), (value, dst, radix))
 JET_CRT80(char*, _strupr, (char* s), (s))
+// the allocator and the startup (unit U14b): Jet::Alloc blocks are msvcr80 heap blocks, the locale is msvcr80's
+JET_CRT80(void*, malloc, (size_t n), (n))
+JET_CRT80(void, free, (void* p), (p))
+JET_CRT80(char*, setlocale, (int category, const char* locale), (category, locale))
 JET_CRT80(int, _mbscmp, (const unsigned char* a, const unsigned char* b), (a, b))
 JET_CRT80(int, _mbsicmp, (const unsigned char* a, const unsigned char* b), (a, b))
 JET_CRT80(int, _mbsnbicmp, (const unsigned char* a, const unsigned char* b, size_t n), (a, b, n))

@@ -339,6 +339,8 @@ struct Scenario {
     bool createUnknown;  // CreateNode's tree holds the missing-key node
 };
 static Scenario sc;
+static void* sideTree[2];  // sc.tree of each side
+static void UseHelpers(int sd);
 
 static void* NewUs(const std::wstring& w)
 {
@@ -606,7 +608,16 @@ static void Draw()
     sc.saveCfgResult = R(6) ? 0 : 4;
     sc.saveBinResult = R(6) ? 0 : 3;
     sc.readData = R(8) != 0;
+    // each side gets its own copy of the tree (its own pool and PString cache, U14b), drawn from the same numbers;
+    // the texts below are made from the original's
+    const std::mt19937 before = rng;
+    UseHelpers(0);
     BuildTree();
+    sideTree[0] = sc.tree;
+    rng = before;
+    UseHelpers(1);
+    BuildTree();
+    sideTree[1] = sc.tree;
     sc.text = TreeText();
     sc.bin = BinImage();
     sc.partialAt = PartialAt();
@@ -1012,6 +1023,56 @@ static LONG WINAPI Crash(EXCEPTION_POINTERS* e)
     return EXCEPTION_EXECUTE_HANDLER;
 }
 
+// every helper from the side's own module (U14b: each module has its own heap, PString cache and statics)
+static HMODULE sideModule[2];
+static void UseHelpers(int sd)
+{
+    const HMODULE m = sideModule[sd];
+    // the token PStrings are the side's (its own cache)
+    tokTable = *Get<Node**>(m, "?TABLE_TOKEN@StringTablesBase@Jet@@1VPString@2@B");
+    tokId = *Get<Node**>(m, "?ID_TOKEN@StringTablesBase@Jet@@1VPString@2@B");
+    tokEntry = *Get<Node**>(m, "?ENTRY_TOKEN@StringTablesBase@Jet@@1VPString@2@B");
+    tokValue = *Get<Node**>(m, "?VALUE_TOKEN@StringTablesBase@Jet@@1VPString@2@B");
+    pstringCache = Get<void**>(m, "?cache@PString@Jet@@0PAVPStringCache@2@A");
+    pstringCreate = Get<decltype(pstringCreate)>(m, "?Create@PStringCache@Jet@@QAAPAUNode@12@PBE@Z");
+    pstringDestroy = Get<decltype(pstringDestroy)>(m, "?Destroy@PStringCache@Jet@@QAAXPAUNode@12@@Z");
+    allocNew = Get<decltype(allocNew)>(m, "?New@Alloc@Jet@@SAPAXI@Z");
+    allocDelete = Get<decltype(allocDelete)>(m, "?Delete@Alloc@Jet@@SAXPAX@Z");
+    cdNew = Get<decltype(cdNew)>(m, "??2ConfigData@Jet@@SAPAXI@Z");
+    cdDelete = Get<decltype(cdDelete)>(m, "??3ConfigData@Jet@@SAXPAX@Z");
+    cdCtor = Get<decltype(cdCtor)>(m, "??0ConfigData@Jet@@QAE@ABVPString@1@@Z");
+    cdDtor = Get<decltype(cdDtor)>(m, "??1ConfigData@Jet@@QAE@XZ");
+    cdNewChild = Get<decltype(cdNewChild)>(m, "?New@ConfigData@Jet@@QAAAAV12@ABVPString@2@@Z");
+    cdAddChild = Get<decltype(cdAddChild)>(m, "??6ConfigData@Jet@@QAAAAV01@PAV01@@Z");
+    cdInt = Get<decltype(cdInt)>(m, "??6ConfigData@Jet@@QAEXH@Z");
+    cdFloat = Get<decltype(cdFloat)>(m, "??6ConfigData@Jet@@QAEXM@Z");
+    cdPString = Get<decltype(cdPString)>(m, "??6ConfigData@Jet@@QAEXABVPString@1@@Z");
+    cdFind = Get<decltype(cdFind)>(m, "?Find@ConfigData@Jet@@QBAABV12@ABVPString@2@@Z");
+    cdSetUnicode = Get<decltype(cdSetUnicode)>(m, "?SetUnicode@ConfigData@Jet@@QAA_NABVUnicodeString@2@@Z");
+    unknownItem = Get<unsigned char*>(m, "?unknownItem@ConfigData@Jet@@2V12@A");
+    cpCtorConfig = Get<decltype(cpCtorConfig)>(m, "??0ConfigParser@Jet@@QAE@PAVConfigData@1@@Z");
+    cpSetVersion = Get<decltype(cpSetVersion)>(m, "?SetVersion@ConfigParser@Jet@@QAAXM@Z");
+    cpSetConfig = Get<decltype(cpSetConfig)>(m, "?SetConfig@ConfigParser@Jet@@QAAXPAVConfigData@2@@Z");
+    cpSave = Get<decltype(cpSave)>(m, "?Save@ConfigParser@Jet@@QBE_NPBD_NH@Z");
+    cpDtor = Get<decltype(cpDtor)>(m, "??1ConfigParser@Jet@@UAE@XZ");
+    fileCtor = Get<decltype(fileCtor)>(m, "??0File@Jet@@QAE@XZ");
+    fileDtor = Get<decltype(fileDtor)>(m, "??1File@Jet@@QAE@XZ");
+    fileOpen = Get<decltype(fileOpen)>(m, "?Open@File@Jet@@QAA?AV?$ResultClass@$1?results@File@Jet@@2QBUResultTable@2@BW4Results@File@Jet@@@2@PBDKH@Z");
+    fileClose = Get<decltype(fileClose)>(m, "?Close@File@Jet@@QAAKXZ");
+    dbCtor = Get<decltype(dbCtor)>(m, "??0DynamicBuffer@Jet@@QAE@KK@Z");
+    dbDtor = Get<decltype(dbDtor)>(m, "??1DynamicBuffer@Jet@@QAE@XZ");
+    dbWrite32 = Get<decltype(dbWrite32)>(m, "?Write@DynamicBuffer@Jet@@QAE_NK@Z");
+    dbWriteRaw = Get<decltype(dbWriteRaw)>(m, "?Write@DynamicBuffer@Jet@@QAEKPBXKK@Z");
+    dbWriteUs = Get<decltype(dbWriteUs)>(m, "?Write@DynamicBuffer@Jet@@QAE_NABVUnicodeString@2@@Z");
+    usCtor = Get<decltype(usCtor)>(m, "??0UnicodeString@Jet@@QAE@XZ");
+    usDtor = Get<decltype(usDtor)>(m, "??1UnicodeString@Jet@@QAE@XZ");
+    usSet = Get<decltype(usSet)>(m, "?Set@UnicodeString@Jet@@AAAXPB_WHH@Z");
+    asCtor = Get<decltype(asCtor)>(m, "??0AnsiString@Jet@@QAE@XZ");
+    asCtorText = Get<decltype(asCtorText)>(m, "??0AnsiString@Jet@@QAE@PBD@Z");
+    asDtor = Get<decltype(asDtor)>(m, "??1AnsiString@Jet@@QAE@XZ");
+    asAssign = Get<decltype(asAssign)>(m, "??4AnsiString@Jet@@QAAABV01@PBD@Z");
+}
+
 int main(int argc, char** argv)
 {
     SetUnhandledExceptionFilter(&Crash);
@@ -1032,48 +1093,9 @@ int main(int argc, char** argv)
     const bool swap = getenv("KST_SWAP") != nullptr;
     Load(apis[0], swap ? orig : ours);
     Load(apis[1], swap ? ours : orig);
-    pstringCache = Get<void**>(orig, "?cache@PString@Jet@@0PAVPStringCache@2@A");
-    pstringCreate = Get<decltype(pstringCreate)>(orig, "?Create@PStringCache@Jet@@QAAPAUNode@12@PBE@Z");
-    pstringDestroy = Get<decltype(pstringDestroy)>(orig, "?Destroy@PStringCache@Jet@@QAAXPAUNode@12@@Z");
-    allocNew = Get<decltype(allocNew)>(orig, "?New@Alloc@Jet@@SAPAXI@Z");
-    allocDelete = Get<decltype(allocDelete)>(orig, "?Delete@Alloc@Jet@@SAXPAX@Z");
-    cdNew = Get<decltype(cdNew)>(orig, "??2ConfigData@Jet@@SAPAXI@Z");
-    cdDelete = Get<decltype(cdDelete)>(orig, "??3ConfigData@Jet@@SAXPAX@Z");
-    cdCtor = Get<decltype(cdCtor)>(orig, "??0ConfigData@Jet@@QAE@ABVPString@1@@Z");
-    cdDtor = Get<decltype(cdDtor)>(orig, "??1ConfigData@Jet@@QAE@XZ");
-    cdNewChild = Get<decltype(cdNewChild)>(orig, "?New@ConfigData@Jet@@QAAAAV12@ABVPString@2@@Z");
-    cdAddChild = Get<decltype(cdAddChild)>(orig, "??6ConfigData@Jet@@QAAAAV01@PAV01@@Z");
-    cdInt = Get<decltype(cdInt)>(orig, "??6ConfigData@Jet@@QAEXH@Z");
-    cdFloat = Get<decltype(cdFloat)>(orig, "??6ConfigData@Jet@@QAEXM@Z");
-    cdPString = Get<decltype(cdPString)>(orig, "??6ConfigData@Jet@@QAEXABVPString@1@@Z");
-    cdFind = Get<decltype(cdFind)>(orig, "?Find@ConfigData@Jet@@QBAABV12@ABVPString@2@@Z");
-    cdSetUnicode = Get<decltype(cdSetUnicode)>(orig, "?SetUnicode@ConfigData@Jet@@QAA_NABVUnicodeString@2@@Z");
-    unknownItem = Get<unsigned char*>(orig, "?unknownItem@ConfigData@Jet@@2V12@A");
-    cpCtorConfig = Get<decltype(cpCtorConfig)>(orig, "??0ConfigParser@Jet@@QAE@PAVConfigData@1@@Z");
-    cpSetVersion = Get<decltype(cpSetVersion)>(orig, "?SetVersion@ConfigParser@Jet@@QAAXM@Z");
-    cpSetConfig = Get<decltype(cpSetConfig)>(orig, "?SetConfig@ConfigParser@Jet@@QAAXPAVConfigData@2@@Z");
-    cpSave = Get<decltype(cpSave)>(orig, "?Save@ConfigParser@Jet@@QBE_NPBD_NH@Z");
-    cpDtor = Get<decltype(cpDtor)>(orig, "??1ConfigParser@Jet@@UAE@XZ");
-    fileCtor = Get<decltype(fileCtor)>(orig, "??0File@Jet@@QAE@XZ");
-    fileDtor = Get<decltype(fileDtor)>(orig, "??1File@Jet@@QAE@XZ");
-    fileOpen = Get<decltype(fileOpen)>(orig, "?Open@File@Jet@@QAA?AV?$ResultClass@$1?results@File@Jet@@2QBUResultTable@2@BW4Results@File@Jet@@@2@PBDKH@Z");
-    fileClose = Get<decltype(fileClose)>(orig, "?Close@File@Jet@@QAAKXZ");
-    dbCtor = Get<decltype(dbCtor)>(orig, "??0DynamicBuffer@Jet@@QAE@KK@Z");
-    dbDtor = Get<decltype(dbDtor)>(orig, "??1DynamicBuffer@Jet@@QAE@XZ");
-    dbWrite32 = Get<decltype(dbWrite32)>(orig, "?Write@DynamicBuffer@Jet@@QAE_NK@Z");
-    dbWriteRaw = Get<decltype(dbWriteRaw)>(orig, "?Write@DynamicBuffer@Jet@@QAEKPBXKK@Z");
-    dbWriteUs = Get<decltype(dbWriteUs)>(orig, "?Write@DynamicBuffer@Jet@@QAE_NABVUnicodeString@2@@Z");
-    usCtor = Get<decltype(usCtor)>(orig, "??0UnicodeString@Jet@@QAE@XZ");
-    usDtor = Get<decltype(usDtor)>(orig, "??1UnicodeString@Jet@@QAE@XZ");
-    usSet = Get<decltype(usSet)>(orig, "?Set@UnicodeString@Jet@@AAAXPB_WHH@Z");
-    asCtor = Get<decltype(asCtor)>(orig, "??0AnsiString@Jet@@QAE@XZ");
-    asCtorText = Get<decltype(asCtorText)>(orig, "??0AnsiString@Jet@@QAE@PBD@Z");
-    asDtor = Get<decltype(asDtor)>(orig, "??1AnsiString@Jet@@QAE@XZ");
-    asAssign = Get<decltype(asAssign)>(orig, "??4AnsiString@Jet@@QAAABV01@PBD@Z");
-    tokTable = *Get<Node**>(orig, "?TABLE_TOKEN@StringTablesBase@Jet@@1VPString@2@B");
-    tokId = *Get<Node**>(orig, "?ID_TOKEN@StringTablesBase@Jet@@1VPString@2@B");
-    tokEntry = *Get<Node**>(orig, "?ENTRY_TOKEN@StringTablesBase@Jet@@1VPString@2@B");
-    tokValue = *Get<Node**>(orig, "?VALUE_TOKEN@StringTablesBase@Jet@@1VPString@2@B");
+    sideModule[0] = swap ? orig : ours;
+    sideModule[1] = swap ? ours : orig;
+    UseHelpers(1);  // the setup below (as before U14b, the original's)
     std::printf("tokens %s %s %s %s, fileTblId %.4s\n", NText(tokTable).c_str(), NText(tokId).c_str(), NText(tokEntry).c_str(),
                 NText(tokValue).c_str(), Get<const char*>(orig, "?fileTblId@StringTablesBase@Jet@@1QBDB"));
     for (int s = 0; s < 2; ++s) {
@@ -1090,9 +1112,14 @@ int main(int argc, char** argv)
         GetTempPathA(MAX_PATH, t);
         tmpDir = t;
         SetCurrentDirectoryA(tmpDir.c_str());  // (the original's File leaves its temporary files in the current directory)
-        Node* drive = Make("kst");
-        Get<void(__cdecl*)(Node* const*, const char*, bool)>(orig, "?Subst@File@Jet@@SAXABVPString@2@PBD_N@Z")(&drive, tmpDir.c_str(), true);
-        Release(drive);
+        for (int sd = 0; sd < 2; ++sd) {  // each module its own substitute list and cache
+            UseHelpers(sd);
+            Node* drive = Make("kst");
+            Get<void(__cdecl*)(Node* const*, const char*, bool)>(sideModule[sd], "?Subst@File@Jet@@SAXABVPString@2@PBD_N@Z")(
+                &drive, tmpDir.c_str(), true);
+            Release(drive);
+        }
+        UseHelpers(1);
     }
 
     unsigned long long checks = 0, bad = 0;
@@ -1100,7 +1127,11 @@ int main(int argc, char** argv)
         Draw();
         PutFile(tmpDir + "st_text.txt", sc.text);
         PutFile(tmpDir + "st_bin.bin", sc.bin);
-        for (side = 0; side < 2; ++side) Run();
+        for (side = 0; side < 2; ++side) {
+            UseHelpers(side);
+            sc.tree = static_cast<unsigned char*>(sideTree[side]);
+            Run();
+        }
         const size_t lines = logs[0].size() > logs[1].size() ? logs[0].size() : logs[1].size();
         for (size_t i = 0; i < lines; ++i) {
             ++checks;
@@ -1125,8 +1156,12 @@ int main(int argc, char** argv)
         logs[0].clear();
         logs[1].clear();
         if (!sc.treeHasUnknown) {
-            cdDtor(sc.tree, nullptr);
-            cdDelete(sc.tree);
+            for (int sd = 0; sd < 2; ++sd) {
+                UseHelpers(sd);
+                cdDtor(sideTree[sd], nullptr);
+                cdDelete(sideTree[sd]);
+            }
+            UseHelpers(1);
         }
     }
     std::printf("%llu checks, %llu mismatches\n", checks, bad);

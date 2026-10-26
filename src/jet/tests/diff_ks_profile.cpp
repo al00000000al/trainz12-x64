@@ -1,12 +1,15 @@
 // Differential test of KernelStandard unit U12b (Console.cpp, Profile.cpp): the same scripted scenario runs once
 // through KernelStandard_7c_orig.dll's exports and once through ours; every observable result goes into a log and the
 // two logs must match. Console is fully deterministic (random operation scripts over several sizes). Profile and
-// QuickTimer share the original's statics (saved, cleared and restored around each side); their clock readings are
+// QuickTimer statics are each module's own since U14b (saved, cleared and restored around each side; the private
+// Display accumulators are the original's base + 0xae210 and ours from KernelStandard_7c.map); their clock readings are
 // replaced by fixed values before anything that prints or sorts them, and are otherwise logged only as relations.
 //
 // usage: diff_ks_profile.exe <dir with our KernelStandard_7c.dll and KernelStandard_7c_orig.dll> [scripts]
 #define NOMINMAX
 #include <windows.h>
+
+#include "ks_private.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -17,6 +20,7 @@
 #include <vector>
 
 static HMODULE ours, orig;
+static HMODULE cur;  // the side running now
 
 template <class F>
 static F Get(HMODULE m, const char* name)
@@ -53,7 +57,7 @@ static long long Hash(const void* p, size_t n)
 }
 
 template <class T>
-static T& Data(const char* name) { return *Get<T*>(orig, name); }
+static T& Data(const char* name) { return *Get<T*>(cur, name); }
 
 using Ctor0 = void*(__fastcall*)(void*, void*);
 using CtorP = void*(__fastcall*)(void*, void*, const void*);
@@ -370,7 +374,7 @@ static void ProfileScenario(const Side& s, uint32_t seed)
     // sorting and the table, on fixed numbers
     std::mt19937 rng(seed);
     auto R = [&](uint32_t n) { return rng() % n; };
-    *(reinterpret_cast<unsigned long long*>(Get<void*>(orig, "?freq@Time@Jet@@0_KA"))) = 3579545;
+    *(reinterpret_cast<unsigned long long*>(Get<void*>(cur, "?freq@Time@Jet@@0_KA"))) = 3579545;
     static unsigned char buf[60 * 30];
     Con c = {60, 30, buf, 0, nullptr, buf, buf};
     s.f<void(__cdecl*)(void*)>("?Clear@Console@Jet@@QAAXXZ")(&c);
@@ -495,6 +499,69 @@ static void ProfileScenario(const Side& s, uint32_t seed)
     RestoreAll();
 }
 
+// the side's statics into ps, saved for RestoreAll
+static float noAcc[3];
+static void Bind(HMODULE m, const char* dir)
+{
+    cur = m;
+    saved.clear();
+    float* acc = m == orig ? reinterpret_cast<float*>(reinterpret_cast<char*>(orig) + 0xae210)
+                           : static_cast<float*>(OurPrivate(dir, m, "displayClock@"));
+    if (!acc) {
+        std::printf("(no map: our Display accumulators stand in)\n");
+        acc = noAcc;
+    }
+    ps = {&Data<unsigned int>("?enabled@Profile@Jet@@0IA"),
+          &Data<int>("?nextid@Profile@Jet@@0HA"),
+          Get<Info**>(cur, "?funcs@Profile@Jet@@0PAPAUInfo@12@A"),
+          &Data<unsigned int>("?depth@Profile@Jet@@0IA"),
+          &Data<void*>("?current@Profile@Jet@@0PAV12@A"),
+          &Data<bool>("?childtime@Profile@Jet@@0_NA"),
+          &Data<float>("?displayPeriod@Profile@Jet@@0MA"),
+          &Data<float>("?sortFreq@Profile@Jet@@0MA"),
+          &Data<float>("?peekResetFreq@Profile@Jet@@0MA"),
+          &Data<void*>("?sort_func@Profile@Jet@@0P6AHPBX0@ZA"),
+          Get<const char**>(cur, "?tracePoint@Profile@Jet@@0PAUTraceInfo@12@A"),
+          &Data<unsigned int>("?numTracePoints@Profile@Jet@@0IA"),
+          &Data<unsigned int>("?traceFrame@Profile@Jet@@0IA"),
+          Get<unsigned char*>(cur, "?traceData@Profile@Jet@@0PAUFrameTrace@12@A"),
+          acc,
+          &Data<bool>("?childtime@QuickTimer@Jet@@0_NA"),
+          &Data<int>("?currentFrame@QuickTimer@Jet@@0HA"),
+          Get<unsigned long*>(cur, "?frameTimes@QuickTimer@Jet@@0PAKA"),
+          Get<QInfo**>(cur, "?funcs@QuickTimer@Jet@@0PAPAUInfo@12@A"),
+          &Data<unsigned long long>("?lastFrameStart@QuickTimer@Jet@@0_KA"),
+          &Data<int>("?logEvery@QuickTimer@Jet@@0HA"),
+          &Data<long>("?nextid@QuickTimer@Jet@@0VProtectedLong@2@A"),
+          &Data<int>("?numFrames@QuickTimer@Jet@@0HA"),
+          &Data<void*>("?threadInfo@QuickTimer@Jet@@0PAUThreadInfo@12@A")};
+    Save(ps.enabled, 4);
+    Save(ps.nextid, 4);
+    Save(ps.funcs, 0x1000 * 4);
+    Save(ps.depth, 4);
+    Save(ps.current, 4);
+    Save(ps.childtime, 1);
+    Save(ps.displayPeriod, 4);
+    Save(ps.sortFreq, 4);
+    Save(ps.peekResetFreq, 4);
+    Save(ps.sortFunc, 4);
+    Save(ps.tracePoint, 0x80 * 4);
+    Save(ps.numTracePoints, 4);
+    Save(ps.traceFrame, 4);
+    Save(ps.traceData, 0x404 * 128);
+    if (ps.acc != &noAcc[0]) Save(ps.acc, 12);
+    Save(ps.qChildtime, 1);
+    Save(ps.qCurrentFrame, 4);
+    Save(ps.qFrameTimes, 16);
+    Save(ps.qFuncs, 0x40 * 4);
+    Save(ps.qLastFrameStart, 8);
+    Save(ps.qLogEvery, 4);
+    Save(ps.qNextid, 4);
+    Save(ps.qNumFrames, 4);
+    Save(ps.qThreadInfo, 4);
+    Save(Get<void*>(cur, "?freq@Time@Jet@@0_KA"), 8);
+}
+
 static void Scenario(const Side& s, int scripts)
 {
     logv.clear();
@@ -525,60 +592,14 @@ int main(int argc, char** argv)
     ours = LoadLibraryA((std::string(argv[1]) + "\\KernelStandard_7c.dll").c_str());
     orig = LoadLibraryA((std::string(argv[1]) + "\\KernelStandard_7c_orig.dll").c_str());
     if (!ours || !orig || ours == orig) return 2;
-    char* const base = reinterpret_cast<char*>(orig);
-    ps = {&Data<unsigned int>("?enabled@Profile@Jet@@0IA"),
-          &Data<int>("?nextid@Profile@Jet@@0HA"),
-          Get<Info**>(orig, "?funcs@Profile@Jet@@0PAPAUInfo@12@A"),
-          &Data<unsigned int>("?depth@Profile@Jet@@0IA"),
-          &Data<void*>("?current@Profile@Jet@@0PAV12@A"),
-          &Data<bool>("?childtime@Profile@Jet@@0_NA"),
-          &Data<float>("?displayPeriod@Profile@Jet@@0MA"),
-          &Data<float>("?sortFreq@Profile@Jet@@0MA"),
-          &Data<float>("?peekResetFreq@Profile@Jet@@0MA"),
-          &Data<void*>("?sort_func@Profile@Jet@@0P6AHPBX0@ZA"),
-          Get<const char**>(orig, "?tracePoint@Profile@Jet@@0PAUTraceInfo@12@A"),
-          &Data<unsigned int>("?numTracePoints@Profile@Jet@@0IA"),
-          &Data<unsigned int>("?traceFrame@Profile@Jet@@0IA"),
-          Get<unsigned char*>(orig, "?traceData@Profile@Jet@@0PAUFrameTrace@12@A"),
-          reinterpret_cast<float*>(base + 0xae210),
-          &Data<bool>("?childtime@QuickTimer@Jet@@0_NA"),
-          &Data<int>("?currentFrame@QuickTimer@Jet@@0HA"),
-          Get<unsigned long*>(orig, "?frameTimes@QuickTimer@Jet@@0PAKA"),
-          Get<QInfo**>(orig, "?funcs@QuickTimer@Jet@@0PAPAUInfo@12@A"),
-          &Data<unsigned long long>("?lastFrameStart@QuickTimer@Jet@@0_KA"),
-          &Data<int>("?logEvery@QuickTimer@Jet@@0HA"),
-          &Data<long>("?nextid@QuickTimer@Jet@@0VProtectedLong@2@A"),
-          &Data<int>("?numFrames@QuickTimer@Jet@@0HA"),
-          &Data<void*>("?threadInfo@QuickTimer@Jet@@0PAUThreadInfo@12@A")};
-    Save(ps.enabled, 4);
-    Save(ps.nextid, 4);
-    Save(ps.funcs, 0x1000 * 4);
-    Save(ps.depth, 4);
-    Save(ps.current, 4);
-    Save(ps.childtime, 1);
-    Save(ps.displayPeriod, 4);
-    Save(ps.sortFreq, 4);
-    Save(ps.peekResetFreq, 4);
-    Save(ps.sortFunc, 4);
-    Save(ps.tracePoint, 0x80 * 4);
-    Save(ps.numTracePoints, 4);
-    Save(ps.traceFrame, 4);
-    Save(ps.traceData, 0x404 * 128);
-    Save(ps.acc, 12);
-    Save(ps.qChildtime, 1);
-    Save(ps.qCurrentFrame, 4);
-    Save(ps.qFrameTimes, 16);
-    Save(ps.qFuncs, 0x40 * 4);
-    Save(ps.qLastFrameStart, 8);
-    Save(ps.qLogEvery, 4);
-    Save(ps.qNextid, 4);
-    Save(ps.qNumFrames, 4);
-    Save(ps.qThreadInfo, 4);
-    Save(Get<void*>(orig, "?freq@Time@Jet@@0_KA"), 8);
+    Bind(orig, argv[1]);
     Scenario({orig, "orig"}, scripts);
+    RestoreAll();
     const std::vector<long long> a = logv;
     const std::vector<int> la = lines;
+    Bind(ours, argv[1]);
     Scenario({ours, "ours"}, scripts);
+    RestoreAll();
     const std::vector<long long>& r = logv;
     size_t bad = 0;
     for (size_t i = 0; i < a.size() || i < r.size(); ++i) {

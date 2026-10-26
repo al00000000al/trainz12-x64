@@ -20,6 +20,15 @@
 
 namespace Jet {
 
+// exported as ?results@ConfigParser@Jet@@2QBUResultTable@2@B (implemented.txt): {name, text} pairs
+extern const char* const ConfigParserResultTable[] = {
+    "RES_UNKNOWN", "Unknown error",
+    "RES_FILE_OPEN_ERROR", "Unable to open file",
+    "RES_FILE_FORMAT_ERROR", "Unexpected file format",
+    "RES_FILE_VERSION_ERROR", "Incompatible file version",
+    "RES_INVALID_PARAMETER", "Invalid parameter",
+    nullptr};
+
 namespace {
 
 // {lookahead | action << 8, next entry address}; the states {first entry address, mask, default action}

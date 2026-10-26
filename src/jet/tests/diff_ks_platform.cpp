@@ -694,8 +694,9 @@ int main(int argc, char** argv)
         std::printf("cannot load the modules from %s\n", dir.c_str());
         return 2;
     }
-    Load(apis[0], getenv("KSP_SWAP") ? orig : ours, orig);
-    Load(apis[1], getenv("KSP_SWAP") ? ours : orig, orig);
+    // each side's own Alloc and ReferenceCount (U14b)
+    Load(apis[0], getenv("KSP_SWAP") ? orig : ours, getenv("KSP_SWAP") ? orig : ours);
+    Load(apis[1], getenv("KSP_SWAP") ? ours : orig, getenv("KSP_SWAP") ? ours : orig);
     InitializeCriticalSection(&jobLog);
     std::mt19937 rng(1234);
     unsigned long long checks = 0, bad = 0;

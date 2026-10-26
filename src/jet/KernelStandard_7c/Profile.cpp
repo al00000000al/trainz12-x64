@@ -1,7 +1,6 @@
 // Unit U12b of KernelStandard_7c: Profile (0x10014d90..0x10014f65, 0x10038aa0..0x100390ab) and QuickTimer
-// (0x1003c0b0..0x1003c36d, 0x1003c830). The statics are the original's (forwarded data); the three accumulators of
-// Profile::Display(float, ...) are private to it and are used there by address. qsort is msvcr80's, so equal keys
-// end up in the original's order.
+// (0x1003c0b0..0x1003c36d, 0x1003c830). The statics are ours since U14b (with the three private accumulators of
+// Profile::Display(float, ...), 0x100ae210..218). qsort is msvcr80's, so equal keys end up in the original's order.
 #include <jet/KernelStandard.h>
 #include <jet/SmallTypes.h>
 
@@ -13,6 +12,36 @@
 
 namespace Jet {
 
+Profile::Info* Profile::funcs[0x1000];         // 0x100a8b58
+int Profile::nextid;                           // 0x100adc04
+unsigned int Profile::enabled;                 // 0x100adbfc
+unsigned int Profile::depth;                   // 0x100adc00
+Profile* Profile::current;                     // 0x100adc08
+bool Profile::childtime = true;                // 0x10072879
+float Profile::displayPeriod = 1.0f / 15.0f;   // 0x10072888 (0x3d888889)
+float Profile::sortFreq = 0.5f;                // 0x1007288c
+float Profile::peekResetFreq = 2.0f;           // 0x10072890
+int(__cdecl* Profile::sort_func)(const void*, const void*) = &Profile::SortTotal;  // 0x10072884
+Profile::TraceInfo Profile::tracePoint[0x80];  // 0x100a8958
+unsigned int Profile::numTracePoints;          // 0x100adc0c
+unsigned int Profile::traceFrame;              // 0x100adc10
+Profile::FrameTrace Profile::traceData[0x80];  // 0x10088758
+
+namespace {
+QuickTimer::ThreadInfo quickThreadInfo;  // 0x100ae1e4
+float displayClock[3];  // 0x100ae210..218: Display(float)'s time since the last display, sort and peak reset
+}  // namespace
+
+bool QuickTimer::childtime = true;                          // 0x10072878
+int QuickTimer::currentFrame;                               // 0x100adc1c
+unsigned long QuickTimer::frameTimes[4];                    // 0x100adc30
+QuickTimer::Info* QuickTimer::funcs[0x40];                  // 0x100adc40
+unsigned __int64 QuickTimer::lastFrameStart;                // 0x100adc28
+int QuickTimer::logEvery = 200;                             // 0x1007287c
+ProtectedLong QuickTimer::nextid;                           // 0x100ae1ec
+int QuickTimer::numFrames;                                  // 0x100adc20
+QuickTimer::ThreadInfo* QuickTimer::threadInfo = &quickThreadInfo;  // 0x10072880
+
 struct ProfileWork {
     static_assert(sizeof(Profile::FrameTrace) == 0x404 && sizeof(Profile::Info) == 0x20);
     static_assert(offsetof(QuickTimer::Info, frames) == 0xc && sizeof(QuickTimer::Stats) == 0x10);
@@ -22,12 +51,6 @@ struct ProfileWork {
         LARGE_INTEGER c;
         QueryPerformanceCounter(&c);
         return c.LowPart;
-    }
-    // Display(float, ...)'s time since the last display, sort and peek reset (0x100ae210 / 214 / 218)
-    static float& Acc(unsigned int rva)
-    {
-        static char* const base = reinterpret_cast<char*>(GetModuleHandleA("KernelStandard_7c_orig.dll"));
-        return *reinterpret_cast<float*>(base + rva);
     }
     static void Line(Console& c)  // '\n' written at the cursor, then the usual wrap
     {
@@ -204,9 +227,9 @@ void __cdecl Profile::Display(Console& console, int max)
 void __cdecl Profile::Display(float elapsed, Console& console, int max)
 {
     if (!(elapsed > 0.0f)) return;
-    float& shown = ProfileWork::Acc(0xae210);
-    float& sorted = ProfileWork::Acc(0xae214);
-    float& peeks = ProfileWork::Acc(0xae218);
+    float& shown = displayClock[0];
+    float& sorted = displayClock[1];
+    float& peeks = displayClock[2];
     peeks += elapsed;
     shown += elapsed;
     sorted += elapsed;

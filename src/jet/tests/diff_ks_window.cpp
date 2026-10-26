@@ -72,9 +72,10 @@ static void* Fn(const char* name)
     }
     return fns[side][name] = p;
 }
+// the side's own export (U14b: Alloc, the strings and ExceptionHandler's lists are each module's own)
 static void* OrigFn(const char* name)
 {
-    void* p = reinterpret_cast<void*>(GetProcAddress(origMod, name));
+    void* p = reinterpret_cast<void*>(GetProcAddress(mods[side], name));
     if (!p) {
         std::printf("missing %s\n", name);
         std::exit(2);

@@ -56,7 +56,8 @@ public:
     ~ConfigData();
     ConfigData& operator=(const ConfigData& o);
 
-    // the pool of the original module (still its PoolBlockAlloc)
+    // nodes come from one PoolBlockAlloc (0x14-byte items, 0x200 a block; Memory.cpp). The placement delete
+    // frees into it too, as in the original.
     static void* __cdecl operator new(size_t size);
     static void __cdecl operator delete(void* p);
     static void* __cdecl operator new(size_t size, void* at);
@@ -209,7 +210,7 @@ public:
     const int* Data() const { return reinterpret_cast<const int*>(data); }
     const PString& Value() const { return reinterpret_cast<const PString&>(data); }
 
-    static JET_KS_FORWARDED ConfigData unknownItem;  // what a missing key returns (still the original's)
+    static JET_KS_FORWARDED ConfigData unknownItem;  // what a missing key returns
 
 protected:
     bool __cdecl HasDataItemOnly() const;
@@ -356,7 +357,7 @@ public:
 
 // a hardware fault as an Exception (0x1114 bytes, unit U12c, ExceptionHandler.cpp): the reason is the fault's
 // name from exceptionTypes, the description the register dump and call stack written by GetCallStack (still the
-// original's: an x86 EBP walk)
+// original's: an x86 EBP walk, with its own tmpDescription)
 class HardwareException : public Exception {
 public:
     struct Type {
@@ -373,6 +374,7 @@ private:
     void __cdecl GetCallStack(void* pointers);
     void* pointers;  // +0x1110
     static JET_KS_FORWARDED Type exceptionTypes[];  // 21 entries
+    static JET_KS_FORWARDED char tmpDescription[];  // 0x400 bytes
 };
 JET_LAYOUT32(sizeof(HardwareException) == 0x1114);
 

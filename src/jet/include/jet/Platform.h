@@ -14,9 +14,10 @@
 #define JET_KS_IMPORT __declspec(dllimport)
 #endif
 
-// JET_KS_FORWARDED marks KernelStandard data that is still the original's. Every 32-bit build imports it (our
-// KernelStandard_7c imports it from KernelStandard_7c_orig.dll); the x64 stand-in defines it.
-#if defined(JET_KS_STATIC)
+// JET_KS_FORWARDED marks KernelStandard data exports. Until U14b they were the original's (our KernelStandard_7c
+// imported them from KernelStandard_7c_orig.dll); now KernelStandard_7c and the x64 stand-in define them and every
+// other 32-bit module imports them.
+#if defined(JET_KS_STATIC) || defined(JET_KS_BUILD)
 #define JET_KS_FORWARDED
 #else
 #define JET_KS_FORWARDED __declspec(dllimport)

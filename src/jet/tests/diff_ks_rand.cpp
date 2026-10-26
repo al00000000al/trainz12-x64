@@ -1,8 +1,8 @@
 // Differential test of KernelStandard unit U5 (Rand.cpp): Rand and LCRand of our KernelStandard_7c.dll against
 // KernelStandard_7c_orig.dll in one process. After seeding, the whole generator state (fields and both tables)
 // is compared; then random call sequences run on both, comparing every result as raw bits (float results are read
-// from st(0) unrounded) and the state after every call. Randomise is made deterministic by setting the original's
-// exported Time::frameLock / frameLockTime, which our module reads too.
+// from st(0) unrounded) and the state after every call. Randomise is made deterministic by setting each module's
+// exported Time::frameLock / frameLockTime (its own since U14b).
 //
 // usage: diff_ks_rand.exe <dir with our KernelStandard_7c.dll and KernelStandard_7c_orig.dll> [seeds]
 #include <windows.h>
@@ -15,6 +15,15 @@
 #include <string>
 
 static HMODULE ours, orig;
+
+// Time::frameLock / frameLockTime of both modules, set alike
+struct TimeLock {
+    bool* lock[2];
+    double* time[2];
+    TimeLock();
+    void Set(bool on) { *lock[0] = *lock[1] = on; }
+    void Time(double t) { *time[0] = *time[1] = t; }
+};
 static unsigned long long checks, bad;
 
 template <class F>
@@ -97,6 +106,15 @@ static float RandomArg(std::mt19937& rng)
     }
 }
 
+TimeLock::TimeLock()
+{
+    HMODULE m[2] = {ours, orig};
+    for (int k = 0; k < 2; ++k) {
+        lock[k] = Get<bool*>(m[k], "?frameLock@Time@Jet@@0_NA");
+        time[k] = Get<double*>(m[k], "?frameLockTime@Time@Jet@@0NA");
+    }
+}
+
 static void RandTest(int seeds)
 {
     Pair<Ctor0> ctor0("??0Rand@Jet@@QAE@XZ");
@@ -117,8 +135,7 @@ static void RandTest(int seeds)
     Pair<B0> nextBool("?NextBool@Rand@Jet@@QAE_NXZ");
     Pair<Assign> assign("??4Rand@Jet@@QAEAAV01@ABV01@@Z");
     Pair<CtorII> init("?Init@Rand@Jet@@IAEXHH@Z");
-    auto* frameLock = Get<bool*>(orig, "?frameLock@Time@Jet@@0_NA");
-    auto* frameLockTime = Get<double*>(orig, "?frameLockTime@Time@Jet@@0NA");
+    TimeLock frameLock;
 
     std::mt19937 rng(321);
     for (int seed = 0; seed < seeds; ++seed) {
@@ -142,11 +159,11 @@ static void RandTest(int seeds)
                   (a.gaussFlag & 0xff) == (b.gaussFlag & 0xff) && a.state == b.state,
               "construction", seed, 0);
         if (kind == 3) {
-            *frameLock = true;
-            *frameLockTime = static_cast<double>(rng()) * 1.37;
+            frameLock.Set(true);
+            frameLock.Time(static_cast<double>(rng()) * 1.37);
             randomise.a(&a, nullptr);
             randomise.b(&b, nullptr);
-            *frameLock = false;
+            frameLock.Set(false);
         } else {
             const unsigned int s = (seed % 9 == 0) ? 0u : (seed % 9 == 1 ? 0xFFFFFFFFu : rng());
             setSeed.a(&a, nullptr, s);
@@ -226,13 +243,12 @@ static void LCRandTest(int seeds)
     Pair<DDD> nextDouble2("?NextDouble@LCRand@Jet@@QAENNN@Z");
     Pair<B0> nextBool("?NextBool@LCRand@Jet@@QAE_NXZ");
     Pair<Assign> assign("??4LCRand@Jet@@QAEAAV01@ABV01@@Z");
-    auto* frameLock = Get<bool*>(orig, "?frameLock@Time@Jet@@0_NA");
-    auto* frameLockTime = Get<double*>(orig, "?frameLockTime@Time@Jet@@0NA");
+    TimeLock frameLock;
     std::mt19937 rng(654);
     for (int seed = 0; seed < seeds; ++seed) {
         uint32_t a = 0, b = 0;
-        *frameLock = true;
-        *frameLockTime = static_cast<double>(rng()) * 0.73;
+        frameLock.Set(true);
+        frameLock.Time(static_cast<double>(rng()) * 0.73);
         if (seed % 3 == 0) {
             ctor0.a(&a, nullptr);
             ctor0.b(&b, nullptr);
@@ -244,7 +260,7 @@ static void LCRandTest(int seeds)
             ctor1.a(&a, nullptr, static_cast<int>(s));
             ctor1.b(&b, nullptr, static_cast<int>(s));
         }
-        *frameLock = false;
+        frameLock.Set(false);
         Check(a == b, "LCRand seed", seed, 0);
         for (int step = 0; step < 4000; ++step) {
             const unsigned op = rng() % 15;

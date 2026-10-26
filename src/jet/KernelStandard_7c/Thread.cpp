@@ -1,7 +1,7 @@
 // Unit U13 of KernelStandard_7c: Thread (0x1003fc90, 0x10040070..0x10040530, 0x1000e7f0..0x1000e820) and
 // ThreadLocalStorage (0x1002dfe0..0x1002e030, 0x10040540..0x10040af0, helpers 0x1002ecf0 / 0x1002edc0).
-// mainThreadId, the TLS singleton and its index statics are still the original's (forwarded data): its
-// KernelStandardInit sets them up and its Profile reads the indices.
+// mainThreadId, the TLS singleton and its index statics are ours since U14b; KernelStandardInit (Memory.cpp) sets them
+// up and Profile reads the indices.
 #include <jet/KernelStandard.h>
 
 #include <windows.h>
@@ -10,6 +10,13 @@
 #include <new>
 
 namespace Jet {
+
+unsigned int Thread::mainThreadId;                          // 0x100add40
+int ThreadLocalStorage::ThreadTlsIndex = -1;                // 0x10072064
+int ThreadLocalStorage::ProfilePtTlsIndex = -1;             // 0x10072068
+int ThreadLocalStorage::ProfileTraceTlsIndex = -1;          // 0x1007206c
+int ThreadLocalStorage::ProfileRenderTlsIndex = -1;         // 0x10072070
+ThreadLocalStorage* ThreadLocalStorage::singleton;          // 0x100add44
 
 // ---- Thread
 
@@ -123,7 +130,7 @@ struct TlsWork {
         PStringCache* const cache = PString::Cache();
         if (!n || !cache) return;
         cache->Lock();
-        if (n->refs == 1) --*reinterpret_cast<int*>(&cache->unknown0);
+        if (n->refs == 1) --cache->usedNodes;
         --cache->liveRefs;
         --n->refs;
         cache->Unlock();

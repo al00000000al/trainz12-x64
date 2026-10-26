@@ -112,9 +112,16 @@ struct Locked {
 
 }  // namespace
 
-// a file of the archive (PackedHeapMP 0x100ae180 in the original: {offset, size, Entry size, length, crc,
-// attrib, name}); the name in lower case
+// The records' heap, "FileSubArchive" (0x100ae180; Memory.cpp makes it before g_jetSTLAllocHeap, as the original's
+// initialisers do, so PackedHeap::DebugPrintAll lists it first)
+extern PackedHeapMP fileSubArchiveHeap;
+
+// a file of the archive (from fileSubArchiveHeap: {offset, size, Entry size, length, crc, attrib, name} in the
+// original); the name in lower case
 struct ArcRecord {
+    static void* operator new(size_t n) { return fileSubArchiveHeap.Alloc(static_cast<unsigned int>(n)); }
+    static void operator delete(void* p) { fileSubArchiveHeap.Free(static_cast<unsigned char*>(p)); }
+
     unsigned long offset;  // the data
     unsigned long size;    // the bytes stored
     unsigned long plain;   // Entry::size

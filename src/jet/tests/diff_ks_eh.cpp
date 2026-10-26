@@ -24,6 +24,7 @@ public:
 class AssertEx : public Jet::Exception {};
 
 static HMODULE ours, orig;
+static HMODULE cur;  // the side running now (its own statics since U14b)
 
 template <class F>
 static F Get(HMODULE m, const char* name)
@@ -67,7 +68,7 @@ static void LogText(const char* s, int line)
 #define LT(s) LogText((s), __LINE__)
 
 template <class T>
-static T& Data(const char* name) { return *Get<T*>(orig, name); }
+static T& Data(const char* name) { return *Get<T*>(cur, name); }
 
 using CallBack = int(__cdecl*)(void*);
 using CtorP = void*(__fastcall*)(void*, void*, const void*);
@@ -120,6 +121,7 @@ static void LogCalls(int line)
 
 static void Scenario(const Side& s)
 {
+    cur = s.m;
     logv.clear();
     lines.clear();
     current = &s;
@@ -226,7 +228,7 @@ static void Scenario(const Side& s)
 
     std::printf("%s: init\n", s.tag);
     // Init: CoreDumps, CorePrefix (10 characters at most), CoreOptions
-    char* prefix = Get<char*>(orig, "?corePrefix@ExceptionHandler@Jet@@0PADA");
+    char* prefix = Get<char*>(cur, "?corePrefix@ExceptionHandler@Jet@@0PADA");
     bool& dumps = Data<bool>("?doCoreDump@ExceptionHandler@Jet@@0_NA");
     int& opts = Data<int>("?dumpOptions@ExceptionHandler@Jet@@0HA");
     char prefix0[16];

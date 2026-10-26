@@ -538,6 +538,33 @@ static DWORD WINAPI Watch(void* seconds)
     return 0;
 }
 
+// every helper from the side's own module (U14b: each module has its own heap, PString cache and statics)
+static HMODULE sideModule[2];
+static void UseHelpers(int sd)
+{
+    const HMODULE m = sideModule[sd];
+    pstringCache = Get<void**>(m, "?cache@PString@Jet@@0PAVPStringCache@2@A");
+    pstringCreate = Get<decltype(pstringCreate)>(m, "?Create@PStringCache@Jet@@QAAPAUNode@12@PBE@Z");
+    pstringDestroy = Get<decltype(pstringDestroy)>(m, "?Destroy@PStringCache@Jet@@QAAXPAUNode@12@@Z");
+    cdNew = Get<decltype(cdNew)>(m, "??2ConfigData@Jet@@SAPAXI@Z");
+    cdDelete = Get<decltype(cdDelete)>(m, "??3ConfigData@Jet@@SAXPAX@Z");
+    cdCtor = Get<decltype(cdCtor)>(m, "??0ConfigData@Jet@@QAE@ABVPString@1@@Z");
+    cdDtor = Get<decltype(cdDtor)>(m, "??1ConfigData@Jet@@QAE@XZ");
+    cdNewChild = Get<decltype(cdNewChild)>(m, "?New@ConfigData@Jet@@QAAAAV12@ABVPString@2@@Z");
+    cdInt = Get<decltype(cdInt)>(m, "??6ConfigData@Jet@@QAEXH@Z");
+    cdFloat = Get<decltype(cdFloat)>(m, "??6ConfigData@Jet@@QAEXM@Z");
+    cdPString = Get<decltype(cdPString)>(m, "??6ConfigData@Jet@@QAEXABVPString@1@@Z");
+    cdBytes = Get<decltype(cdBytes)>(m, "?SetByteArray@ConfigData@Jet@@QAAXPAEH@Z");
+    cdInts = Get<decltype(cdInts)>(m, "?SetIntArray@ConfigData@Jet@@QAAXPAHH@Z");
+    cdFloats = Get<decltype(cdFloats)>(m, "?SetFloatArray@ConfigData@Jet@@QAAXPAMH@Z");
+    cdPStrings = Get<decltype(cdPStrings)>(m, "?SetPStringArray@ConfigData@Jet@@QAAXPAVPString@2@H@Z");
+    cdWrite = Get<decltype(cdWrite)>(m, "?Write@ConfigData@Jet@@QBA_NAAVPString@2@H@Z");
+    stringCtor = Get<decltype(stringCtor)>(m, "??0String@Jet@@QAE@PBD@Z");
+    stringDtor = Get<decltype(stringDtor)>(m, "??1String@Jet@@QAE@XZ");
+    mfCtor = Get<decltype(mfCtor)>(m, "??0MemoryFile@Jet@@QAE@PBXI_NH@Z");
+    mfDtor = Get<decltype(mfDtor)>(m, "??1MemoryFile@Jet@@QAE@XZ");
+}
+
 int main(int argc, char** argv)
 {
     SetUnhandledExceptionFilter(&Crash);
@@ -562,37 +589,24 @@ int main(int argc, char** argv)
     const bool swap = getenv("KSP_SWAP") != nullptr;
     Load(apis[0], swap ? orig : ours);
     Load(apis[1], swap ? ours : orig);
-    pstringCache = Get<void**>(orig, "?cache@PString@Jet@@0PAVPStringCache@2@A");
-    pstringCreate = Get<decltype(pstringCreate)>(orig, "?Create@PStringCache@Jet@@QAAPAUNode@12@PBE@Z");
-    pstringDestroy = Get<decltype(pstringDestroy)>(orig, "?Destroy@PStringCache@Jet@@QAAXPAUNode@12@@Z");
-    cdNew = Get<decltype(cdNew)>(orig, "??2ConfigData@Jet@@SAPAXI@Z");
-    cdDelete = Get<decltype(cdDelete)>(orig, "??3ConfigData@Jet@@SAXPAX@Z");
-    cdCtor = Get<decltype(cdCtor)>(orig, "??0ConfigData@Jet@@QAE@ABVPString@1@@Z");
-    cdDtor = Get<decltype(cdDtor)>(orig, "??1ConfigData@Jet@@QAE@XZ");
-    cdNewChild = Get<decltype(cdNewChild)>(orig, "?New@ConfigData@Jet@@QAAAAV12@ABVPString@2@@Z");
-    cdInt = Get<decltype(cdInt)>(orig, "??6ConfigData@Jet@@QAEXH@Z");
-    cdFloat = Get<decltype(cdFloat)>(orig, "??6ConfigData@Jet@@QAEXM@Z");
-    cdPString = Get<decltype(cdPString)>(orig, "??6ConfigData@Jet@@QAEXABVPString@1@@Z");
-    cdBytes = Get<decltype(cdBytes)>(orig, "?SetByteArray@ConfigData@Jet@@QAAXPAEH@Z");
-    cdInts = Get<decltype(cdInts)>(orig, "?SetIntArray@ConfigData@Jet@@QAAXPAHH@Z");
-    cdFloats = Get<decltype(cdFloats)>(orig, "?SetFloatArray@ConfigData@Jet@@QAAXPAMH@Z");
-    cdPStrings = Get<decltype(cdPStrings)>(orig, "?SetPStringArray@ConfigData@Jet@@QAAXPAVPString@2@H@Z");
-    cdWrite = Get<decltype(cdWrite)>(orig, "?Write@ConfigData@Jet@@QBA_NAAVPString@2@H@Z");
-    stringCtor = Get<decltype(stringCtor)>(orig, "??0String@Jet@@QAE@PBD@Z");
-    stringDtor = Get<decltype(stringDtor)>(orig, "??1String@Jet@@QAE@XZ");
-    mfCtor = Get<decltype(mfCtor)>(orig, "??0MemoryFile@Jet@@QAE@PBXI_NH@Z");
-    mfDtor = Get<decltype(mfDtor)>(orig, "??1MemoryFile@Jet@@QAE@XZ");
+    sideModule[0] = swap ? orig : ours;
+    sideModule[1] = swap ? ours : orig;
+    UseHelpers(1);  // the setup below (as before U14b, the original's)
     {
         char t[MAX_PATH];
         GetTempPathA(MAX_PATH, t);
         tmpDir = t;
         CreateDirectoryA((tmpDir + "c0").c_str(), nullptr);
         CreateDirectoryA((tmpDir + "c1").c_str(), nullptr);
-        Node* drive = Make("ksp");
-        // each module keeps its own substitute list (U10b)
-        for (HMODULE m : {orig, ours})
-            Get<void(__cdecl*)(Node* const*, const char*, bool)>(m, "?Subst@File@Jet@@SAXABVPString@2@PBD_N@Z")(&drive, tmpDir.c_str(), true);
-        Release(drive);
+        // each module keeps its own substitute list (U10b) and PString cache (U14b)
+        for (int sd = 0; sd < 2; ++sd) {
+            UseHelpers(sd);
+            Node* drive = Make("ksp");
+            Get<void(__cdecl*)(Node* const*, const char*, bool)>(sideModule[sd], "?Subst@File@Jet@@SAXABVPString@2@PBD_N@Z")(
+                &drive, tmpDir.c_str(), true);
+            Release(drive);
+        }
+        UseHelpers(1);
     }
     if (const char* one = getenv("KSP_FILE")) {  // one file, each side
         FILE* f = std::fopen(one, "rb");
@@ -601,7 +615,10 @@ int main(int argc, char** argv)
         size_t n;
         while (f && (n = std::fread(buf, 1, sizeof(buf), f)) > 0) text.append(buf, n);
         if (f) std::fclose(f);
-        for (side = 0; side < 2; ++side) Run(text, 1, 1);
+        for (side = 0; side < 2; ++side) {
+            UseHelpers(side);
+            Run(text, 1, 1);
+        }
         for (side = 0; side < 2; ++side)
             for (const std::string& l : logs[side]) std::printf("%d| %s\n", side, l.substr(0, 400).c_str());
         return 0;
@@ -615,6 +632,7 @@ int main(int argc, char** argv)
         const uint32_t enc = R(3), flags = R(16);
         if (trace) std::printf("scenario %d [%s]\n", sc, Hex(text.substr(0, 200)).c_str());
         for (side = 0; side < 2; ++side) {
+            UseHelpers(side);
             SideCwd(side);
             Run(text, enc, flags);
         }

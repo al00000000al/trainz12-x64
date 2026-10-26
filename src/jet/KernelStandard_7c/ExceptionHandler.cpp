@@ -2,9 +2,11 @@
 // (0x1001cc90..0x1001ccbf, 0x1001d4e0) and HardwareException (0x10014380..0x10014445, 0x1001ccc0).
 // Still the original's and called there by address: the crash report writers (the hardware-fault filter 0x1001e920
 // with ERRORLOG.TXT / CRASH.DMP / XCrashReport.exe, and the assertion report 0x1001ee20) and
-// HardwareException::GetCallStack (an x86 EBP walk, through its export). They move with the x64 rewrite.
-// The statics are the original's: the exported ones imported, the private ones (the report lock, the nesting count
-// of Main, the re-entry flags of the critical lists, the "Exception" log client) by address.
+// HardwareException::GetCallStack (an x86 EBP walk, through its export). They move with the x64 rewrite; they keep
+// their own state (the report buffer, ERRORLOG.TXT), so they need none of ours.
+// The statics are ours since U14b: the exported ones, the report lock, the nesting count of Main, the re-entry flags
+// of the critical lists and the "ExceptionHandler" log client. `file` / `reason` mangle differently in VS2005
+// (const char* const, 0PBDB): they are exported under those names from ExceptionHandlerFile / ExceptionHandlerReason.
 #include <jet/Config.h>
 #include <jet/KernelStandard.h>
 
@@ -26,6 +28,52 @@ public:
 
 namespace Jet {
 
+class ExceptionHandler::Shutdown;
+
+char ExceptionHandler::corePrefix[0x10] = "core";                    // 0x100728d8
+ExceptionHandler::Shutdown* ExceptionHandler::criticalShutdown;      // 0x100adba8
+ExceptionHandler::Shutdown* ExceptionHandler::criticalStartup;       // 0x100adbac
+bool ExceptionHandler::doCoreDump = true;                            // 0x100728d5
+int ExceptionHandler::dumpOptions;                                   // 0x100adbbc
+alignas(8) char ExceptionHandler::hardwareExceptionBlock[0x1118];    // 0x10075528: DoFilterException's HardwareException
+bool ExceptionHandler::ignore;                                       // 0x100adb91
+bool ExceptionHandler::isPromptAssertions = true;                    // 0x100728d4
+int ExceptionHandler::line;                                          // 0x100adbb4
+extern const char* ExceptionHandlerFile = nullptr;                                  // 0x100adbb0
+extern const char* ExceptionHandlerReason = nullptr;                                // 0x100adbb8
+
+char HardwareException::tmpDescription[0x400];  // 0x10075128 (the original's GetCallStack uses its own)
+HardwareException::Type HardwareException::exceptionTypes[21] = {  // 0x100728e8
+    {0xc0000005, "Access Violation"},
+    {0xc000008c, "Array Bounds Exceeded"},
+    {0x80000003, "Breakpoint"},
+    {0x80000002, "Data Type Misalignment"},
+    {0xc000008d, "Floating Point Denormal Operation"},
+    {0xc000008e, "Floating Point Divide By Zero"},
+    {0xc000008f, "Floating Point Inexact Result"},
+    {0xc0000090, "Floating Point Invalid Operaton"},
+    {0xc0000091, "Floating Point Overflow"},
+    {0xc0000092, "Floating Point Stack Check"},
+    {0xc0000093, "Floating Point Underflow"},
+    {0xc000001d, "Illegal Instruction"},
+    {0xc0000006, "In Page Error"},
+    {0xc0000094, "Integer Divide By Zero"},
+    {0xc0000095, "Integer Overflow"},
+    {0xc0000026, "Invalid Disposition"},
+    {0xc0000025, "Non-continuable Exception"},
+    {0xc0000096, "Privileged Instruction"},
+    {0x80000004, "Single Step"},
+    {0xc00000fd, "Stack Overflow"},
+    {0xe06d7363, "C++ Exception"},
+};
+
+namespace {
+CRITICAL_SECTION reportLock;  // 0x1007663c, made by the outermost Main
+int mainNesting;              // 0x100ae208
+bool inShutdown, inStartup;   // 0x100ae20c / 0x100ae20d
+LogClient* const handlerClient = Log::GetClient("ExceptionHandler");  // 0x100ae178 (0x100507b0)
+}  // namespace
+
 class ExceptionHandler::Shutdown {
 public:
     void* arg;
@@ -39,14 +87,11 @@ struct HandlerWork {
         static char* const base = reinterpret_cast<char*>(GetModuleHandleA("KernelStandard_7c_orig.dll"));
         return base;
     }
-    template <class T>
-    static T& At(unsigned int rva) { return *reinterpret_cast<T*>(Base() + rva); }
-
-    static CRITICAL_SECTION* Lock() { return &At<CRITICAL_SECTION>(0x7663c); }
-    static int& Nesting() { return At<int>(0xae208); }
-    static bool& InShutdown() { return At<bool>(0xae20c); }
-    static bool& InStartup() { return At<bool>(0xae20d); }
-    static LogClient* Client() { return At<LogClient*>(0xae178); }  // the "Exception" log channel
+    static CRITICAL_SECTION* Lock() { return &reportLock; }
+    static int& Nesting() { return mainNesting; }
+    static bool& InShutdown() { return inShutdown; }
+    static bool& InStartup() { return inStartup; }
+    static LogClient* Client() { return handlerClient; }
 
     // the original's crash report for a hardware fault (the filter of Main; 1: handled, 0: continue the search)
     static int CrashFilter(void* pointers)
@@ -56,10 +101,8 @@ struct HandlerWork {
     // the original's report of an Exception (ERRORLOG.TXT and XCrashReport.exe -assert); 1: ignore from now on
     static int Report(Exception& e) { return reinterpret_cast<int(__fastcall*)(Exception*)>(Base() + 0x1ee20)(&e); }
 
-    static const char*& File() { return *reinterpret_cast<const char**>(GetProcAddress(
-                                     reinterpret_cast<HMODULE>(Base()), "?file@ExceptionHandler@Jet@@0PBDB")); }
-    static const char*& Reason() { return *reinterpret_cast<const char**>(GetProcAddress(
-                                       reinterpret_cast<HMODULE>(Base()), "?reason@ExceptionHandler@Jet@@0PBDB")); }
+    static const char*& File() { return ExceptionHandlerFile; }
+    static const char*& Reason() { return ExceptionHandlerReason; }
 
     // 0x1001cc40: the channel takes a message
     static bool Open(LogClient* c)

@@ -1208,3 +1208,74 @@ Internal functions of orig can be reached by RVA (`diff_blowfish.cpp`).
 - The lists are `{arg, fn, next}` nodes, newest first, run front to back. A run is allowed again while the list is
   not empty. A failing log message closes the log (Log::Shutdown(true)), and a failing callback logs "... failure!".
 - Test: diff_ks_eh (ordinary paths only; 131 results per side, 0 mismatches).
+
+## U14b done (2026-10-26): Memory.cpp + PString.cpp and every data export (1761/1762 ours)
+- The foundation cut-over: Alloc, PackedHeap / PackedHeapMP, PoolBlockAlloc, ReferenceCount, ConfigData's pool
+  operators, PStringCache / PString, KernelStandardInit, g_jetSTLAllocHeap, and all 68 data exports (defined in the
+  unit that uses them). Only HardwareException::GetCallStack is still forwarded; the crash report writers (base +
+  0x1e920 / +0x1ee20) are still called by address. Both keep their own state (a report buffer at 0x10076658,
+  ERRORLOG.TXT), so they need none of ours. The original module stays loaded for them (and msvcr80 with it).
+- Static initialisers: the original's .CRT$XCU table (0x10051478) runs Alloc's constructor, the free-list heads
+  {0x155, head}, the shutdown table runner (0x10050e20), KernelStandardInit, the counter frequency, ConfigData's pool,
+  the "ExceptionHandler" and "PackedHeap" log clients, File::Sep, the StringTables tokens and g_jetSTLAllocHeap
+  ("#jetstd::"). Ours: Memory.cpp and Time.cpp are `#pragma init_seg(lib)`, so they come before every other static
+  and go after them at exit. KernelStandardInit (one instance; a static flag as in the original) sets the locale
+  (msvcr80 setlocale(LC_CTYPE, ".ACP")), Thread::mainThreadId, the cache (997 buckets) and the TLS singleton, and puts
+  the shutdown routine (0x1002ec50: cache, isFinished, Log::Done, TLS) in the 0x400-entry table run at exit.
+- Alloc: class c = (size + 0xb) >> 3 (size 0: class 1, 8 bytes); classes above 0x7f go straight to msvcr80 malloc.
+  The tag is ((c ^ 0x155) & 0x1ff) | c << 9; Delete reads only c. Free lists keep caps[c] = 0x2000 / 8c + 1 blocks
+  (class 0: 1; classes 2/3/4: 0x2000 / 0x1555 / 0x1000) and push the block header; 16 locks by c & 0xf. Until the
+  constructor and after the destructor (flag 0x100728d6, initially 1) nothing is locked. Out of memory: debug string,
+  then std::bad_alloc. Dump prints hits / misses / large / bytes (Search and Maximum are never counted).
+- PackedHeap {name, block set, size map, unused}: 1 MB blocks (VirtualAlloc, MEM_TOP_DOWN) {used, offset, free
+  chain}, allocations {size, data} from +0xc. Sizes: < 0x10 become 0x10, rounded to 4, at most 0xffff0. Alloc tries
+  the freed allocation of that exact size first (a map size -> chain), then bumps in the blocks **from the highest
+  address down** (a reverse walk of the original's set), then a new block. A freed allocation goes on its block's
+  chain and its size's chain {size, prev link, next, prev link, next}. A block that empties is released when another
+  empty one exists, else reset (its chunks unlinked, offset 0); the unused count is not lowered on release (as in the
+  original). Free ignores pointers outside a block, misaligned ones, and sizes past the block's offset. Copies (copy
+  constructor and operator=) take the same blocks and chains, are not in the list of heaps, and destroying two of
+  them frees the blocks twice (as in the original). DebugPrint logs "%s - %luk unused, %luk used, %luk free" with
+  the values in the order free, used, unused. The two MSVC8 trees are our own containers behind the same 12 bytes
+  (a sorted block array; a std::map, whose slots stay put as the chains need).
+- PoolBlockAlloc 0x30 {full, partial, align, item size, count, block bytes, free items, carving, uncarved,
+  CriticalSection}: align not a power of 2 becomes 8; item = (align + 3 + size) & ~(align - 1). Blocks (one
+  Jet::Alloc each) are {next, prev, offset to the raw block, free chain, free items} 0x14 bytes before the first item
+  {block, data}; free items are used before a new block is carved; a block whose items are all free is released.
+  ConfigData's nodes come from one (0x10-byte nodes, 0x200 a block, 4-aligned); the placement delete frees into it too.
+- PStringCache 0x30 {usedNodes, liveRefs, hits, nodes, probes, -, -, bucketCount, gcBucket, buckets, walkBucket,
+  walkNode}: buckets {head, tail, count}, an Alloc'd array with its count at -4. The hash (also GetHash) is
+  h = h * 8 ^ byte over the last 16 bytes at most; a lookup moves a found node to the front and counts hits and
+  probes. Nodes are (length + 0x29) & ~0xf bytes from the "#StringData" heap (above 0xa0 from Alloc) {next, prev,
+  length, capacity, refs, id, text}. Create / Insert count usedNodes when a node gets its first reference; Destroy and
+  the inline release drop it at the last. GetUnique takes the node out of its chain when it has at most one reference
+  and room, else copies it (one reference dropped); Ins / Del / ToLower / ToUpper edit that and Insert it back
+  (merged with an equal node). CollectGarbage sweeps one bucket a call (round robin) from the tail. CreateUnicode
+  makes a node of the bytes msvcr80 wcstombs wrote. The static lock (0x100acb58) is made by the constructor.
+- PString::Read: header bit 30 = a UTF-16 byte count (converted with CreateUnicode), else the length. An ANSI text
+  cut short frees its node with Jet::Alloc::Delete whatever heap it came from (the original's bug: a string-heap node,
+  length below 0x87, corrupts the msvcr80 heap). Write: {length} then the text.
+- The string heap and AnsiString's empty block (a constant {1, 0, 0, ""} now) are in AnsiString.cpp
+  (StringHeap.h); Log's LogFlush, Profile::Display's accumulators (one array, displayClock), ExceptionHandler's
+  report lock, Main nesting and list flags are ours. `file` / `reason` / the three `results` tables mangle
+  differently in VS2005: they are exported from our own symbols through implemented.txt aliases. Console's 8x8 font
+  is read from the installed game's module at build time (ConsoleFont.h, like StdMath's table).
+- Tests: diff_ks_alloc (Alloc reuse and Dump counters, PackedHeap / MP layout and block headers, copies,
+  PoolBlockAlloc with four shapes, ConfigData's pool, ReferenceCount slots, a 6-thread stress per side) and
+  diff_ks_pstring (every PStringCache and PString export over a corpus, node identity by the test's slots, chain
+  places, counter changes, Read / Write). The older tests now make every input through the side under test: each
+  module has its own heap, cache and statics (helpers per side; LogFlush and the Display accumulators of ours from
+  KernelStandard_7c.map next to the DLL, tests/ks_private.h; diff_ks_filesub interns its substitute names on both
+  sides in one address order, since that list is sorted by node address).
+- Also fixed on the way: LCRand::NextDouble(lo, hi) is computed on the x87 stack (with two NaN arguments the x87
+  keeps the larger significand, SSE the first operand): the U5 NaN-only difference is gone.
+- Two static heaps besides "#StringData": "FileSubArchive" (the archive records; ArcRecord's operator new) and
+  g_jetSTLAllocHeap "#jetstd::". DebugPrintAll lists heaps by address and the original's archive heap comes first, so
+  both sit in one section in that order (`.jheap$a` / `$b`; plain definitions came out in either order). The game's
+  exit summary in JetLog then matches the baseline line for line, except #StringData's fill (486k used against
+  507k): the archive directories and file searches keep their strings in std containers since U10b.
+- Results: diff_ks_alloc 1.6 million results and diff_ks_pstring 1.5 million, 0 mismatches; 24 of 27 mutations
+  caught, 3 equivalent. All 25 diff_ks_* tests pass (one diff_ks_file mismatch once, while the game ran at the same
+  time; not repeated in 2 reruns). x64 harness: 0 differences. In game: 3 menu checks with JetLog identical to the
+  baseline; an input run (hover, SELECT ROUTE with Cyrillic route names, Esc, the Main menu dropdown) shows the same
+  screens as the U14a build; the Launcher shows no "faulty" box.

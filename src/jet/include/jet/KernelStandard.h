@@ -338,21 +338,16 @@ private:
 };
 JET_LAYOUT32(sizeof(QuickTimer) == 0x20);
 
+// Jet's allocator (unit U14b, Memory.cpp): msvcr80 malloc blocks behind a 4-byte tag, with free lists for the 127
+// size classes of 8 bytes up to 0x3f8 (classes pick one of 16 locks by their low 4 bits). One static instance.
 class Alloc {
 public:
+    Alloc();
+    ~Alloc();
+    Alloc& operator=(const Alloc&);
     static void* __cdecl New(unsigned int size);
     static void __cdecl Delete(void* p);
-};
-
-// a heap of small blocks in 1 MB pages, locked (still the original's until U14b)
-class PackedHeapMP {
-public:
-    PackedHeapMP(const char* name);
-    unsigned char* Alloc(unsigned int size);
-    void Free(unsigned char* p);
-
-private:
-    unsigned char opaque[0x2c];
+    static void __cdecl Dump();  // the statistics to OutputDebugString
 };
 
 // objects of classes using this live in Jet's heap, so any module can free them
@@ -872,7 +867,7 @@ private:
     static JET_KS_FORWARDED Shutdown* criticalStartup;
     static JET_KS_FORWARDED bool doCoreDump;
     static JET_KS_FORWARDED int dumpOptions;
-    static JET_KS_FORWARDED char hardwareExceptionBlock[];
+    alignas(8) static JET_KS_FORWARDED char hardwareExceptionBlock[];  // room for a HardwareException
     static JET_KS_FORWARDED bool ignore;
     static JET_KS_FORWARDED bool isPromptAssertions;
     static JET_KS_FORWARDED int line;
@@ -961,6 +956,7 @@ private:
     friend class Log;
     friend struct LogWork;
     friend struct HandlerWork;
+    friend struct HeapWork;  // PackedHeap::DebugPrint sets the kind
     LogClient(const char* name);
 #if defined(JET_KS_BUILD)
     LogClient* next;
@@ -979,8 +975,7 @@ private:
 JET_LAYOUT32(sizeof(LogClient) == 0x24);
 #endif
 
-// JetLog.txt and the log channels (unit U12a, Log.cpp). The state stays the original's (forwarded data) until
-// U14: its allocator and strings still log through it.
+// JetLog.txt and the log channels (unit U12a, Log.cpp; the statics are ours since U14b).
 class Log {
 public:
     static void __cdecl Init(Options* options);
@@ -1433,6 +1428,88 @@ private:
 JET_LAYOUT32(sizeof(Mutex) == 8);
 JET_LAYOUT32(sizeof(CriticalSection) == 0xc);
 
+// ---- heaps (unit U14b, Memory.cpp)
+
+// 1 MB of VirtualAlloc: {allocations in use, bytes handed out, free chain}, then the allocations from +0xc, each
+// {size, data...}. A freed one is {size, prev's next field, next (block chain), prev's next field, next (size chain)}.
+class PackedHeapBlock;
+
+// A heap of small allocations (4-byte aligned, 0x10..0xffff0 bytes) in PackedHeapBlocks, with the freed ones
+// reused by exact size. The blocks are ordered by address; every heap is in one global list (DebugPrintAll).
+// sizeof is the original's (0x20): other modules allocate these. The two MSVC8 trees of the original are our own
+// containers here, behind the same 12 bytes each.
+class PackedHeap {
+public:
+    PackedHeap(const char* name);
+    PackedHeap(const PackedHeap& o);  // the same blocks and chains as o (shared), not in the list of heaps
+    ~PackedHeap();                    // frees the blocks with nothing left in them
+    PackedHeap& operator=(const PackedHeap& o);
+    unsigned char* Alloc(unsigned int size);
+    void Free(unsigned char* p);
+    bool IsEmpty() const;
+    void DebugPrint();
+    static void __cdecl DebugPrintAll();
+
+private:
+    friend struct HeapWork;
+    unsigned char* AllocFromUnused(unsigned int size);
+    bool Free(PackedHeapBlock* block, unsigned char* p);
+    PackedHeapBlock* FindBlockForAllocation(unsigned char* p);
+    PackedHeapBlock* AllocBlock();
+    void FreeBlock(PackedHeapBlock* block);
+
+    const char* name;     // +0x00
+    void* blocks[3];      // +0x04  {PackedHeapBlock* array, count, capacity}, by address
+    void* bySize[3];      // +0x10  {map of size -> free chain head, -, -}
+    unsigned int unused;  // +0x1c  blocks with nothing in use
+};
+
+// PackedHeap under a CriticalSection
+class PackedHeapMP : public PackedHeap {
+public:
+    PackedHeapMP(const char* name);
+    ~PackedHeapMP();
+    unsigned char* Alloc(unsigned int size);
+    void Free(unsigned char* p);
+    bool IsEmpty() const;
+
+private:
+    CriticalSection lock;  // +0x20
+};
+
+JET_LAYOUT32(sizeof(PackedHeap) == 0x20);
+JET_LAYOUT32(sizeof(PackedHeapMP) == 0x2c);
+
+// Fixed-size items in blocks of `count` (one Jet::Alloc each). Blocks with free items are on the second list; a
+// block whose items are all free again is released, unless it is the one being carved. ConfigData nodes use one.
+class PoolBlockAlloc {
+public:
+    PoolBlockAlloc(unsigned int itemSize, unsigned int count, unsigned int align);
+    ~PoolBlockAlloc();
+    void* __cdecl Alloc();
+    void __cdecl Free(void* p);
+    void __cdecl ReleaseMemory();
+
+protected:
+    void __cdecl Lock();
+    void __cdecl Unlock();
+
+private:
+    friend struct PoolWork;
+    void* full;           // +0x00  blocks without free items
+    void* partial;        // +0x04  blocks with free items
+    int align;            // +0x08  a power of 2 (8 otherwise)
+    int itemSize;         // +0x0c  with its 4-byte block pointer, rounded to align
+    int count;            // +0x10
+    int blockBytes;       // +0x14
+    int freeItems;        // +0x18
+    void* carving;        // +0x1c  the newest block, while it has uncarved items
+    int uncarved;         // +0x20
+    CriticalSection lock; // +0x24
+};
+
+JET_LAYOUT32(sizeof(PoolBlockAlloc) == 0x30);
+
 // locks a SyncObject (Lock(INFINITE)) for its lifetime: {SyncObject*, bool locked}
 class SingleLock {
 public:
@@ -1520,7 +1597,8 @@ private:
     static int __cdecl SafeStart(void* thread);
 
     friend class ResourceSystem;  // compares the caller with the main thread
-    static JET_KS_FORWARDED unsigned int mainThreadId;  // the original's until U14
+    friend struct FoundationWork;  // KernelStandardInit sets it
+    static JET_KS_FORWARDED unsigned int mainThreadId;
 #if defined(JET_KS_BUILD)
     WEvent done;        // +0x08
     bool alive;         // +0x10
@@ -1534,8 +1612,7 @@ private:
 JET_LAYOUT32(sizeof(Thread) == 0x20);
 
 // Named TLS slots (unit U13, Thread.cpp): {Mutex*, count, capacity, entries {PString name, TlsAlloc index}}.
-// The singleton and the index statics stay the original's until U14 (its KernelStandardInit creates the
-// singleton, its Profile reads the indices).
+// KernelStandardInit creates the singleton and its shutdown routine destroys it (Memory.cpp).
 class ThreadLocalStorage {
 public:
     JET_KS_IMPORT ThreadLocalStorage(const ThreadLocalStorage& o);  // shares the mutex, copies the entries
@@ -1556,6 +1633,7 @@ private:
     JET_KS_IMPORT ~ThreadLocalStorage();
     friend JET_KS_IMPORT ThreadLocalStorage& GetTLS();
     friend struct TlsWork;
+    friend struct FoundationWork;
 
     struct Entry {
         PStringCache::Node* name;

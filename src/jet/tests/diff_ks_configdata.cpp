@@ -1,6 +1,7 @@
 // Differential test of KernelStandard unit U7b1 (ConfigData.cpp). Each scenario is drawn once, then run on a tree
 // whose root is made by our KernelStandard_7c.dll and on one made by KernelStandard_7c_orig.dll (both in this
-// process, called through raw exports; the nodes come from the original's pool either way): children added by every
+// process, called through raw exports; since U14b each side's nodes, strings and files come from its own module):
+// children added by every
 // New / operator() / Replace / copy, values set by every setter and operator<<, nodes removed, extracted, moved,
 // copied over and swapped, then every Find, getter, conversion and operator>> read back. After every step the whole
 // tree (names, types, value bits, chunk counts) and its Crc are logged per side; at the end the reference counts of
@@ -373,7 +374,8 @@ static const char* const kTexts[] = {"a", "B", "b", "name", "x", "", "12", "-7",
                                      "3.99", "-2.5e-3", "0", "kuid", "a b", "q\"x", "t\tab", "back\\slash", "{x}",
                                      "semi;", "#c", "/p", "`", "line\nfeed", "x=y", "(p)", "c,d", "\r\b"};
 static const int kTextCount = sizeof(kTexts) / sizeof(kTexts[0]);
-static Node* pool[kTextCount + 1];  // [0] the null string
+static Node* pools[2][kTextCount + 1];  // per side, from its own PString cache; [0] the null string
+static Node** pool = pools[0];
 static int poolRefs[kTextCount + 1];
 static uint32_t FloatBits()
 {
@@ -811,6 +813,31 @@ static void* (__fastcall* fileCtor)(void*, void*);
 static void(__fastcall* fileDtor)(void*, void*);
 static void* (__cdecl* fileOpen)(void*, int*, const char*, unsigned long, int);
 static unsigned long(__cdecl* fileClose)(void*);
+
+// every helper from the side's own module (its pool, cache, strings and files)
+static HMODULE sideModule[2];
+static void UseSide(int sd)
+{
+    const HMODULE m = sideModule[sd];
+    pool = pools[sd];
+    cdNew = Get<decltype(cdNew)>(m, "??2ConfigData@Jet@@SAPAXI@Z");
+    cdDelete = Get<decltype(cdDelete)>(m, "??3ConfigData@Jet@@SAXPAX@Z");
+    unknownItem = Get<const unsigned char*>(m, "?unknownItem@ConfigData@Jet@@2V12@A");
+    pstringCache = Get<void**>(m, "?cache@PString@Jet@@0PAVPStringCache@2@A");
+    pstringCreate = Get<decltype(pstringCreate)>(m, "?Create@PStringCache@Jet@@QAAPAUNode@12@PBE@Z");
+    pstringDestroy = Get<decltype(pstringDestroy)>(m, "?Destroy@PStringCache@Jet@@QAAXPAUNode@12@@Z");
+    stringCtor = Get<decltype(stringCtor)>(m, "??0String@Jet@@QAE@PBD@Z");
+    stringDefault = Get<decltype(stringDefault)>(m, "??0String@Jet@@QAE@XZ");
+    stringDtor = Get<decltype(stringDtor)>(m, "??1String@Jet@@QAE@XZ");
+    unicodeCtor = Get<decltype(unicodeCtor)>(m, "??0UnicodeString@Jet@@QAE@PB_W@Z");
+    unicodeDefault = Get<decltype(unicodeDefault)>(m, "??0UnicodeString@Jet@@QAE@XZ");
+    unicodeDtor = Get<decltype(unicodeDtor)>(m, "??1UnicodeString@Jet@@QAE@XZ");
+    fileCtor = Get<decltype(fileCtor)>(m, "??0File@Jet@@QAE@XZ");
+    fileDtor = Get<decltype(fileDtor)>(m, "??1File@Jet@@QAE@XZ");
+    fileOpen = Get<decltype(fileOpen)>(
+        m, "?Open@File@Jet@@QAA?AV?$ResultClass@$1?results@File@Jet@@2QBUResultTable@2@BW4Results@File@Jet@@@2@PBDKH@Z");
+    fileClose = Get<decltype(fileClose)>(m, "?Close@File@Jet@@QAAKXZ");
+}
 static std::string TreeOf(const unsigned char* c)
 {
     std::string t;
@@ -1182,23 +1209,9 @@ int main(int argc, char** argv)
         fns[0][i] = Get<void*>(swap ? orig : ours, kNames[i]);
         fns[1][i] = Get<void*>(swap ? ours : orig, kNames[i]);
     }
-    cdNew = Get<decltype(cdNew)>(orig, "??2ConfigData@Jet@@SAPAXI@Z");
-    cdDelete = Get<decltype(cdDelete)>(orig, "??3ConfigData@Jet@@SAXPAX@Z");
-    unknownItem = Get<const unsigned char*>(orig, "?unknownItem@ConfigData@Jet@@2V12@A");
-    pstringCache = Get<void**>(orig, "?cache@PString@Jet@@0PAVPStringCache@2@A");
-    pstringCreate = Get<decltype(pstringCreate)>(orig, "?Create@PStringCache@Jet@@QAAPAUNode@12@PBE@Z");
-    pstringDestroy = Get<decltype(pstringDestroy)>(orig, "?Destroy@PStringCache@Jet@@QAAXPAUNode@12@@Z");
-    stringCtor = Get<decltype(stringCtor)>(orig, "??0String@Jet@@QAE@PBD@Z");
-    stringDefault = Get<decltype(stringDefault)>(orig, "??0String@Jet@@QAE@XZ");
-    stringDtor = Get<decltype(stringDtor)>(orig, "??1String@Jet@@QAE@XZ");
-    unicodeCtor = Get<decltype(unicodeCtor)>(orig, "??0UnicodeString@Jet@@QAE@PB_W@Z");
-    unicodeDefault = Get<decltype(unicodeDefault)>(orig, "??0UnicodeString@Jet@@QAE@XZ");
-    unicodeDtor = Get<decltype(unicodeDtor)>(orig, "??1UnicodeString@Jet@@QAE@XZ");
-    fileCtor = Get<decltype(fileCtor)>(orig, "??0File@Jet@@QAE@XZ");
-    fileDtor = Get<decltype(fileDtor)>(orig, "??1File@Jet@@QAE@XZ");
-    fileOpen = Get<decltype(fileOpen)>(
-        orig, "?Open@File@Jet@@QAA?AV?$ResultClass@$1?results@File@Jet@@2QBUResultTable@2@BW4Results@File@Jet@@@2@PBDKH@Z");
-    fileClose = Get<decltype(fileClose)>(orig, "?Close@File@Jet@@QAAKXZ");
+    sideModule[0] = swap ? orig : ours;
+    sideModule[1] = swap ? ours : orig;
+    UseSide(0);
     {
         char t[MAX_PATH];
         GetTempPathA(MAX_PATH, t);
@@ -1206,18 +1219,19 @@ int main(int argc, char** argv)
         CreateDirectoryA((tmpDir + "c0").c_str(), nullptr);
         CreateDirectoryA((tmpDir + "c1").c_str(), nullptr);
     }
-    if (!*pstringCache) {
-        std::printf("no PString cache\n");
-        return 2;
-    }
-    {  // "ksc" names the temp directory for Open(base, path)
+    for (int sd = 0; sd < 2; ++sd) {
+        UseSide(sd);
+        if (!*pstringCache) {
+            std::printf("no PString cache\n");
+            return 2;
+        }
+        // "ksc" names the temp directory for Open(base, path); each module keeps its own substitute list (U10b)
         Node* drive = pstringCreate(*pstringCache, reinterpret_cast<const unsigned char*>("ksc"));
-        // each module keeps its own substitute list (U10b)
-        for (HMODULE m : {orig, ours})
-            Get<void(__cdecl*)(Node* const*, const char*, bool)>(m, "?Subst@File@Jet@@SAXABVPString@2@PBD_N@Z")(&drive, tmpDir.c_str(), true);
+        Get<void(__cdecl*)(Node* const*, const char*, bool)>(sideModule[sd], "?Subst@File@Jet@@SAXABVPString@2@PBD_N@Z")(
+            &drive, tmpDir.c_str(), true);
+        for (int i = 0; i < kTextCount; ++i)
+            pool[i + 1] = pstringCreate(*pstringCache, reinterpret_cast<const unsigned char*>(kTexts[i]));
     }
-    for (int i = 0; i < kTextCount; ++i)
-        pool[i + 1] = pstringCreate(*pstringCache, reinterpret_cast<const unsigned char*>(kTexts[i]));
 
     unsigned long long checks = 0, bad = 0;
     for (int sc = 0; sc < scenarios; ++sc) {
@@ -1245,6 +1259,7 @@ int main(int argc, char** argv)
                 while (op.v.size() < 4) op.v.push_back(op.sub <= 17 ? FloatBits() : IntBits());
         }
         for (side = 0; side < 2; ++side) {
+            UseSide(side);
             SideCwd(side);
             Run(ops);
         }

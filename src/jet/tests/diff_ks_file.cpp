@@ -338,8 +338,7 @@ static void Load(Api& a, HMODULE m)
 #undef G
 }
 
-// the original's PString cache (both sides share it) and each side's File::Subst (since U10b the substitute lists
-// are separate)
+// each side's PString cache (U14b, UseHelpers) and File::Subst (since U10b the substitute lists are separate)
 static void** pstringCache;
 static Node*(__cdecl* pstringCreate)(void*, const unsigned char*);
 static void(__cdecl* pstringDestroy)(void*, Node*);
@@ -989,6 +988,16 @@ static void RunMemory(unsigned seed)
     }
 }
 
+// every helper from the side's own module (U14b: each module has its own heap, PString cache and statics)
+static HMODULE sideModule[2];
+static void UseHelpers(int sd)
+{
+    const HMODULE m = sideModule[sd];
+    pstringCache = Get<void**>(m, "?cache@PString@Jet@@0PAVPStringCache@2@A");
+    pstringCreate = Get<decltype(pstringCreate)>(m, "?Create@PStringCache@Jet@@QAAPAUNode@12@PBE@Z");
+    pstringDestroy = Get<decltype(pstringDestroy)>(m, "?Destroy@PStringCache@Jet@@QAAXPAUNode@12@@Z");
+}
+
 int main(int argc, char** argv)
 {
     SetUnhandledExceptionFilter(&Crash);
@@ -1009,10 +1018,10 @@ int main(int argc, char** argv)
     const bool swap = getenv("KFD_SWAP") != nullptr;
     Load(apis[0], swap ? orig : ours);
     Load(apis[1], swap ? ours : orig);
+    sideModule[0] = swap ? orig : ours;
+    sideModule[1] = swap ? ours : orig;
+    UseHelpers(1);  // the setup below (as before U14b, the original's)
     origApi = &apis[swap ? 0 : 1];
-    pstringCache = Get<void**>(orig, "?cache@PString@Jet@@0PAVPStringCache@2@A");
-    pstringCreate = Get<decltype(pstringCreate)>(orig, "?Create@PStringCache@Jet@@QAAPAUNode@12@PBE@Z");
-    pstringDestroy = Get<decltype(pstringDestroy)>(orig, "?Destroy@PStringCache@Jet@@QAAXPAUNode@12@@Z");
     fileSubsts[0] = Get<void(__cdecl*)(const Node**, const char*, bool)>(swap ? orig : ours, "?Subst@File@Jet@@SAXABVPString@2@PBD_N@Z");
     fileSubsts[1] = Get<void(__cdecl*)(const Node**, const char*, bool)>(swap ? ours : orig, "?Subst@File@Jet@@SAXABVPString@2@PBD_N@Z");
     {
@@ -1036,6 +1045,7 @@ int main(int argc, char** argv)
         const bool subst = n % 10 == 0;
         const bool trace = getenv("KFD_TRACE") != nullptr;
         for (side = 0; side < 2; ++side) {
+            UseHelpers(side);
             if (trace) std::printf("%d/%d paths\n", n, side);
             RunPaths();
             if (trace) std::printf("time\n");

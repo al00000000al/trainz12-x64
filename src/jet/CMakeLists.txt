@@ -38,7 +38,7 @@ target_link_libraries(Kernel_7c PRIVATE "${IMPLIB}/KernelStandard_7c.lib" ole32)
 jet_module(KernelStandard_7c)
 target_link_options(KernelStandard_7c PRIVATE /MAP)
 target_compile_definitions(KernelStandard_7c PRIVATE _CRT_SECURE_NO_WARNINGS JET_KS_BUILD JET_KS_IMPLEMENTATION)
-# what is not ours yet (Alloc, strings, ...) is called in the original, renamed to KernelStandard_7c_orig.dll
+# since U14b only the crash report writers and HardwareException::GetCallStack are the original's (called there)
 target_link_libraries(KernelStandard_7c PRIVATE "${IMPLIB}/KernelStandard_7c_orig.lib")
 # Bitmap::SaveJPG: libjpeg-turbo in place of the original's static IJG encoder (vcpkg x86-windows-static)
 set(VCPKG_X86 "D:/trainz12-decomp/thirdparty/vcpkg/installed/x86-windows-static")
@@ -52,6 +52,12 @@ add_custom_command(
     COMMAND ${PY} -I "${TOOLS}/extract_data.py" "${ORIG_KS}" 72078 512 u32 STDMATH_SQRT_LUT "${GEN}/StdMathLUT.h"
     DEPENDS "${TOOLS}/extract_data.py" VERBATIM)
 target_sources(KernelStandard_7c PRIVATE "${GEN}/StdMathLUT.h")
+# Console's 8x8 bitmap font (256 characters)
+add_custom_command(
+    OUTPUT "${GEN}/ConsoleFont.h"
+    COMMAND ${PY} -I "${TOOLS}/extract_data.py" "${ORIG_KS}" 72d98 2048 u8 CONSOLE_F50_FONT "${GEN}/ConsoleFont.h"
+    DEPENDS "${TOOLS}/extract_data.py" VERBATIM)
+target_sources(KernelStandard_7c PRIVATE "${GEN}/ConsoleFont.h")
 target_include_directories(KernelStandard_7c PRIVATE "${GEN}")
 # ConfigParser's scanner (flex) and parser (Lemon) tables: generated output with no source, read the same way
 set(SCFG_TABLES "")
@@ -136,6 +142,8 @@ add_executable(diff_ks_log tests/diff_ks_log.cpp)
 add_executable(diff_ks_profile tests/diff_ks_profile.cpp)
 add_executable(diff_ks_eh tests/diff_ks_eh.cpp)
 add_executable(diff_ks_string tests/diff_ks_string.cpp)
+add_executable(diff_ks_pstring tests/diff_ks_pstring.cpp)
+add_executable(diff_ks_alloc tests/diff_ks_alloc.cpp)
 add_executable(diff_krs tests/diff_krs.cpp)
 add_executable(diff_r2d tests/diff_r2d.cpp)
 add_executable(diff_iw32 tests/diff_iw32.cpp)

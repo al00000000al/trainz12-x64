@@ -1,9 +1,10 @@
 ﻿// Differential test of KernelStandard unit U14a (UnicodeString.cpp, MultiByteString.cpp, AnsiString.cpp): one
 // random operation script per class (made once, before either side runs) is played through
 // KernelStandard_7c_orig.dll's exports and through ours; after every step each touched object is dumped (counts,
-// capacity, references, the text) and every result is logged. Both modules share the original's Alloc, string
-// heap and empty AnsiString block, so AnsiStrings are also handed across: made by one module, changed and freed by
-// the other. Inputs that crash the original (a null text into the MBCS/wide converters) are left out.
+// capacity, references, the text) and every result is logged. Since U14b each module has its own Alloc, string
+// heap, empty AnsiString block and PString cache, so every object and every input string (AnsiString, UnicodeString,
+// PString) is made by the side under test. Inputs that crash the original (a null text into the MBCS/wide
+// converters) are left out.
 //
 // usage: diff_ks_string.exe <dir with our KernelStandard_7c.dll and KernelStandard_7c_orig.dll> [steps]
 #include <windows.h>
@@ -15,6 +16,7 @@
 #include <vector>
 
 static HMODULE ours, orig;
+static HMODULE cur;  // the side running now: it makes the inputs too
 
 template <class F>
 static F Get(HMODULE m, const char* name)
@@ -169,23 +171,23 @@ struct Side {
     F f(const char* name) const { return Get<F>(m, name); }
 };
 
-static void* PStringNode(const char* text)  // a node of the live cache (the original's), one reference
+static void* PStringNode(const char* text)  // a node of the side's cache, one reference
 {
-    void* cache = *Get<void**>(orig, "?cache@PString@Jet@@0PAVPStringCache@2@A");
-    return Get<void*(__cdecl*)(void*, const unsigned char*)>(orig, "?Create@PStringCache@Jet@@QAAPAUNode@12@PBE@Z")(
+    void* cache = *Get<void**>(cur, "?cache@PString@Jet@@0PAVPStringCache@2@A");
+    return Get<void*(__cdecl*)(void*, const unsigned char*)>(cur, "?Create@PStringCache@Jet@@QAAPAUNode@12@PBE@Z")(
         cache, reinterpret_cast<const unsigned char*>(text));
 }
 static void PStringRelease(void* node)
 {
-    void* cache = *Get<void**>(orig, "?cache@PString@Jet@@0PAVPStringCache@2@A");
-    if (node) Get<void(__cdecl*)(void*, void*)>(orig, "?Destroy@PStringCache@Jet@@QAAXPAUNode@12@@Z")(cache, node);
+    void* cache = *Get<void**>(cur, "?cache@PString@Jet@@0PAVPStringCache@2@A");
+    if (node) Get<void(__cdecl*)(void*, void*)>(cur, "?Destroy@PStringCache@Jet@@QAAXPAUNode@12@@Z")(cache, node);
 }
 
-// an AnsiString made by the original from text (the input of the conversions)
+// an AnsiString made by the side from text (the input of the conversions)
 struct OrigAnsi {
     void* data;
-    OrigAnsi(const char* s) { Get<CP>(orig, "??0AnsiString@Jet@@QAE@PBD@Z")(this, nullptr, s); }
-    ~OrigAnsi() { Get<Dt>(orig, "??1AnsiString@Jet@@QAE@XZ")(this, nullptr); }
+    OrigAnsi(const char* s) { Get<CP>(cur, "??0AnsiString@Jet@@QAE@PBD@Z")(this, nullptr, s); }
+    ~OrigAnsi() { Get<Dt>(cur, "??1AnsiString@Jet@@QAE@XZ")(this, nullptr); }
 };
 
 // ---- UnicodeString {text, capacity, length}
@@ -236,7 +238,14 @@ static void UnicodeScenario(const Side& s, const std::vector<Step>& script)
         case 13: L(s.f<Fmt>("?Addf@UnicodeString@Jet@@QAAHPB_WZZ")(&x, st.a & 1 ? L"%s." : L"", w.c_str())); break;
         case 14: s.f<MPI>("?Setn@UnicodeString@Jet@@QAAXPB_WI@Z")(&x, w.c_str(), st.a % 50); break;
         case 15: s.f<MPI>("?Ins@UnicodeString@Jet@@QAAXPB_WI@Z")(&x, w.c_str(), st.a % (len + 2)); break;
-        case 16: s.f<MIII>("?Ins@UnicodeString@Jet@@QAAXIII@Z")(&x, 0x30 + st.a % 400, st.b % (len + 2), st.c % 9); break;
+        case 16: {
+            // Ins fills `count` bytes of the 2 * count it opens: the other half is whatever the heap block held
+            // (the two modules have their own heaps since U14b), so it is cleared before the dump
+            const unsigned pos = st.b % (len + 2), count = st.c % 9;
+            s.f<MIII>("?Ins@UnicodeString@Jet@@QAAXIII@Z")(&x, 0x30 + st.a % 400, pos, count);
+            if (x.text && count && pos <= len) std::memset(reinterpret_cast<char*>(x.text + pos) + count, 0, count);
+            break;
+        }
         case 17: s.f<MII>("?Del@UnicodeString@Jet@@QAAXII@Z")(&x, st.a % (len + 2), st.b % 12); break;
         case 18: s.f<MI>("?Left@UnicodeString@Jet@@QAAXI@Z")(&x, st.a % (len + 2)); break;
         case 19: s.f<MI>("?Right@UnicodeString@Jet@@QAAXI@Z")(&x, st.a % (len + 2)); break;
@@ -513,7 +522,7 @@ static void MultiByteScenario(const Side& s, const std::vector<Step>& script)
 
 // ---- AnsiString: data -> {refs @-4, capacity, length, characters}
 
-static void* nullData;  // the empty block (the original's, shared by both modules)
+static void* nullData;  // the side's empty block
 static void Dump(void* const& a, int line)
 {
     const unsigned* d = static_cast<const unsigned*>(a);
@@ -527,7 +536,7 @@ static void Dump(void* const& a, int line)
 static void AnsiScenario(const Side& s, const std::vector<Step>& script)
 {
     void* o[6];
-    const Side& other = s.m == ours ? Side{orig, "orig"} : Side{ours, "ours"};
+    const Side& other = s;  // (objects used to cross modules here; each module has its own heap since U14b)
     const char* const dtorName = "??1AnsiString@Jet@@QAE@XZ";
     for (auto& x : o) s.f<C0>("??0AnsiString@Jet@@QAE@XZ")(&x, nullptr);
     for (const Step& st : script) {
@@ -663,14 +672,14 @@ static void AnsiScenario(const Side& s, const std::vector<Step>& script)
         }
         case 32: {  // conversions: UnicodeString / PString in and out
             unsigned short* ut[3];
-            Get<CP>(orig, "??0UnicodeString@Jet@@QAE@PB_W@Z")(ut, nullptr, w.c_str());
+            Get<CP>(cur, "??0UnicodeString@Jet@@QAE@PB_W@Z")(ut, nullptr, w.c_str());
             if (st.a & 1) {
                 dtor(&x, nullptr);
                 life.f<CP>(st.b & 1 ? "??0AnsiString@Jet@@QAE@ABVUnicodeString@1@@Z" : "??0String@Jet@@QAE@ABVUnicodeString@1@@Z")(&x, nullptr, ut);
             } else {
                 L(s.f<MP>(st.b & 1 ? "??4AnsiString@Jet@@QAAABV01@ABVUnicodeString@1@@Z" : "??4String@Jet@@QAAABV01@ABVUnicodeString@1@@Z")(&x, ut) == &x);
             }
-            Get<Dt>(orig, "??1UnicodeString@Jet@@QAE@XZ")(ut, nullptr);
+            Get<Dt>(cur, "??1UnicodeString@Jet@@QAE@XZ")(ut, nullptr);
             void* node = st.c % 4 ? PStringNode(t.c_str()) : nullptr;
             if (st.c & 1) {
                 dtor(&y, nullptr);
@@ -715,24 +724,37 @@ static void AnsiScenario(const Side& s, const std::vector<Step>& script)
     for (auto& x : o) s.f<Dt>(dtorName)(&x, nullptr);
 }
 
+static void SetSide(HMODULE m)
+{
+    cur = m;
+    void* a;
+    Get<C0>(m, "??0AnsiString@Jet@@QAE@XZ")(&a, nullptr);
+    nullData = a;
+}
+
 using Scen = void (*)(const Side&, const std::vector<Step>&);
 static size_t Compare(const char* name, Scen f, const std::vector<Step>& script)
 {
     logv.clear();
     lines.clear();
     std::printf("%s: orig\n", name);
+    SetSide(orig);
     f({orig, "orig"}, script);
     const std::vector<long long> a = logv;
     const std::vector<int> la = lines;
     logv.clear();
     lines.clear();
     std::printf("%s: ours\n", name);
+    SetSide(ours);
     f({ours, "ours"}, script);
     size_t bad = 0;
     for (size_t i = 0; i < a.size() || i < logv.size(); ++i) {
         const long long x = i < a.size() ? a[i] : -999, y = i < logv.size() ? logv[i] : -999;
-        if (x != y && ++bad <= 10)
+        if (x != y && ++bad <= 10) {
             std::printf("  %s step %zu (line %d): orig %lld ours %lld\n", name, i, i < la.size() ? la[i] : 0, x, y);
+            if (getenv("KS_TRACE"))
+                for (size_t k = i > 40 ? i - 40 : 0; k <= i; ++k) std::printf("    [%zu] line %d: %lld / %lld\n", k, la[k], a[k], logv[k]);
+        }
     }
     std::printf("%s: %zu results each, %zu mismatches\n", name, a.size(), bad);
     return bad;
@@ -756,11 +778,6 @@ int main(int argc, char** argv)
     using SetLoc = char*(__cdecl*)(int, const char*);
     HMODULE crt = GetModuleHandleA("msvcr80.dll");
     if (crt) reinterpret_cast<SetLoc>(GetProcAddress(crt, "setlocale"))(0, ".ACP");
-    {
-        void* a;
-        Get<C0>(orig, "??0AnsiString@Jet@@QAE@XZ")(&a, nullptr);
-        nullData = a;
-    }
     MakeCorpus();
     size_t bad = 0;
     bad += Compare("UnicodeString", UnicodeScenario, MakeScript(32, steps, 1));

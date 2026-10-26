@@ -1,8 +1,8 @@
 // Differential test of KernelStandard unit U13 (Thread.cpp, Time.cpp): one scripted scenario is run once through
 // KernelStandard_7c_orig.dll's exports and once through ours; every observable result goes into a log and the two
-// logs must match. Both modules share the original's statics (our module imports them), so the scenario saves and
-// restores the frame-lock state, mainThreadId, the TLS singleton and its index statics, and it uses its own TLS
-// names on each side. Values that differ by nature (handles, TLS slot numbers, clocks) are logged as relations.
+// logs must match. Since U14b each module has its own statics (frame lock, mainThreadId, the TLS singleton and
+// its indices) and its own heap and PString cache: the helpers use the side's module. The scenario still saves and
+// restores those statics and uses its own TLS names on each side. Values that differ by nature (handles, TLS slot numbers, clocks) are logged as relations.
 //
 // usage: diff_ks_thread.exe <dir with our KernelStandard_7c.dll and KernelStandard_7c_orig.dll>
 #include <windows.h>
@@ -16,6 +16,7 @@
 #include <vector>
 
 static HMODULE ours, orig;
+static HMODULE cur;  // the side running now
 
 template <class F>
 static F Get(HMODULE m, const char* name)
@@ -81,9 +82,9 @@ static long long Bits(double d)
 template <class F>
 static F Slot(void* obj, int n) { return reinterpret_cast<F>((*static_cast<void***>(obj))[n]); }
 
-// the original's statics (our module imports the same ones)
+// the side's statics
 template <class T>
-static T& Data(const char* name) { return *Get<T*>(orig, name); }
+static T& Data(const char* name) { return *Get<T*>(cur, name); }
 
 struct TlsObj {
     void* lock;
@@ -104,7 +105,7 @@ struct Node {
 static void* PStr(const char* text)  // an interned node (the caller's reference)
 {
     void* cache = Data<void*>("?cache@PString@Jet@@0PAVPStringCache@2@A");
-    return Get<CreateT>(orig, "?Create@PStringCache@Jet@@QAAPAUNode@12@PBE@Z")(
+    return Get<CreateT>(cur, "?Create@PStringCache@Jet@@QAAPAUNode@12@PBE@Z")(
         cache, reinterpret_cast<const unsigned char*>(text));
 }
 
@@ -245,7 +246,7 @@ static void ThreadScenario(const Side& s)
     const auto terminate = s.f<MemberU>("?Terminate@Thread@Jet@@QAAKXZ");
     const auto threadId = s.f<MemberU>("?GetThreadID@Thread@Jet@@QAAKXZ");
     const auto opVoid = s.f<MemberP>("??BThread@Jet@@UAAPAXXZ");
-    const NewT alloc = Get<NewT>(orig, "?New@Alloc@Jet@@SAPAXI@Z");
+    const NewT alloc = Get<NewT>(cur, "?New@Alloc@Jet@@SAPAXI@Z");
 
     // 1. created suspended, the state words, suspend/resume, priorities, done flag, Terminate
     for (int prio : {0, 1, 2, -1, -2, 15, -15}) {
@@ -402,8 +403,8 @@ static void TlsScenario(const Side& s)
         L(single0->count - count);
         L(static_cast<Node*>(node)->refs - refs);
     }
-    // new names, growth past 128 entries, repeats: on a fresh instance of the side (the singleton is shared)
-    TlsObj* const grow = static_cast<TlsObj*>(Get<NewT>(orig, "?New@Alloc@Jet@@SAPAXI@Z")(16));
+    // new names, growth past 128 entries, repeats: on a fresh instance of the side
+    TlsObj* const grow = static_cast<TlsObj*>(Get<NewT>(cur, "?New@Alloc@Jet@@SAPAXI@Z")(16));
     s.f<Dtor>("??0ThreadLocalStorage@Jet@@AAE@XZ")(grow, nullptr);
     std::vector<int> got;
     const unsigned int count0 = grow->count;
@@ -476,7 +477,7 @@ static void TlsScenario(const Side& s)
     // copies share the mutex and copy the entries (never destroyed: their destructor frees the slots and the
     // shared mutex)
     {
-        TlsObj* c = static_cast<TlsObj*>(Get<NewT>(orig, "?New@Alloc@Jet@@SAPAXI@Z")(16));
+        TlsObj* c = static_cast<TlsObj*>(Get<NewT>(cur, "?New@Alloc@Jet@@SAPAXI@Z")(16));
         std::memset(c, 0xcd, 16);
         Node* first = static_cast<Node*>(single0->entries[0].name);
         const int refs = first->refs;
@@ -495,7 +496,7 @@ static void TlsScenario(const Side& s)
         L(d.capacity == c->capacity);
         L(first->refs - refs);
         const unsigned int bigCap = d.capacity;
-        TlsObj few = {nullptr, 2, 0, static_cast<TlsObj::Entry*>(Get<NewT>(orig, "?New@Alloc@Jet@@SAPAXI@Z")(16))};
+        TlsObj few = {nullptr, 2, 0, static_cast<TlsObj::Entry*>(Get<NewT>(cur, "?New@Alloc@Jet@@SAPAXI@Z")(16))};
         few.entries[0] = {nullptr, 1};
         few.entries[1] = {nullptr, 2};
         few.capacity = 2;
@@ -512,7 +513,7 @@ static void TlsScenario(const Side& s)
 
     // a private instance: its own mutex, the four names (the index statics move to it), then its destructor
     {
-        TlsObj* t = static_cast<TlsObj*>(Get<NewT>(orig, "?New@Alloc@Jet@@SAPAXI@Z")(16));
+        TlsObj* t = static_cast<TlsObj*>(Get<NewT>(cur, "?New@Alloc@Jet@@SAPAXI@Z")(16));
         s.f<Dtor>("??0ThreadLocalStorage@Jet@@AAE@XZ")(t, nullptr);
         L(t->lock != nullptr && t->lock != single0->lock);
         L(*static_cast<void**>(t->lock) == s.f<void*>("??_7Mutex@Jet@@6B@"));
@@ -547,6 +548,7 @@ static void TlsScenario(const Side& s)
 
 static void Scenario(const Side& s)
 {
+    cur = s.m;
     logv.clear();
     lines.clear();
     std::printf("%s: time\n", s.tag);

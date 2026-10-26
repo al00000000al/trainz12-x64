@@ -90,8 +90,10 @@ CacheState& State()
 }
 }  // namespace
 
-static PStringCache g_cache{};
-PStringCache* PString::cache = &g_cache;
+// the stand-in keeps its nodes in State(); the cache object only carries the counters (zeroed: the real
+// constructor builds the hash table this stand-in does not use)
+alignas(PStringCache) static unsigned char g_cache[sizeof(PStringCache)];
+PStringCache* PString::cache = reinterpret_cast<PStringCache*>(g_cache);
 
 void __cdecl PStringCache::Lock() { EnterCriticalSection(&State().lock); }
 void __cdecl PStringCache::Unlock() { LeaveCriticalSection(&State().lock); }

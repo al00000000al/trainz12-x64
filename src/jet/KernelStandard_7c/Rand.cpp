@@ -291,10 +291,29 @@ float LCRand::NextFloat(float lo, float hi) { return static_cast<float>(LCRand_N
 double LCRand::NextDouble() { return LCRand_NextFloat0(this, 0); }
 double LCRand::NextDouble(double m) { return (U(GetRandom()) * m) * kScale; }
 
+// lo + ((hi - lo) * v) * kScale on the x87 stack (0x1003cbe0): with two NaN arguments the x87 keeps the one with the
+// larger significand, where SSE would keep the first
 double LCRand::NextDouble(double lo, double hi)
 {
     const unsigned int v = GetRandom();
+#if defined(_M_IX86)
+    const double u = U(v), scale = kScale;
+    double r;
+    __asm {
+        fld hi
+        fld lo
+        fsub st(1), st
+        fld u
+        fmulp st(2), st
+        fxch st(1)
+        fmul scale
+        faddp st(1), st
+        fstp r
+    }
+    return r;
+#else
     return ((hi - lo) * U(v)) * kScale + lo;
+#endif
 }
 
 bool LCRand::NextBool() { return (GetRandom() & 1) != 0; }

@@ -1,7 +1,6 @@
-// Unit U12a of KernelStandard_7c: LogClient and Log (0x1002ee80..0x1002fd65). The state is the original's: the
-// exported statics are imported (clientList, logFile, stderrFile, startTime, writeLock, initialized,
-// displayModuleName, LogClient::disabled) and the one private flag, LogFlush (0x1007287b), is read and written in
-// the original module by address. Its allocator and strings (U14) still log through the same clients and file.
+// Unit U12a of KernelStandard_7c: LogClient and Log (0x1002ee80..0x1002fd65). The statics (ours since U14b):
+// clientList, logFile, stderrFile, startTime, writeLock, initialized, displayModuleName (on), LogClient::disabled
+// and the private LogFlush option (0x1007287b, on).
 #include <jet/KernelStandard.h>
 
 #include "Crt80.h"
@@ -15,6 +14,19 @@
 
 namespace Jet {
 
+IList<LogClient>* Log::clientList;  // 0x100adbdc
+File* Log::logFile;                 // 0x100adbe0
+::_iobuf* Log::stderrFile;          // 0x100adbe4
+double Log::startTime;              // 0x100adbe8
+CriticalSection* Log::writeLock;    // 0x100adbf0
+bool Log::initialized;              // 0x100adbf4
+bool Log::displayModuleName = true; // 0x1007287a
+bool LogClient::disabled;           // 0x100adb93
+
+namespace {
+bool logFlush = true;  // 0x1007287b
+}  // namespace
+
 struct LogWork {
     static_assert(offsetof(LogClient, level) == 0x10 && offsetof(LogClient, busy) == 0x18 &&
                   offsetof(LogClient, outputs) == 0x1c && offsetof(LogClient, format) == 0x20);
@@ -26,13 +38,8 @@ struct LogWork {
     static Ring* List() { return reinterpret_cast<Ring*>(Log::clientList); }
     static LogClient* End() { return reinterpret_cast<LogClient*>(Log::clientList); }
 
-    // the original's private "LogFlush" option (commit after every line)
-    static bool& Flush()
-    {
-        static bool* const p =
-            reinterpret_cast<bool*>(reinterpret_cast<char*>(GetModuleHandleA("KernelStandard_7c_orig.dll")) + 0x7287b);
-        return *p;
-    }
+    // the private "LogFlush" option (commit after every line)
+    static bool& Flush() { return logFlush; }
 
     // an AnsiString's buffer {capacity, length, text}: no text when the capacity is 0 (the shared empty buffer)
     static const int* Data(const AnsiString& s) { return static_cast<const int*>(s.data); }

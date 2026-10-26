@@ -1,6 +1,6 @@
-// Unit U13 of KernelStandard_7c: Time (0x1000db20..0x1000ddd7). The counter frequency and the frame-lock state
-// are still the original's statics (forwarded data): its CRT initialiser 0x100506c0 fills freq and its Log reads
-// the clock, so both modules see one state until the U14 cut-over.
+// Unit U13 of KernelStandard_7c: Time (0x1000db20..0x1000ddd7). The counter frequency and the frame-lock state are
+// ours since U14b; freq is filled by a "lib" initialiser (the original's 0x100506c0 runs right after
+// KernelStandardInit), before any other static of the module can read the clock.
 #include <jet/KernelStandard.h>
 
 #include <windows.h>
@@ -10,7 +10,16 @@
 
 #pragma comment(lib, "winmm.lib")
 
+#pragma warning(disable : 4073)  // initializers put in library initialization area
+#pragma init_seg(lib)
+
 namespace Jet {
+
+bool Time::frameLock;              // 0x100adb90
+unsigned int Time::frameLockCount; // 0x100adb94
+double Time::frameLockTime;        // 0x100adb98
+double Time::frameLockDelta;       // 0x100adba0
+unsigned __int64 Time::freq = Time::QueryCounterFrequency();  // 0x100ae160
 
 Time& Time::operator=(const Time&) { return *this; }  // 0x1000db10 (shared with the other empty classes)
 

@@ -78,17 +78,11 @@ at every step and catches mistakes while they are small.
    runtime (MODLOG "Step 6/7 decisions").
 7. ~~SpeedTree.~~ Done 2026-10-21: not in trainz.exe; it is the TNI plugin plugins\TNISpeedTree.dll (SpeedTree 5,
    524 .srt trees in the user's content). Keep it 32-bit in a helper process behind a TNI bridge.
-7b. KernelStandard_7c units U6-U14 (needed before x64). U6 small platform, U7 Options / ConfigData / ConfigParser / StringTables (2026-10-21) and U9 DynamicBuffer / IOSlave / BlockReader / BPE / JIRF (2026-10-22) and U8 Bitmap (2026-10-22) and U10a File / Path / MemoryFile (2026-10-25) and U10b part 1 (substitute list,
-    directory / link FileSubs, File::Find, the path statics; 2026-10-25) and U10b part 2 (FileSubArchive, the .ja
-    reader and writer, File::Sep / callback, SetDefault*; 2026-10-25) and U11 (OS, Window, WindowPlacement;
-    2026-10-25) and U13 (Thread, ThreadLocalStorage, Time; 2026-10-26, their statics still the original's) and
-    U12a (Exception, Debugger, Log, LogClient; 2026-10-26) and U12b (Profile, QuickTimer, Console; 2026-10-26)
-    and U12c (ExceptionHandler, HardwareException; 2026-10-26) and U14a (UnicodeString, MultiByteString,
-    AnsiString, String; 2026-10-26, the empty block and string heap still the original's) done: 1606/1762 ours.
-    The crash report writers and HardwareException::GetCallStack (an x86 stack walk) are still the original's,
-    called by address; they move with the x64 rewrite.
-    Next: U14b, the foundation cut-over: Alloc, PackedHeap(MP), PoolBlockAlloc, ReferenceCount,
-    PString/PStringCache, KernelStandardInit and the 68 data exports still forwarded.
+7b. ~~KernelStandard_7c units U6-U14 (needed before x64).~~ Done 2026-10-26: U6-U13 (2026-10-21..26), U14a (the string
+    classes) and U14b (the foundation cut-over: Alloc, PackedHeap(MP), PoolBlockAlloc, ReferenceCount,
+    PString/PStringCache, KernelStandardInit and every data export). 1761/1762 exports ours; only
+    HardwareException::GetCallStack (an x86 stack walk) is forwarded, and the crash report writers are called in the
+    original by address. Both move with the x64 rewrite.
 8. Render stack (RenderSystem, Render3D*, RenderOpenGL), then InterfaceSystem, WaterSystem.
 9. trainz.exe subsystems through the loader DLL: asset DB, GS compiler/VM, physics, world.
 

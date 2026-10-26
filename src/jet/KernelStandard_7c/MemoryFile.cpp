@@ -310,7 +310,7 @@ void MemoryFile::Read(PString& s, bool) const
     if (s.node) {
         // the original's inlined release: the node is not destroyed here
         cache->Lock();
-        if (s.node->refs == 1) --*reinterpret_cast<int*>(&cache->unknown0);
+        if (s.node->refs == 1) --cache->usedNodes;
         --cache->liveRefs;
         --s.node->refs;
         cache->Unlock();

@@ -1167,6 +1167,16 @@ static unsigned long long Compare(const char* what, int n)
     return checks;
 }
 
+// every helper from the side's own module (U14b: each module has its own heap, PString cache and statics)
+static HMODULE sideModule[2];
+static void UseHelpers(int sd)
+{
+    const HMODULE m = sideModule[sd];
+    pstringCache = Get<void**>(m, "?cache@PString@Jet@@0PAVPStringCache@2@A");
+    pstringCreate = Get<decltype(pstringCreate)>(m, "?Create@PStringCache@Jet@@QAAPAUNode@12@PBE@Z");
+    pstringDestroy = Get<decltype(pstringDestroy)>(m, "?Destroy@PStringCache@Jet@@QAAXPAUNode@12@@Z");
+}
+
 int main(int argc, char** argv)
 {
     SetUnhandledExceptionFilter(&Crash);
@@ -1187,11 +1197,24 @@ int main(int argc, char** argv)
     const bool swap = getenv("KFS_SWAP") != nullptr;
     Load(apis[0], swap ? orig : ours);
     Load(apis[1], swap ? ours : orig);
+    sideModule[0] = swap ? orig : ours;
+    sideModule[1] = swap ? ours : orig;
+    // The substitute list is sorted by the name's node address, so both caches must hold the names in one order:
+    // made here one after another, after enough other nodes of their sizes to use up the freed blocks the string
+    // heap would hand back first (newest first), and kept (U14b: two caches)
+    for (int sd = 0; sd < 2; ++sd) {
+        UseHelpers(sd);
+        for (int i = 0; i < 4000; ++i) {
+            char fill[16];
+            std::sprintf(fill, i & 1 ? "q%03x" : "q%06x", i);  // the sizes of 4- and 7-character names
+            Name(fill);
+        }
+        for (const char* n : {"kfsJ", "kfsL", "kfsNone", "kfsP", "kfsR", "kfsS", "kfsT", "kfsW", "kfsmake", "kfsreal"})
+            Name(n);
+    }
+    UseHelpers(1);  // the setup below (as before U14b, the original's)
     const Api& origApi = apis[swap ? 0 : 1];
     origSide = swap ? 0 : 1;
-    pstringCache = Get<void**>(orig, "?cache@PString@Jet@@0PAVPStringCache@2@A");
-    pstringCreate = Get<decltype(pstringCreate)>(orig, "?Create@PStringCache@Jet@@QAAPAUNode@12@PBE@Z");
-    pstringDestroy = Get<decltype(pstringDestroy)>(orig, "?Destroy@PStringCache@Jet@@QAAXPAUNode@12@@Z");
     {
         char t[MAX_PATH];
         GetTempPathA(MAX_PATH, t);
@@ -1205,6 +1228,7 @@ int main(int argc, char** argv)
     }
     if (getenv("KFS_PROBE")) {  // one compressed write through a directory substitute, each module
         for (side = 0; side < 2; ++side) {
+            UseHelpers(side);
             const Api& a = apis[side];
             const std::string d = tmpDir + "probe" + Num(side);
             Wipe(d);
@@ -1230,6 +1254,7 @@ int main(int argc, char** argv)
     }
     if (getenv("KFS_APROBE")) {  // one file written to a new archive, read back and searched, each module
         for (side = 0; side < 2; ++side) {
+            UseHelpers(side);
             SideCwd(side);
             const Api& a = apis[side];
             const std::string arc = sideDirs[side] + "p.ja";
@@ -1266,7 +1291,10 @@ int main(int argc, char** argv)
     }
     unsigned long long checks = 0;
     if (!getenv("KFS_NOREAL")) {
-        for (side = 0; side < 2; ++side) RunReal();
+        for (side = 0; side < 2; ++side) {
+            UseHelpers(side);
+            RunReal();
+        }
         checks += Compare("real", 0);
         std::printf("real archives: %llu files, %llu bytes read on each side\n", realFiles, realBytes);
     }
@@ -1275,11 +1303,20 @@ int main(int argc, char** argv)
         rng.seed(0x5eed1000u + n);
         BuildShared(n, origApi);
         const unsigned seed = rng();
-        for (side = 0; side < 2; ++side) RunRead(seed);
+        for (side = 0; side < 2; ++side) {
+            UseHelpers(side);
+            RunRead(seed);
+        }
         checks += Compare("read", n);
-        for (side = 0; side < 2; ++side) RunWrite(seed);
+        for (side = 0; side < 2; ++side) {
+            UseHelpers(side);
+            RunWrite(seed);
+        }
         checks += Compare("write", n);
-        for (side = 0; side < 2; ++side) RunArchive(seed + 1);
+        for (side = 0; side < 2; ++side) {
+            UseHelpers(side);
+            RunArchive(seed + 1);
+        }
         checks += Compare("archive", n);
     }
     std::printf("%llu checks, %llu mismatches\n", checks, bad);

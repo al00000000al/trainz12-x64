@@ -1,6 +1,5 @@
 // Unit U7c2 of KernelStandard_7c: StringTablesBase and StringTablesDefaultTraits (0x1003dcd0..0x1003f804). The
-// data exports (fileTblId, results, the four token PStrings) stay the original's: its static initialiser fills
-// the tokens. Notes: D:/trainz12-decomp/notes/KernelStandard.md ("U7c2").
+// data exports (fileTblId, results, the four token PStrings) are ours since U14b. Notes: D:/trainz12-decomp/notes/KernelStandard.md ("U7c2").
 #include <jet/Config.h>
 #include <jet/KernelStandard.h>
 #include <jet/StringTables.h>
@@ -9,6 +8,26 @@
 #include <new>
 
 namespace Jet {
+
+const char StringTablesBase::fileTblId[4] = {'T', 'A', 'B', 'L'};  // 0x10052218 (no NUL)
+const PString StringTablesBase::TABLE_TOKEN("Table");              // 0x100ae1f8
+const PString StringTablesBase::ID_TOKEN("Id");                    // 0x100ae1fc
+const PString StringTablesBase::ENTRY_TOKEN("Entry");              // 0x100ae200
+const PString StringTablesBase::VALUE_TOKEN("Value");              // 0x100ae204
+
+// exported as ?results@StringTablesBase@Jet@@2QBUResultTable@2@B (implemented.txt): {name, text} pairs
+extern const char* const StringTablesResultTable[] = {
+    "RES_UNKNOWN", "Unknown error",
+    "RES_NAMESRESOLVING_NOTDEFINED", "Not supported if namesResolving equal to false",
+    "RES_FILE_OPEN_ERROR", "Unable to open file",
+    "RES_FILE_WRITE_ERROR", "Can not write to the file",
+    "RES_FILE_FORMAT_ERROR", "Unexpected file format",
+    "RES_FILE_SUBSTNOTFOUND", "Subst not found",
+    "RES_FILE_READONLY", "File is read-only",
+    "RES_TABLE_EXISTS", "Table already exists",
+    "RES_TABLE_NOTFOUND", "Table not found",
+    "RES_CONVERT_ERROR", "Can not convert string to current character set",
+    nullptr};
 
 namespace {
 

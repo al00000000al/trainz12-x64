@@ -1,10 +1,14 @@
 // Differential test of KernelStandard unit U12a (Exception.cpp, Log.cpp): the same scripted scenario runs once
 // through KernelStandard_7c_orig.dll's exports and once through ours; every observable result goes into a log and
-// the two logs must match. The Log statics are the original's (our module imports them), so each side starts from
-// a cleared state (saved and restored around the run) and writes its own log files, whose bytes are compared.
+// the two logs must match. Each module has its own Log statics since U14b; each side starts from a cleared state
+// (saved and restored around its run) and writes its own log files, whose bytes are compared. The private LogFlush
+// byte is the original's base + 0x7287b; ours is found in KernelStandard_7c.map next to the DLL (when it is not
+// there, the byte is not compared).
 //
 // usage: diff_ks_log.exe <dir with our KernelStandard_7c.dll and KernelStandard_7c_orig.dll>
 #include <windows.h>
+
+#include "ks_private.h"
 
 #include <cstdint>
 #include <cstdio>
@@ -13,6 +17,7 @@
 #include <vector>
 
 static HMODULE ours, orig;
+static HMODULE cur;  // the side running now
 static std::string tmpDir;
 
 template <class F>
@@ -63,7 +68,7 @@ template <class F>
 static F Slot(void* obj, int n) { return reinterpret_cast<F>((*static_cast<void***>(obj))[n]); }
 
 template <class T>
-static T& Data(const char* name) { return *Get<T*>(orig, name); }
+static T& Data(const char* name) { return *Get<T*>(cur, name); }
 
 using Ctor0 = void*(__fastcall*)(void*, void*);
 using CtorFL = void*(__fastcall*)(void*, void*, const char*, int);
@@ -85,7 +90,7 @@ using NewT = void*(__cdecl*)(unsigned int);
 
 static void ExceptionScenario(const Side& s)
 {
-    const NewT alloc = Get<NewT>(orig, "?New@Alloc@Jet@@SAPAXI@Z");
+    const NewT alloc = Get<NewT>(cur, "?New@Alloc@Jet@@SAPAXI@Z");
     const auto vft = s.f<void*>("??_7Exception@Jet@@6B@");
     const auto setReason = s.f<Fmt>("?SetReasonf@Exception@Jet@@QAAXPBDZZ");
     const auto addReason = s.f<Fmt>("?AddReasonf@Exception@Jet@@QAAXPBDZZ");
@@ -171,6 +176,16 @@ struct Statics {
     bool* flush;
 };
 static Statics st;
+static bool noFlush;       // stands in for our LogFlush byte when the map is missing
+static bool flushUnknown;  // then neither side's byte is logged
+
+// our private LogFlush byte, from the linker map next to the DLL
+static bool* OurFlush(const char* dir, HMODULE m)
+{
+    bool* p = static_cast<bool*>(OurPrivate(dir, m, "logFlush@"));
+    if (!p) flushUnknown = true;
+    return p;
+}
 
 static void Clear()
 {
@@ -246,8 +261,8 @@ static void LogScenario(const Side& s)
     const auto outV = s.f<VFmt>("?OutputStringV@LogClient@Jet@@QAAXPBDPAD@Z");
     const auto setLogTo = s.f<void(__cdecl*)(void*)>("?SetLogToFile@Log@Jet@@SAXPAU_iobuf@@@Z");
     const auto getLogTo = s.f<void*(__cdecl*)()>("?GetLogToFile@Log@Jet@@SAPAU_iobuf@@XZ");
-    const auto strCtor = Get<CtorS>(orig, "??0String@Jet@@QAE@PBD@Z");
-    const auto strDtor = Get<Dtor>(orig, "??1String@Jet@@QAE@XZ");
+    const auto strCtor = Get<CtorS>(cur, "??0String@Jet@@QAE@PBD@Z");
+    const auto strDtor = Get<Dtor>(cur, "??1String@Jet@@QAE@XZ");
 
     struct Case {
         const char* options;
@@ -285,7 +300,7 @@ static void LogScenario(const Side& s)
         L(*st.logFile != nullptr);
         L(*st.disabled);
         L(*st.displayModuleName);
-        L(*st.flush);
+        if (!flushUnknown) L(*st.flush);
         L(*st.stderrFile != nullptr);
         LogRing(__LINE__);
         init(opts);  // a second Init does nothing
@@ -375,33 +390,44 @@ int main(int argc, char** argv)
     GetTempPathA(MAX_PATH, t);
     tmpDir = t;
     SetCurrentDirectoryA(t);
-    st = {&Data<void*>("?clientList@Log@Jet@@0PAV?$IList@VLogClient@Jet@@@2@A"),
-          &Data<void*>("?logFile@Log@Jet@@0PAVFile@2@A"),
-          &Data<void*>("?stderrFile@Log@Jet@@0PAU_iobuf@@A"),
-          &Data<double>("?startTime@Log@Jet@@0NA"),
-          &Data<void*>("?writeLock@Log@Jet@@0PAVCriticalSection@2@A"),
-          &Data<bool>("?initialized@Log@Jet@@0_NA"),
-          &Data<bool>("?displayModuleName@Log@Jet@@0_NA"),
-          &Data<bool>("?disabled@LogClient@Jet@@0_NA"),
-          reinterpret_cast<bool*>(reinterpret_cast<char*>(orig) + 0x7287b)};
-    const Statics saved = st;
-    void* const v[] = {*st.clientList, *st.logFile, *st.stderrFile, *st.writeLock};
-    const double start = *st.startTime;
-    const bool b[] = {*st.initialized, *st.displayModuleName, *st.disabled, *st.flush};
-    Scenario({orig, "orig"});
-    const std::vector<long long> a = logv;
-    const std::vector<int> la = lines;
-    Scenario({ours, "ours"});
+    std::vector<long long> a;
+    std::vector<int> la;
+    bool* const ourFlush = OurFlush(argv[1], ours);
+    for (HMODULE m : {orig, ours}) {
+        cur = m;
+        bool* flush = m == orig ? reinterpret_cast<bool*>(reinterpret_cast<char*>(orig) + 0x7287b)
+                                : ourFlush;
+        st = {&Data<void*>("?clientList@Log@Jet@@0PAV?$IList@VLogClient@Jet@@@2@A"),
+              &Data<void*>("?logFile@Log@Jet@@0PAVFile@2@A"),
+              &Data<void*>("?stderrFile@Log@Jet@@0PAU_iobuf@@A"),
+              &Data<double>("?startTime@Log@Jet@@0NA"),
+              &Data<void*>("?writeLock@Log@Jet@@0PAVCriticalSection@2@A"),
+              &Data<bool>("?initialized@Log@Jet@@0_NA"),
+              &Data<bool>("?displayModuleName@Log@Jet@@0_NA"),
+              &Data<bool>("?disabled@LogClient@Jet@@0_NA"),
+              flush};
+        if (!flush) st.flush = &noFlush;
+        if (st.flush == &noFlush && m == ours) std::printf("(no map: LogFlush not compared)\n");
+        const Statics saved = st;
+        void* const v[] = {*st.clientList, *st.logFile, *st.stderrFile, *st.writeLock};
+        const double start = *st.startTime;
+        const bool b[] = {*st.initialized, *st.displayModuleName, *st.disabled, *st.flush};
+        Scenario({m, m == orig ? "orig" : "ours"});
+        *saved.clientList = v[0];
+        *saved.logFile = v[1];
+        *saved.stderrFile = v[2];
+        *saved.writeLock = v[3];
+        *saved.startTime = start;
+        *saved.initialized = b[0];
+        *saved.displayModuleName = b[1];
+        *saved.disabled = b[2];
+        *saved.flush = b[3];
+        if (m == orig) {
+            a = logv;
+            la = lines;
+        }
+    }
     const std::vector<long long>& r = logv;
-    *saved.clientList = v[0];
-    *saved.logFile = v[1];
-    *saved.stderrFile = v[2];
-    *saved.writeLock = v[3];
-    *saved.startTime = start;
-    *saved.initialized = b[0];
-    *saved.displayModuleName = b[1];
-    *saved.disabled = b[2];
-    *saved.flush = b[3];
     size_t bad = 0;
     for (size_t i = 0; i < a.size() || i < r.size(); ++i) {
         const long long x = i < a.size() ? a[i] : -999, y = i < r.size() ? r[i] : -999;

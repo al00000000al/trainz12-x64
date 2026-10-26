@@ -1,16 +1,19 @@
 // Unit U12b of KernelStandard_7c: Console (0x1001a7f0..0x1001b3a0), Jet's debug text console. The character ring
 // is printed into at a cursor that wraps at the end of a line (NewLine scrolls `top` when it reaches it); Print
-// takes "<color:RRGGBB>" / "</color>" tags out of the text into a span list. The bitmap font is the original's
-// (forwarded data).
+// takes "<color:RRGGBB>" / "</color>" tags out of the text into a span list. The 8x8 bitmap font (f50_font) is read
+// from the installed game's module at build time (ConsoleFont.h), like StdMath's table.
 #include <jet/KernelStandard.h>
 #include <jet/Math.h>
 
+#include "ConsoleFont.h"  // generated at build time from the installed game's KernelStandard_7c.dll
 #include "Crt80.h"
 
 #include <cstdarg>
 #include <cstring>
 
 namespace Jet {
+
+unsigned char Console::f50_font[0x800] = {CONSOLE_F50_FONT_DATA};  // 0x10072d98
 
 struct ConsoleWork {
     using Chunk = Console::Chunk;

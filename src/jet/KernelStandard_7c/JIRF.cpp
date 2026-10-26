@@ -7,6 +7,10 @@
 
 namespace Jet {
 
+// exported as ?results@JIRFFile@Jet@@2QBUResultTable@2@B (implemented.txt): the texts only
+extern const char* const JIRFResultTable[] = {"Unknown Error", "Not a JIRF file", "Identifer not the same as the supplied id",
+                                              "Failed to open the file", nullptr};
+
 namespace {
 
 const unsigned long kMagic = 0x4652494a;  // "JIRF"
