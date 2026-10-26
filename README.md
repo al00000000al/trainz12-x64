@@ -29,10 +29,30 @@ https://discord.gg/DmqMJGtCZ
 Measured by code size: a module counts in proportion to the exports that are already ours (`tools/progress.py`, 2026-10-26).
 
 ```
-Whole game   ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░   6.2 %  (0.47 of 7.54 MB)
-Jet engine   ██████░░░░░░░░░░░░░░░░░░░░░░░░  20.9 %
-trainz.exe   ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %
+Whole game        ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░   6.2 %   7,240 KB left of 7,719
+
+Jet engine        ███████░░░░░░░░░░░░░░░░░░░░░░░  22.4 %   1,659 KB left of 2,138  7/18 modules
+  Engine core     ██████████████████████████████ 100.0 %       0 KB left of   378  4/4 modules
+  Input           ████████████████████████░░░░░░  81.2 %      19 KB left of   103  2/3 modules
+  Graphics        ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   1.3 %   1,268 KB left of 1,284  1/7 modules
+  User interface  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %     354 KB left of   354  0/2 modules
+  Debug           ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %      18 KB left of    18  0/2 modules
+
+Game              ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %   5,434 KB left of 5,434  0/2 modules
+Not loaded        ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   0.0 %     147 KB left of   147  0/3 modules
 ```
+
+Jet is Auran's general engine, a set of DLLs: core services, input, graphics and UI. The train simulation itself (physics, routes, sessions, Surveyor, TrainzScript, the asset system) is the game, `trainz.exe`, the biggest part, not started yet.
+
+| Group | What it is |
+|---|---|
+| Engine core | Jet: memory, strings, files, .ja archives, config, threads, logs, resources |
+| Input | Jet: keyboard, mouse, joysticks, key bindings |
+| Graphics | Jet: 2D/3D scene, meshes, materials, OpenGL renderer, water |
+| User interface | Jet: windows, buttons, menus, fonts |
+| Debug | Jet: debug console and overlays |
+| Game | trainz.exe: simulation, trains, routes, Surveyor, TrainzScript, assets; TNI plugin API |
+| Not loaded | Jet modules the game never loads: Lexer, DirectX 9 renderer, movie player |
 
 Plan steps finished: 9 of 11 (`PORT_PLAN.md`). After the 32-bit replacement come the x64 build and the add-on compatibility tests.
 
@@ -40,29 +60,36 @@ Plan steps finished: 9 of 11 (`PORT_PLAN.md`). After the 32-bit replacement come
 
 | Module | Code | Functions | Exports ours | Status |
 |---|---:|---:|---:|---|
+| **Engine core** | | | | |
 | Kernel_7c | 52 KB | 534 | 256/256 | done |
 | KernelStandard_7c | 286 KB | 2,250 | 1761/1762 | done* |
 | KernelResources_7c | 10 KB | 118 | 51/51 | done |
 | KernelResource_7c | 31 KB | 396 | 187/187 | done |
-| Render2DCore_7c | 17 KB | 167 | 85/85 | done |
+| **Input** | | | | |
 | InputWin32_7c | 12 KB | 100 | 1/1 | done |
 | InputSystem_7c | 71 KB | 560 | 327/327 | done |
+| InputDirectX_7c | 19 KB | 122 | 0/1 | not started |
+| **Graphics** | | | | |
+| Render2DCore_7c | 17 KB | 167 | 85/85 | done |
 | RenderSystem_7c | 351 KB | 3,628 | 0/2687 | not started |
 | Render3DCore_7c | 458 KB | 3,168 | 0/2500 | not started |
 | Render3DFoundation_7c | 194 KB | 1,453 | 0/1084 | not started |
 | Render3DExtension_7c | 38 KB | 326 | 0/186 | not started |
 | RenderOpenGL_7c | 135 KB | 944 | 0/51 | not started |
+| WaterSystem_7c | 92 KB | 714 | 0/490 | not started |
+| **User interface** | | | | |
 | InterfaceSystem_7c | 319 KB | 3,358 | 0/2022 | not started |
 | InterfaceResources_7c | 34 KB | 345 | 0/169 | not started |
-| WaterSystem_7c | 92 KB | 714 | 0/490 | not started |
-| InputDirectX_7c | 19 KB | 122 | 0/1 | not started |
-| RenderDirectX9_7c | 70 KB | 404 | 0/41 | not started |
+| **Debug** | | | | |
 | DebugSupport_7c | 16 KB | 201 | 0/119 | not started |
 | DebugInterface_7c | 3 KB | 50 | 0/38 | not started |
-| Lexer_7c | 18 KB | 233 | 0/185 | not started |
-| DSMoviePlayer_7c | 58 KB | 728 | 0/1 | not started |
+| **Game** | | | | |
 | trainz.exe | 5,411 KB | 45,438 | - | not started |
 | trainznativeinterface.dll | 23 KB | 369 | - | not started |
+| **Not loaded** | | | | |
+| Lexer_7c | 18 KB | 233 | 0/185 | not started |
+| RenderDirectX9_7c | 70 KB | 404 | 0/41 | not started |
+| DSMoviePlayer_7c | 58 KB | 728 | 0/1 | not started |
 
 `done*`: KernelStandard_7c keeps one export, `HardwareException::GetCallStack` (an x86 stack walk), forwarded to the original until the x64 rewrite.
 

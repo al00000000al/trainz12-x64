@@ -18,13 +18,25 @@ TOTALS = ROOT / "tools" / "progress_exports.tsv"
 README = ROOT / "README.md"
 START, END = "<!-- progress:start -->", "<!-- progress:end -->"
 
-# modules the game loads, in port order; the movie players and Lexer are not loaded (PORT_PLAN)
-JET = ["Kernel_7c", "KernelStandard_7c", "KernelResources_7c", "KernelResource_7c", "Render2DCore_7c",
-       "InputWin32_7c", "InputSystem_7c", "RenderSystem_7c", "Render3DCore_7c", "Render3DFoundation_7c",
-       "Render3DExtension_7c", "RenderOpenGL_7c", "InterfaceSystem_7c", "InterfaceResources_7c",
-       "WaterSystem_7c", "InputDirectX_7c", "RenderDirectX9_7c", "DebugSupport_7c", "DebugInterface_7c",
-       "Lexer_7c", "DSMoviePlayer_7c"]
-TRAINZ = ["trainz.exe", "trainznativeinterface.dll"]
+# (label, what it is, map dir, modules); the game never loads the last group (PORT_PLAN)
+GROUPS = [
+    ("Engine core", "Jet: memory, strings, files, .ja archives, config, threads, logs, resources", "jet",
+     ["Kernel_7c", "KernelStandard_7c", "KernelResources_7c", "KernelResource_7c"]),
+    ("Input", "Jet: keyboard, mouse, joysticks, key bindings", "jet",
+     ["InputWin32_7c", "InputSystem_7c", "InputDirectX_7c"]),
+    ("Graphics", "Jet: 2D/3D scene, meshes, materials, OpenGL renderer, water", "jet",
+     ["Render2DCore_7c", "RenderSystem_7c", "Render3DCore_7c", "Render3DFoundation_7c", "Render3DExtension_7c",
+      "RenderOpenGL_7c", "WaterSystem_7c"]),
+    ("User interface", "Jet: windows, buttons, menus, fonts", "jet",
+     ["InterfaceSystem_7c", "InterfaceResources_7c"]),
+    ("Debug", "Jet: debug console and overlays", "jet",
+     ["DebugSupport_7c", "DebugInterface_7c"]),
+    ("Game", "trainz.exe: simulation, trains, routes, Surveyor, TrainzScript, assets; TNI plugin API", "trainz",
+     ["trainz.exe", "trainznativeinterface.dll"]),
+    ("Not loaded", "Jet modules the game never loads: Lexer, DirectX 9 renderer, movie player", "jet",
+     ["Lexer_7c", "RenderDirectX9_7c", "DSMoviePlayer_7c"]),
+]
+JET = [n for _, _, g, names in GROUPS if g == "jet" for n in names]
 
 
 def code_size(group, name):
@@ -71,26 +83,35 @@ def bar(frac, width=30):
 
 def block():
     totals = dict(l.split("\t") for l in TOTALS.read_text(encoding="utf-8").splitlines()[1:])
-    rows, groups = [], {}
-    for group, names in (("jet", JET), ("trainz", TRAINZ)):
+    rows, stats = [], []  # stats: (label, what, map dir, done bytes, bytes, modules done, modules)
+    for label, what, group, names in GROUPS:
+        g = [label, what, group, 0, 0, 0, len(names)]
+        rows.append(f"| **{label}** | | | | |")
         for name in names:
             size, funcs = code_size(group, name)
             total = int(totals.get(name, 0))
             mine = owned(name)
             # a module with one or no export (a plugin entry only) is ours when its entry point is
             share = (mine / total if total > 1 else float(mine > 0)) if group == "jet" else 0.0
-            done = size * share
-            g = groups.setdefault(group, [0, 0])
-            g[0] += done
-            g[1] += size
+            g[3] += size * share
+            g[4] += size
+            g[5] += share >= 0.999
             status = ("done" if share >= 1 else "done*" if share >= 0.999 else
                       "partial" if share > 0 else "not started")
             exp = f"{mine}/{total}" if group == "jet" else "-"
             rows.append(f"| {name} | {size / 1024:,.0f} KB | {funcs:,} | {exp} | {status} |")
-    done = sum(g[0] for g in groups.values())
-    size = sum(g[1] for g in groups.values())
+        stats.append(g)
+
+    def line(label, done, size, mods_done=None, mods=None):
+        mods_txt = f"  {mods_done}/{mods} modules" if mods else ""
+        return (f"{label:<18}{bar(done / size)} {100 * done / size:5.1f} %  "
+                f"{(size - done) / 1024:>6,.0f} KB left of {size / 1024:>5,.0f}{mods_txt}")
+
+    def total(sel):
+        return [sum(g[i] for g in sel) for i in (3, 4, 5, 6)]
+
+    jet = [g for g in stats if g[2] == "jet" and g[0] != "Not loaded"]
     steps_done, steps = plan_steps()
-    jet, tz = groups["jet"], groups["trainz"]
     today = datetime.date.today().isoformat()
     out = [
         START,
@@ -98,10 +119,21 @@ def block():
         f"(`tools/progress.py`, {today}).",
         "",
         "```",
-        f"Whole game   {bar(done / size)} {100 * done / size:5.1f} %  ({done / 2**20:.2f} of {size / 2**20:.2f} MB)",
-        f"Jet engine   {bar(jet[0] / jet[1])} {100 * jet[0] / jet[1]:5.1f} %",
-        f"trainz.exe   {bar(tz[0] / tz[1])} {100 * tz[0] / tz[1]:5.1f} %",
+        line("Whole game", *total(stats)[:2]),
+        "",
+        line("Jet engine", *total(jet)),
+        *(line("  " + g[0], g[3], g[4], g[5], g[6]) for g in jet),
+        "",
+        *(line(g[0], g[3], g[4], g[5], g[6]) for g in stats if g not in jet),
         "```",
+        "",
+        "Jet is Auran's general engine, a set of DLLs: core services, input, graphics and UI. The train simulation "
+        "itself (physics, routes, sessions, Surveyor, TrainzScript, the asset system) is the game, `trainz.exe`, "
+        "the biggest part, not started yet.",
+        "",
+        "| Group | What it is |",
+        "|---|---|",
+        *(f"| {g[0]} | {g[1]} |" for g in stats),
         "",
         f"Plan steps finished: {steps_done} of {steps} (`PORT_PLAN.md`). After the 32-bit replacement come the "
         f"x64 build and the add-on compatibility tests.",
