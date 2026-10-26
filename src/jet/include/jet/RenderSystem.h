@@ -7,6 +7,7 @@
 #include <jet/KernelStandard.h>
 #include <jet/Math.h>
 #include <jet/PString.h>
+#include <jet/RenderTypes.h>
 #include <jet/SmallTypes.h>
 #include <jet/VCall.h>
 
@@ -26,7 +27,6 @@ enum Factor { DST_ONE = 1 };
 }
 enum DFunction { DFUNCTION_ALWAYS = 7 };
 enum DCull { DCULL_NONE = 0 };
-enum DFormatId { DFORMAT_DEFAULT = 1 };
 enum PointPosition { POINT_CENTRE = 0, POINT_CORNER = 1 };
 
 // the device-independent renderer (implemented by RenderDirectX9 / RenderOpenGL). Its virtual slots used so far:
@@ -70,23 +70,6 @@ class RenderKernel {
 public:
     Display* GetDisplay() const { return *reinterpret_cast<Display* const*>(reinterpret_cast<const char*>(this) + 0x7c); }
     void* TextureManager() const { return *reinterpret_cast<void* const*>(reinterpret_cast<const char*>(this) + 0x94); }
-};
-
-class DisplayFormat {
-public:
-    DisplayFormat(DFormatId id);
-
-private:
-    unsigned char data[0xc];
-};
-
-class RenderTextureConstruct {
-public:
-    RenderTextureConstruct() : a(0), b(0), unknown8(0), c(0) {}
-    ~RenderTextureConstruct();
-
-private:
-    int a, b, unknown8, c;
 };
 
 class MaterialFileSupport {

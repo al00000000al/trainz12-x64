@@ -2,11 +2,14 @@
 
 Code size and function counts come from ghidra_maps/*/<module>.functions.tsv (non-thunk functions),
 exports we own from src/jet/<module>/implemented.txt, export totals from tools/progress_exports.tsv.
-A module's share is owned/total exports, applied to its code size. Modules with no src/ directory count as 0.
+A module with all exports ours counts whole; a partial one counts the code of the functions behind its exports that
+are ours (cached in tools/progress_exports.tsv, recomputed with --exports from the export dumps, which hold the
+addresses). Modules with no src/ directory count as 0.
 
 usage: python -I tools/progress.py                 print the README block
        python -I tools/progress.py --write         put it between the progress markers in README.md
-       python -I tools/progress.py --exports DIR   refresh tools/progress_exports.tsv from exports/*.tsv
+       python -I tools/progress.py --exports DIR   refresh tools/progress_exports.tsv from exports/*.tsv (run it
+                                                   with --write after each step)
 """
 import datetime
 import re
@@ -54,21 +57,34 @@ def code_size(group, name):
     return size, count
 
 
-def owned(name):
+def owned_names(name):
     impl = ROOT / "src" / "jet" / name / "implemented.txt"
     if not impl.exists():
-        return 0
-    return sum(1 for line in impl.read_text(encoding="utf-8").splitlines()
-               if line.strip() and not line.startswith("#"))
+        return []
+    return [line.split("=", 1)[0].strip() for line in impl.read_text(encoding="utf-8").splitlines()
+            if line.strip() and not line.startswith("#")]
+
+
+def owned(name):
+    return len(owned_names(name))
 
 
 def refresh_totals(exports_dir):
     rows = []
     for name in JET:
         tsv = Path(exports_dir) / f"{name}.tsv"
-        lines = tsv.read_text(encoding="utf-8").splitlines()[1:]
-        rows.append(f"{name}\t{sum(1 for l in lines if l.strip())}")
-    TOTALS.write_text("module\texports\n" + "\n".join(rows) + "\n", encoding="utf-8")
+        lines = [l.split("\t") for l in tsv.read_text(encoding="utf-8").splitlines()[1:] if l.strip()]
+        # the functions behind our exports (folded bodies counted once), by the Ghidra map's sizes
+        sizes = {}
+        with open(ROOT / "ghidra_maps" / "jet" / f"{name}.dll.functions.tsv", encoding="utf-8") as f:
+            next(f)
+            for line in f:
+                col = line.split("\t")
+                sizes[int(col[0], 16)] = int(col[1])
+        rva = {l[2]: 0x10000000 + int(l[1], 16) for l in lines}
+        mine = {rva[n] for n in owned_names(name) if n in rva}
+        rows.append(f"{name}\t{len(lines)}\t{sum(sizes.get(a, 0) for a in mine)}")
+    TOTALS.write_text("module\texports\towned_bytes\n" + "\n".join(rows) + "\n", encoding="utf-8")
 
 
 def plan_steps():
@@ -83,7 +99,11 @@ def bar(frac, width=30):
 
 
 def block():
-    totals = dict(l.split("\t") for l in TOTALS.read_text(encoding="utf-8").splitlines()[1:])
+    totals, owned_bytes = {}, {}
+    for l in TOTALS.read_text(encoding="utf-8").splitlines()[1:]:
+        col = l.split("\t")
+        totals[col[0]] = col[1]
+        owned_bytes[col[0]] = int(col[2]) if len(col) > 2 else 0
     rows, stats = [], []  # stats: (label, what, map dir, done bytes, bytes, modules done, modules)
     for label, what, group, names in GROUPS:
         g = [label, what, group, 0, 0, 0, len(names)]
@@ -94,7 +114,9 @@ def block():
             mine = owned(name)
             # a module with one or no export (a plugin entry only) is ours when its entry point is
             share = (mine / total if total > 1 else float(mine > 0)) if group == "jet" else 0.0
-            g[3] += size * share
+            # partial modules: the code behind our exports, not their count (many exports are tiny accessors)
+            code_share = share if share >= 0.999 or share == 0 else min(owned_bytes.get(name, 0) / size, share)
+            g[3] += size * code_share
             g[4] += size
             g[5] += share >= 0.999
             status = ("done" if share >= 1 else "done*" if share >= 0.999 else
@@ -116,8 +138,8 @@ def block():
     today = datetime.date.today().isoformat()
     out = [
         START,
-        f"Measured by code size: a module counts in proportion to the exports that are already ours "
-        f"(`tools/progress.py`, {today}).",
+        f"Measured by code size: a finished module counts whole, a partial one by the code behind the exports "
+        f"that are already ours (`tools/progress.py`, {today}).",
         "",
         "```",
         line("Whole game", *total(stats)[:2]),

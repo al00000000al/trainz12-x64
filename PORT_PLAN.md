@@ -59,7 +59,7 @@ at every step and catches mistakes while they are small.
   libjpeg-turbo, nvtt); Cg, d3dx9, XULRunner, SpeedTree still open.
 
 ## Next steps (one fresh session each; read MODLOG.md first, work sequentially to save the usage limit)
-After each step, refresh the README progress block: `python -I tools/progress.py --write`.
+After each step, refresh the README progress block: `python -I tools/progress.py --exports D:/trainz12-decomp/exports --write`.
 1. ~~Kernel_7c: EditItem block + Compress/Encrypt vbtables → 256/256, probe + menu check.~~ Done 2026-10-19.
 2. ~~Kernel_7c x64: build the module as x64 in a standalone test harness (no game yet) to find 64-bit hazards early.~~
    Done 2026-10-19.
@@ -88,7 +88,8 @@ After each step, refresh the README progress block: `python -I tools/progress.py
 8. Render stack (RenderSystem, Render3D*, RenderOpenGL), then InterfaceSystem, WaterSystem.
    8a. ~~RenderSystem_7c: inventory, unit order, U0 forwarding proxy in game.~~ Done 2026-10-26: 2687 exports in
        units U1-U9 (`notes/RenderSystem.md`); every other render module and trainz.exe stand on it.
-   8b. RenderSystem_7c U1 (value types, vertex formats) and U4 (modifiers).
+   8b. RenderSystem_7c U1 (value types, vertex formats) and U4 (modifiers). U1 done 2026-10-26: 939/2687 exports
+       ours, `tests/diff_rs_u1.cpp` 0 mismatches, menu check clean. U4 next (it holds a VC8 `std::list`).
    8c. RenderSystem_7c U2 + U3 (shader languages, vertex programs, combiners).
    8d. RenderSystem_7c U5 (geometry), U6 (textures), U7 (materials), U8 (layers), U9 (Display, RenderKernel).
    8e. Render3DCore, Render3DFoundation, RenderOpenGL, then InterfaceSystem, WaterSystem (own inventories).

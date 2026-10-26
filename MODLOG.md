@@ -1541,6 +1541,36 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
 - U0: `src/jet/RenderSystem_7c` with an empty `implemented.txt` (all 2687 exports forwarded to
   `RenderSystem_7c_orig.dll`). In game: menu reached, JetLog identical to the baseline (diff_lines=0).
 
+### RenderSystem_7c U1, value types and vertex records (2026-10-26): 939/2687 exports ours
+- `include/jet/VertexFormats.h` + `RenderSystem_7c/VertexFormats.cpp` (generated from the TS12 assembly and data):
+  118 vertex records (PackedVertex*, GeoLOD*Vertex*, TerrainBlend*, StreamedVertex*), 652 members, 178 data exports.
+  - Each record: type id, size, accessors returning pointers into the record, `operator=` (Vector) setters, copies.
+  - Item offset tables have **39 entries** (VertexItemType count; the 40th dword of the int tables is padding):
+    `int` (GeoLOD/Terrain), `OffsetLookupCheck {offset, type}` (PackedVertex), `CheckVertexItemTypeInt
+    {stream, offset, type}` (Streamed). The `type` column is not always the index.
+  - TerrainBlend `readDataOffset/Size` live in .bss and nothing writes them: always 0.
+  - StreamedVertexPCTBase/PNTBase are empty records (statics only).
+- `include/jet/RenderTypes.h` + `RenderSystem_7c/RenderTypes.cpp`, by hand:
+  - DisplayFormat {id, bits, shift/size per channel, stencil, depth} (0xc): `Set` is a 28-case table (id kept as a
+    byte); `operator==` compares ids unless one is 0 or 20 (custom), then layouts; `Classify` probes ids 1..28.
+    `GetFormatIDString` reads a 29-entry name table the original fills at start-up.
+  - DisplayLight (0x50, default: type 3, constant attenuation 1, spot cutoff 180), DisplayMaterial (0x44, colours
+    with alpha 1), RenderTextureConstruct (shared context is a ReferenceCount; `operator=` is a plain copy).
+  - TextureArgs (0x44) and its text decoder (`COLOR MODULATE TEX COLOR PREV COLOR`, 19 tokens, strtok/_strupr/
+    sscanf). Short lines make the original strcmp a null token (crash): kept.
+  - TextureStage (0x94: two TextureArgs, stage, display; Build calls Display slot 0x11c).
+  - DisplayDescriptor (0x1c, four PStrings), Element (0xc; `Element::currentVisited` stays the original's, imported
+    from `RenderSystem_7c_orig.lib`, new in `implib/`), Projector (`projectorCache` stays the original's).
+  - DisplayLight slots 2-5 and Projector slot 1 have no exported name; the bases answer 0.
+- **VertexType moved to U5**: it owns a global registry (hash tables, `nextFreeId`, `display`), so it goes with the
+  geometry unit.
+- Test `tests/diff_rs_u1.cpp` (557 051 checks at 400 rounds, 0 mismatches, ~1 s): vertex records found in the export
+  table and classified by their undecorated signature; the other classes driven through their exports.
+  - Kept difference: the original copies floats with x87 `fld/fstp`, which quiets signalling NaNs; ours copies
+    bits. The test generates no SNaNs (vertex data never holds them).
+  - Mutations caught: a format table entry, the MINUS flag in Decode, a GetMorphedTex stride.
+- In game: menu reached, JetLog identical to the baseline.
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's
