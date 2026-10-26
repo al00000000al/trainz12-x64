@@ -104,7 +104,9 @@ foreach(t "gfxqk_acclist;6cdb0;88;u16" "gfxqk_accept;6ce60;96;u16" "gfxqk_ec;6cf
           "gfxpp_acclist;6d518;356;u16" "gfxpp_accept;6d7e0;288;u16" "gfxpp_ec;6da20;128;u8" "gfxpp_meta;6daa0;56;u32"
           "gfxpp_base;6db80;304;u16" "gfxpp_def;6dde0;304;u16" "gfxpp_nxt;6e040;636;u16" "gfxpp_chk;6e538;636;u16"
           "gfxtp_acclist;69438;424;u16" "gfxtp_accept;69788;328;u16" "gfxtp_ec;69a18;128;u8" "gfxtp_meta;69a98;68;u32"
-          "gfxtp_base;69ba8;344;u16" "gfxtp_def;69e58;344;u16" "gfxtp_nxt;6a108;840;u16" "gfxtp_chk;6a798;840;u16")
+          "gfxtp_base;69ba8;344;u16" "gfxtp_def;69e58;344;u16" "gfxtp_nxt;6a108;840;u16" "gfxtp_chk;6a798;840;u16"
+          "gfxvp_acclist;62be8;492;u16" "gfxvp_accept;62fc0;612;u16" "gfxvp_ec;63488;128;u8" "gfxvp_meta;63508;74;u32"
+          "gfxvp_base;63630;616;u16" "gfxvp_def;63b00;616;u16" "gfxvp_nxt;63fd0;956;u16" "gfxvp_chk;64748;956;u16")
     list(GET t 0 n)
     list(GET t 1 rva)
     list(GET t 2 cnt)
@@ -116,17 +118,19 @@ foreach(t "gfxqk_acclist;6cdb0;88;u16" "gfxqk_accept;6ce60;96;u16" "gfxqk_ec;6cf
         DEPENDS "${TOOLS}/extract_data.py" VERBATIM)
     list(APPEND RS_TABLES "${GEN}/${n}.h")
 endforeach()
-foreach(t "gfxqk;100b5de0;32;100b5fc8;19" "gfxpp;100b66c0;95;100b6c28;54" "gfxtp;100b14a8;119;100b1b58;69")
+foreach(t "gfxqk;100b5de0;32;100b5fc8;19;" "gfxpp;100b66c0;95;100b6c28;54;" "gfxtp;100b14a8;119;100b1b58;69;"
+          "gfxvp;100aef10;480;100b0950;268;wide")
     list(GET t 0 n)
     list(GET t 1 states)
     list(GET t 2 nstates)
     list(GET t 3 rules)
     list(GET t 4 nrules)
+    list(GET t 5 mode)
     string(TOUPPER "${n}" macro)
     add_custom_command(
         OUTPUT "${GEN}/${n}_lemon.h"
         COMMAND ${PY} -I "${TOOLS}/extract_lemon.py" "${ORIG_RS}" ${states} ${nstates} ${rules} ${nrules} ${macro}
-                "${GEN}/${n}_lemon.h"
+                "${GEN}/${n}_lemon.h" ${mode}
         DEPENDS "${TOOLS}/extract_lemon.py" VERBATIM)
     list(APPEND RS_TABLES "${GEN}/${n}_lemon.h")
 endforeach()

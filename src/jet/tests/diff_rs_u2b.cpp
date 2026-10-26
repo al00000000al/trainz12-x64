@@ -71,6 +71,7 @@ static void Log(const char* fmt, ...)
 static std::string Name(const void* p)
 {
     if (!p) return "null";
+    if (cur < 0) return "?";  // (nothing is logged then)
     auto it = names[cur].find(p);
     if (it != names[cur].end()) return it->second;
     return "?";
@@ -891,6 +892,8 @@ struct EngineSpec {
     void (*finish)(int side, unsigned char* ctx, void* parser);  // log and free what the actions left
     void* (*makeParser)(int side);
     void (*freeParser)(int side, void* parser);
+    void (*origDriver)(void* stack, int major, void* minor, void* ctx);  // when the convention is another one
+    unsigned stackSize;  // 0x4bc when not given
 };
 
 static void OrigDriver(unsigned rva, void* stack, int major, void* minor, void* ctx)
@@ -956,15 +959,40 @@ static void* TokenText(std::mt19937& r)  // a token's minor: a number-like text 
 
 // one token through a side's driver; false when it faults (the texture parser's actions read address 0 on some
 // streams, in both modules: the stack is left as it is then)
+// zeroes the stack below the caller: the vertex parser's driver reads a slot of it that nothing sets (rules
+// without a value); between two tokens the game's scanner leaves zeroes there
+static __declspec(noinline) void ScrubStack()
+{
+    volatile char area[0x1000];
+    for (char& c : const_cast<char(&)[0x1000]>(area)) c = 0;
+}
+
+static uintptr_t faultAddress;  // the last fault caught (RS_U2B_FAULTS=1 prints it)
+static int FaultAt(EXCEPTION_POINTERS* e)
+{
+    if (e->ExceptionRecord->ExceptionCode != EXCEPTION_ACCESS_VIOLATION) return EXCEPTION_CONTINUE_SEARCH;
+    faultAddress = reinterpret_cast<uintptr_t>(e->ExceptionRecord->ExceptionAddress);
+    if (std::getenv("RS_U2B_FAULTS")) {
+        HMODULE m = nullptr;
+        char path[MAX_PATH] = "";
+        if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                               reinterpret_cast<const char*>(faultAddress), &m))
+            GetModuleFileNameA(m, path, MAX_PATH);
+        std::printf("caught a fault in %s +0x%x\n", path, static_cast<unsigned>(faultAddress - reinterpret_cast<uintptr_t>(m)));
+    }
+    return EXCEPTION_EXECUTE_HANDLER;
+}
 static bool GuardedParse(int s, const EngineSpec& e, ParseFn parse, void* stack, int major, void* minor, void* ctx)
 {
     __try {
         if (s == 0)
             parse(stack, major, minor, ctx);
+        else if (e.origDriver)
+            e.origDriver(stack, major, minor, ctx);
         else
             OrigDriver(e.driver, stack, major, minor, ctx);
         return true;
-    } __except (GetExceptionCode() == EXCEPTION_ACCESS_VIOLATION ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH) {
+    } __except (FaultAt(GetExceptionInformation())) {
         return false;
     }
 }
@@ -986,17 +1014,20 @@ static std::pair<int, int> Probe(const EngineSpec& e, ParseFn parse, FreeFn free
     const int saved = cur;
     cur = -1;
     std::mt19937 r(1);
-    unsigned char ctx[0x40] = {};
+    unsigned char ctx[0x80] = {};
     e.prepare(ctx, 0);
     *reinterpret_cast<void**>(ctx + e.ctxSize - 4) = parser;
-    void* stack = RealNew(0x4bc);
+    void* stack = RealNew(e.stackSize ? e.stackSize : 0x4bc);
     *static_cast<int*>(stack) = -1;
     bool fault = false;
-    for (int t : stream)
-        if (!GuardedParse(0, e, parse, stack, t, t ? TokenText(r) : nullptr, ctx)) {
+    for (int t : stream) {
+        void* const text = t ? TokenText(r) : nullptr;
+        ScrubStack();
+        if (!GuardedParse(0, e, parse, stack, t, text, ctx)) {
             fault = true;
             break;
         }
+    }
     std::pair<int, int> state{static_cast<int*>(stack)[1], static_cast<int*>(stack)[0]};
     if (fault)
         state = {-1000, -1000};
@@ -1056,12 +1087,12 @@ static void RunEngine(int s, unsigned seed, const EngineSpec& e)
     cur = saved;
     void* parser = e.makeParser(s);
     for (int round = 0; round < 4; ++round) {
-        unsigned char ctx[0x40];
+        unsigned char ctx[0x80];
         std::memset(ctx, 0, sizeof ctx);
         const int variant = static_cast<int>(r() % 4);
         e.prepare(ctx, variant);
         *reinterpret_cast<void**>(ctx + e.ctxSize - 4) = parser;
-        void* stack = TestNew(0x4bc, "Stack%d", round);
+        void* stack = TestNew(e.stackSize ? e.stackSize : 0x4bc, "Stack%d", round);
         *static_cast<int*>(stack) = -1;
         std::vector<int> stream;
         if (round % 2) {
@@ -1090,6 +1121,7 @@ static void RunEngine(int s, unsigned seed, const EngineSpec& e)
                 minor = TestNew(static_cast<unsigned>(std::strlen(text) + 1), "T%d", i);
                 std::strcpy(static_cast<char*>(minor), text);
             }
+            ScrubStack();
             if (!GuardedParse(s, e, ourParse, stack, major, minor, ctx)) {
                 Log("  %d -> crashed\n", major);
                 fault = true;
@@ -1333,12 +1365,12 @@ static std::vector<std::string> ProgramNames(const std::string& t)
     return out;
 }
 
-// the scanners' module statics (0x100b7dc8..0x100b809f in the original): a damaged text can leave them in any
+// the scanners' module statics (0x100b7dc8..0x100b8127 in the original): a damaged text can leave them in any
 // state, which the next run inherits (as in the original); most scenarios start both sides from zero
 static void ResetLexStatics(int s)
 {
     static void* ours = OurSym("?gfxLex@Jet@@3UGfxLexStatics@1@A");
-    std::memset(s == 0 ? ours : OrigAt(0xb7dc8), 0, 0x2d8);
+    std::memset(s == 0 ? ours : OrigAt(0xb7dc8), 0, 0x360);
 }
 
 // a run that may fault (as the original does): -1 then
@@ -1775,6 +1807,385 @@ static void RunTpEngine(int s, unsigned seed)
     RunEngine(s, seed, spec);
 }
 
+// ---------------------------------------------------------------------------------------------------------------
+// the vertex program parser (VertexProgram::Load's front end, run over the pre-parser's output). A stand-in program
+// logs what it is handed: slot 3 LoadNativeFormat, 4 CompileProgram, 12 the names, 13 the symbol table, 14 the
+// instructions, 28 a vertex type, 29/30 queries; SetProgramName writes its +0x14.
+
+static std::vector<std::string> vpCorpus;  // our pre-parser's output for every program of the corpus
+static std::vector<std::string> vpNative;  // ... of made-up files, the programs with a native block
+static void CollectVpCorpus()
+{
+    const int saved = cur;
+    cur = -1;
+    std::vector<std::pair<std::string, std::string>> inputs;  // {text, program}
+    for (const std::string& text : corpus)
+        for (const std::string& program : ProgramNames(text)) inputs.push_back({text, program});
+    std::mt19937 r(77);
+    const size_t real = inputs.size();
+    for (int k = 0; k < 400; ++k) {
+        std::vector<std::string> programs;
+        const std::string text = PreText(r, programs);
+        for (const std::string& program : programs) inputs.push_back({text, program});
+    }
+    for (size_t i = 0; i < inputs.size(); ++i) {
+        const std::string& text = inputs[i].first;
+        const std::string& program = inputs[i].second;
+        {  // (a made-up file needs a language that answers its #ifs: the pre-parser test's stand-in)
+            void* file = RealNew(0x14);
+            MemFileCtor(file, nullptr, text.c_str(), static_cast<unsigned>(text.size()), false, 0);
+            void* obj = RealNew(0x400);
+            std::memset(obj, 0, 0x400);
+            void* node = CreateNode(*cache, reinterpret_cast<const unsigned char*>(program.c_str()));
+            void* fileNode = nullptr;
+            OurPre().ctor(obj, 0, file);
+            ResetLexStatics(0);
+            if (OurPre().run(obj, &node, &fileNode, &fakeLang)) {
+                const char* out = PreOutput(0, obj);
+                if (out && *out) {
+                    if (i < real)
+                        vpCorpus.push_back(out);
+                    else if (std::strstr(out, "#NATIVE"))
+                        vpNative.push_back(out);
+                }
+            }
+            OurPre().dtor(obj);
+            RealDelete(obj);
+            MemFileDtor(file);
+            RealDelete(file);
+            DestroyNode(*cache, node);
+        }
+    }
+    ResetLexStatics(0);
+    cur = saved;
+    std::printf("-- vertex program corpus: %zu texts, %zu native\n", vpCorpus.size(), vpNative.size());
+}
+static std::string VpSample(std::mt19937& r)
+{
+    static std::vector<std::string> w;
+    static const std::vector<const char*> punct = {
+        "{", "}", "(", ")", ",", ";", "=", "[", "]", ".", "-", "+", "#LINE 3\n", "#CODE 0\n", "#ENDCODE 0\n",
+        "#NATIVE 0\n", "#ENDNATIVE 0\n", "#BINDING 0\n", "#ENDBINDING\n", "#VERTEX PNT\n", "%MAXCONST", "\n", "MOV",
+        "ADD", "DP4", "MAD", "SWZ", "ARL", "POW", "R0", "c[0]", "v[0]", "o[HPOS]", "A0.x", ".xyzw", "1.0", "-2",
+        "\xe9t\xe9", "\x80\xff"};
+    return SampleOf(r, vpCorpus, w, punct, "#CODE 0\n");
+}
+// a native program as the pre-parser writes it (its native text sometimes longer)
+static std::string VpMadeUp(std::mt19937& r)
+{
+    std::string s = vpNative[r() % vpNative.size()];
+    if (r() % 2) {
+        const size_t at = s.find("#ENDNATIVE");
+        if (at != std::string::npos)
+            for (int k = static_cast<int>(r() % 6); k; --k) s.insert(at, "MOV result.position, vertex.position;\n");
+    }
+    return s;
+}
+
+static int vpCalls;
+static int vpTypeCalls, vpNativeCalls, vpCrashes;  // on the original's side: how often the run got that far
+static int vpTypeSet;  // slot 29's answer this scenario
+static void DumpSymbol(const char* tag, const void* sym);
+static bool __cdecl ProgNative(void* self, const void* name, const char* text)
+{
+    const bool ok = (text ? std::strlen(text) : 0) % 5 != 0;
+    vpNativeCalls += cur == 1;
+    Log("  native %s name %s [%s] -> %d\n", Name(self).c_str(), NodeText(*static_cast<void* const*>(name)).c_str(),
+        text ? text : "(null)", ok);
+    return ok;
+}
+static bool __cdecl ProgCompile(void* self)
+{
+    const bool ok = ++vpCalls % 4 != 0;
+    Log("  compile %s -> %d\n", Name(self).c_str(), ok);
+    return ok;
+}
+static void __cdecl ProgNames(void*, const void* list) { DumpNames("program names", *static_cast<void* const*>(list)); }
+static bool __cdecl ProgSymbols(void* self, const void* table, bool native)
+{
+    const auto* t = static_cast<const unsigned*>(table);
+    Log("  symbols %s native %d #%u:\n", Name(self).c_str(), native, t[0]);
+    for (unsigned i = 0; i < t[0] && i < 400; ++i) DumpSymbol("   ", reinterpret_cast<void* const*>(t[2])[i]);
+    const bool ok = ++vpCalls % 5 != 0;
+    Log("  -> %d\n", ok);
+    return ok;
+}
+static void DumpOperand(const void* reg, int depth)
+{
+    if (!reg) {
+        Log(" null");
+        return;
+    }
+    const auto* r = static_cast<const int*>(reg);
+    const char* sw = reinterpret_cast<const char*>(r[2]);
+    Log(" {%s sym %s sw %s [%s] flag %d", Name(reg).c_str(), Name(reinterpret_cast<void*>(r[0])).c_str(),
+        Name(sw).c_str(), sw ? sw : "", static_cast<const unsigned char*>(reg)[0xc]);
+    if (const auto* o = reinterpret_cast<const int*>(r[1])) {
+        Log(" offset %s %d", Name(o).c_str(), o[1]);
+        if (depth < 3) DumpOperand(reinterpret_cast<void*>(o[0]), depth + 1);
+    }
+    Log("}");
+}
+static bool __cdecl ProgInstructions(void* self, const void* array)
+{
+    const auto* a = static_cast<const unsigned*>(array);
+    Log("  instructions %s #%u:\n", Name(self).c_str(), a[0]);
+    for (unsigned i = 0; i < a[0] && i < 400; ++i) {
+        const auto* ins = reinterpret_cast<const int*>(reinterpret_cast<void* const*>(a[2])[i]);
+        if (!ins) {
+            Log("   null\n");
+            continue;
+        }
+        Log("   %s op %d ops", Name(ins).c_str(), ins[2]);
+        if (const auto* l = reinterpret_cast<const unsigned*>(ins[1])) {
+            Log(" %s #%u:", Name(l).c_str(), l[0]);
+            for (unsigned j = 0; j < l[0] && j < 16; ++j) DumpOperand(reinterpret_cast<void* const*>(l[2])[j], 0);
+        }
+        Log("\n");
+    }
+    const bool ok = ++vpCalls % 6 != 0;
+    Log("  -> %d\n", ok);
+    return ok;
+}
+static void __cdecl ProgVertexType(void* self, const void* vt) { vpTypeCalls += cur == 1; Log("  vertex type %s %s\n", Name(self).c_str(), Name(vt).c_str()); }
+static int __cdecl ProgHasType(void*) { return vpTypeSet; }
+static int __cdecl ProgRegisters(void*) { return 96; }
+static void* progVtable[31];
+static struct {
+    void** vt = progVtable;
+    void* vb = nullptr;
+    void* display = &fakeDisplay;
+    unsigned char rest[0x34] = {};
+} fakeProg;
+static void*& ProgProgramName() { return *reinterpret_cast<void**>(reinterpret_cast<char*>(&fakeProg) + 0x14); }
+
+static bool vpEngineRun;
+static void DumpSymbol(const char* tag, const void* sym)
+{
+    if (!sym) {
+        Log("%s null\n", tag);
+        return;
+    }
+    const auto* w = static_cast<const int*>(sym);
+    const auto* b = static_cast<const unsigned char*>(sym);
+    // a program parameter's value (+0x24) is the original's stack garbage when the text gives none: not compared;
+    // nor is +0x20 in the driver-alone runs (after a syntax error the original's unset value holds what formatting
+    // the message left on the stack)
+    const bool garbage = w[0x12] == 1;
+    Log("%s %s class %d type %d f08 %d %d %d %d hint %d f1c %d f20 %d flags %x v %08x %08x %08x %08x f34 %d name %s "
+        "refs %d alias %s next %s\n",
+        tag, Name(sym).c_str(), w[0x12], w[1], w[2], w[3], w[4], w[5], w[6], w[7], vpEngineRun ? 0 : b[0x20], b[0x21],
+        garbage ? 0 : w[9], garbage ? 0 : w[10], garbage ? 0 : w[11], garbage ? 0 : w[12], w[13],
+        NodeText(reinterpret_cast<void*>(w[14])).c_str(), w[15], Name(reinterpret_cast<void*>(w[0])).c_str(),
+        Name(reinterpret_cast<void*>(w[16])).c_str());
+}
+
+static void LogVpState(int s)
+{
+    const unsigned char* st = LexStatics(s);
+    const int* t = reinterpret_cast<const int*>(st + 0x34c);
+    Log("  scanner depth %d cond %d count %d flag %d stack %d %d\n", t[0], t[1], t[2], st[0x2db],
+        reinterpret_cast<const int*>(st + 0x228)[0], reinterpret_cast<const int*>(st + 0x228)[1]);
+}
+static void ResetVp(int s)
+{
+    ResetLexStatics(s);
+}
+
+static void OrigVpCtor(void* obj, void* file)
+{
+    void* f = OrigAt(0x537b0);  // vpFlexLexer(file), then what VertexProgram::Load sets
+    __asm {
+        pushad
+        mov ecx, file
+        push obj
+        call f
+        popad
+    }
+    auto* o = static_cast<unsigned char*>(obj);
+    *reinterpret_cast<void**>(o) = OrigAt(0x73c08);
+    *reinterpret_cast<void**>(o + 0x7c) = nullptr;
+    *reinterpret_cast<void**>(o + 0x80) = nullptr;
+    *reinterpret_cast<int*>(o + 0x84) = 1;
+    *reinterpret_cast<void**>(o + 0x88) = nullptr;
+}
+static bool OrigVpRun(void* obj, const void* program, const void* file, void* prog)
+{
+    void* f = OrigAt(0x54f00);
+    __asm {
+        pushad
+        push prog
+        push file
+        push program
+        mov ecx, obj
+        call f
+        add esp, 12
+        mov asmResult, al
+        popad
+    }
+    return asmResult != 0;
+}
+static void OrigVpDtor(void* obj)
+{
+    void* f = OrigAt(0x496d0);
+    __asm {
+        pushad
+        push obj
+        call f
+        popad
+    }
+}
+static struct {
+    void (*ctor)(void*, void*);
+    bool (*run)(void*, const void*, const void*, void*);
+    void (*dtor)(void*);
+    int (*line)(void*);
+    void (*destroy)(void*);
+} ourVp;
+static void LoadOurVp()
+{
+    if (ourVp.ctor) return;
+    ourVp.ctor = As<decltype(ourVp.ctor)>(OurSym("_RsTestVpCtor"));
+    ourVp.run = As<decltype(ourVp.run)>(OurSym("_RsTestVpRun"));
+    ourVp.dtor = As<decltype(ourVp.dtor)>(OurSym("_RsTestVpDtor"));
+    ourVp.line = As<decltype(ourVp.line)>(OurSym("_RsTestVpLine"));
+    ourVp.destroy = As<decltype(ourVp.destroy)>(OurSym("_RsTestVpDestroy"));
+    for (void*& slot : progVtable) slot = reinterpret_cast<void*>(&FakeFalse);
+    progVtable[3] = reinterpret_cast<void*>(&ProgNative);
+    progVtable[4] = reinterpret_cast<void*>(&ProgCompile);
+    progVtable[12] = reinterpret_cast<void*>(&ProgNames);
+    progVtable[13] = reinterpret_cast<void*>(&ProgSymbols);
+    progVtable[14] = reinterpret_cast<void*>(&ProgInstructions);
+    progVtable[28] = reinterpret_cast<void*>(&ProgVertexType);
+    progVtable[29] = reinterpret_cast<void*>(&ProgHasType);
+    progVtable[30] = reinterpret_cast<void*>(&ProgRegisters);
+}
+
+static int GuardedVpRun(int s, void* obj, const void* program, const void* file)
+{
+    __try {
+        return s == 0 ? ourVp.run(obj, program, file, &fakeProg) : OrigVpRun(obj, program, file, &fakeProg);
+    } __except (FaultAt(GetExceptionInformation())) {
+        return -1;
+    }
+}
+
+static void RunVp(int s, unsigned seed)
+{
+    std::mt19937 r(seed);
+    LoadOurVp();
+    if (r() % 4) ResetVp(s);
+    names[s][&fakeProg] = "prog";
+    names[s][&fakeDisplay] = "display";
+    for (int k = 0; k < 3; ++k) {
+        const int kind = static_cast<int>(r() % 4);
+        const std::string text = kind == 0 ? vpCorpus[r() % vpCorpus.size()] : kind == 1 ? VpMadeUp(r) : VpSample(r);
+        vpTypeSet = r() % 4 != 0;  // (0 asks for VertexType::GetVertexType, which faults here: no types are known)
+        void* programNode = CreateNode(*cache, reinterpret_cast<const unsigned char*>(r() % 4 ? "prog" : "x"));
+        void* fileNode = r() % 2 ? CreateNode(*cache, reinterpret_cast<const unsigned char*>("vp.txt")) : nullptr;
+        void* file = RealNew(0x14);
+        MemFileCtor(file, nullptr, text.c_str(), static_cast<unsigned>(text.size()), false, 0);
+        void* obj = RealNew(0x400);
+        std::memset(obj, 0xcd, 0x400);
+        vpCalls = 0;
+        Log("vp %d: %u bytes, has type %d\n", k, static_cast<unsigned>(text.size()), vpTypeSet);
+        if (s == 0)
+            ourVp.ctor(obj, file);
+        else
+            OrigVpCtor(obj, file);
+        const int ok = GuardedVpRun(s, obj, &programNode, &fileNode);
+        vpCrashes += s == 1 && ok < 0;
+        if (s == 1 && kind <= 1 && std::getenv("RS_U2B_SHOWVP"))
+            std::printf("==== made-up program (ok %d, line %d):\n%s\n", ok,
+                        *reinterpret_cast<int*>(static_cast<char*>(obj) + 0x84), text.c_str());
+        if (ok < 0) Log("  crashed\n");
+        Log("  ok %d line %d program %s\n", ok,
+            s == 0 ? ourVp.line(obj) : *reinterpret_cast<int*>(static_cast<char*>(obj) + 0x84),
+            NodeText(ProgProgramName()).c_str());
+        LogVpState(s);
+        if (ok < 0) ResetVp(s);
+        if (ProgProgramName()) DestroyNode(*cache, ProgProgramName());
+        ProgProgramName() = nullptr;
+        if (s == 1) ++(ok > 0 ? parsedOk : parsedBad);
+        if (s == 0)
+            ourVp.dtor(obj);
+        else
+            OrigVpDtor(obj);
+        RealDelete(obj);
+        MemFileDtor(file);
+        RealDelete(file);
+        DestroyNode(*cache, programNode);
+        if (fileNode) DestroyNode(*cache, fileNode);
+    }
+}
+
+// ---- the vertex parser's driver alone: context {version, program (+4), symbols (+8), instructions (+0x14),
+// file, program name, parser (+0x28), names (+0x2c), vertex type (+0x30), blocks, native (+0x40), error (+0x44)}
+
+static void OrigVpDriver(void* stack, int major, void* minor, void* ctx)
+{
+    void* f = OrigAt(0x518c0);
+    __asm {
+        pushad
+        push major
+        mov edi, stack
+        mov ecx, minor
+        mov edx, ctx
+        call f
+        add esp, 4
+        popad
+    }
+}
+static void VpPrepare(unsigned char* ctx, int)
+{
+    *reinterpret_cast<void**>(ctx + 4) = &fakeProg;
+    *reinterpret_cast<const char**>(ctx + 0x20) = "file";
+    *reinterpret_cast<const char**>(ctx + 0x24) = "prog";
+}
+static void VpFinish(int side, unsigned char* ctx, void*)
+{
+    if (side >= 0) {
+        Log("  ctx native %s [%s] type %s\n", Name(*reinterpret_cast<void**>(ctx + 0x40)).c_str(),
+            *reinterpret_cast<char**>(ctx + 0x40) ? *reinterpret_cast<char**>(ctx + 0x40) : "",
+            NodeText(*reinterpret_cast<void**>(ctx + 0x30)).c_str());
+        ProgSymbols(&fakeProg, ctx + 8, false);
+        ProgInstructions(&fakeProg, ctx + 0x14);
+        DumpNames("names", *reinterpret_cast<void**>(ctx + 0x2c));
+    }
+    if (side == 1) {
+        void* f = OrigAt(0x32050);
+        __asm {
+            pushad
+            push ctx
+            call f
+            popad
+        }
+    } else {
+        LoadOurVp();
+        ourVp.destroy(ctx);
+    }
+}
+
+static void* VpParser(int)  // what the error messages read: the file (+0x7c) and program (+0x80) names, the line
+{
+    void* parser = RealNew(0x200);
+    std::memset(parser, 0, 0x200);
+    *reinterpret_cast<int*>(static_cast<char*>(parser) + 0x84) = 7;
+    return parser;
+}
+
+static void RunVpEngine(int s, unsigned seed)
+{
+    static const EngineSpec spec = {"_RsTestVpParse", "_RsTestVpFree", 0x518c0, 0x4e5c0, 0x64, 0x2c, 0x44,
+                                    VpPrepare, VpFinish, VpParser, FreeTpParser, OrigVpDriver, 0x96c};
+    LoadOurVp();
+    names[s][&fakeProg] = "prog";
+    vpCalls = 0;
+    vpEngineRun = true;
+    RunEngine(s, seed, spec);
+    vpEngineRun = false;
+}
+
 static void WriteSources()
 {
     char tmp[MAX_PATH];
@@ -1800,8 +2211,14 @@ static LONG WINAPI Crashed(EXCEPTION_POINTERS* e)
         const auto b = reinterpret_cast<uintptr_t>(mod[s]);
         if (at - b < 0x200000) std::printf("fault in %s +0x%x\n", s ? "the original" : "ours", static_cast<unsigned>(at - b));
     }
-    std::printf("fault %08lx at %p, side %d; log end:\n", e->ExceptionRecord->ExceptionCode,
-                e->ExceptionRecord->ExceptionAddress, cur);
+    HMODULE m = nullptr;
+    char path[MAX_PATH] = "";
+    if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                           static_cast<const char*>(e->ExceptionRecord->ExceptionAddress), &m))
+        GetModuleFileNameA(m, path, MAX_PATH);
+    std::printf("fault %08lx at %p (%s +0x%x), side %d; log end:\n", e->ExceptionRecord->ExceptionCode,
+                e->ExceptionRecord->ExceptionAddress, path,
+                static_cast<unsigned>(at - reinterpret_cast<uintptr_t>(m)), cur);
     if (cur >= 0) {
         const std::string& t = logText[cur];
         std::printf("%s\n", t.substr(t.size() > 3000 ? t.size() - 3000 : 0).c_str());
@@ -1847,6 +2264,7 @@ int main(int argc, char** argv)
     MemFileDtor = As<decltype(MemFileDtor)>(Proc(ks, "??1MemoryFile@Jet@@QAE@XZ"));
     CollectCorpus();
     CollectTpCorpus();
+    CollectVpCorpus();
     for (int s = 0; s < 2; ++s) {
         LoadApi(s);
         PatchImport(mod[s], "?New@Alloc@Jet@@SAPAXI@Z", reinterpret_cast<void*>(&HookNew));
@@ -1857,7 +2275,8 @@ int main(int argc, char** argv)
         void (*run)(int, unsigned);
         int scale;
     } parts[] = {{"languages", RunLanguages, 4}, {"records", RunRecords, 2}, {"quick", RunQuick, 2}, {"qkengine", RunQuickEngine, 2},
-                 {"pre", RunPre, 2}, {"ppengine", RunPreEngine, 2}, {"tp", RunTp, 3}, {"tpengine", RunTpEngine, 2}};
+                 {"pre", RunPre, 2}, {"ppengine", RunPreEngine, 2}, {"tp", RunTp, 3}, {"tpengine", RunTpEngine, 2},
+                 {"vp", RunVp, 3}, {"vpengine", RunVpEngine, 2}};
     const char* only = std::getenv("RS_U2B_ONLY");  // a comma list of parts to run (mutation runs)
     for (auto& p : parts) {
         if (only && !std::strstr((std::string(",") + only + ",").c_str(), (std::string(",") + p.name + ",").c_str()))
@@ -1875,6 +2294,10 @@ int main(int argc, char** argv)
             Compare(p.name, round);
         }
         std::printf("-- %s done (parses ok %d, failed %d)\n", p.name, parsedOk, parsedBad);
+        if (vpTypeCalls || vpNativeCalls || vpCrashes)
+            std::printf("   vertex types set %d, native programs %d, runs that fault %d\n", vpTypeCalls, vpNativeCalls,
+                        vpCrashes);
+        vpTypeCalls = vpNativeCalls = vpCrashes = 0;
         parsedOk = parsedBad = 0;
     }
     std::printf("%llu scenarios, %llu mismatches\n", checks, bad);

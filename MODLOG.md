@@ -1738,6 +1738,45 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
     value, empty native sections and a refused compile (one section per program).
 - In game: menu reached, JetLog identical to the baseline (the parser is not called there until U3).
 
+### RenderSystem_7c U2b2b2, the vertex program parser (2026-10-27): internal code, no new exports
+- `VertexProgramParser.cpp`: VertexProgramParser (scanner vp 0x10051bd0, 125 rules, 5 start conditions; Lemon
+  480 states / 268 rules, driver 0x100518c0, reduce 0x1004e710 (11 KB); run 0x10054f00, called by
+  VertexProgram::Load with the program name, the file name and the program). Its input is the pre-parser's output:
+  `#VERTEX fmt`, `#CODE n` / `#ENDCODE n` around the ARB-style program text, `#BINDING n` / `#ENDBINDING` and
+  `#NATIVE n` / `#ENDNATIVE n` around a native one, `#LINE n` markers.
+- Its Lemon is a later generation than the other three: int actions (shift below 0x1e0, reduce below 0x2ec, error
+  0x2ec), actions {byte lookahead, int action, next} (12 bytes; `tools/extract_lemon.py ... wide`), no-code 0xf1,
+  error symbol 0x76, 100 terminals, and 16-byte values: the stack (0x96c) holds 100 {state, major, value[4]}, and a
+  token's text is freed whenever set (no "above 0x100" test). GfxParse.h's LemonParser now takes the value type
+  from the traits (LemonMinor16); the older three are unchanged (their tests still 0 mismatches).
+- The reduce's value is a stack slot nothing initialises. Rules without a value, or setting one byte of it, leave
+  what the previous reduction of the same driver call wrote there; between tokens the scanner's frame overwrites it.
+  Ours carries the value within one driver call and starts each call from zero, which matches every real text
+  tried. Where the original then stores non-reproducible garbage (a program parameter's value when the text gives
+  none, words 1-3 of it; a byte read after a syntax error message was formatted), the test does not compare.
+- Statics: the condition stack at 0x100b7ff0 (so the texture scanner's is 20 ints), the block flag 0x100b80a3 and
+  0x100b8114..0x100b8127 (depth, condition, marker count, the code block's buffer of the file's size and its write
+  pointer); GfxLexStatics is now 0x360 bytes. One rule pops through the entry below the top, as in tp.
+- The actions build the program: VertexSymbolEntry symbols of classes 0-10 (parameters, attributes, outputs,
+  temporaries, constants with a Vec4, aliases, address registers) added to a VertexSymbolTable (FindLike merges a
+  symbol with an equal one), RegisterItem operands with swizzles ("x", "xyzw", "aa,bb,cc,dd" for SWZ) and
+  OffsetAddress indices, VertexInstruction (ARL, 7 unary, 6 scalar, POW, 18 binary, LRP/MAD, SWZ; names looked up
+  ignoring case in five static PString tables built at module start, 0x100b8820..0x100b8950).
+- The run then hands them over: SetProgramName, slot 12 the program names, slot 13 the symbol table (and whether
+  the program is native), slot 29 "has a vertex type" (if not: VertexType::GetVertexType(name), a copy of it to
+  slot 28), then either LoadNativeFormat (slot 3) or slot 14 with the instruction list and CompileProgram (slot 4).
+  VertexType is still the original's (unit U5): called through the import library.
+- Test `tests/diff_rs_u2b.cpp` parts vp and vpengine (0 mismatches; 2410 scenarios over all parts): the 155
+  program texts the corpus gives after our pre-parser (equal to the original's), the native programs it writes for
+  400 made-up pre-parser files, damaged copies and token soups, against a stand-in VertexProgram that dumps every
+  symbol, operand and instruction it is handed; the driver alone on random and grammar-guided streams (the stack
+  below the driver is zeroed before each call, as the scanner leaves it in a real run). VertexType::GetVertexType
+  knows no types in the test, so that path faults on both sides.
+  - Mutations caught: 51 of 58. Not reached by any input: ABS (no program uses it), one popped condition's token,
+    a declared symbol aliasing a type-12 parameter, the copy of a constant's first word, a negative ARL offset, the
+    texture coordinate "s", and the alias DecRef.
+- In game: menu reached, JetLog identical to the baseline (the parsers are not called there until U3).
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's

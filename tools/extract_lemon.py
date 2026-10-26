@@ -6,7 +6,8 @@ actions as {lookahead byte, action byte, pad, pointer to the next action of the 
 {lhs byte, rhs count byte}. The pointers are absolute addresses, so they are turned into indices into one pool of
 actions (each state's block keeps its mask + 1 slots in a row; the lookup is block + (lookahead & mask)).
 
-usage: python extract_lemon.py <dll> <states va hex> <state count> <rules va hex> <rule count> <NAME> <out.h>
+usage: python extract_lemon.py <dll> <states va hex> <state count> <rules va hex> <rule count> <NAME> <out.h> [wide]
+"wide" reads a later generation (more than 255 actions): actions {lookahead byte, pad, action int, next pointer}.
 The header defines NAME_POOL_DATA ({lookahead, action, next index or -1}...), NAME_STATES_DATA ({block index or -1,
 mask, default}...) and NAME_RULES_DATA ({lhs, rhs count}...), brace-enclosed rows for aggregate initialisation.
 """
@@ -17,6 +18,8 @@ from pathlib import Path
 dll, states_text, nstates_text, rules_text, nrules_text, name, out = sys.argv[1:8]
 states_va, nstates = int(states_text, 16), int(nstates_text)
 rules_va, nrules = int(rules_text, 16), int(nrules_text)
+wide = len(sys.argv) > 8 and sys.argv[8] == "wide"
+size, layout, next_at = (12, "<BxxxiI", 8) if wide else (8, "<BBxxI", 4)
 
 data = Path(dll).read_bytes()
 pe = struct.unpack_from("<I", data, 0x3C)[0]
@@ -45,24 +48,24 @@ todo = []
 for block, mask, _ in states:
     if block:
         for i in range(mask + 1):
-            todo.append(block + 8 * i)
+            todo.append(block + size * i)
 while todo:
     va = todo.pop()
     if va in pool:
         continue
     pool.add(va)
-    nxt = struct.unpack_from("<I", data, off(va) + 4)[0]
+    nxt = struct.unpack_from("<I", data, off(va) + next_at)[0]
     if nxt:
         todo.append(nxt)
 order = sorted(pool)
 index = {va: i for i, va in enumerate(order)}
 for block, mask, _ in states:  # a block must be contiguous in the pool
-    if block and any(index[block + 8 * i] != index[block] + i for i in range(mask + 1)):
+    if block and any(index[block + size * i] != index[block] + i for i in range(mask + 1)):
         sys.exit(f"state block {block:#x} is not contiguous")
 
 rows_pool = []
 for va in order:
-    la, act, nxt = struct.unpack_from("<BBxxI", data, off(va))
+    la, act, nxt = struct.unpack_from(layout, data, off(va))
     rows_pool.append(f"{{{la}, {act}, {index[nxt] if nxt else -1}}}")
 rows_states = [f"{{{index[b] if b else -1}, {m}, {d}}}" for b, m, d in states]
 rows_rules = [f"{{{l}, {n}}}" for l, n in rules]

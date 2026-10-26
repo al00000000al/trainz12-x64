@@ -9,6 +9,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <type_traits>
 
 namespace Jet {
 
@@ -41,7 +42,7 @@ struct GfxIntStack {
     void Clear();  // the second chunk first, the head last
 };
 
-// The rule actions' state: module statics in the original (0x100b7dc8..0x100b809f), shared by every scanner
+// The rule actions' state: module statics in the original (0x100b7dc8..0x100b8127), shared by every scanner
 // instance and kept between runs. Laid out the same way, so an overrun lands in the same neighbours. Names follow
 // the addresses; what each flag does is in the actions.
 struct GfxLexStatics {
@@ -53,8 +54,9 @@ struct GfxLexStatics {
     unsigned char pp7ee8[100];  // 0x100b7ee8 per #if level
     int unknown7f4c;            // 0x100b7f4c
     int qkStack[20];            // 0x100b7f50 the quick parser's start conditions
-    int tpStack[40];            // 0x100b7fa0 the texture program scanner's (one rule reads the entry below the top,
+    int tpStack[20];            // 0x100b7fa0 the texture program scanner's (one rule reads the entry below the top,
                                 // so an empty stack reads qkStack[19])
+    int vpStack[20];            // 0x100b7ff0 the vertex program scanner's (the same, reading tpStack[19])
     unsigned char unknown8040[3];
     unsigned char pp8043;       // 0x100b8043
     unsigned char unknown8044[12];
@@ -74,13 +76,21 @@ struct GfxLexStatics {
     int tpCurrent;              // 0x100b8094
     int tpBraces;               // 0x100b8098 brace depth inside an API section
     int tpBlock;                // 0x100b809c brace depth of a code or native block
+    unsigned char unknown80a0[3];
+    unsigned char vpFlag;       // 0x100b80a3 inside a block that counts its markers
+    unsigned char unknown80a4[0x70];
+    int vpDepth;                // 0x100b8114
+    int vpCurrent;              // 0x100b8118
+    int vpCount;                // 0x100b811c markers seen in the block
+    char* vpBuffer;             // 0x100b8120 the code block's text (Jet::Alloc, the file's size)
+    char* vpWrite;              // 0x100b8124 where the next text goes
 };
-static_assert(offsetof(GfxLexStatics, ppStack) == 0x68 && offsetof(GfxLexStatics, qkStack) == 0x188 &&
+JET_LAYOUT32(offsetof(GfxLexStatics, ppStack) == 0x68 && offsetof(GfxLexStatics, qkStack) == 0x188 &&
                   offsetof(GfxLexStatics, tpStack) == 0x1d8 && offsetof(GfxLexStatics, pp8043) == 0x27b &&
                   offsetof(GfxLexStatics, ppDepth) == 0x288 && offsetof(GfxLexStatics, ppIfDepth) == 0x2a0 &&
                   offsetof(GfxLexStatics, tpNative) == 0x29f && offsetof(GfxLexStatics, tpDepth) == 0x2c8 &&
-                  sizeof(GfxLexStatics) == 0x2d8,
-              "the original's layout");
+                  offsetof(GfxLexStatics, vpStack) == 0x228 && offsetof(GfxLexStatics, vpFlag) == 0x2db &&
+                  offsetof(GfxLexStatics, vpDepth) == 0x34c && sizeof(GfxLexStatics) == 0x360);
 extern GfxLexStatics gfxLex;
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -158,59 +168,100 @@ private:
 };
 
 // ---------------------------------------------------------------------------------------------------------------
-// Lemon
+// Lemon (two generations: the older keeps one pointer per value and byte actions; the vertex program parser's
+// keeps 16-byte values and int actions)
 
 struct LemonAction {
-    unsigned char lookahead, action;
+    unsigned char lookahead;
+    unsigned short action;
     short next;  // index in the pool, -1 at the end of the chain
 };
 struct LemonState {
     short block;  // first slot in the pool, -1 none
     unsigned mask;
-    unsigned char defaultAction;
+    unsigned short defaultAction;
 };
 struct LemonRule {
     unsigned char lhs, nrhs;
 };
 
-struct LemonEntry {
+// the newer generation's value: a pointer (a token's text) and three more words
+struct LemonMinor16 {
+    void* p;
+    int w[3];
+};
+
+template <class M>
+struct LemonEntryT {
     int state;
     int major;
-    void* minor;
+    M minor;
 };
-// the parser's stack (0x4bc, Jet::Alloc): index of the top, error countdown, top, 100 entries
-struct LemonStack {
+// the parser's stack (Jet::Alloc): index of the top, error countdown, top, 100 entries (0x4bc / 0x96c)
+template <class M>
+struct LemonStackT {
     int index;
     int errorCount;
-    LemonEntry* top;
-    LemonEntry entries[100];
+    LemonEntryT<M>* top;
+    LemonEntryT<M> entries[100];
 };
-JET_LAYOUT32(sizeof(LemonStack) == 0x4bc);
+using LemonEntry = LemonEntryT<void*>;
+using LemonStack = LemonStackT<void*>;
+JET_LAYOUT32(sizeof(LemonStack) == 0x4bc && sizeof(LemonStackT<LemonMinor16>) == 0x96c);
 
-// Traits: kNoCode, kStates, kRules, kErrorSymbol, kTerminals (minors of majors 1..kTerminals above 0x100 are
-// freed), pool[], states[], rules[], Reduce(LemonStack*, int rule, Ctx*, void*& gotoMinor), Failed(Ctx*) and
-// SyntaxError(Ctx*). Actions: below kStates shift, then the rules, then error, accept, and (lookups only) none.
+template <class T, class = void>
+struct LemonMinorOf {
+    using type = void*;
+};
+template <class T>
+struct LemonMinorOf<T, std::void_t<typename T::Minor>> {
+    using type = typename T::Minor;
+};
+
+// Traits: kNoCode, kStates, kRules, kErrorSymbol, kTerminals, pool[], states[], rules[], Reduce(Stack*, int rule,
+// Ctx*, Minor& gotoMinor), Failed(Ctx*) and SyntaxError(Ctx*); Minor (void* when not given). The text a terminal of
+// majors 1..kTerminals carries is freed: a void* above 0x100, a LemonMinor16's pointer whenever set. Actions: below
+// kStates shift, then the rules, then error, accept, and (lookups only) none.
 template <class Traits, class Ctx>
 struct LemonParser {
+    using Minor = typename LemonMinorOf<Traits>::type;
+    using Entry = LemonEntryT<Minor>;
+    using Stack = LemonStackT<Minor>;
     static constexpr int kError = Traits::kStates + Traits::kRules;
     static constexpr int kAccept = kError + 1;
     static constexpr int kNone = kError + 2;
 
-    static LemonStack* New()
+    static void* Text(const Minor& m)  // the token text a value owns, or null
     {
-        auto* p = static_cast<LemonStack*>(Alloc::New(sizeof(LemonStack)));
+        if constexpr (std::is_same_v<Minor, void*>)
+            return reinterpret_cast<uintptr_t>(m) > 0x100 ? m : nullptr;
+        else
+            return m.p;
+    }
+    static void ClearText(Minor& m)
+    {
+        if constexpr (std::is_same_v<Minor, void*>)
+            m = nullptr;
+        else
+            m.p = nullptr;
+    }
+
+    static Stack* New()
+    {
+        auto* p = static_cast<Stack*>(Alloc::New(sizeof(Stack)));
         if (p) p->index = -1;
         return p;
     }
-    static void Destroy(LemonEntry* e)
+    static void Destroy(Entry* e)
     {
-        if (static_cast<unsigned char>(e->major - 1) < Traits::kTerminals &&
-            reinterpret_cast<uintptr_t>(e->minor) > 0x100) {
-            if (e->minor) Alloc::Delete(e->minor);
-            e->minor = nullptr;
+        if (static_cast<unsigned char>(e->major - 1) < Traits::kTerminals && Text(e->minor)) {
+            Alloc::Delete(Text(e->minor));
+            ClearText(e->minor);
+        } else if (static_cast<unsigned char>(e->major - 1) < Traits::kTerminals && !std::is_same_v<Minor, void*>) {
+            ClearText(e->minor);
         }
     }
-    static void PopAll(LemonStack* p)
+    static void PopAll(Stack* p)
     {
         while (p->index >= 0) {
             Destroy(p->top);
@@ -218,13 +269,13 @@ struct LemonParser {
             --p->top;
         }
     }
-    static void Free(LemonStack* p)  // the stack and what is left on it
+    static void Free(Stack* p)  // the stack and what is left on it
     {
         if (!p) return;
         PopAll(p);
         Alloc::Delete(p);
     }
-    static void Push(LemonStack* p, int state, int major, void* const* minor)
+    static void Push(Stack* p, int state, int major, const Minor* minor)
     {
         ++p->index;
         ++p->top;
@@ -256,15 +307,25 @@ struct LemonParser {
         action = s.defaultAction;
         return true;
     }
-    static int FindGoto(LemonStack* p, int la)
+    static int FindGoto(Stack* p, int la)
     {
         int action;
         return Find(p->top->state, la, action) ? action : kNone;
     }
-    static void Reduce(LemonStack* p, int rule, Ctx* ctx)
+    static void Reduce(Stack* p, int rule, Ctx* ctx)
     {
-        void* gotoMinor = p;  // left as it is by rules without a value (the original's stack slot)
-        Traits::Reduce(p, rule, ctx, gotoMinor);
+        Minor gotoMinor;
+        if constexpr (std::is_same_v<Minor, void*>) {
+            gotoMinor = p;  // left as it is by rules without a value (the original's stack slot)
+            Traits::Reduce(p, rule, ctx, gotoMinor);
+        } else {
+            // the original's is a stack slot nothing initialises: rules that set part of it or nothing leave the
+            // previous reduction's value of the same token there; the scanner's frame overwrites it between
+            // tokens (with what cannot be reproduced: zero here)
+            gotoMinor = Carry();
+            Traits::Reduce(p, rule, ctx, gotoMinor);
+            Carry() = gotoMinor;
+        }
         const int lhs = Traits::rules[rule].lhs;
         const int n = Traits::rules[rule].nrhs;
         p->index -= n;
@@ -275,8 +336,14 @@ struct LemonParser {
         else if (action == kAccept)
             PopAll(p);
     }
-    static void Parse(LemonStack* p, int major, void* minor, Ctx* ctx)
+    static Minor& Carry()
     {
+        static Minor value{};
+        return value;
+    }
+    static void Parse(Stack* p, int major, Minor minor, Ctx* ctx)
+    {
+        if constexpr (!std::is_same_v<Minor, void*>) Carry() = Minor{};
         int errorHit = 0;
         if (p->index < 0) {
             if (major == 0) return;
@@ -287,7 +354,7 @@ struct LemonParser {
             p->top->major = 0;
         }
         const bool endOfInput = major == 0;
-        void* value = minor;
+        Minor value = minor;
         do {
             int action;
             if (!Find(p->top->state, major, action)) {
@@ -310,7 +377,7 @@ struct LemonParser {
                 } else {
                     int recover = kError;
                     while (p->index >= 0) {
-                        LemonEntry* e = p->top;
+                        Entry* e = p->top;
                         if (e->major == Traits::kErrorSymbol) break;
                         recover = FindGoto(p, Traits::kErrorSymbol);
                         if (recover < Traits::kStates) break;
@@ -324,7 +391,7 @@ struct LemonParser {
                         Traits::Failed(ctx);
                         major = Traits::kNoCode;
                     } else if (p->top->major != Traits::kErrorSymbol) {
-                        void* none = nullptr;
+                        Minor none{};
                         Push(p, recover, Traits::kErrorSymbol, &none);
                     }
                 }
@@ -339,12 +406,12 @@ struct LemonParser {
     }
 
 private:
-    static void DropToken(int major, void*& value)
+    static void DropToken(int major, Minor& value)
     {
         const unsigned char m = static_cast<unsigned char>(major);
-        if (m != 0 && m <= Traits::kTerminals && reinterpret_cast<uintptr_t>(value) > 0x100) {
-            if (value) Alloc::Delete(value);
-            value = nullptr;
+        if (m != 0 && m <= Traits::kTerminals) {
+            if (void* const t = Text(value)) Alloc::Delete(t);
+            if (Text(value) || !std::is_same_v<Minor, void*>) ClearText(value);
         }
     }
 };
