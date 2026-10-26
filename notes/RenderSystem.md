@@ -1,8 +1,8 @@
 # RenderSystem_7c.dll: reconstruction plan
 
-Status: 2026-10-26. U0 (proxy) and U1 (value types, vertex records; 939 exports) are ours and verified
-(`tests/diff_rs_u1.cpp`, MODLOG). Next: U4.
-Inputs: `ghidra_maps/jet/graphics/RenderSystem_7c.dll.functions.tsv`, the export list (`tools/dump_exports.py`), the import tables
+Status: 2026-10-26. U0 (proxy), U1 (value types, vertex records; 939 exports) and U4 (modifiers; 54 exports) are
+ours and verified (`tests/diff_rs_u1.cpp`, `tests/diff_rs_u4.cpp`, MODLOG): 993/2687. Next: U2.
+Inputs: `ghidra_maps/jet/RenderSystem_7c.dll.functions.tsv`, the export list (`tools/dump_exports.py`), the import tables
 of every module in `bin\` (pefile), the Jet SDK Beta2 headers (`Display.h`, `Material.h`, `Layer.h`, `Modifier.h`,
 `Texture.h`, `RenderKernel.h`...: names and intent only, the TS12 layouts differ) and the private decompile
 `decomp\RenderSystem_7c.dll.c`.
@@ -34,7 +34,7 @@ Grouping by exported class; code size by Ghidra namespace (the unnamed `Global` 
 |---|---|---:|---:|---:|
 | U0 | forwarding proxy (no code) | 0 | - | - |
 | U1 value types and vertex formats (done) | PackedVertex* (60 formats), GeoLOD*/TerrainBlend*/StreamedVertex* tables, Element, TextureArgs, RenderTextureConstruct, DisplayFormat, DisplayDescriptor, DisplayLight, DisplayMaterial, Projector, TextureStage | 980 | 131 | 14 KB |
-| U4 modifiers | Modifier, ModifierList (+ global lock), ModifierHost, ModifierUpdateTask | 55 | 33 | 6 KB |
+| U4 modifiers (done; the lock stays the original's) | Modifier, ModifierList (+ global lock), ModifierHost, ModifierUpdateTask | 55 | 33 | 6 KB |
 | U2 shader language front-end | GfxLanguagePreParser/QuickParser, ExtendedGfxLanguage, Vertex/TextureProgramParser, symbol tables, Instruction/RegisterItem, PreProcessor* | 102 | 21 | 6 KB (+ ~10 KB parsers in `Global`) |
 | U3 programs and shaders | VertexProgram, VertexProgramBasic (text program generator), VertexProgramManager/Resource, TextureCombiner(+Manager/Resource), CGShader*, GLSLShaderBase | 215 | 78 | 33 KB |
 | U5 geometry | VertexType (+ its registry, moved from U1), GeometryChunk, Single/MultiStream, Generic*, GeometryChunkTemplate, RenderingCache(+Manager), VertexBufferManager, StaticBuffer, chunk hints | 268 | 193 | 35 KB |

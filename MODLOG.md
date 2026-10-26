@@ -1571,6 +1571,39 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
   - Mutations caught: a format table entry, the MINUS flag in Decode, a GetMorphedTex stride.
 - In game: menu reached, JetLog identical to the baseline.
 
+### RenderSystem_7c U4, modifiers (2026-10-26): 993/2687 exports ours
+- `include/jet/Modifier.h` + `graphics/RenderSystem_7c/Modifiers.cpp`: Modifier, ModifierHost, ModifierList,
+  ModifierUpdateTask (54 exports). The four vftables match the original slot by slot (`tools/compare_vtables.py`).
+  - Modifier (0x18): +4 host, +8 name, +0xc priority (0.5 by default), +0x10 bit 0 complete, +0x14 the frame stamp
+    of its last update (no constructor sets it). Slot 8 is the per-frame `Update(dt)`: not exported, the base is the
+    shared `xor eax,eax; ret` stub (it writes no result); 2 detaches the modifier, 3 detaches and deletes it.
+  - ModifierHost is abstract: the inserts answer 2, the other slots are that stub. Overloads sit in reverse in the
+    vtable (InsertBefore(m, other) 3, InsertBefore(m) 4, ...; Remove(name) 7, Remove(m) 8).
+  - ModifierList (0x18): +4 a VC8 `std::list<Modifier*>` laid out by hand ({empty allocator, head, size}, nodes
+    {next, prev, value} of 0xc from `Jet::Alloc`), +0x10 set while a modifier updates, +0x14 the frame counter.
+    `QuickRemove` takes and returns the checked `_Iterator<1>` {container, node}: our `ModifierIterator` has the
+    same layout and a constructor (so it is returned in memory) and is exported under the original name by an
+    `implemented.txt` alias.
+  - InsertBefore(m) goes before the first modifier of equal or higher priority, InsertAfter(m) after the last of
+    equal priority. The two-argument forms answer 4 unless both priorities are equal, then insert next to `other`,
+    or, when `other` is not in the list, where the one-argument form would (InsertAfter: after the last modifier of
+    equal or higher priority).
+  - Nothing removes a modifier from its old host when it gets a new one (SetHost, the host constructor). Remove(m)
+    answers 5 for a modifier without a host and does not compare the host. QuickRemove clears the host, then calls
+    the list's virtual Remove(m) (5 in the base: a derived list sees the modifier go).
+  - SetHost(RenderKernel*) uses the kernel's scene graph (+0x80) and its modifier task (+8); 6 when there is none.
+  - UpdateModifiers holds `modifierListLock` (still the original's static) and a Profile scope
+    ("ModifierList::UpdateModifiers"; our own Info), bumps the frame counter and updates each modifier whose stamp
+    differs; 3 when any modifier was taken out, else 0. ModifierUpdateTask::Update calls it through the vtable.
+  - `results` of Modifier and ModifierHost point at the text "RES_UNKNOWN" (0x10070fac): ours.
+- Test `tests/diff_rs_u4.cpp` (2000 scenarios of up to 60 calls, 0 mismatches, ~1.5 s): two lists and six
+  modifiers per side, built with that side's exports; Update, the deleting destructor and the lists'
+  Remove(const Modifier*) wrapped to log; snapshot of every list and modifier after each call. Update never
+  deletes a modifier that is still in another node (the original would leave it dangling as well).
+  - Mutations caught: InsertAfter `<` as `<=`, InsertBefore(m, other) position, the virtual Remove in QuickRemove,
+    the UpdateModifiers result, the result 2 detach, the frame-stamp test.
+- In game: menu reached, JetLog identical to the baseline.
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's

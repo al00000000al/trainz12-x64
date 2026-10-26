@@ -153,6 +153,8 @@ add_executable(diff_krs tests/diff_krs.cpp)
 add_executable(diff_r2d tests/diff_r2d.cpp)
 # RenderSystem U1: ours vs RenderSystem_7c_orig.dll (vertex records by signature, the small display types)
 add_executable(diff_rs_u1 tests/diff_rs_u1.cpp)
+# RenderSystem U4: modifiers and lists, ours vs RenderSystem_7c_orig.dll on the same scripts
+add_executable(diff_rs_u4 tests/diff_rs_u4.cpp)
 add_executable(diff_iw32 tests/diff_iw32.cpp)
 add_executable(diff_is_obs tests/diff_is_obs.cpp)
 add_executable(diff_is_dev tests/diff_is_dev.cpp)
