@@ -1,9 +1,9 @@
 # RenderSystem_7c.dll: reconstruction plan
 
-Status: 2026-10-26. U0 (proxy), U1 (value types, vertex records; 939 exports), U4 (modifiers; 54 exports), U2a
+Status: 2026-10-27. U0 (proxy), U1 (value types, vertex records; 939 exports), U4 (modifiers; 54 exports), U2a
 (shader-language data; 99 exports) and U2b1 (ExtendedGfxLanguage, TextureCombiner records; 44 exports) are ours and
-verified (`tests/diff_rs_u1.cpp`, `diff_rs_u4.cpp`, `diff_rs_u2.cpp`, `diff_rs_u2b.cpp`, MODLOG): 1136/2687. Next:
-U2b2 (the scanners/parsers).
+verified (`tests/diff_rs_u1.cpp`, `diff_rs_u4.cpp`, `diff_rs_u2.cpp`, `diff_rs_u2b.cpp`, MODLOG): 1136/2687. U2b2
+(the four shader-language scanners and parsers) is ours too (internal code). Next: U3.
 
 U2 is split: U2a the data classes (GfxSymbols.cpp); U2b1 ExtendedGfxLanguage and the TextureCombiner
 Instruction/RegisterItem/ModifierItem records (ExtendedGfxLanguage.cpp); U2b2 four flex 2.5 C++ scanners
@@ -11,6 +11,15 @@ Instruction/RegisterItem/ModifierItem records (ExtendedGfxLanguage.cpp); U2b2 fo
 0x10051bd0, tp = TextureProgramParser 0x10044d30; their `yylex` holds the rule actions) and the Lemon parsers that
 drive them (pre-parser driver 0x1002cad0 with reduce 0x1002c340, "Syntax error at %s."; texture 0x10044830; vertex
 0x100517d0). Same shape as KernelStandard's ConfigParser: tables read from the installed original at build time.
+U2b2a (2026-10-27): quick parser and pre-parser done (GfxParse.*, GfxQuickParser.cpp, GfxPreParser.cpp; MODLOG).
+U2b2b1 (2026-10-27): tp = TextureProgramParser done (TexProgramParser.cpp; MODLOG): yylex 0x10044d30, driver
+0x10044830, reduce 0x10043760 (builds the records only), run 0x100462d0 (hands them to the combiner: slots 3, 4, 11,
+13), statics 0x100b7fa0 stack, 0x100b8067, 0x100b8090..0x100b809f, and the code text AnsiString at 0x100b8800.
+U2b2b2 (2026-10-27): vp = VertexProgramParser done (VertexProgramParser.cpp; MODLOG): a later Lemon (int actions,
+16-byte values, LemonMinor16), statics 0x100b7ff0, 0x100b80a3, 0x100b8114..0x100b8127, five opcode PString tables
+0x100b8820..0x100b8950. All four shader-language front ends are now ours; U3 (VertexProgram, TextureCombiner and
+their managers) is what calls them. Syntax of any scanner: walk its DFA (scratchpad dfa_examples.py: shortest text
+per rule and start condition).
 U2b2 findings so far: the parsers are an old Lemon with per-state hash tables in .data (pre-parser: states
 {action list VA, mask, default} at 0x100b66c0, entries {byte lookahead, byte action, pad, next VA}; rule
 {lhs, rhs count} bytes at 0x100b6c28; 0x5f shifts, then reduces, 0x95 error, 0x96 accept): the tables hold

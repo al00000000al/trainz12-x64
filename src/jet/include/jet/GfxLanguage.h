@@ -213,7 +213,8 @@ public:
     virtual bool __cdecl CompileProgram();                                           // true
     virtual bool __cdecl Bind() const;                                               // false
     virtual bool __cdecl End() const;                                                // false
-    virtual bool __cdecl Slot7();  // unnamed, false in every class seen
+    // slot 7: does the program's API define `name` (#if in the pre-parser)? false in every class seen here
+    virtual bool __cdecl Defines(const PString& name) const;
 
     Display* __cdecl GetDisplay() const;
     const AnsiString& __cdecl GetProgramString() const;

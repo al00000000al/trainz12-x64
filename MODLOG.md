@@ -1736,6 +1736,120 @@ unit order in `notes/WaterSystem.md`.
   StandardChunkHint); the original's quirks are kept (the last-row overread, the wrapped right neighbour, the
   unused PNoise constructions, the mixed old/new buffer reads in the attrib gradients). Verification deferred
   to the Windows build, per the user's call.
+### RenderSystem_7c U2b2a, the quick parser and the pre-parser (2026-10-27): internal code, no new exports
+- The four shader-language front ends are internal (no exports); only VertexProgram::Load, TextureCombiner::Load and
+  VertexProgramManager::RegisterBuiltInPrograms (all U3) run them. U2b2a does two of them; the texture and vertex
+  program parsers (tp, vp) are U2b2b. Our code is reached from the test only until U3 calls it.
+- `GfxParse.h/.cpp`: the shared machinery.
+  - FlexScanner: the flex 2.5.4 C++ skeleton with REJECT (the same as KernelStandard's ConfigLexer: state buffer of
+    0x10008 bytes from Jet::Alloc, 16 KB buffers read 8 KB at a time from the MemoryFile, yy_get_previous_state reads
+    chars >= 0x7f as ec[0x7e]). Scan() hands back the next rule; each language's Lex() holds the actions.
+  - LemonParser<Traits>: an old Lemon (before the yy_action[] arrays): per state {hash block, mask, default}, actions
+    {lookahead, action, next}; stack {index, error countdown, top, 100 x {state, major, minor}} (0x4bc,
+    Jet::Alloc); overflow drops everything; minors of terminals above 0x100 are freed by the destructor. The
+    driver's error recovery is the classic one. The tables hold absolute pointers: `tools/extract_lemon.py` turns
+    them into indices at build time (like extract_data.py for the flex tables).
+  - GfxNameList / GfxIntStack: circular lists of 0x40-byte chunks {next, prev, count, 13 items}; append at the end,
+    clear from the second chunk to the head, pop frees an emptied last chunk.
+  - GfxLexStatics: the scanners' rule state is module statics (0x100b7dc8..0x100b8077: start-condition stacks,
+    #if level flags, block depths), shared by every instance and kept between runs. Same layout in ours.
+  - Error messages are vsprintf'd into a local buffer and dropped: only the error flag is observable.
+- `GfxQuickParser.cpp`: GfxLanguageQuickParser (gfxqk, 26 rules, Lemon 32 states / 19 rules): collects the program
+  names of a built-in program text ("program <name> (...)").
+- `GfxPreParser.cpp`: GfxLanguagePreParser (gfxpp, 92 rules, 12 start conditions, Lemon 95 states / 54 rules).
+  Syntax (from the DFA): `version x`, `vertexProgram(Name) { program n (FMT) = flag, ...; generation = x; }`,
+  `API(a|b) { ... }`, `API_NATIVE(a) : { binding } { native }`, `%ifdef/%ifndef/%elseif/%else/%endif` with
+  `( | & ! )`, program flags, `API(name)` (ExtendedGfxLanguage vftable slot 7, now `Defines(const PString&)`) and
+  `extension(D_...)` (Display vftable slot 7 with the index into 33 capability names at 0x100b6c9c). It keeps the
+  program asked for and writes the kept text with `\n#VERTEX fmt`, `#CODE`/`#ENDCODE`, `#BINDING`, `#NATIVE`/
+  `#ENDNATIVE` and `#LINE n` markers; the language gets the program's generation when SupportedByPlatform takes it.
+  Versions below 2.0 are refused. A duplicate program block leaks its flag list (as in the original).
+- Test `tests/diff_rs_u2b.cpp` parts quick/qkengine/pre/ppengine (1406 scenarios in all, 0 mismatches). The
+  original's internal functions are called by address through asm thunks (register arguments); ours are
+  `RsTest*` functions found through RenderSystem_7c.map (the map must sit next to the deployed DLL). Inputs: the 17
+  program texts embedded in the render modules and trainz.exe, damaged copies, token soups, long texts with bytes
+  above 0x7f, made-up pre-parser files using every construct; the drivers alone get random and grammar-guided
+  token streams (each next token one our driver shifts). The statics are zeroed on both sides in most scenarios;
+  runs that fault (the original reads address 0 on some broken texts, e.g. an #if stack popped empty) are caught
+  and must fault on both sides.
+  - Mutations caught: 42 of 58. Not reached by any input: the 99-entry stack overflow, error-symbol recovery
+    (neither grammar has error rules, so those branches are dead), the brace counter reset at `vertexProgram`
+    (only differs after an unbalanced earlier run), `= {` directly opening a skipped block, one rule's free order.
+- In game: menu reached, JetLog identical to the baseline (our parsers are not called there yet).
+
+### RenderSystem_7c U2b2b1, the texture program parser (2026-10-27): internal code, no new exports
+- `TexProgramParser.cpp`: TextureProgramParser (scanner tp 0x10044d30, 90 rules, 8 start conditions, no REJECT;
+  Lemon 119 states / 69 rules, driver 0x10044830, reduce 0x10043760; run 0x100462d0, called by
+  TextureCombiner::Load with the parser at +0, the file name +0x7c, the line +0x80 and the combiner's vftable slot
+  17 value (the API this build runs: 0, 1, 2) at +0x84). Same flex skeleton and Lemon engine as U2b2a.
+  - Syntax (from the DFA and the corpus): `version x`, `header(name) { reg n (name) - x, y, z, w; ... }`,
+    `API(common|OpenGL|DirectX) { ps.x.y instructions }` and `API_NATIVE(OpenGL|DirectX) { native text }`. An API
+    block of another API is skipped as a brace-counted block; a native block's text is collected whole.
+  - Statics: the start-condition stack at 0x100b7fa0 (so the quick parser's is 20 ints, not 60), 0x100b8067 (the
+    block is native), 0x100b8090..0x100b809f (depth, condition, brace depths) in GfxLexStatics, now 0x2d8 bytes;
+    the native text is a module AnsiString at 0x100b8800 (gfxTpCode), kept between runs. One rule pops through the
+    entry below the stack top, so an empty stack reads the quick parser's last entry.
+  - The reduce actions only build records: TexHeaderItem, TexRegisterDefinition {index, name, 0x18 constant
+    {0, 4 floats, count}}, TexApiSection {lines, text}, TexApiCodeLine (a ParseItem with a TextureCombiner::
+    Instruction at +0xc), TexApiDataItem; lists of them, operand lists (RegisterItem) and modifier lists. Lookup
+    tables: 35 instructions (lower case, unknown = add), 5 address types, register files c/r/v/t (unknown = t), 41
+    modifiers ("_x2" is 1 on an instruction, 13 on a register; one rule takes only "_x2" and sets the error flag
+    for anything else).
+    Rules without a value leave the goto minor as it is (stack garbage in the original); nothing reads those.
+  - The run then hands the records over: TrackConstant (slot 13) per constant, then per API section either
+    LoadNativeFormat (slot 3, skipped when empty) or every instruction (slot 11) and CompileProgram (slot 4),
+    stopping at the first refusal. SetProgramName gets the header's name. The final parse is not checked for errors.
+  - The original faults in the reduce when an operand is appended to an empty operand list (the empty-list rule
+    gives null and the append reads address 4); ours does the same.
+- Test `tests/diff_rs_u2b.cpp` parts tp and tpengine (1908 scenarios in all parts, 0 mismatches): the 58 texture
+  programs embedded in the render modules and trainz.exe, damaged copies and token soups, run through each side's
+  parser against a stand-in combiner that logs every call (and refuses some); the scanner statics and the native
+  text logged after each run. The driver alone gets random and grammar-guided token streams; a step that faults
+  is caught on both sides (new in the engine harness). RS_U2B_ONLY=tp,tpengine runs just these parts.
+  - Mutations caught: 46 of 58. Not reached by any input: the "c<n> (x, y, z, w)" constant line (its register
+    number and values), the API_NATIVE-in-header branch, the rule popping below the stack top, a line-counting
+    pop, case-insensitive instruction names and constant lookup (the corpus is lower case), the register "_x2"
+    value, empty native sections and a refused compile (one section per program).
+- In game: menu reached, JetLog identical to the baseline (the parser is not called there until U3).
+
+### RenderSystem_7c U2b2b2, the vertex program parser (2026-10-27): internal code, no new exports
+- `VertexProgramParser.cpp`: VertexProgramParser (scanner vp 0x10051bd0, 125 rules, 5 start conditions; Lemon
+  480 states / 268 rules, driver 0x100518c0, reduce 0x1004e710 (11 KB); run 0x10054f00, called by
+  VertexProgram::Load with the program name, the file name and the program). Its input is the pre-parser's output:
+  `#VERTEX fmt`, `#CODE n` / `#ENDCODE n` around the ARB-style program text, `#BINDING n` / `#ENDBINDING` and
+  `#NATIVE n` / `#ENDNATIVE n` around a native one, `#LINE n` markers.
+- Its Lemon is a later generation than the other three: int actions (shift below 0x1e0, reduce below 0x2ec, error
+  0x2ec), actions {byte lookahead, int action, next} (12 bytes; `tools/extract_lemon.py ... wide`), no-code 0xf1,
+  error symbol 0x76, 100 terminals, and 16-byte values: the stack (0x96c) holds 100 {state, major, value[4]}, and a
+  token's text is freed whenever set (no "above 0x100" test). GfxParse.h's LemonParser now takes the value type
+  from the traits (LemonMinor16); the older three are unchanged (their tests still 0 mismatches).
+- The reduce's value is a stack slot nothing initialises. Rules without a value, or setting one byte of it, leave
+  what the previous reduction of the same driver call wrote there; between tokens the scanner's frame overwrites it.
+  Ours carries the value within one driver call and starts each call from zero, which matches every real text
+  tried. Where the original then stores non-reproducible garbage (a program parameter's value when the text gives
+  none, words 1-3 of it; a byte read after a syntax error message was formatted), the test does not compare.
+- Statics: the condition stack at 0x100b7ff0 (so the texture scanner's is 20 ints), the block flag 0x100b80a3 and
+  0x100b8114..0x100b8127 (depth, condition, marker count, the code block's buffer of the file's size and its write
+  pointer); GfxLexStatics is now 0x360 bytes. One rule pops through the entry below the top, as in tp.
+- The actions build the program: VertexSymbolEntry symbols of classes 0-10 (parameters, attributes, outputs,
+  temporaries, constants with a Vec4, aliases, address registers) added to a VertexSymbolTable (FindLike merges a
+  symbol with an equal one), RegisterItem operands with swizzles ("x", "xyzw", "aa,bb,cc,dd" for SWZ) and
+  OffsetAddress indices, VertexInstruction (ARL, 7 unary, 6 scalar, POW, 18 binary, LRP/MAD, SWZ; names looked up
+  ignoring case in five static PString tables built at module start, 0x100b8820..0x100b8950).
+- The run then hands them over: SetProgramName, slot 12 the program names, slot 13 the symbol table (and whether
+  the program is native), slot 29 "has a vertex type" (if not: VertexType::GetVertexType(name), a copy of it to
+  slot 28), then either LoadNativeFormat (slot 3) or slot 14 with the instruction list and CompileProgram (slot 4).
+  VertexType is still the original's (unit U5): called through the import library.
+- Test `tests/diff_rs_u2b.cpp` parts vp and vpengine (0 mismatches; 2410 scenarios over all parts): the 155
+  program texts the corpus gives after our pre-parser (equal to the original's), the native programs it writes for
+  400 made-up pre-parser files, damaged copies and token soups, against a stand-in VertexProgram that dumps every
+  symbol, operand and instruction it is handed; the driver alone on random and grammar-guided streams (the stack
+  below the driver is zeroed before each call, as the scanner leaves it in a real run). VertexType::GetVertexType
+  knows no types in the test, so that path faults on both sides.
+  - Mutations caught: 51 of 58. Not reached by any input: ABS (no program uses it), one popped condition's token,
+    a declared symbol aliasing a type-12 parameter, the copy of a constant's first word, a negative ARL offset, the
+    texture coordinate "s", and the alias DecRef.
+- In game: menu reached, JetLog identical to the baseline (the parsers are not called there until U3).
 
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 
