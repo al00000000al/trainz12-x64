@@ -79,7 +79,7 @@ endforeach()
 target_sources(KernelStandard_7c PRIVATE ${SCFG_TABLES})
 
 # step 5, small Jet modules: drop-in proxies, replaced module by module (the rest forwards to <module>_orig.dll)
-foreach(m KernelResource_7c KernelResources_7c Render2DCore_7c InputSystem_7c InputWin32_7c)
+foreach(m KernelResource_7c KernelResources_7c Render2DCore_7c InputSystem_7c InputWin32_7c RenderSystem_7c)
     jet_module(${m})
     target_compile_definitions(${m} PRIVATE _CRT_SECURE_NO_WARNINGS)
     # each calls the other Jet modules by their original names (our proxies or the originals)

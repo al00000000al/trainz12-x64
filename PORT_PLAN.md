@@ -85,6 +85,12 @@ After each step, refresh the README progress block: `python -I tools/progress.py
     HardwareException::GetCallStack (an x86 stack walk) is forwarded, and the crash report writers are called in the
     original by address. Both move with the x64 rewrite.
 8. Render stack (RenderSystem, Render3D*, RenderOpenGL), then InterfaceSystem, WaterSystem.
+   8a. ~~RenderSystem_7c: inventory, unit order, U0 forwarding proxy in game.~~ Done 2026-10-26: 2687 exports in
+       units U1-U9 (`notes/RenderSystem.md`); every other render module and trainz.exe stand on it.
+   8b. RenderSystem_7c U1 (value types, vertex formats) and U4 (modifiers).
+   8c. RenderSystem_7c U2 + U3 (shader languages, vertex programs, combiners).
+   8d. RenderSystem_7c U5 (geometry), U6 (textures), U7 (materials), U8 (layers), U9 (Display, RenderKernel).
+   8e. Render3DCore, Render3DFoundation, RenderOpenGL, then InterfaceSystem, WaterSystem (own inventories).
 9. trainz.exe subsystems through the loader DLL: asset DB, GS compiler/VM, physics, world.
 
 ## Honest scale

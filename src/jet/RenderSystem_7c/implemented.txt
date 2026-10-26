@@ -1,0 +1,4 @@
+# RenderSystem_7c exports taken from our code (one mangled name per line); all others forward to
+# RenderSystem_7c_orig.dll. Units and their order: notes/RenderSystem.md
+
+# U0: pure forwarding proxy (nothing ours yet)

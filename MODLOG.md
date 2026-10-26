@@ -1522,6 +1522,23 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
 - KernelStandard_7c is now ours except HardwareException::GetCallStack and the crash report writers, which move
   with the x64 rewrite.
 
+### Step 8a, RenderSystem_7c inventory and U0 proxy (2026-10-26)
+- Plan in `notes/RenderSystem.md`: 2687 exports (76 vftables, 9 vbtables, ~240 static data), 3628 functions,
+  351 KB; units U1-U9, order U1, U4, U2, U3, U5-U9 (Display and RenderKernel last).
+- RenderSystem imports only KernelStandard (168), Kernel (24), KernelResource (28), KernelResources (1): all ours.
+- 855 exports are imported by anyone: trainz.exe 457, Render3DCore 320, TrainzUtil 222, ContentManager 198,
+  Render3DFoundation 196, RenderOpenGL 178, CCP 177, WaterSystem 149, RenderDirectX9 143, Render3DExtension 111,
+  Launcher 80, TADDaemon 51, DebugSupport 32, Render2DCore 28, TrainzDiag 24, InterfaceSystem 24.
+- Render module dependencies (Jet imports): Render3DCore → RenderSystem 320, DebugInterface 3;
+  Render3DFoundation → RenderSystem 196, Render3DCore 108; Render3DExtension → Render3DCore 134, RenderSystem 111;
+  RenderOpenGL → RenderSystem 178 only; WaterSystem → RenderSystem 149, Render3DCore 80; InterfaceSystem →
+  InterfaceResources 32, RenderSystem 24, Render2DCore 15, InputSystem 16. trainz.exe → RenderSystem 457,
+  Render3DCore 431, Render3DFoundation 88, InterfaceSystem 81, WaterSystem 36.
+- Most module state is exported static data (registries, managers, texture defaults, vertex offset tables), so
+  units can use the original's statics through the `_orig` import library until U9.
+- U0: `src/jet/RenderSystem_7c` with an empty `implemented.txt` (all 2687 exports forwarded to
+  `RenderSystem_7c_orig.dll`). In game: menu reached, JetLog identical to the baseline (diff_lines=0).
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's

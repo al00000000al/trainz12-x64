@@ -1,0 +1,62 @@
+# RenderSystem_7c.dll: reconstruction plan
+
+Status: inventory, 2026-10-26 (PORT_PLAN step 8a). No RenderSystem code is reconstructed yet beyond the U0 proxy.
+Inputs: `ghidra_maps/jet/RenderSystem_7c.dll.functions.tsv`, the export list (`tools/dump_exports.py`), the import tables
+of every module in `bin\` (pefile), the Jet SDK Beta2 headers (`Display.h`, `Material.h`, `Layer.h`, `Modifier.h`,
+`Texture.h`, `RenderKernel.h`...: names and intent only, the TS12 layouts differ) and the private decompile
+`decomp\RenderSystem_7c.dll.c`.
+
+## 0. Summary
+
+* RenderSystem is the API-independent half of the renderer: the abstract `Display` (the OpenGL/DX9 modules derive
+  from it), vertex formats, geometry chunks, textures and their `.texture`/`.texture.txt` resources, materials,
+  vertex/texture programs and their small shader languages, modifiers, layers. **2687 exports** (76 vftables, 9
+  vbtables, ~240 static data), 3628 Ghidra functions, 351 KB of code; 1792 functions (96 KB) are unnamed `Global`
+  helpers still to attribute.
+* It imports only modules that are already ours: KernelStandard 168, Kernel 24, KernelResource 28, KernelResources 1.
+* **Every other render module stands on it.** Imports of RenderSystem exports: trainz.exe 457, Render3DCore 320,
+  TrainzUtil 222, ContentManager 198, Render3DFoundation 196, RenderOpenGL 178, CCP 177, WaterSystem 149,
+  RenderDirectX9 143, Render3DExtension 111, Launcher 80, TADDaemon 51, DebugSupport 32, Render2DCore 28,
+  TrainzDiag 24, InterfaceSystem 24. **855 of the 2687 exports are imported by anyone**; the rest is used only inside.
+* Unlike KernelStandard, most of the module's state is **exported static data** (registries, managers, defaults,
+  per-vertex-format offset tables, `results` tables). Units can keep using the original's statics through the
+  import library of `RenderSystem_7c_orig.dll` until the foundation unit moves them, as KS did with its private
+  statics by address.
+* Dependency order inside the module is the usual Jet one: `Display` and `RenderKernel` are the foundation (every
+  class takes a `Display*`), so they move last (top-down, as in KernelStandard).
+
+## 1. Units
+
+Grouping by exported class; code size by Ghidra namespace (the unnamed `Global` helpers are not attributed yet).
+
+| Unit | Classes | exports | imported by anyone | code |
+|---|---|---:|---:|---:|
+| U0 | forwarding proxy (no code) | 0 | - | - |
+| U1 value types and vertex formats | VertexType (+ its registry), PackedVertex* (60 formats), GeoLOD*/TerrainBlend*/StreamedVertex* tables, Element, TextureArgs, RenderTextureConstruct, DisplayFormat, DisplayDescriptor, DisplayLight, DisplayMaterial, Projector, TextureStage | 980 | 131 | 14 KB |
+| U4 modifiers | Modifier, ModifierList (+ global lock), ModifierHost, ModifierUpdateTask | 55 | 33 | 6 KB |
+| U2 shader language front-end | GfxLanguagePreParser/QuickParser, ExtendedGfxLanguage, Vertex/TextureProgramParser, symbol tables, Instruction/RegisterItem, PreProcessor* | 102 | 21 | 6 KB (+ ~10 KB parsers in `Global`) |
+| U3 programs and shaders | VertexProgram, VertexProgramBasic (text program generator), VertexProgramManager/Resource, TextureCombiner(+Manager/Resource), CGShader*, GLSLShaderBase | 215 | 78 | 33 KB |
+| U5 geometry | GeometryChunk, Single/MultiStream, Generic*, GeometryChunkTemplate, RenderingCache(+Manager), VertexBufferManager, StaticBuffer, chunk hints | 268 | 193 | 35 KB |
+| U6 textures | Texture, TextureRes, TextureResource, AsciiTextureResource (`.texture.txt`), BitmapTextureResource(+Type), BinaryTextureResourceExport, SharedTextureCollection, TextureManager (streaming), DisplayTexture, DisplayTextureNull | 380 | 113 | 47 KB |
+| U7 materials | Material, NullMaterial, MaterialConfig/Spec, MaterialManager, MaterialResource, MaterialFileSupport, MaterialPlugin | 171 | 97 | 16 KB |
+| U8 layers and scene | Layer, LayerGroup, LayerManager, ClearLayer, Overlay, SceneGraph, SystemResource*, GenericReferenceArray | 144 | 35 | 9 KB |
+| U9 foundation | Display (57 KB), DisplaySelector, DisplaySaveBuffer, NonRenderContext, SharedContext, ApiDataBase, RenderKernel, ResourceType, free functions, `JetGetPluginsRenderSystem` | 257 | 139 | 64 KB |
+| (small) | VideoMode/VideoFormat, chunk hints, ModifierItem, Tex2/3Pair... folded into the unit of their owner | 115 | 15 | 1 KB |
+
+Order: U0, U1, U4, U2, U3, U5, U6, U7, U8, U9. Leaves and pure data first; textures and materials (which read
+add-on files) in the middle with file-level diff tests; Display last.
+
+## 2. Testing
+
+* Differential tests in one process, as for Render2DCore (`tests/diff_r2d.cpp`): our module and
+  `RenderSystem_7c_orig.dll` driven with the same inputs against a stand-in `Display` whose vtable logs every call.
+* Parsers (U2, U3, U6 `.texture.txt`, U7 material configs): fed with real files from the user's content and Data.ja,
+  output structures compared field by field.
+* In game: menu check and Launcher faulty check after each unit; from U5 on also a fixed driving session compared by
+  screenshot (`dupshot.exe`).
+
+## 3. Open questions
+
+* Attribute the 96 KB of unnamed `Global` functions (single-caller propagation, as for KS).
+* Which statics are touched by address from other modules (data imports): `Layer::layerManager`, `TextureManager`
+  streaming limits, `VertexType::display`. They decide what must stay forwarded until U9.
