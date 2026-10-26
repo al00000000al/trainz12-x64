@@ -1703,6 +1703,41 @@ TrainzUtil, TrainzDiag, JAConverter, XCrashReport.
     (only differs after an unbalanced earlier run), `= {` directly opening a skipped block, one rule's free order.
 - In game: menu reached, JetLog identical to the baseline (our parsers are not called there yet).
 
+### RenderSystem_7c U2b2b1, the texture program parser (2026-10-27): internal code, no new exports
+- `TexProgramParser.cpp`: TextureProgramParser (scanner tp 0x10044d30, 90 rules, 8 start conditions, no REJECT;
+  Lemon 119 states / 69 rules, driver 0x10044830, reduce 0x10043760; run 0x100462d0, called by
+  TextureCombiner::Load with the parser at +0, the file name +0x7c, the line +0x80 and the combiner's vftable slot
+  17 value (the API this build runs: 0, 1, 2) at +0x84). Same flex skeleton and Lemon engine as U2b2a.
+  - Syntax (from the DFA and the corpus): `version x`, `header(name) { reg n (name) - x, y, z, w; ... }`,
+    `API(common|OpenGL|DirectX) { ps.x.y instructions }` and `API_NATIVE(OpenGL|DirectX) { native text }`. An API
+    block of another API is skipped as a brace-counted block; a native block's text is collected whole.
+  - Statics: the start-condition stack at 0x100b7fa0 (so the quick parser's is 20 ints, not 60), 0x100b8067 (the
+    block is native), 0x100b8090..0x100b809f (depth, condition, brace depths) in GfxLexStatics, now 0x2d8 bytes;
+    the native text is a module AnsiString at 0x100b8800 (gfxTpCode), kept between runs. One rule pops through the
+    entry below the stack top, so an empty stack reads the quick parser's last entry.
+  - The reduce actions only build records: TexHeaderItem, TexRegisterDefinition {index, name, 0x18 constant
+    {0, 4 floats, count}}, TexApiSection {lines, text}, TexApiCodeLine (a ParseItem with a TextureCombiner::
+    Instruction at +0xc), TexApiDataItem; lists of them, operand lists (RegisterItem) and modifier lists. Lookup
+    tables: 35 instructions (lower case, unknown = add), 5 address types, register files c/r/v/t (unknown = t), 41
+    modifiers ("_x2" is 1 on an instruction, 13 on a register; one rule takes only "_x2" and sets the error flag
+    for anything else).
+    Rules without a value leave the goto minor as it is (stack garbage in the original); nothing reads those.
+  - The run then hands the records over: TrackConstant (slot 13) per constant, then per API section either
+    LoadNativeFormat (slot 3, skipped when empty) or every instruction (slot 11) and CompileProgram (slot 4),
+    stopping at the first refusal. SetProgramName gets the header's name. The final parse is not checked for errors.
+  - The original faults in the reduce when an operand is appended to an empty operand list (the empty-list rule
+    gives null and the append reads address 4); ours does the same.
+- Test `tests/diff_rs_u2b.cpp` parts tp and tpengine (1908 scenarios in all parts, 0 mismatches): the 58 texture
+  programs embedded in the render modules and trainz.exe, damaged copies and token soups, run through each side's
+  parser against a stand-in combiner that logs every call (and refuses some); the scanner statics and the native
+  text logged after each run. The driver alone gets random and grammar-guided token streams; a step that faults
+  is caught on both sides (new in the engine harness). RS_U2B_ONLY=tp,tpengine runs just these parts.
+  - Mutations caught: 46 of 58. Not reached by any input: the "c<n> (x, y, z, w)" constant line (its register
+    number and values), the API_NATIVE-in-header branch, the rule popping below the stack top, a line-counting
+    pop, case-insensitive instruction names and constant lookup (the corpus is lower case), the register "_x2"
+    value, empty native sections and a refused compile (one section per program).
+- In game: menu reached, JetLog identical to the baseline (the parser is not called there until U3).
+
 ### Prior art: open source around Trainz and Jet (searched 2026-10-21)
 - No open engine, decompilation or leaked source of Auran Jet or trainz.exe was found. The only reference is
   the Jet SDK 1.0 headers we already have. (Dark Reign 2 went open source in 2012, but it is Pandemic's

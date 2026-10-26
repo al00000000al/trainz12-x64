@@ -41,7 +41,7 @@ struct GfxIntStack {
     void Clear();  // the second chunk first, the head last
 };
 
-// The rule actions' state: module statics in the original (0x100b7dc8..0x100b8077), shared by every scanner
+// The rule actions' state: module statics in the original (0x100b7dc8..0x100b809f), shared by every scanner
 // instance and kept between runs. Laid out the same way, so an overrun lands in the same neighbours. Names follow
 // the addresses; what each flag does is in the actions.
 struct GfxLexStatics {
@@ -52,7 +52,9 @@ struct GfxLexStatics {
     unsigned char pp7e80[104];  // 0x100b7e80 per #if level
     unsigned char pp7ee8[100];  // 0x100b7ee8 per #if level
     int unknown7f4c;            // 0x100b7f4c
-    int qkStack[60];            // 0x100b7f50 the quick parser's start conditions
+    int qkStack[20];            // 0x100b7f50 the quick parser's start conditions
+    int tpStack[40];            // 0x100b7fa0 the texture program scanner's (one rule reads the entry below the top,
+                                // so an empty stack reads qkStack[19])
     unsigned char unknown8040[3];
     unsigned char pp8043;       // 0x100b8043
     unsigned char unknown8044[12];
@@ -61,15 +63,23 @@ struct GfxLexStatics {
     int pp8058;                 // 0x100b8058 code/native block depth
     int pp805c;                 // 0x100b805c brace depth
     unsigned char pp8060, pp8061, pp8062, pp8063, pp8064;
-    unsigned char pad8065[3];
+    unsigned char pad8065[2];
+    unsigned char tpNative;     // 0x100b8067 the API section is native (its text is collected whole)
     int ppIfDepth;              // 0x100b8068
     int qkDepth;                // 0x100b806c
     int qkCurrent;              // 0x100b8070
     int qkBraces;               // 0x100b8074
+    unsigned char unknown8078[0x18];
+    int tpDepth;                // 0x100b8090
+    int tpCurrent;              // 0x100b8094
+    int tpBraces;               // 0x100b8098 brace depth inside an API section
+    int tpBlock;                // 0x100b809c brace depth of a code or native block
 };
 static_assert(offsetof(GfxLexStatics, ppStack) == 0x68 && offsetof(GfxLexStatics, qkStack) == 0x188 &&
-                  offsetof(GfxLexStatics, pp8043) == 0x27b && offsetof(GfxLexStatics, ppDepth) == 0x288 &&
-                  offsetof(GfxLexStatics, ppIfDepth) == 0x2a0 && sizeof(GfxLexStatics) == 0x2b0,
+                  offsetof(GfxLexStatics, tpStack) == 0x1d8 && offsetof(GfxLexStatics, pp8043) == 0x27b &&
+                  offsetof(GfxLexStatics, ppDepth) == 0x288 && offsetof(GfxLexStatics, ppIfDepth) == 0x2a0 &&
+                  offsetof(GfxLexStatics, tpNative) == 0x29f && offsetof(GfxLexStatics, tpDepth) == 0x2c8 &&
+                  sizeof(GfxLexStatics) == 0x2d8,
               "the original's layout");
 extern GfxLexStatics gfxLex;
 

@@ -102,7 +102,9 @@ set(RS_TABLES "")
 foreach(t "gfxqk_acclist;6cdb0;88;u16" "gfxqk_accept;6ce60;96;u16" "gfxqk_ec;6cf20;128;u8" "gfxqk_meta;6cfa0;42;u32"
           "gfxqk_base;6d048;100;u16" "gfxqk_def;6d110;100;u16" "gfxqk_nxt;6d1d8;208;u16" "gfxqk_chk;6d378;208;u16"
           "gfxpp_acclist;6d518;356;u16" "gfxpp_accept;6d7e0;288;u16" "gfxpp_ec;6da20;128;u8" "gfxpp_meta;6daa0;56;u32"
-          "gfxpp_base;6db80;304;u16" "gfxpp_def;6dde0;304;u16" "gfxpp_nxt;6e040;636;u16" "gfxpp_chk;6e538;636;u16")
+          "gfxpp_base;6db80;304;u16" "gfxpp_def;6dde0;304;u16" "gfxpp_nxt;6e040;636;u16" "gfxpp_chk;6e538;636;u16"
+          "gfxtp_acclist;69438;424;u16" "gfxtp_accept;69788;328;u16" "gfxtp_ec;69a18;128;u8" "gfxtp_meta;69a98;68;u32"
+          "gfxtp_base;69ba8;344;u16" "gfxtp_def;69e58;344;u16" "gfxtp_nxt;6a108;840;u16" "gfxtp_chk;6a798;840;u16")
     list(GET t 0 n)
     list(GET t 1 rva)
     list(GET t 2 cnt)
@@ -114,7 +116,7 @@ foreach(t "gfxqk_acclist;6cdb0;88;u16" "gfxqk_accept;6ce60;96;u16" "gfxqk_ec;6cf
         DEPENDS "${TOOLS}/extract_data.py" VERBATIM)
     list(APPEND RS_TABLES "${GEN}/${n}.h")
 endforeach()
-foreach(t "gfxqk;100b5de0;32;100b5fc8;19" "gfxpp;100b66c0;95;100b6c28;54")
+foreach(t "gfxqk;100b5de0;32;100b5fc8;19" "gfxpp;100b66c0;95;100b6c28;54" "gfxtp;100b14a8;119;100b1b58;69")
     list(GET t 0 n)
     list(GET t 1 states)
     list(GET t 2 nstates)

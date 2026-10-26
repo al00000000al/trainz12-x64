@@ -708,9 +708,10 @@ static void CollectCorpus()
     std::printf("-- corpus: %zu texts\n", corpus.size());
 }
 
-// a corpus text, as it is or damaged (cut, tokens dropped or doubled, bytes changed)
-static std::vector<std::string> words;  // the corpus split at blanks, plus punctuation
-static std::string Sample(std::mt19937& r)
+// a corpus text, as it is or damaged (cut, tokens dropped or doubled, bytes changed); `words` is the corpus split
+// at blanks, plus punctuation
+static std::string SampleOf(std::mt19937& r, const std::vector<std::string>& corpus, std::vector<std::string>& words,
+                            const std::vector<const char*>& punct, const char* head)
 {
     if (words.empty()) {
         for (const std::string& t : corpus) {
@@ -723,13 +724,12 @@ static std::string Sample(std::mt19937& r)
                 i = j;
             }
         }
-        for (const char* p : {"{", "}", "(", ")", "=", ";", ",", "#if", "#else", "#endif", "#define", "\"", "/*", "*/",
-                              "//", "version", "2.0", "1.5", "\xe9t\xe9", "\x80\xff"})
+        for (const char* p : punct)
             for (int k = 0; k < 40; ++k) words.push_back(p);
     }
     const int how = static_cast<int>(r() % 10);
     if (how >= 8) {  // token soup, or a piece cut out of the middle of a text
-        std::string s = r() % 2 ? "version 2.0\n" : "";
+        std::string s = r() % 2 ? head : "";
         if (how == 8) {
             for (int n = static_cast<int>(r() % 300); n; --n) {
                 s += words[r() % words.size()];
@@ -761,6 +761,14 @@ static std::string Sample(std::mt19937& r)
         }
     }
     return s;
+}
+static std::string Sample(std::mt19937& r)
+{
+    static std::vector<std::string> words;
+    static const std::vector<const char*> punct = {"{", "}", "(", ")", "=", ";", ",", "#if", "#else", "#endif",
+                                                   "#define", "\"", "/*", "*/", "//", "version", "2.0", "1.5",
+                                                   "\xe9t\xe9", "\x80\xff"};
+    return SampleOf(r, corpus, words, punct, "version 2.0\n");
 }
 
 static void DumpNames(const char* tag, const void* listHead)
@@ -946,7 +954,32 @@ static void* TokenText(std::mt19937& r)  // a token's minor: a number-like text 
     return m;
 }
 
-// our driver's state after `stream` from scratch, nothing logged: {error countdown, stack index}
+// one token through a side's driver; false when it faults (the texture parser's actions read address 0 on some
+// streams, in both modules: the stack is left as it is then)
+static bool GuardedParse(int s, const EngineSpec& e, ParseFn parse, void* stack, int major, void* minor, void* ctx)
+{
+    __try {
+        if (s == 0)
+            parse(stack, major, minor, ctx);
+        else
+            OrigDriver(e.driver, stack, major, minor, ctx);
+        return true;
+    } __except (GetExceptionCode() == EXCEPTION_ACCESS_VIOLATION ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH) {
+        return false;
+    }
+}
+static bool GuardedFinish(const EngineSpec& e, int side, unsigned char* ctx, void* parser)
+{
+    __try {
+        e.finish(side, ctx, parser);
+        return true;
+    } __except (GetExceptionCode() == EXCEPTION_ACCESS_VIOLATION ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH) {
+        return false;
+    }
+}
+
+// our driver's state after `stream` from scratch, nothing logged: {error countdown, stack index} ({-1000, -1000}
+// when the stream faults)
 static std::pair<int, int> Probe(const EngineSpec& e, ParseFn parse, FreeFn free, void* parser,
                                  const std::vector<int>& stream)
 {
@@ -958,10 +991,18 @@ static std::pair<int, int> Probe(const EngineSpec& e, ParseFn parse, FreeFn free
     *reinterpret_cast<void**>(ctx + e.ctxSize - 4) = parser;
     void* stack = RealNew(0x4bc);
     *static_cast<int*>(stack) = -1;
-    for (int t : stream) parse(stack, t, t ? TokenText(r) : nullptr, ctx);
-    const std::pair<int, int> state{static_cast<int*>(stack)[1], static_cast<int*>(stack)[0]};
-    free(stack);
-    e.finish(-1, ctx, parser);
+    bool fault = false;
+    for (int t : stream)
+        if (!GuardedParse(0, e, parse, stack, t, t ? TokenText(r) : nullptr, ctx)) {
+            fault = true;
+            break;
+        }
+    std::pair<int, int> state{static_cast<int*>(stack)[1], static_cast<int*>(stack)[0]};
+    if (fault)
+        state = {-1000, -1000};
+    else
+        free(stack);
+    GuardedFinish(e, -1, ctx, parser);
     cur = saved;
     return state;
 }
@@ -1039,6 +1080,7 @@ static void RunEngine(int s, unsigned seed, const EngineSpec& e)
         Log("engine %d (variant %d): %d tokens:", round, variant, n);
         for (int t : stream) Log(" %d", t);
         Log("\n");
+        bool fault = false;
         for (int i = 0; i <= n; ++i) {
             const int major = stream[i];
             void* minor = nullptr;
@@ -1048,10 +1090,11 @@ static void RunEngine(int s, unsigned seed, const EngineSpec& e)
                 minor = TestNew(static_cast<unsigned>(std::strlen(text) + 1), "T%d", i);
                 std::strcpy(static_cast<char*>(minor), text);
             }
-            if (s == 0)
-                ourParse(stack, major, minor, ctx);
-            else
-                OrigDriver(e.driver, stack, major, minor, ctx);
+            if (!GuardedParse(s, e, ourParse, stack, major, minor, ctx)) {
+                Log("  %d -> crashed\n", major);
+                fault = true;
+                break;
+            }
             const int idx = *static_cast<int*>(stack);
             Log("  %d -> top %d err %d flag %d", major, idx, static_cast<int*>(stack)[1], ctx[e.errorOffset]);
             if (idx >= 0) {
@@ -1060,11 +1103,13 @@ static void RunEngine(int s, unsigned seed, const EngineSpec& e)
             }
             Log("\n");
         }
-        if (s == 0)
+        if (fault)  // (the stack is left: a half-done reduce may have freed what it holds)
+            ;
+        else if (s == 0)
             ourFree(stack);
         else
             OrigFreeStack(e.freeStack, stack);
-        e.finish(s, ctx, parser);
+        if (!GuardedFinish(e, s, ctx, parser)) Log("  finish crashed\n");
     }
     e.freeParser(s, parser);
     cur = -1;
@@ -1288,12 +1333,12 @@ static std::vector<std::string> ProgramNames(const std::string& t)
     return out;
 }
 
-// the scanners' module statics (0x100b7dc8..0x100b8077 in the original): a damaged text can leave them in any
+// the scanners' module statics (0x100b7dc8..0x100b809f in the original): a damaged text can leave them in any
 // state, which the next run inherits (as in the original); most scenarios start both sides from zero
 static void ResetLexStatics(int s)
 {
     static void* ours = OurSym("?gfxLex@Jet@@3UGfxLexStatics@1@A");
-    std::memset(s == 0 ? ours : OrigAt(0xb7dc8), 0, 0x2b0);
+    std::memset(s == 0 ? ours : OrigAt(0xb7dc8), 0, 0x2d8);
 }
 
 // a run that may fault (as the original does): -1 then
@@ -1409,6 +1454,327 @@ static void RunPreEngine(int s, unsigned seed)
     RunEngine(s, seed, spec);
 }
 
+// ---------------------------------------------------------------------------------------------------------------
+// the texture program parser (TextureCombiner::Load's front end). A stand-in combiner logs what the parser hands
+// it: slot 3 LoadNativeFormat, 4 CompileProgram, 11 an instruction, 13 TrackConstant; SetProgramName writes its +0x14.
+
+static std::vector<std::string> tpCorpus;
+static void CollectTpCorpus()
+{
+    const char* files[] = {"Render3DCore_7c.dll", "Render3DFoundation_7c.dll", "Render3DExtension_7c.dll",
+                           "WaterSystem_7c.dll", "RenderOpenGL_7c.dll", "RenderDirectX9_7c.dll", "trainz.exe"};
+    for (const char* name : files) {
+        FILE* f = std::fopen((binDir + "\\" + name).c_str(), "rb");
+        if (!f) continue;
+        std::vector<char> d;
+        char buf[65536];
+        size_t n;
+        while ((n = std::fread(buf, 1, sizeof buf, f)) > 0) d.insert(d.end(), buf, buf + n);
+        std::fclose(f);
+        size_t i = 0;
+        while (i < d.size()) {
+            size_t j = i;
+            while (j < d.size() && (static_cast<unsigned char>(d[j]) >= 0x20 || d[j] == '\r' || d[j] == '\n' || d[j] == '\t'))
+                ++j;
+            if (j - i > 120 && j < d.size() && d[j] == 0) {
+                std::string s(d.begin() + i, d.begin() + j);
+                if (s.find("API") != std::string::npos &&
+                    (s.find("ps.") != std::string::npos || s.find("header") != std::string::npos))
+                    tpCorpus.push_back(s);
+            }
+            i = j + 1;
+        }
+    }
+    std::printf("-- texture program corpus: %zu texts\n", tpCorpus.size());
+}
+static std::string TpSample(std::mt19937& r)
+{
+    static std::vector<std::string> w;
+    static const std::vector<const char*> punct = {
+        "{", "}", "(", ")", ",", ";", "-", "+", "[", "]", "^", "\"", "/*", "*/", "//", "#", "\n", "API(common)",
+        "API(OpenGL)", "API(DirectX)", "API_NATIVE(OpenGL)", "API_NATIVE(DirectX)", "header(x)", "reg", "c[^",
+        "version", "1.1", "ps.1.1", "ps.1.4", "_bx2", ".rgb", "c0", "r1", "t2", "tex(cube)", "\xe9t\xe9", "\x80\xff"};
+    return SampleOf(r, tpCorpus, w, punct, "version 1.1\n");
+}
+
+static int tpCompiles;
+static bool __cdecl CombNative(void* self, const void* name, const char* text)
+{
+    const bool ok = (text ? std::strlen(text) : 0) % 5 != 0;
+    Log("  native %s name %s [%s] -> %d\n", Name(self).c_str(), NodeText(*static_cast<void* const*>(name)).c_str(),
+        text ? text : "(null)", ok);
+    return ok;
+}
+static bool __cdecl CombCompile(void* self)
+{
+    const bool ok = ++tpCompiles % 4 != 0;
+    Log("  compile %s -> %d\n", Name(self).c_str(), ok);
+    return ok;
+}
+static void __cdecl CombInstruction(void*, const void* ins) { DumpIns("instruction", ins); }
+static bool __cdecl CombConstant(void* self, int index, const void* name, const float* v)
+{
+    const char* t = AnsiText(name);
+    Log("  constant %s %d [%s] %g %g %g %g\n", Name(self).c_str(), index, t ? t : "(null)", v[0], v[1], v[2], v[3]);
+    return true;
+}
+static void* combVtable[18] = {&FakeFalse, &FakeFalse, &FakeFalse, reinterpret_cast<void*>(&CombNative),
+                               reinterpret_cast<void*>(&CombCompile), &FakeFalse, &FakeFalse, &FakeFalse,
+                               &FakeFalse, &FakeFalse, &FakeFalse, reinterpret_cast<void*>(&CombInstruction),
+                               &FakeFalse, reinterpret_cast<void*>(&CombConstant), &FakeFalse, &FakeFalse,
+                               &FakeFalse, &FakeFalse};
+static struct {
+    void** vt = combVtable;
+    void* vb = nullptr;
+    void* display = &fakeDisplay;
+    unsigned char rest[0x34] = {};
+} fakeComb;
+static void*& CombProgramName() { return *reinterpret_cast<void**>(reinterpret_cast<char*>(&fakeComb) + 0x14); }
+
+static void(__cdecl* AnsiAssign)(void*, const char*);
+static void* TpCode(int s)  // the code-block text, a module static (0x100b8800)
+{
+    static void* ours = OurSym("?gfxTpCode@Jet@@3VAnsiString@1@A");
+    return s == 0 ? ours : OrigAt(0xb8800);
+}
+static unsigned char* LexStatics(int s)
+{
+    static void* ours = OurSym("?gfxLex@Jet@@3UGfxLexStatics@1@A");
+    return static_cast<unsigned char*>(s == 0 ? ours : OrigAt(0xb7dc8));
+}
+static void ResetTp(int s)
+{
+    ResetLexStatics(s);
+    AnsiAssign(TpCode(s), "");
+}
+static void LogTpState(int s)
+{
+    const unsigned char* st = LexStatics(s);
+    const int* t = reinterpret_cast<const int*>(st + 0x2c8);
+    const char* code = AnsiText(TpCode(s));
+    Log("  scanner depth %d cond %d braces %d block %d native %d stack %d %d, code [%s]\n", t[0], t[1], t[2], t[3],
+        st[0x29f], reinterpret_cast<const int*>(st + 0x1d8)[0], reinterpret_cast<const int*>(st + 0x1d8)[1],
+        code ? code : "(null)");
+}
+
+static void OrigTpCtor(void* obj, void* file, int apiKind)
+{
+    void* f = OrigAt(0x45dc0);  // tpFlexLexer(file), then what TextureCombiner::Load sets
+    __asm {
+        pushad
+        mov ecx, file
+        push obj
+        call f
+        popad
+    }
+    auto* o = static_cast<unsigned char*>(obj);
+    *reinterpret_cast<void**>(o) = OrigAt(0x72830);
+    *reinterpret_cast<void**>(o + 0x7c) = nullptr;
+    *reinterpret_cast<int*>(o + 0x80) = 1;
+    *reinterpret_cast<int*>(o + 0x84) = apiKind;
+}
+static bool OrigTpRun(void* obj, const void* file, void* lang)
+{
+    void* f = OrigAt(0x462d0);
+    __asm {
+        pushad
+        push lang
+        push file
+        mov ecx, obj
+        call f
+        add esp, 8
+        mov asmResult, al
+        popad
+    }
+    return asmResult != 0;
+}
+static void OrigTpDtor(void* obj)
+{
+    void* f = OrigAt(0x40610);
+    __asm {
+        pushad
+        push obj
+        call f
+        popad
+    }
+}
+static struct {
+    void (*ctor)(void*, void*, int);
+    bool (*run)(void*, const void*, void*);
+    void (*dtor)(void*);
+    void (*destroy)(void*);
+    int (*line)(void*);
+} ourTp;
+static void LoadOurTp()
+{
+    if (ourTp.ctor) return;
+    ourTp.ctor = As<decltype(ourTp.ctor)>(OurSym("_RsTestTpCtor"));
+    ourTp.run = As<decltype(ourTp.run)>(OurSym("_RsTestTpRun"));
+    ourTp.dtor = As<decltype(ourTp.dtor)>(OurSym("_RsTestTpDtor"));
+    ourTp.destroy = As<decltype(ourTp.destroy)>(OurSym("_RsTestTpDestroy"));
+    ourTp.line = As<decltype(ourTp.line)>(OurSym("_RsTestTpLine"));
+}
+
+static int GuardedTpRun(int s, void* obj, const void* file)
+{
+    __try {
+        return s == 0 ? ourTp.run(obj, file, &fakeComb) : OrigTpRun(obj, file, &fakeComb);
+    } __except (GetExceptionCode() == EXCEPTION_ACCESS_VIOLATION ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH) {
+        return -1;
+    }
+}
+
+static void RunTp(int s, unsigned seed)
+{
+    std::mt19937 r(seed);
+    LoadOurTp();
+    if (r() % 4) ResetTp(s);
+    names[s][&fakeComb] = "comb";
+    names[s][&fakeDisplay] = "display";
+    for (int k = 0; k < 3; ++k) {
+        const std::string text = r() % 3 == 0 ? tpCorpus[r() % tpCorpus.size()] : TpSample(r);
+        const int apiKind = static_cast<int>(r() % 3);
+        void* fileNode = r() % 2 ? CreateNode(*cache, reinterpret_cast<const unsigned char*>("comb.texture.txt")) : nullptr;
+        void* file = RealNew(0x14);
+        MemFileCtor(file, nullptr, text.c_str(), static_cast<unsigned>(text.size()), false, 0);
+        void* obj = RealNew(0x400);
+        std::memset(obj, 0xcd, 0x400);
+        tpCompiles = 0;
+        Log("tp %d: %u bytes, api %d\n", k, static_cast<unsigned>(text.size()), apiKind);
+        if (s == 0)
+            ourTp.ctor(obj, file, apiKind);
+        else
+            OrigTpCtor(obj, file, apiKind);
+        const int ok = GuardedTpRun(s, obj, &fileNode);
+        if (ok < 0) Log("  crashed\n");
+        Log("  ok %d line %d program %s\n", ok,
+            s == 0 ? ourTp.line(obj) : *reinterpret_cast<int*>(static_cast<char*>(obj) + 0x80),
+            NodeText(CombProgramName()).c_str());
+        LogTpState(s);
+        if (ok < 0) ResetTp(s);
+        if (CombProgramName()) DestroyNode(*cache, CombProgramName());
+        CombProgramName() = nullptr;
+        if (s == 1) ++(ok > 0 ? parsedOk : parsedBad);
+        if (s == 0)
+            ourTp.dtor(obj);
+        else
+            OrigTpDtor(obj);
+        RealDelete(obj);
+        MemFileDtor(file);
+        RealDelete(file);
+        if (fileNode) DestroyNode(*cache, fileNode);
+    }
+}
+
+// ---- the texture parser's driver alone: context {version, program name, api, header list (+0xc), lang, file,
+// parser (+0x18), sections (+0x1c), constant names (+0x20..+0x28), error (+0x2c)}
+
+static void* TpVftable(int s, const char* ours, unsigned orig)
+{
+    return s == 0 ? OurSym(ours) : OrigAt(orig);
+}
+static void DumpTpItems(const char* tag, const void* list, int depth);
+static void DumpTpItem(const void* item, int depth)
+{
+    static void* vt[2][6];
+    if (!vt[cur][0]) {
+        const int s = cur;
+        vt[s][0] = TpVftable(s, "??_7TexApiSection@Jet@@6B@", 0x727cc);
+        vt[s][1] = TpVftable(s, "??_7TexHeaderItem@Jet@@6B@", 0x727dc);
+        vt[s][2] = TpVftable(s, "??_7TexRegisterDefinition@Jet@@6B@", 0x727e4);
+        vt[s][3] = TpVftable(s, "??_7TexApiDataItem@Jet@@6B@", 0x727ec);
+        vt[s][4] = TpVftable(s, "??_7TexApiCodeLine@Jet@@6BTexApiDataItem@1@@", 0x727f4);
+        vt[s][5] = TpVftable(s, "??_7TexItem@Jet@@6B@", 0x727d4);
+    }
+    const auto* w = static_cast<const int*>(item);
+    const void* v = reinterpret_cast<void* const*>(item)[0];
+    int kind = 0;
+    while (kind < 6 && vt[cur][kind] != v) ++kind;
+    static const char* kinds[] = {"section", "header", "regdef", "data", "line", "item", "?"};
+    Log("  %*s%s %s next %s", depth * 2, "", kinds[kind], Name(item).c_str(), Name(reinterpret_cast<void*>(w[1])).c_str());
+    switch (kind) {
+    case 0: {
+        const char* t = AnsiText(w + 3);
+        Log(" text [%s]\n", t ? t : "(null)");
+        DumpTpItems("lines", reinterpret_cast<void*>(w[2]), depth + 1);
+        break;
+    }
+    case 2: {
+        const char* t = AnsiText(w + 4);
+        Log(" kind %d index %d name [%s] value %s", w[2], w[3], t ? t : "(null)", Name(reinterpret_cast<void*>(w[5])).c_str());
+        if (const auto* c = reinterpret_cast<const int*>(w[5])) {
+            float f[4];
+            std::memcpy(f, c + 1, sizeof f);
+            Log(" {%d %g %g %g %g #%d}", c[0], f[0], f[1], f[2], f[3], c[5]);
+        }
+        Log("\n");
+        break;
+    }
+    case 4: Log(" kind %d\n", w[2]); DumpIns("ins", w + 3); break;
+    default: Log(" +8 %d\n", w[2]); break;
+    }
+}
+static void DumpTpItems(const char* tag, const void* list, int depth)
+{
+    if (!list) {
+        Log("  %*s%s -\n", depth * 2, "", tag);
+        return;
+    }
+    const auto* l = static_cast<void* const*>(list);
+    Log("  %*s%s %s %s/%s #%d\n", depth * 2, "", tag, Name(list).c_str(), Name(l[0]).c_str(), Name(l[1]).c_str(),
+        reinterpret_cast<const int*>(l)[2]);
+    int n = 0;
+    for (const void* i = l[0]; i && n < 200; i = reinterpret_cast<void* const*>(i)[1], ++n) DumpTpItem(i, depth + 1);
+}
+static void TpPrepare(unsigned char* ctx, int variant)
+{
+    *reinterpret_cast<int*>(ctx + 8) = variant % 3;
+    *reinterpret_cast<void**>(ctx + 0x10) = &fakeComb;
+    *reinterpret_cast<const char**>(ctx + 0x14) = "file";
+}
+static void TpFinish(int side, unsigned char* ctx, void*)
+{
+    if (side >= 0) {
+        float v;
+        std::memcpy(&v, ctx, 4);
+        Log("  ctx version %g program %s\n", v, NodeText(*reinterpret_cast<void**>(ctx + 4)).c_str());
+        DumpTpItems("header", *reinterpret_cast<void**>(ctx + 0xc), 0);
+        DumpTpItems("sections", *reinterpret_cast<void**>(ctx + 0x1c), 0);
+        Log("  names #%d:", *reinterpret_cast<int*>(ctx + 0x28));
+        for (const int* e = *reinterpret_cast<int**>(ctx + 0x20); e; e = reinterpret_cast<const int*>(e[2]))
+            Log(" %s=%d %s", Name(e).c_str(), e[0], NodeText(reinterpret_cast<void*>(e[1])).c_str());
+        Log("\n");
+    }
+    if (side == 1) {
+        void* f = OrigAt(0x44bf0);
+        __asm {
+            pushad
+            push ctx
+            call f
+            popad
+        }
+    } else {
+        LoadOurTp();
+        ourTp.destroy(ctx);
+    }
+}
+static void* TpParser(int)
+{
+    void* parser = RealNew(0x200);
+    std::memset(parser, 0, 0x200);
+    *reinterpret_cast<int*>(static_cast<char*>(parser) + 0x80) = 7;
+    return parser;
+}
+static void FreeTpParser(int, void* parser) { RealDelete(parser); }
+
+static void RunTpEngine(int s, unsigned seed)
+{
+    static const EngineSpec spec = {"_RsTestTpParse", "_RsTestTpFree", 0x44830, 0x43630, 0x20, 0x1c, 0x2c,
+                                    TpPrepare, TpFinish, TpParser, FreeTpParser};
+    names[s][&fakeComb] = "comb";
+    RunEngine(s, seed, spec);
+}
+
 static void WriteSources()
 {
     char tmp[MAX_PATH];
@@ -1426,8 +1792,26 @@ static void WriteSources()
     }
 }
 
+// an unexpected fault: where, and the end of the side's log
+static LONG WINAPI Crashed(EXCEPTION_POINTERS* e)
+{
+    const auto at = reinterpret_cast<uintptr_t>(e->ExceptionRecord->ExceptionAddress);
+    for (int s = 0; s < 2; ++s) {
+        const auto b = reinterpret_cast<uintptr_t>(mod[s]);
+        if (at - b < 0x200000) std::printf("fault in %s +0x%x\n", s ? "the original" : "ours", static_cast<unsigned>(at - b));
+    }
+    std::printf("fault %08lx at %p, side %d; log end:\n", e->ExceptionRecord->ExceptionCode,
+                e->ExceptionRecord->ExceptionAddress, cur);
+    if (cur >= 0) {
+        const std::string& t = logText[cur];
+        std::printf("%s\n", t.substr(t.size() > 3000 ? t.size() - 3000 : 0).c_str());
+    }
+    return EXCEPTION_EXECUTE_HANDLER;
+}
+
 int main(int argc, char** argv)
 {
+    SetUnhandledExceptionFilter(&Crashed);
     if (argc < 2) {
         std::printf("usage: diff_rs_u2b <bin dir> [rounds]\n");
         return 2;
@@ -1453,6 +1837,7 @@ int main(int argc, char** argv)
     AnsiFromText = As<decltype(AnsiFromText)>(Proc(ks, "??0AnsiString@Jet@@QAE@PBD@Z"));
     AnsiDtor = As<decltype(AnsiDtor)>(Proc(ks, "??1AnsiString@Jet@@QAE@XZ"));
     AnsiText = As<decltype(AnsiText)>(Proc(ks, "??BAnsiString@Jet@@QBAPBDXZ"));
+    AnsiAssign = As<decltype(AnsiAssign)>(Proc(ks, "??4AnsiString@Jet@@QAAABV01@PBD@Z"));
     ReleaseRef = As<decltype(ReleaseRef)>(Proc(ks, "?ReleaseReference@ReferenceCount@Jet@@QBE_NXZ"));
     AddRef = As<decltype(AddRef)>(Proc(ks, "?AddReference@ReferenceCount@Jet@@QBEXXZ"));
     for (int i = 0; i < kNames; ++i)
@@ -1461,6 +1846,7 @@ int main(int argc, char** argv)
     MemFileCtor = As<decltype(MemFileCtor)>(Proc(ks, "??0MemoryFile@Jet@@QAE@PBXI_NH@Z"));
     MemFileDtor = As<decltype(MemFileDtor)>(Proc(ks, "??1MemoryFile@Jet@@QAE@XZ"));
     CollectCorpus();
+    CollectTpCorpus();
     for (int s = 0; s < 2; ++s) {
         LoadApi(s);
         PatchImport(mod[s], "?New@Alloc@Jet@@SAPAXI@Z", reinterpret_cast<void*>(&HookNew));
@@ -1471,8 +1857,11 @@ int main(int argc, char** argv)
         void (*run)(int, unsigned);
         int scale;
     } parts[] = {{"languages", RunLanguages, 4}, {"records", RunRecords, 2}, {"quick", RunQuick, 2}, {"qkengine", RunQuickEngine, 2},
-                 {"pre", RunPre, 2}, {"ppengine", RunPreEngine, 2}};
+                 {"pre", RunPre, 2}, {"ppengine", RunPreEngine, 2}, {"tp", RunTp, 3}, {"tpengine", RunTpEngine, 2}};
+    const char* only = std::getenv("RS_U2B_ONLY");  // a comma list of parts to run (mutation runs)
     for (auto& p : parts) {
+        if (only && !std::strstr((std::string(",") + only + ",").c_str(), (std::string(",") + p.name + ",").c_str()))
+            continue;
         for (int round = 0; round < rounds * p.scale / 4 + 1; ++round) {
             const unsigned seed = rng();
             for (int s = 0; s < 2; ++s) {

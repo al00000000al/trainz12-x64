@@ -1,9 +1,10 @@
 # RenderSystem_7c.dll: reconstruction plan
 
-Status: 2026-10-26. U0 (proxy), U1 (value types, vertex records; 939 exports), U4 (modifiers; 54 exports), U2a
+Status: 2026-10-27. U0 (proxy), U1 (value types, vertex records; 939 exports), U4 (modifiers; 54 exports), U2a
 (shader-language data; 99 exports) and U2b1 (ExtendedGfxLanguage, TextureCombiner records; 44 exports) are ours and
-verified (`tests/diff_rs_u1.cpp`, `diff_rs_u4.cpp`, `diff_rs_u2.cpp`, `diff_rs_u2b.cpp`, MODLOG): 1136/2687. Next:
-U2b2 (the scanners/parsers).
+verified (`tests/diff_rs_u1.cpp`, `diff_rs_u4.cpp`, `diff_rs_u2.cpp`, `diff_rs_u2b.cpp`, MODLOG): 1136/2687. U2b2a
+(quick parser, pre-parser) and U2b2b1 (texture program parser) are ours too (internal code). Next: U2b2b2 (the
+vertex program parser), then U3.
 
 U2 is split: U2a the data classes (GfxSymbols.cpp); U2b1 ExtendedGfxLanguage and the TextureCombiner
 Instruction/RegisterItem/ModifierItem records (ExtendedGfxLanguage.cpp); U2b2 four flex 2.5 C++ scanners
@@ -12,12 +13,17 @@ Instruction/RegisterItem/ModifierItem records (ExtendedGfxLanguage.cpp); U2b2 fo
 drive them (pre-parser driver 0x1002cad0 with reduce 0x1002c340, "Syntax error at %s."; texture 0x10044830; vertex
 0x100517d0). Same shape as KernelStandard's ConfigParser: tables read from the installed original at build time.
 U2b2a (2026-10-27): quick parser and pre-parser done (GfxParse.*, GfxQuickParser.cpp, GfxPreParser.cpp; MODLOG).
-U2b2b: tp = TextureProgramParser (yylex 0x10044d30, driver 0x10044830, reduce 0x10043760, run 0x100462d0 called
-by TextureCombiner::Load with ecx = parser object: tpFlexLexer at +0, +0x7c 0, +0x80 line 1, +0x84 the combiner's
-vftable slot 17 value; the reduce calls the combiner's virtuals and builds TexApiSection/TexApiCodeLine/
-TexRegisterDefinition records), vp = VertexProgramParser (yylex 0x10051bd0, driver 0x100518c0, run 0x10054f00).
-Their statics have to be placed against GfxLexStatics (find their addresses first). Syntax of any scanner: walk its
-DFA (scratchpad dfa_examples.py did it for gfxpp: shortest text per rule and start condition).
+U2b2b1 (2026-10-27): tp = TextureProgramParser done (TexProgramParser.cpp; MODLOG): yylex 0x10044d30, driver
+0x10044830, reduce 0x10043760 (builds the records only), run 0x100462d0 (hands them to the combiner: slots 3, 4, 11,
+13), statics 0x100b7fa0 stack, 0x100b8067, 0x100b8090..0x100b809f, and the code text AnsiString at 0x100b8800.
+U2b2b2: vp = VertexProgramParser (yylex 0x10051bd0, 6.6 KB; driver 0x100518c0 with reduce 0x1004e710, 11 KB; run
+0x10054f00 called by VertexProgram::Load). Its Lemon is a newer generation than the other three: 480 states and
+268 rules (shift < 0x1e0, reduce < 0x2ec, error 0x2ec), state table {action list, mask, default int} at 0x100aef10,
+actions {byte lookahead, int action, next} (12 bytes), no-code 0xf1, error symbol 0x76, 100 terminals, and a
+16-byte minor: the stack (0x96c) is 100 entries of {state, major, minor[4]}. It needs its own engine (or the
+template widened), its own extractor mode, and the run calls VertexProgram slots 0x0c, 0x10, 0x30, 0x34, 0x38,
+0x70, 0x74 and VertexType::GetVertexType; the context dies in 0x10032050. Syntax of any scanner: walk its DFA
+(scratchpad dfa_examples.py: shortest text per rule and start condition).
 U2b2 findings so far: the parsers are an old Lemon with per-state hash tables in .data (pre-parser: states
 {action list VA, mask, default} at 0x100b66c0, entries {byte lookahead, byte action, pad, next VA}; rule
 {lhs, rhs count} bytes at 0x100b6c28; 0x5f shifts, then reduces, 0x95 error, 0x96 accept): the tables hold
