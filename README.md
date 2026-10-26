@@ -26,7 +26,7 @@ https://discord.gg/DmqMJGtCZ
 ## 📊 Progress
 
 <!-- progress:start -->
-Measured by code size: a finished module counts whole, a partial one by the code behind the exports that are already ours (`tools/progress.py`, 2026-10-26).
+Measured by code size: a finished module counts whole, a partial one by the code behind the exports that are already ours (`tools/progress.py`, 2026-10-27).
 
 ```
 🌍 Whole game         ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░   6.5 %   7,216 KB left of 7,719

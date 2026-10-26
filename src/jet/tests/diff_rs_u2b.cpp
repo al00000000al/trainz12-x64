@@ -9,11 +9,13 @@
 // usage: diff_rs_u2b.exe <bin dir with RenderSystem_7c.dll, RenderSystem_7c_orig.dll and the Jet modules> [rounds]
 #include <windows.h>
 
+#include <cctype>
 #include <cstdarg>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <functional>
 #include <map>
 #include <random>
 #include <string>
@@ -624,9 +626,11 @@ static void RunRecords(int s, unsigned seed)
 
 // ---------------------------------------------------------------------------------------------------------------
 
+static const char* dumpPart;  // argv[3]: print this part's first log (to look at what a part does)
 static void Compare(const char* part, int round)
 {
     ++checks;
+    if (dumpPart && round < 6 && !std::strcmp(dumpPart, part)) std::printf("%s", logText[1].c_str());
     if (logText[0] == logText[1]) return;
     if (++bad > 8) return;
     const std::string &x = logText[0], &y = logText[1];
@@ -636,6 +640,773 @@ static void Compare(const char* part, int round)
     if (from == std::string::npos || i - from > 2000) from = i > 400 ? i - 400 : 0;
     std::printf("MISMATCH %s round %d\n-- ours:\n%s\n-- original:\n%s\n", part, round,
                 x.substr(from, i - from + 400).c_str(), y.substr(from, i - from + 400).c_str());
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// the shader-language parsers (internal to the module): the original's entry points by address, ours by the names
+// the linker map gives them (RenderSystem_7c.map next to the DLL)
+
+static std::string binDir;
+static void* OurSym(const char* name)
+{
+    FILE* f = std::fopen((binDir + "\\RenderSystem_7c.map").c_str(), "r");
+    if (!f) {
+        std::printf("RenderSystem_7c.map missing next to the DLL\n");
+        std::exit(2);
+    }
+    char line[1024];
+    unsigned long va = 0;
+    while (std::fgets(line, sizeof line, f)) {
+        char sym[512];
+        unsigned sec, off;
+        unsigned long v;
+        if (std::sscanf(line, " %x:%x %511s %lx", &sec, &off, sym, &v) == 4 && !std::strcmp(sym, name)) {
+            va = v;
+            break;
+        }
+    }
+    std::fclose(f);
+    if (!va) {
+        std::printf("%s not in the map\n", name);
+        std::exit(2);
+    }
+    return reinterpret_cast<char*>(mod[0]) + (va - 0x10000000);
+}
+static void* OrigAt(unsigned rva) { return reinterpret_cast<char*>(mod[1]) + rva; }
+
+static void*(__fastcall* MemFileCtor)(void*, void*, const void*, unsigned, bool, int);
+static void(__fastcall* MemFileDtor)(void*);
+
+// the corpus: every embedded program text of the render modules (the built-in vertex programs and the like)
+static std::vector<std::string> corpus;
+static void CollectCorpus()
+{
+    const char* files[] = {"Render3DCore_7c.dll", "Render3DFoundation_7c.dll", "Render3DExtension_7c.dll",
+                           "WaterSystem_7c.dll", "RenderOpenGL_7c.dll", "RenderDirectX9_7c.dll", "trainz.exe"};
+    for (const char* name : files) {
+        FILE* f = std::fopen((binDir + "\\" + name).c_str(), "rb");
+        if (!f) continue;
+        std::vector<char> d;
+        char buf[65536];
+        size_t n;
+        while ((n = std::fread(buf, 1, sizeof buf, f)) > 0) d.insert(d.end(), buf, buf + n);
+        std::fclose(f);
+        size_t i = 0;
+        while (i < d.size()) {
+            size_t j = i;
+            while (j < d.size() && (static_cast<unsigned char>(d[j]) >= 0x20 || d[j] == '\r' || d[j] == '\n' || d[j] == '\t'))
+                ++j;
+            if (j - i > 120 && j < d.size() && d[j] == 0) {
+                std::string s(d.begin() + i, d.begin() + j);
+                if (s.find("version") != std::string::npos &&
+                    (s.find("rogram") != std::string::npos || s.find("ombiner") != std::string::npos))
+                    corpus.push_back(s);
+            }
+            i = j + 1;
+        }
+    }
+    std::printf("-- corpus: %zu texts\n", corpus.size());
+}
+
+// a corpus text, as it is or damaged (cut, tokens dropped or doubled, bytes changed)
+static std::vector<std::string> words;  // the corpus split at blanks, plus punctuation
+static std::string Sample(std::mt19937& r)
+{
+    if (words.empty()) {
+        for (const std::string& t : corpus) {
+            size_t i = 0;
+            while (i < t.size()) {
+                while (i < t.size() && std::strchr(" \t\r\n", t[i])) ++i;
+                size_t j = i;
+                while (j < t.size() && !std::strchr(" \t\r\n", t[j])) ++j;
+                if (j > i) words.push_back(t.substr(i, j - i));
+                i = j;
+            }
+        }
+        for (const char* p : {"{", "}", "(", ")", "=", ";", ",", "#if", "#else", "#endif", "#define", "\"", "/*", "*/",
+                              "//", "version", "2.0", "1.5", "\xe9t\xe9", "\x80\xff"})
+            for (int k = 0; k < 40; ++k) words.push_back(p);
+    }
+    const int how = static_cast<int>(r() % 10);
+    if (how >= 8) {  // token soup, or a piece cut out of the middle of a text
+        std::string s = r() % 2 ? "version 2.0\n" : "";
+        if (how == 8) {
+            for (int n = static_cast<int>(r() % 300); n; --n) {
+                s += words[r() % words.size()];
+                s += " \n\t"[r() % 3];
+            }
+        } else {
+            const std::string& t = corpus[r() % corpus.size()];
+            const size_t at = r() % t.size();
+            s += t.substr(at, r() % 4000);
+        }
+        return s;
+    }
+    std::string s = corpus[r() % corpus.size()];
+    if (how == 7) {  // long, with bytes above 0x7f: tokens across the scanner's 8 KB reads
+        while (s.size() < 20000) s += corpus[r() % corpus.size()];
+        for (int k = static_cast<int>(r() % 200); k; --k) s[r() % s.size()] = static_cast<char>(0x80 + r() % 0x80);
+        return s;
+    }
+    if (how >= 4) return s;
+    for (int k = 1 + static_cast<int>(r() % 4); k; --k) {
+        if (s.empty()) break;
+        const size_t at = r() % s.size();
+        const size_t len = 1 + r() % 12;
+        switch (how) {
+        case 0: s.erase(at, len); break;
+        case 1: s.insert(at, s.substr(at, len)); break;
+        case 2: s[at] = "{}()=;,.#\n x0\"/*\x80\xff"[r() % 18]; break;
+        case 3: s.resize(at); break;
+        }
+    }
+    return s;
+}
+
+static void DumpNames(const char* tag, const void* listHead)
+{
+    struct Chunk {
+        Chunk* next;
+        Chunk* prev;
+        int count;
+        void* names[13];
+    };
+    const auto* head = static_cast<const Chunk*>(listHead);
+    Log("  %s:", tag);
+    if (head) {
+        const Chunk* c = head;
+        do {
+            Log(" [%s %d:", Name(c).c_str(), c->count);
+            for (int i = 0; i < c->count; ++i) Log(" %s", NodeText(c->names[i]).c_str());
+            Log("]");
+            c = c->next;
+        } while (c != head);
+    }
+    Log("\n");
+}
+
+static unsigned char asmResult;
+static int parsedOk, parsedBad;  // the original's results, to see how much of the error paths is reached
+static void OrigQuickCtor(void* obj, void* file)
+{
+    void* f = OrigAt(0x2f830);
+    __asm {
+        pushad
+        mov ecx, file
+        push obj
+        call f
+        popad
+    }
+}
+static bool OrigQuickRun(void* obj, void* name)
+{
+    void* f = OrigAt(0x2f930);
+    __asm {
+        pushad
+        mov edi, obj
+        mov eax, name
+        call f
+        mov asmResult, al
+        popad
+    }
+    return asmResult != 0;
+}
+static void OrigQuickDtor(void* obj)
+{
+    void* f = OrigAt(0x2f8d0);
+    __asm {
+        pushad
+        push obj
+        call f
+        popad
+    }
+}
+
+static void RunQuick(int s, unsigned seed)
+{
+    std::mt19937 r(seed);
+    static void (*ourCtor)(void*, void*);
+    static bool (*ourRun)(void*, const void*);
+    static const void* (*ourNames)(void*);
+    static void (*ourDtor)(void*);
+    if (!ourCtor) {
+        ourCtor = As<decltype(ourCtor)>(OurSym("_RsTestQuickCtor"));
+        ourRun = As<decltype(ourRun)>(OurSym("_RsTestQuickRun"));
+        ourNames = As<decltype(ourNames)>(OurSym("_RsTestQuickNames"));
+        ourDtor = As<decltype(ourDtor)>(OurSym("_RsTestQuickDtor"));
+    }
+    for (int k = 0; k < 3; ++k) {
+        const std::string text = Sample(r);
+        const char* names[] = {"MPOneTexMaterial_Vtx", "", "x"};
+        void* file = RealNew(0x14);
+        MemFileCtor(file, nullptr, text.c_str(), static_cast<unsigned>(text.size()), false, 0);
+        void* name = NewAnsi(names[r() % 3]);
+        void* obj = RealNew(0x400);
+        std::memset(obj, 0xcd, 0x400);
+        Log("quick %d: %u bytes\n", k, static_cast<unsigned>(text.size()));
+        bool ok;
+        const void* list;
+        if (s == 0) {
+            ourCtor(obj, file);
+            ok = ourRun(obj, name);
+            list = *static_cast<void* const*>(ourNames(obj));
+        } else {
+            OrigQuickCtor(obj, file);
+            ok = OrigQuickRun(obj, name);
+            list = *reinterpret_cast<void* const*>(static_cast<char*>(obj) + 0x80);
+        }
+        Log("  ok %d\n", ok);
+        if (s == 1) ++(ok ? parsedOk : parsedBad);
+        DumpNames("names", list);
+        if (s == 0)
+            ourDtor(obj);
+        else
+            OrigQuickDtor(obj);
+        RealDelete(obj);
+        FreeAnsi(name);
+        MemFileDtor(file);
+        RealDelete(file);
+    }
+}
+
+// ---- a Lemon driver alone: made-up token streams (every terminal carries a text, so any rule finds strings)
+
+struct EngineSpec {
+    const char* ourParse;
+    const char* ourFree;
+    unsigned driver;     // the original's: ecx stack, eax major, edx minor, [esp+4] context
+    unsigned freeStack;  // esi stack
+    int terminals;
+    int ctxSize;      // the context the reduce actions see (the parser last)
+    int errorOffset;  // the context's error flag
+    void (*prepare)(unsigned char* ctx, int variant);  // the rest of the context
+    void (*finish)(int side, unsigned char* ctx, void* parser);  // log and free what the actions left
+    void* (*makeParser)(int side);
+    void (*freeParser)(int side, void* parser);
+};
+
+static void OrigDriver(unsigned rva, void* stack, int major, void* minor, void* ctx)
+{
+    void* f = OrigAt(rva);
+    __asm {
+        pushad
+        push ctx
+        mov ecx, stack
+        mov eax, major
+        mov edx, minor
+        call f
+        add esp, 4
+        popad
+    }
+}
+static void OrigFreeStack(unsigned rva, void* stack)
+{
+    void* f = OrigAt(rva);
+    __asm {
+        pushad
+        mov esi, stack
+        call f
+        popad
+    }
+}
+
+static void FreeNameList(void* head)  // the chunks the reduce actions made (0x1002ce20 order)
+{
+    struct Chunk {
+        Chunk* next;
+        Chunk* prev;
+        int count;
+        void* n[13];
+    };
+    auto* first = static_cast<Chunk*>(head);
+    if (!first) return;
+    auto release = [](Chunk* c) {
+        for (int i = 0; i < c->count; ++i)
+            if (c->n[i]) DestroyNode(*cache, c->n[i]);
+        HookDelete(c);
+    };
+    Chunk* c = first->next;
+    while (c != first) {
+        Chunk* next = c->next;
+        release(c);
+        c = next;
+    }
+    release(first);
+}
+
+using ParseFn = void(__cdecl*)(void*, int, void*, void*);
+using FreeFn = void(__cdecl*)(void*);
+
+static void* TokenText(std::mt19937& r)  // a token's minor: a number-like text in Jet's heap
+{
+    char text[16];
+    std::snprintf(text, sizeof text, "%d.%d", static_cast<int>(r() % 100), static_cast<int>(r() % 10));
+    void* m = RealNew(static_cast<unsigned>(std::strlen(text) + 1));
+    std::strcpy(static_cast<char*>(m), text);
+    return m;
+}
+
+// our driver's state after `stream` from scratch, nothing logged: {error countdown, stack index}
+static std::pair<int, int> Probe(const EngineSpec& e, ParseFn parse, FreeFn free, void* parser,
+                                 const std::vector<int>& stream)
+{
+    const int saved = cur;
+    cur = -1;
+    std::mt19937 r(1);
+    unsigned char ctx[0x40] = {};
+    e.prepare(ctx, 0);
+    *reinterpret_cast<void**>(ctx + e.ctxSize - 4) = parser;
+    void* stack = RealNew(0x4bc);
+    *static_cast<int*>(stack) = -1;
+    for (int t : stream) parse(stack, t, t ? TokenText(r) : nullptr, ctx);
+    const std::pair<int, int> state{static_cast<int*>(stack)[1], static_cast<int*>(stack)[0]};
+    free(stack);
+    e.finish(-1, ctx, parser);
+    cur = saved;
+    return state;
+}
+
+// a stream the grammar mostly takes: each next token one our driver shifts without an error (the error countdown
+// goes down by one), now and then any token
+static std::vector<int> GrammarStream(std::mt19937& r, const EngineSpec& e, ParseFn parse, FreeFn free, void* parser)
+{
+    std::vector<int> stream;
+    const int n = static_cast<int>(r() % (r() % 4 ? 40 : 160));
+    const int bad = static_cast<int>(r() % 3);  // how often a wrong token is let in (never, rarely, more)
+    for (int i = 0; i < n; ++i) {
+        std::vector<int> order;
+        for (int t = 1; t <= e.terminals; ++t) order.push_back(t);
+        for (int k = static_cast<int>(order.size()) - 1; k > 0; --k) std::swap(order[k], order[r() % (k + 1)]);
+        int pick = 0;
+        if (bad && static_cast<int>(r() % 20) < bad) {
+            pick = order[0];
+        } else {
+            const int before = stream.empty() ? -1 : Probe(e, parse, free, parser, stream).first;
+            for (int t : order) {
+                stream.push_back(t);
+                const std::pair<int, int> after = Probe(e, parse, free, parser, stream);
+                stream.pop_back();
+                if (after.first == before - 1 && after.second >= 0) {
+                    pick = t;
+                    break;
+                }
+            }
+        }
+        if (!pick) pick = order[0];  // nothing fits: an error, then recovery
+        stream.push_back(pick);
+    }
+    return stream;
+}
+
+static void RunEngine(int s, unsigned seed, const EngineSpec& e)
+{
+    std::mt19937 r(seed);
+    static std::map<std::string, void*> syms;
+    if (!syms[e.ourParse]) {
+        syms[e.ourParse] = OurSym(e.ourParse);
+        syms[e.ourFree] = OurSym(e.ourFree);
+    }
+    const auto ourParse = reinterpret_cast<ParseFn>(syms[e.ourParse]);
+    const auto ourFree = reinterpret_cast<FreeFn>(syms[e.ourFree]);
+    // the probes always run our driver with our parser object; the logged run uses the side's
+    const int saved = cur;
+    cur = -1;
+    void* probeParser = e.makeParser(0);
+    cur = saved;
+    void* parser = e.makeParser(s);
+    for (int round = 0; round < 4; ++round) {
+        unsigned char ctx[0x40];
+        std::memset(ctx, 0, sizeof ctx);
+        const int variant = static_cast<int>(r() % 4);
+        e.prepare(ctx, variant);
+        *reinterpret_cast<void**>(ctx + e.ctxSize - 4) = parser;
+        void* stack = TestNew(0x4bc, "Stack%d", round);
+        *static_cast<int*>(stack) = -1;
+        std::vector<int> stream;
+        if (round % 2) {
+            stream = GrammarStream(r, e, ourParse, ourFree, probeParser);
+        } else {
+            const int n = static_cast<int>(r() % (r() % 4 ? 60 : 400));
+            const int bias = static_cast<int>(r() % e.terminals) + 1;  // one token more frequent (lists, nesting)
+            for (int i = 0; i < n; ++i) {
+                int major = r() % 3 ? bias : static_cast<int>(r() % e.terminals) + 1;
+                if (r() % 50 == 0) major = 0;
+                stream.push_back(major);
+            }
+        }
+        stream.push_back(0);
+        const int n = static_cast<int>(stream.size()) - 1;
+        Log("engine %d (variant %d): %d tokens:", round, variant, n);
+        for (int t : stream) Log(" %d", t);
+        Log("\n");
+        for (int i = 0; i <= n; ++i) {
+            const int major = stream[i];
+            void* minor = nullptr;
+            if (major) {  // (a rule may atof() its token: never null)
+                char text[16];
+                std::snprintf(text, sizeof text, "%d.%d", static_cast<int>(r() % 100), static_cast<int>(r() % 10));
+                minor = TestNew(static_cast<unsigned>(std::strlen(text) + 1), "T%d", i);
+                std::strcpy(static_cast<char*>(minor), text);
+            }
+            if (s == 0)
+                ourParse(stack, major, minor, ctx);
+            else
+                OrigDriver(e.driver, stack, major, minor, ctx);
+            const int idx = *static_cast<int*>(stack);
+            Log("  %d -> top %d err %d flag %d", major, idx, static_cast<int*>(stack)[1], ctx[e.errorOffset]);
+            if (idx >= 0) {
+                const int* top = reinterpret_cast<int*>(static_cast<int*>(stack)[2]);
+                Log(" [%d %d]", top[0], top[1]);
+            }
+            Log("\n");
+        }
+        if (s == 0)
+            ourFree(stack);
+        else
+            OrigFreeStack(e.freeStack, stack);
+        e.finish(s, ctx, parser);
+    }
+    e.freeParser(s, parser);
+    cur = -1;
+    e.freeParser(0, probeParser);
+    cur = saved;
+}
+
+// the quick parser: context {names list, error, parser}; a stand-in parser for the original's error message (a
+// String at +0x7c, the line at +0x84)
+static void QuickPrepare(unsigned char* ctx, int)
+{
+    *reinterpret_cast<void**>(ctx) = ctx + 0x30;  // the list head lives in the context buffer
+}
+static void QuickFinish(int side, unsigned char* ctx, void*)
+{
+    void* head = *reinterpret_cast<void**>(ctx + 0x30);
+    if (side >= 0) DumpNames("names", head);
+    FreeNameList(head);
+}
+static void* QuickParser(int)
+{
+    void* parser = RealNew(0x200);
+    std::memset(parser, 0, 0x200);
+    AnsiFromText(static_cast<char*>(parser) + 0x7c, nullptr, "test");
+    *reinterpret_cast<int*>(static_cast<char*>(parser) + 0x84) = 7;
+    return parser;
+}
+static void FreeQuickParser(int, void* parser)
+{
+    AnsiDtor(static_cast<char*>(parser) + 0x7c, nullptr);
+    RealDelete(parser);
+}
+
+static void RunQuickEngine(int s, unsigned seed)
+{
+    static const EngineSpec spec = {"_RsTestQuickParse", "_RsTestQuickFree", 0x2ed30, 0x2e860, 11, 12, 4,
+                                    QuickPrepare, QuickFinish, QuickParser, FreeQuickParser};
+    RunEngine(s, seed, spec);
+}
+
+// ---- the pre-parser: a stand-in language (slot 0 SupportedByPlatform, slot 7 Defines, the Display at +8 with its
+// capability query in slot 7, the generation at +0x1c)
+
+static bool __cdecl FakeSupported(void* self, float generation)
+{
+    const bool ok = static_cast<int>(generation * 8) % 5 != 0;
+    Log("  supported %s %g -> %d\n", Name(self).c_str(), generation, ok);
+    return ok;
+}
+static bool __cdecl FakeDefines(const void* self, const void* name)
+{
+    const void* node = *static_cast<void* const*>(name);
+    unsigned h = 0;
+    for (const char* p = node ? static_cast<const Node*>(node)->text : ""; *p; ++p) h = h * 31 + static_cast<unsigned char>(*p);
+    const bool yes = h % 2 != 0;
+    Log("  defines %s %s -> %d\n", Name(self).c_str(), NodeText(node).c_str(), yes);
+    return yes;
+}
+static bool __cdecl FakeCapability(void* self, int index)
+{
+    const bool yes = index % 3 == 0;
+    Log("  capability %s %d -> %d\n", Name(self).c_str(), index, yes);
+    return yes;
+}
+static bool __cdecl FakeFalse() { return false; }
+static void* langVtable[9] = {reinterpret_cast<void*>(&FakeSupported), &FakeFalse, &FakeFalse, &FakeFalse, &FakeFalse,
+                              &FakeFalse, &FakeFalse, reinterpret_cast<void*>(&FakeDefines), &FakeFalse};
+static void* displayVtable[8] = {&FakeFalse, &FakeFalse, &FakeFalse, &FakeFalse, &FakeFalse, &FakeFalse, &FakeFalse,
+                                 reinterpret_cast<void*>(&FakeCapability)};
+static struct {
+    void** vt = displayVtable;
+} fakeDisplay;
+static struct {
+    void** vt = langVtable;
+    void* vb = nullptr;
+    void* display = &fakeDisplay;
+    unsigned char rest[0x34] = {};
+} fakeLang;
+static float LangGeneration() { return *reinterpret_cast<float*>(reinterpret_cast<char*>(&fakeLang) + 0x1c); }
+
+static void OrigPreCtor(void* obj, int param, void* file)
+{
+    void* f = OrigAt(0x2b9d0);
+    __asm {
+        pushad
+        push file
+        push param
+        push obj
+        call f
+        popad
+    }
+}
+static bool OrigPreRun(void* obj, const void* program, const void* file, void* lang)
+{
+    void* f = OrigAt(0x2bbd0);
+    __asm {
+        pushad
+        mov edi, obj
+        push lang
+        push file
+        push program
+        call f
+        add esp, 12
+        mov asmResult, al
+        popad
+    }
+    return asmResult != 0;
+}
+static void OrigPreDtor(void* obj)
+{
+    void* f = OrigAt(0x2baf0);
+    __asm {
+        pushad
+        push obj
+        call f
+        popad
+    }
+}
+
+struct PreApi {
+    void (*ctor)(void*, int, void*);
+    bool (*run)(void*, const void*, const void*, void*);
+    const void* (*output)(void*);
+    void (*dtor)(void*);
+};
+static PreApi& OurPre()
+{
+    static PreApi a;
+    if (!a.ctor) {
+        a.ctor = As<decltype(a.ctor)>(OurSym("_RsTestPreCtor"));
+        a.run = As<decltype(a.run)>(OurSym("_RsTestPreRun"));
+        a.output = As<decltype(a.output)>(OurSym("_RsTestPreOutput"));
+        a.dtor = As<decltype(a.dtor)>(OurSym("_RsTestPreDtor"));
+    }
+    return a;
+}
+static const char* PreOutput(int s, void* obj)
+{
+    return AnsiText(s == 0 ? OurPre().output(obj) : static_cast<char*>(obj) + 0x88);
+}
+
+// a made-up program file using every feature of the pre-parser's syntax (found by walking its DFA): API blocks,
+// API_NATIVE with a binding part, nested %ifdef/%ifndef/%elseif/%else/%endif with ( | & ! ), API(name),
+// extension(capability) and program names, generation
+static std::string PreText(std::mt19937& r, std::vector<std::string>& programs)
+{
+    static const char* apis[] = {"common", "OpenGL", "DirectX", "Other"};
+    static const char* flags[] = {"extrusion", "point", "color", "fog", "skin"};
+    static const char* caps[] = {"D_MULTI_TEXTURE", "D_AUTOMIP", "D_VERTEX_PROGRAM", "D_BLEND_EQUATION", "D_NOPE"};
+    auto P = [&](int n) { return static_cast<int>(r() % n); };
+    std::string t = "# made up\n\nversion " + std::string(P(6) ? "2.0" : "1.5") + "\n\n";
+    t += "vertexProgram(Made" + std::to_string(P(3)) + ") {\n";
+    for (int i = 0, n = 1 + P(4); i < n; ++i) {
+        const std::string name = "prog" + std::to_string(i);
+        programs.push_back(name);
+        t += "  program " + name + " (P" + std::to_string(P(5)) + ")";
+        if (P(4)) {
+            t += " =";
+            for (int k = 0, m = 1 + P(3); k < m; ++k) t += std::string(k ? ", " : " ") + flags[P(5)];
+        }
+        t += ";\n";
+    }
+    if (P(2)) t += "  generation = " + std::to_string(1 + P(3)) + "." + std::to_string(P(10)) + ";\n";
+    t += "}\n\n";
+    std::function<std::string(int)> expr = [&](int depth) -> std::string {
+        switch (depth > 2 ? P(3) : P(7)) {
+        case 0: return flags[P(5)];
+        case 1: return std::string("API(") + apis[P(4)] + ")";
+        case 2: return std::string("extension(") + caps[P(5)] + ")";
+        case 3: return "!" + expr(depth + 1);
+        case 4: return "(" + expr(depth + 1) + ")";
+        case 5: return expr(depth + 1) + " | " + expr(depth + 1);
+        default: return expr(depth + 1) + " & " + expr(depth + 1);
+        }
+    };
+    std::function<std::string(int)> body = [&](int depth) -> std::string {
+        std::string b;
+        for (int i = 0, n = 1 + P(5); i < n; ++i) {
+            switch (depth > 3 ? 0 : P(7)) {
+            case 0: b += "  MOV r" + std::to_string(P(9)) + ", c[" + std::to_string(P(9)) + "];\n"; break;
+            case 6: b += "  PARAM v = { 0, 1 };\n"; break;
+            case 1: b += "  { DP4 a, b; }\n"; break;
+            case 2: b += "  /* note */ # comment\n"; break;
+            default: {
+                static const char* broken[] = {"", "", "", "", " &", " | (", " !"};  // an expression left open
+                b += std::string(P(3) ? "%ifdef " : "%ifndef ") + expr(0) + broken[P(7)] + "\n" + body(depth + 1);
+                for (int k = P(3); k; --k) b += "%elseif " + expr(0) + "\n" + body(depth + 1);
+                if (P(2)) b += "%else\n" + body(depth + 1);
+                b += "%endif\n";
+            }
+            }
+        }
+        return b;
+    };
+    for (int i = 0, n = 1 + P(4); i < n; ++i) {
+        if (P(3)) {
+            std::string a = apis[P(4)];
+            if (P(3) == 0) a += std::string("|") + apis[P(4)];
+            t += "API(" + a + ")" + (P(4) ? "" : " =") + "\n{\n" + body(0) + "}\n\n";
+        } else {
+            t += "API_NATIVE(" + std::string(apis[P(4)]) + ")";
+            if (P(2)) t += " : { PARAM x = 1; }";
+            t += "\n{\n  !!ARBvp1.0 { native = 2; }\n" + body(0) + "}\n\n";
+        }
+    }
+    if (P(5) == 0) t.erase(r() % t.size(), 1 + r() % 6);  // now and then broken
+    return t;
+}
+
+// the program names a text declares ("program <name>"), to ask for one of them
+static std::vector<std::string> ProgramNames(const std::string& t)
+{
+    std::vector<std::string> out;
+    for (size_t at = t.find("program "); at != std::string::npos; at = t.find("program ", at + 8)) {
+        size_t i = at + 8;
+        while (i < t.size() && t[i] == ' ') ++i;
+        size_t j = i;
+        while (j < t.size() && (std::isalnum(static_cast<unsigned char>(t[j])) || t[j] == '_')) ++j;
+        if (j > i) out.push_back(t.substr(i, j - i));
+    }
+    return out;
+}
+
+// the scanners' module statics (0x100b7dc8..0x100b8077 in the original): a damaged text can leave them in any
+// state, which the next run inherits (as in the original); most scenarios start both sides from zero
+static void ResetLexStatics(int s)
+{
+    static void* ours = OurSym("?gfxLex@Jet@@3UGfxLexStatics@1@A");
+    std::memset(s == 0 ? ours : OrigAt(0xb7dc8), 0, 0x2b0);
+}
+
+// a run that may fault (as the original does): -1 then
+static int GuardedPreRun(int s, void* obj, const void* program, const void* file)
+{
+    __try {
+        return s == 0 ? OurPre().run(obj, program, file, &fakeLang) : OrigPreRun(obj, program, file, &fakeLang);
+    } __except (GetExceptionCode() == EXCEPTION_ACCESS_VIOLATION ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH) {
+        return -1;
+    }
+}
+
+static void RunPre(int s, unsigned seed)
+{
+    std::mt19937 r(seed);
+    if (r() % 4) ResetLexStatics(s);
+    names[s][&fakeLang] = "lang";
+    names[s][&fakeDisplay] = "display";
+    for (int k = 0; k < 3; ++k) {
+        std::vector<std::string> programs;
+        const int kind = static_cast<int>(r() % 3);
+        const std::string text = kind == 0 ? PreText(r, programs) : kind == 1 ? Sample(r) : corpus[r() % corpus.size()];
+        if (kind) programs = ProgramNames(text);
+        std::string program = "";
+        const int pick = static_cast<int>(r() % 6);
+        if (pick && !programs.empty()) program = programs[r() % programs.size()];
+        else if (pick == 1) program = "nosuchprogram";
+        void* programNode = program.empty() ? nullptr : CreateNode(*cache, reinterpret_cast<const unsigned char*>(program.c_str()));
+        void* fileNode = r() % 2 ? CreateNode(*cache, reinterpret_cast<const unsigned char*>("prog.txt")) : nullptr;
+        const int param = static_cast<int>(r() % 3);
+        *reinterpret_cast<float*>(reinterpret_cast<char*>(&fakeLang) + 0x1c) = 0.25f;  // so the store shows
+        void* file = RealNew(0x14);
+        MemFileCtor(file, nullptr, text.c_str(), static_cast<unsigned>(text.size()), false, 0);
+        void* obj = RealNew(0x400);
+        std::memset(obj, 0xcd, 0x400);
+        Log("pre %d: %u bytes, program \"%s\"\n", k, static_cast<unsigned>(text.size()), program.c_str());
+        if (s == 0)
+            OurPre().ctor(obj, param, file);
+        else
+            OrigPreCtor(obj, param, file);
+        const int ok = GuardedPreRun(s, obj, &programNode, &fileNode);
+        if (ok < 0) {  // both modules read address 0 on such a text (an #if stack popped empty...)
+            Log("  crashed\n");
+            ResetLexStatics(s);
+        }
+        Log("  ok %d gen %g\n  out [%s]\n", ok, LangGeneration(), PreOutput(s, obj));
+        if (s == 1) ++(ok > 0 ? parsedOk : parsedBad);
+        if (s == 0)
+            OurPre().dtor(obj);
+        else
+            OrigPreDtor(obj);
+        RealDelete(obj);
+        MemFileDtor(file);
+        RealDelete(file);
+        if (programNode) DestroyNode(*cache, programNode);
+        if (fileNode) DestroyNode(*cache, fileNode);
+    }
+}
+
+// the pre-parser's driver alone: context {version, generation, param, lang, names (+0x10), file, program (+0x18),
+// error (+0x1c), found, -, parser (+0x20)}; the parser a real one of the side's (rule 13 writes into its output)
+static void* emptyFile;
+static void PrePrepare(unsigned char* ctx, int variant)
+{
+    static const char* programs[] = {nullptr, "12.3", "5.5", "x"};
+    *reinterpret_cast<float*>(ctx + 4) = 1.0f;
+    *reinterpret_cast<void**>(ctx + 0xc) = &fakeLang;
+    *reinterpret_cast<const char**>(ctx + 0x14) = "file";
+    *reinterpret_cast<const char**>(ctx + 0x18) = programs[variant];
+}
+static void PreFinish(int side, unsigned char* ctx, void* parser)
+{
+    void* list = *reinterpret_cast<void**>(ctx + 0x10);
+    if (side >= 0) {
+        float v[2];
+        std::memcpy(v, ctx, sizeof v);
+        Log("  ctx version %g generation %g found %d out [%s]\n", v[0], v[1], ctx[0x1d], PreOutput(side, parser));
+        DumpNames("names", list ? *static_cast<void**>(list) : nullptr);
+    }
+    if (list) {
+        FreeNameList(*static_cast<void**>(list));
+        HookDelete(list);
+    }
+}
+static void* PreParserObject(int side)
+{
+    if (!emptyFile) {
+        emptyFile = RealNew(0x14);
+        MemFileCtor(emptyFile, nullptr, "", 0, false, 0);
+    }
+    void* obj = RealNew(0x400);
+    std::memset(obj, 0, 0x400);
+    if (side == 0)
+        OurPre().ctor(obj, 0, emptyFile);
+    else
+        OrigPreCtor(obj, 0, emptyFile);
+    return obj;
+}
+static void FreePreParserObject(int side, void* obj)
+{
+    if (side == 0)
+        OurPre().dtor(obj);
+    else
+        OrigPreDtor(obj);
+    RealDelete(obj);
+}
+
+static void RunPreEngine(int s, unsigned seed)
+{
+    static const EngineSpec spec = {"_RsTestPreParse", "_RsTestPreFree", 0x2cad0, 0x2c210, 0x1d, 0x24, 0x1c,
+                                    PrePrepare, PreFinish, PreParserObject, FreePreParserObject};
+    names[s][&fakeLang] = "lang";
+    RunEngine(s, seed, spec);
 }
 
 static void WriteSources()
@@ -664,6 +1435,8 @@ int main(int argc, char** argv)
     const int rounds = argc > 2 ? std::atoi(argv[2]) : 400;
     SetDllDirectoryA(argv[1]);
     std::string dir = argv[1];
+    binDir = dir;
+    if (argc > 3) dumpPart = argv[3];
     mod[0] = LoadLibraryA((dir + "\\RenderSystem_7c.dll").c_str());
     mod[1] = GetModuleHandleA("RenderSystem_7c_orig.dll");
     ks = GetModuleHandleA("KernelStandard_7c.dll");
@@ -685,6 +1458,9 @@ int main(int argc, char** argv)
     for (int i = 0; i < kNames; ++i)
         nodes[i] = *kTexts[i] ? CreateNode(*cache, reinterpret_cast<const unsigned char*>(kTexts[i])) : nullptr;
     WriteSources();
+    MemFileCtor = As<decltype(MemFileCtor)>(Proc(ks, "??0MemoryFile@Jet@@QAE@PBXI_NH@Z"));
+    MemFileDtor = As<decltype(MemFileDtor)>(Proc(ks, "??1MemoryFile@Jet@@QAE@XZ"));
+    CollectCorpus();
     for (int s = 0; s < 2; ++s) {
         LoadApi(s);
         PatchImport(mod[s], "?New@Alloc@Jet@@SAPAXI@Z", reinterpret_cast<void*>(&HookNew));
@@ -694,7 +1470,8 @@ int main(int argc, char** argv)
         const char* name;
         void (*run)(int, unsigned);
         int scale;
-    } parts[] = {{"languages", RunLanguages, 4}, {"records", RunRecords, 2}};
+    } parts[] = {{"languages", RunLanguages, 4}, {"records", RunRecords, 2}, {"quick", RunQuick, 2}, {"qkengine", RunQuickEngine, 2},
+                 {"pre", RunPre, 2}, {"ppengine", RunPreEngine, 2}};
     for (auto& p : parts) {
         for (int round = 0; round < rounds * p.scale / 4 + 1; ++round) {
             const unsigned seed = rng();
@@ -708,7 +1485,8 @@ int main(int argc, char** argv)
             }
             Compare(p.name, round);
         }
-        std::printf("-- %s done\n", p.name);
+        std::printf("-- %s done (parses ok %d, failed %d)\n", p.name, parsedOk, parsedBad);
+        parsedOk = parsedBad = 0;
     }
     std::printf("%llu scenarios, %llu mismatches\n", checks, bad);
     return bad ? 1 : 0;

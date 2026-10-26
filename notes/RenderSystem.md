@@ -11,6 +11,13 @@ Instruction/RegisterItem/ModifierItem records (ExtendedGfxLanguage.cpp); U2b2 fo
 0x10051bd0, tp = TextureProgramParser 0x10044d30; their `yylex` holds the rule actions) and the Lemon parsers that
 drive them (pre-parser driver 0x1002cad0 with reduce 0x1002c340, "Syntax error at %s."; texture 0x10044830; vertex
 0x100517d0). Same shape as KernelStandard's ConfigParser: tables read from the installed original at build time.
+U2b2a (2026-10-27): quick parser and pre-parser done (GfxParse.*, GfxQuickParser.cpp, GfxPreParser.cpp; MODLOG).
+U2b2b: tp = TextureProgramParser (yylex 0x10044d30, driver 0x10044830, reduce 0x10043760, run 0x100462d0 called
+by TextureCombiner::Load with ecx = parser object: tpFlexLexer at +0, +0x7c 0, +0x80 line 1, +0x84 the combiner's
+vftable slot 17 value; the reduce calls the combiner's virtuals and builds TexApiSection/TexApiCodeLine/
+TexRegisterDefinition records), vp = VertexProgramParser (yylex 0x10051bd0, driver 0x100518c0, run 0x10054f00).
+Their statics have to be placed against GfxLexStatics (find their addresses first). Syntax of any scanner: walk its
+DFA (scratchpad dfa_examples.py did it for gfxpp: shortest text per rule and start condition).
 U2b2 findings so far: the parsers are an old Lemon with per-state hash tables in .data (pre-parser: states
 {action list VA, mask, default} at 0x100b66c0, entries {byte lookahead, byte action, pad, next VA}; rule
 {lhs, rhs count} bytes at 0x100b6c28; 0x5f shifts, then reduces, 0x95 error, 0x96 accept): the tables hold

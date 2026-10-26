@@ -93,6 +93,43 @@ target_link_libraries(InputWin32_7c PRIVATE "${IMPLIB}/InputSystem_7c.lib")
 # RenderSystem_7c: replaced unit by unit (notes/RenderSystem.md); its module state stays the original's until U9
 target_compile_definitions(RenderSystem_7c PRIVATE JET_RS_BUILD)
 target_link_libraries(RenderSystem_7c PRIVATE "${IMPLIB}/RenderSystem_7c_orig.lib")
+# the map lets the diff tests find the parsers' internal entry points (RsTest*)
+target_link_options(RenderSystem_7c PRIVATE /MAP)
+# the shader-language scanners' DFA tables and their Lemon parsers' tables (generated output with no source), read
+# from the installed original at build time like KernelStandard's ConfigParser
+set(ORIG_RS "D:/games/trainz 2012 VDK/bin/RenderSystem_7c.dll")
+set(RS_TABLES "")
+foreach(t "gfxqk_acclist;6cdb0;88;u16" "gfxqk_accept;6ce60;96;u16" "gfxqk_ec;6cf20;128;u8" "gfxqk_meta;6cfa0;42;u32"
+          "gfxqk_base;6d048;100;u16" "gfxqk_def;6d110;100;u16" "gfxqk_nxt;6d1d8;208;u16" "gfxqk_chk;6d378;208;u16"
+          "gfxpp_acclist;6d518;356;u16" "gfxpp_accept;6d7e0;288;u16" "gfxpp_ec;6da20;128;u8" "gfxpp_meta;6daa0;56;u32"
+          "gfxpp_base;6db80;304;u16" "gfxpp_def;6dde0;304;u16" "gfxpp_nxt;6e040;636;u16" "gfxpp_chk;6e538;636;u16")
+    list(GET t 0 n)
+    list(GET t 1 rva)
+    list(GET t 2 cnt)
+    list(GET t 3 kind)
+    string(TOUPPER "${n}" macro)
+    add_custom_command(
+        OUTPUT "${GEN}/${n}.h"
+        COMMAND ${PY} -I "${TOOLS}/extract_data.py" "${ORIG_RS}" ${rva} ${cnt} ${kind} ${macro} "${GEN}/${n}.h"
+        DEPENDS "${TOOLS}/extract_data.py" VERBATIM)
+    list(APPEND RS_TABLES "${GEN}/${n}.h")
+endforeach()
+foreach(t "gfxqk;100b5de0;32;100b5fc8;19" "gfxpp;100b66c0;95;100b6c28;54")
+    list(GET t 0 n)
+    list(GET t 1 states)
+    list(GET t 2 nstates)
+    list(GET t 3 rules)
+    list(GET t 4 nrules)
+    string(TOUPPER "${n}" macro)
+    add_custom_command(
+        OUTPUT "${GEN}/${n}_lemon.h"
+        COMMAND ${PY} -I "${TOOLS}/extract_lemon.py" "${ORIG_RS}" ${states} ${nstates} ${rules} ${nrules} ${macro}
+                "${GEN}/${n}_lemon.h"
+        DEPENDS "${TOOLS}/extract_lemon.py" VERBATIM)
+    list(APPEND RS_TABLES "${GEN}/${n}_lemon.h")
+endforeach()
+target_sources(RenderSystem_7c PRIVATE ${RS_TABLES})
+target_include_directories(RenderSystem_7c PRIVATE "${GEN}")
 target_compile_definitions(InputSystem_7c PRIVATE JET_IS_BUILD)
 # (all 327 exports are ours: nothing is called in InputSystem_7c_orig.dll any more)
 target_link_libraries(InputSystem_7c PRIVATE "${IMPLIB}/KernelResource_7c.lib")

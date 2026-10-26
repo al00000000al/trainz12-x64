@@ -34,7 +34,7 @@ bool __cdecl ExtendedGfxLanguage::LoadNativeFormat(const PString&, const char*) 
 bool __cdecl ExtendedGfxLanguage::CompileProgram() { return true; }
 bool __cdecl ExtendedGfxLanguage::Bind() const { return false; }
 bool __cdecl ExtendedGfxLanguage::End() const { return false; }
-bool __cdecl ExtendedGfxLanguage::Slot7() { return false; }
+bool __cdecl ExtendedGfxLanguage::Defines(const PString&) const { return false; }
 bool __cdecl ExtendedGfxLanguage::Load(MemoryFile&, const PString&, const PString&) { return false; }
 
 // 0x10020820: the text (with the defines applied) as a memory file named "built-in"
